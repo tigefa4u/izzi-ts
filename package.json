@@ -2,9 +2,11 @@
   "name": "izzi",
   "version": "3.0.0",
   "description": "",
-  "main": "server/shard.ts",
+  "main": "lib/server/shard.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node .",
+    "dev": "ts-node -r dotenv/config src/server/shard.ts"
   },
   "keywords": [
     "izzi",
@@ -18,7 +20,8 @@
     "dotenv": "^10.0.0",
     "eslint": "^8.1.0",
     "nodemon": "^2.0.14",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
   },
   "dependencies": {
     "@top-gg/sdk": "^3.1.2",

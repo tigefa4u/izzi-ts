@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-"use strict";
+"use strict"
 
-import discord from "discord.js";
-import config from "../../env";
-import { handleClient, handleClientEvents } from "../handlers/client";
+import discord from "discord.js"
+import config from "../env"
+import { handleClient, handleClientEvents } from "../handlers/client"
 
 // app.use(
 //   cors({
@@ -31,16 +31,16 @@ import { handleClient, handleClientEvents } from "../handlers/client";
 // process.setMaxListeners(100);
 
 const client = new discord.Client({
-    partials: [ "MESSAGE", "REACTION", "CHANNEL" ],
-    messageSweepInterval: 2,
-    messageCacheLifetime: 2,
-    retryLimit: 5,
-    intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES],
-    // restRequestTimeout: 1000 * 25
-});
+  partials: ["MESSAGE", "REACTION", "CHANNEL"],
+  messageSweepInterval: 2,
+  messageCacheLifetime: 2,
+  retryLimit: 5,
+  intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES],
+  // restRequestTimeout: 1000 * 25
+})
 
-handleClient(client);
-handleClientEvents(client);
+handleClient(client)
+handleClientEvents(client)
 
 // client.login(config.DISCORD_BOT_TOKEN);
-client.login(config.DISCORD_TEST_BOT);
+client.login(config.DISCORD_TEST_BOT)
