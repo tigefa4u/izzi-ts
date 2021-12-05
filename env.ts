@@ -1,31 +1,27 @@
-const config = {
-    DISCORD_BOT_PORT: process.env.DISCORD_BOT_PORT || 5000,
-    DB_USER: process.env.DB_USER,
-    DB_PASSWORD: process.env.DB_PASSWORD,
-    DB_NAME: process.env.DB_NAME,
-    DB_HOST: process.env.DB_HOST,
-    DB_PORT: Number(process.env.DB_PORT),
-    REDIS_HOST: process.env.REDIS_HOST,
-    REDIS_PORT: Number(process.env.REDIS_PORT),
-    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-	DISCORD_TEST_BOT: process.env.DISCORD_TEST_BOT,
-	DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
-	IZZI_WEBSITE: process.env.IZZI_WEBSITE,
-	OFFICIAL_SERVER_LINK: process.env.OFFICIAL_SERVER_LINK,
-	LAVALINK_HOST: process.env.LAVALINK_HOST,
-	LAVALINK_PORT: process.env.LAVALINK_PORT,
-	LAVALINK_PASSWORD: process.env.LAVALINK_PASSWORD,
-	BOT_INVITE_LINK: process.env.BOT_INVITE_LINK,
-	OWNER_DISCORD_DISCRIMINATOR: process.env.OWNER_DISCORD_DISCRIMINATOR,
-	OWNER_DISCORDID: process.env.OWNER_DISCORDID,
-	BOT_VOTE_LINK: process.env.BOT_VOTE_LINK,
-	AUTH_TOKEN: process.env.AUTH_TOKEN,
-	API_DOMAIN: process.env.API_DOMAIN,
-	TOTAL_SHARDS: Number(process.env.TOTAL_SHARDS), // total shards spawned on all machines together
-	SHARD_LIST: process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_LIST) : undefined, // shard id list
-	PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL,
-	BASE_XP: 10,
-	XP_GAIN_EXPONENT: 1.5
-};
-
-export default config;
+export const DISCORD_BOT_PORT = process.env.DISCORD_BOT_PORT || 5000;
+export const DB_USER = process.env.DB_USER;
+export const DB_PASSWORD = process.env.DB_PASSWORD;
+export const DB_NAME = process.env.DB_NAME;
+export const DB_HOST = process.env.DB_HOST;
+export const DB_PORT = Number(process.env.DB_PORT);
+export const REDIS_HOST = process.env.REDIS_HOST;
+export const REDIS_PORT = Number(process.env.REDIS_PORT);
+export const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+export const DISCORD_TEST_BOT = process.env.DISCORD_TEST_BOT;
+export const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+export const IZZI_WEBSITE = process.env.IZZI_WEBSITE;
+export const OFFICIAL_SERVER_LINK = process.env.OFFICIAL_SERVER_LINK;
+export const LAVALINK_HOST = process.env.LAVALINK_HOST;
+export const LAVALINK_PORT = process.env.LAVALINK_PORT;
+export const LAVALINK_PASSWORD = process.env.LAVALINK_PASSWORD;
+export const BOT_INVITE_LINK = process.env.BOT_INVITE_LINK;
+export const OWNER_DISCORD_DISCRIMINATOR = process.env.OWNER_DISCORD_DISCRIMINATOR;
+export const OWNER_DISCORDID = process.env.OWNER_DISCORDID;
+export const BOT_VOTE_LINK = process.env.BOT_VOTE_LINK;
+export const AUTH_TOKEN = process.env.AUTH_TOKEN;
+export const API_DOMAIN = process.env.API_DOMAIN;
+export const TOTAL_SHARDS = Number(process.env.TOTAL_SHARDS); // total shards spawned on all machines together
+export const SHARD_LIST = process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_LIST) : undefined; // shard id list
+export const PRIVACY_POLICY_URL = process.env.PRIVACY_POLICY_URL;
+export const BASE_XP = 10;
+export const XP_GAIN_EXPONENT = 1.5;

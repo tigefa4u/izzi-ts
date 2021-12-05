@@ -1,6 +1,6 @@
 import { Client, Interaction, Message } from "discord.js";
 import handleMessage from "../modules/events/message";
-import config from "../../env";
+import { IZZI_WEBSITE } from "../../env";
 
 export const handleClientEvents = (client: Client) => {
     client.on("messageCreate", (message: Message) => {
@@ -20,7 +20,7 @@ export const handleClient = (client: Client) => {
 		console.log("listening");
 		client?.user?.setPresence({
 			activities: [{
-				name: config.IZZI_WEBSITE,
+				name: IZZI_WEBSITE,
 				type: 3
 			}],
 		});

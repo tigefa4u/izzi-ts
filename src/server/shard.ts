@@ -2,7 +2,7 @@
 import { ShardingManager } from "discord.js";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/../../.env" });
-import config from "../../env";
+import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN, SHARD_LIST, TOTAL_SHARDS } from "../../env";
 
 // eslint-disable-next-line no-unused-vars
 process.on("unhandledRejection", (error, promise) => {
@@ -17,20 +17,21 @@ process.on("uncaughtException", (error) => {
 process.setMaxListeners(100);
 
 const shardParams = {
-	totalShards: config.TOTAL_SHARDS || "auto",
+    execArgv: ["-r", "ts-node/register"],
+	totalShards: TOTAL_SHARDS || "auto",
 	respawn: true,
-	token: config.DISCORD_TEST_BOT,
+	token: DISCORD_TEST_BOT,
 	// token: config.DISCORD_BOT_TOKEN
 };
 
-if (config.SHARD_LIST) {
-	Object.assign(shardParams, { shardList: config.SHARD_LIST });
+if (SHARD_LIST) {
+	Object.assign(shardParams, { shardList: SHARD_LIST });
 }
 
 const manager = new ShardingManager("./server/client.ts", {
     execArgv: ["-r", "ts-node/register"],
     totalShards: "auto",
-    token: config.DISCORD_TEST_BOT,
+    token: DISCORD_TEST_BOT,
     respawn: true
 });
 

@@ -1,4 +1,4 @@
-import { MessageAttachment, MessageButton, MessageEmbed } from "discord.js";
+import { Message, MessageAttachment, MessageButton, MessageEmbed } from "discord.js";
 
 export interface CustomEmbedProps extends MessageEmbed {
     attachments: MessageAttachment[];
@@ -10,3 +10,5 @@ export interface CustomEmbedProps extends MessageEmbed {
     setConfirmation: (bool: boolean) => CustomEmbedProps;
     setPagination: (bool: boolean) => CustomEmbedProps;
 }
+
+export type EmbedProps = (member: Message["member"]) => MessageEmbed;

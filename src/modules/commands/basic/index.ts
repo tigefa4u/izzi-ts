@@ -1,4 +1,6 @@
 import { BaseProps } from "../../../../types/command";
+import { createEmbed } from "../../../commons/embeds";
+import { BOT_INVITE_LINK } from "../../../../env";
 
 export const ping = async({ message, client }: BaseProps) => {
   message.channel.sendMessage(
@@ -9,5 +11,13 @@ export const ping = async({ message, client }: BaseProps) => {
   return;
 };
 export const invite = async({ message, client }: BaseProps) => {
-    return "";
+    const embed = createEmbed(message.member);
+    embed.setAuthor("Izzi", client?.user?.displayAvatarURL())
+        .setDescription(`Invite izzi into your server through the link:- ${BOT_INVITE_LINK}`);
+
+    if (client.user) {
+        embed.setThumbnail(client?.user?.displayAvatarURL())
+            .setImage(client?.user?.displayAvatarURL());
+    }
+    message.channel.sendMessage(embed);
 };

@@ -1,4 +1,5 @@
-import { DMChannel, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
+import { DMChannel, MessageAttachment, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
+import implementSendMessage from "./implementations/sendMessage";
 import { CustomEmbedProps } from "./types/embed";
 
 type customProps = string | CustomEmbedProps;
@@ -16,20 +17,20 @@ declare module "discord.js" {
     interface NewsChannel {
         sendMessage: (content: customProps) => Promise<Message>;
     }
-    // interface MessageEmbed {
-    //     attachments: MessageAttachment[];
-    //     isConfirmation: boolean;
-    //     isPagination: boolean;
-    //     buttons: MessageButton[];
-    //     attachFiles: (attachments: MessageAttachment[]) => MessageEmbed;
-    //     setButtons: (buttons: MessageButton[]) => MessageEmbed;
-    //     setConfirmation: (bool: boolean) => MessageEmbed;
-    //     setPagination: (bool: boolean) => MessageEmbed;
-    // }
+    interface MessageEmbed {
+        attachments: MessageAttachment[];
+        isConfirmation: boolean;
+        isPagination: boolean;
+        buttons: MessageButton[];
+        attachFiles: (attachments: MessageAttachment[]) => MessageEmbed;
+        setButtons: (buttons: MessageButton[]) => MessageEmbed;
+        setConfirmation: (bool: boolean) => MessageEmbed;
+        setPagination: (bool: boolean) => MessageEmbed;
+    }
 }
 
 TextChannel.prototype.sendMessage = function(content) {
-    return this.send(content);
+    return implementSendMessage(this, content);
 };
 DMChannel.prototype.sendMessage = function() {
     throw new Error("Unimplemented");
@@ -39,4 +40,20 @@ ThreadChannel.prototype.sendMessage = function() {
 };
 NewsChannel.prototype.sendMessage = function() {
     throw new Error("Unimplemented");
+};
+MessageEmbed.prototype.attachFiles = function(attachments: MessageAttachment[]) {
+    this.attachments = attachments;
+    return this;
+};
+MessageEmbed.prototype.setButtons = function (buttons: MessageButton[]) {
+    this.buttons = buttons;
+    return this;
+};
+MessageEmbed.prototype.setConfirmation = function(bool: boolean) {
+    this.isConfirmation = bool;
+    return this;
+};
+MessageEmbed.prototype.setPagination = function(bool: boolean) {
+    this.isPagination = bool;
+    return this;
 };

@@ -2,7 +2,7 @@
 "use strict";
 
 import discord from "discord.js";
-import config from "../../env";
+import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../../env";
 import { handleClient, handleClientEvents } from "../handlers/client";
 
 // app.use(
@@ -43,4 +43,4 @@ handleClient(client);
 handleClientEvents(client);
 
 // client.login(config.DISCORD_BOT_TOKEN);
-client.login(config.DISCORD_TEST_BOT);
+client.login(DISCORD_TEST_BOT);
