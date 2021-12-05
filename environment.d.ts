@@ -24,8 +24,9 @@ declare global {
       BOT_VOTE_LINK: string;
       AUTH_TOKEN: string;
       API_DOMAIN: string;
-      TOTAL_SHARDS: string; // total shards spawned on all machines together
+      TOTAL_SHARDS: string | "auto"; // total shards spawned on all machines together
       SHARD_LIST: string; // list of shard ids
+      PRIVACY_POLICY: string;
     }
   }
 }

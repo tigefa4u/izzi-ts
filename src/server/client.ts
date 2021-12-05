@@ -1,12 +1,9 @@
 /* eslint-disable no-undef */
 "use strict";
 
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import discord from "discord.js";
 import config from "../../env";
-import handleClient from "../modules/events/client";
+import { handleClient, handleClientEvents } from "../handlers/client";
 
 // app.use(
 //   cors({
@@ -38,12 +35,12 @@ const client = new discord.Client({
     messageSweepInterval: 2,
     messageCacheLifetime: 2,
     retryLimit: 5,
-    intents: 0,
+    intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES],
     // restRequestTimeout: 1000 * 25
 });
 
-// clientEvents(client);
-handleClient(client, discord);
+handleClient(client);
+handleClientEvents(client);
 
 // client.login(config.DISCORD_BOT_TOKEN);
 client.login(config.DISCORD_TEST_BOT);

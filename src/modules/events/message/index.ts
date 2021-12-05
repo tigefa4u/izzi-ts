@@ -1,7 +1,7 @@
-const handleMessageEvents = (client) => {
-    client.on("message", (message) => {
-        if (message.author.bot || message.channel.type === "dm") return;
-    });
+import { Client, Message } from "discord.js";
+
+const handleMessage = (client: Client, message: Message) => {
+    return;
 };
 
-export default handleMessageEvents;
+export default handleMessage;

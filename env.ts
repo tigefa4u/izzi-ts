@@ -21,8 +21,11 @@ const config = {
 	BOT_VOTE_LINK: process.env.BOT_VOTE_LINK,
 	AUTH_TOKEN: process.env.AUTH_TOKEN,
 	API_DOMAIN: process.env.API_DOMAIN,
-	TOTAL_SHARDS: Number(process.env.TOTAL_SHARDS) || "auto", // total shards spawned on all machines together
+	TOTAL_SHARDS: Number(process.env.TOTAL_SHARDS), // total shards spawned on all machines together
 	SHARD_LIST: process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_LIST) : undefined, // shard id list
+	PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL,
+	BASE_XP: 10,
+	XP_GAIN_EXPONENT: 1.5
 };
 
 export default config;
