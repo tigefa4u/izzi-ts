@@ -1,6 +1,6 @@
 import { Client, Interaction, Message } from "discord.js";
 import handleMessage from "../modules/events/message";
-import { IZZI_WEBSITE } from "../../env";
+import { IZZI_WEBSITE } from "../env";
 
 export const handleClientEvents = (client: Client) => {
     client.on("messageCreate", (message: Message) => {

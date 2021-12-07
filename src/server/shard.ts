@@ -2,7 +2,7 @@
 import { ShardingManager } from "discord.js";
 import * as dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/../../.env" });
-import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN, SHARD_LIST, TOTAL_SHARDS } from "../../env";
+import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN, SHARD_LIST, TOTAL_SHARDS } from "../env";
 
 // eslint-disable-next-line no-unused-vars
 process.on("unhandledRejection", (error, promise) => {

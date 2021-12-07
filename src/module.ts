@@ -1,6 +1,6 @@
 import { DMChannel, MessageAttachment, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
 import implementSendMessage from "./implementations/sendMessage";
-import { CustomEmbedProps } from "./types/embed";
+import { CustomEmbedProps } from "./@types/embed";
 
 type customProps = string | CustomEmbedProps;
 
@@ -29,7 +29,7 @@ declare module "discord.js" {
     }
 }
 
-TextChannel.prototype.sendMessage = function(content) {
+TextChannel.prototype.sendMessage = function(content: customProps) {
     return implementSendMessage(this, content);
 };
 DMChannel.prototype.sendMessage = function() {

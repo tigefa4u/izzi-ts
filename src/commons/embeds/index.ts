@@ -2,7 +2,7 @@
 // import { CustomEmbedProps } from "../../../types/embed";
 
 import { Message, MessageEmbed } from "discord.js";
-import { EmbedProps } from "../../../types/embed";
+import { EmbedProps } from "../../@types/embed";
 
 // class CustomEmbed extends MessageEmbed implements CustomEmbedProps {
 //     embed: MessageEmbed;

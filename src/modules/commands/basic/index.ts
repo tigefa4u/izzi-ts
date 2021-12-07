@@ -1,6 +1,6 @@
-import { BaseProps } from "../../../../types/command";
+import { BaseProps } from "../../../@types/command";
 import { createEmbed } from "../../../commons/embeds";
-import { BOT_INVITE_LINK } from "../../../../env";
+import { BOT_INVITE_LINK } from "../../../env";
 
 export const ping = async({ message, client }: BaseProps) => {
   message.channel.sendMessage(

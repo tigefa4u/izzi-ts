@@ -2,8 +2,9 @@
 "use strict";
 
 import discord from "discord.js";
-import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../../env";
+import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../env";
 import { handleClient, handleClientEvents } from "../handlers/client";
+import "../module";
 
 // app.use(
 //   cors({
