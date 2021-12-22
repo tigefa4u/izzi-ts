@@ -23,5 +23,3 @@ export const API_DOMAIN = process.env.API_DOMAIN;
 export const TOTAL_SHARDS = Number(process.env.TOTAL_SHARDS); // total shards spawned on all machines together
 export const SHARD_LIST = process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_LIST) : undefined; // shard id list
 export const PRIVACY_POLICY_URL = process.env.PRIVACY_POLICY_URL;
-export const BASE_XP = 10;
-export const XP_GAIN_EXPONENT = 1.5;

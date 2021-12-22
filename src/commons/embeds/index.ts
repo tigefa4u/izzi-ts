@@ -1,8 +1,8 @@
 // import { MessageAttachment, MessageButton, MessageEmbed } from "discord.js";
-// import { CustomEmbedProps } from "../../../types/embed";
+// import { CustomEmbedProps } from "@customTypes/embed";
 
 import { Message, MessageEmbed } from "discord.js";
-import { EmbedProps } from "../../@types/embed";
+import { EmbedProps } from "@customTypes/embed";
 
 // class CustomEmbed extends MessageEmbed implements CustomEmbedProps {
 //     embed: MessageEmbed;
@@ -35,7 +35,7 @@ import { EmbedProps } from "../../@types/embed";
 // export default CustomEmbed;
 
 export const createEmbed: EmbedProps = (member) => {
-    const embed = new MessageEmbed();
-    member?.displayColor && embed.setColor(member?.displayColor);
-    return embed;
+	const embed = new MessageEmbed();
+	member?.displayColor && embed.setColor(member?.displayColor);
+	return embed;
 };

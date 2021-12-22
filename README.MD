@@ -1,11 +1,9 @@
 ########### IZZI DISCORD BOT ################
 #All you need to know
 
-- Image uploading is done with the server in "izzi-image-uploads" it uploads the images into assets in the parent dir.
-
 # IMPORTANT
 REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
-- check TODO
+- USE OLD PROJECT TO CREATE NEW MIGRATIONS
 - While installing canvas on ubuntu run the command "sudo npm config set user 0"
 - use sudo curl -sL https://deb.nodesource.com/setup_12.x | sudo bash - (to install node v12)
 - use nohup java -jar Lavalink.jar & to run lavalink deamon
@@ -15,6 +13,7 @@ REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - need to sudo apt install redis-server
 - sudo forever start -c "node --max-old-space-size=8024" -o out.log -e error.log server/shard.js  
 (run this to make node utilize more RAM)
+- set ``NODE_PATH=src`` in env for typescript module short imports
 
 # Used GCS to store images
 - Install skipper-gcstorage if using sails

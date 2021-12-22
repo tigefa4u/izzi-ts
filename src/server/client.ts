@@ -2,8 +2,8 @@
 "use strict";
 
 import discord from "discord.js";
-import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../env";
-import { handleClient, handleClientEvents } from "../handlers/client";
+import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../environment";
+import { handleClient, handleClientEvents } from "handlers/client";
 import "../module";
 
 // app.use(
@@ -32,12 +32,12 @@ import "../module";
 // process.setMaxListeners(100);
 
 const client = new discord.Client({
-    partials: [ "MESSAGE", "REACTION", "CHANNEL" ],
-    messageSweepInterval: 2,
-    messageCacheLifetime: 2,
-    retryLimit: 5,
-    intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES],
-    // restRequestTimeout: 1000 * 25
+	partials: [ "MESSAGE", "REACTION", "CHANNEL" ],
+	messageSweepInterval: 2,
+	messageCacheLifetime: 2,
+	retryLimit: 5,
+	intents: [ discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES ],
+	// restRequestTimeout: 1000 * 25
 });
 
 handleClient(client);

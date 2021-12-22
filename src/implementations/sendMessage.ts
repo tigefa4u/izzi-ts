@@ -1,5 +1,5 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js";
-import { CustomEmbedProps } from "../@types/embed";
+import { CustomEmbedProps } from "@customTypes/embed";
 
 type Props = TextChannel;
 

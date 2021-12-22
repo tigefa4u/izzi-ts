@@ -1,17 +1,20 @@
 import { Client, Interaction, Message } from "discord.js";
-import handleMessage from "../modules/events/message";
-import { IZZI_WEBSITE } from "../env";
+import handleMessage from "modules/events/message";
+import { IZZI_WEBSITE } from "../environment";
 
 export const handleClientEvents = (client: Client) => {
-    client.on("messageCreate", (message: Message) => {
-        if (message.author.bot || message.channel.type === "DM" || !message.guild) return;
-        if (message.content === "tt ping") message.channel.sendMessage("pls work");
-        // handleMessage(client, message);
-    });
+	client.on("messageCreate", (message: Message) => {
+		if (message.author.bot || message.channel.type === "DM" || !message.guild) return;
+		try {
+			handleMessage(client, message);
+		} catch (err) {
+			console.log(err);
+		}
+	});
 
-    client.on("interactionCreate", (interaction: Interaction) => {
-        if (!interaction.isCommand()) return;
-    });
+	client.on("interactionCreate", (interaction: Interaction) => {
+		if (!interaction.isCommand()) return;
+	});
 };
 
 export const handleClient = (client: Client) => {
@@ -19,10 +22,10 @@ export const handleClient = (client: Client) => {
 	client.on("ready", async () => {
 		console.log("listening");
 		client?.user?.setPresence({
-			activities: [{
+			activities: [ {
 				name: IZZI_WEBSITE,
 				type: 3
-			}],
+			} ],
 		});
 		try {
 			// handleMusicEvents(client, discord);
