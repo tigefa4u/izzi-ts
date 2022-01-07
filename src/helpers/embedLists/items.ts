@@ -15,7 +15,7 @@ export const createItemList = (
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} ${titleCase(item.name)} ${emojiMap(
 				item.name
-			)}${options?.isMarket ? `| ${item.price} ${emoji.gold}` : ""}`,
+			)}${options?.isMarket ? ` | ${item.price} ${emoji.gold}` : ""}`,
 			value: `Category: [${item.category
 				.map((i) => titleCase(i))
 				.join(", ")}] | ID: ${item.id}`,

@@ -9,7 +9,6 @@ export const getPowerLevelByRank = async (params: { rank: string }): Promise<PLP
 		const result = await Cache.fetch(key, async () => {
 			let res: PLProps[] | PLProps = await Ranks.get(params);
 			res = res[0];
-			await Cache.set(key, JSON.stringify(res));
 			return res;
 		});
 

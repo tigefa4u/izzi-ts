@@ -8,7 +8,6 @@ export const getSkinById = async (params: Pick<SkinProps, "id">): Promise<SkinPr
 		const key = `skin::${params.id}`;
 		const result = await Cache.fetch(key, async () => {
 			const resp = await Skins.get({ id: params.id });
-			await Cache.set(key, JSON.stringify(resp[0]));
 			return resp[0];
 		});
 

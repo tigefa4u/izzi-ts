@@ -15,11 +15,15 @@ const Cache: CacheProps = {
 	del: (key) => client.del(key),
 	expire: (key, ttl) => client.expire(key, ttl),
 	keys: (pattern = "*") => client.keys(pattern),
-	fetch: async (key: string, cb: () => void) => {
+	fetch: async <T>(key: string, cb: () => Promise<T>) => {
 		const data = await client.get(key);
 		if (!data) {
-			loggers.info("Cache miss for: " + key);
-			return cb();
+			const ttl = 1000 * 60 * 60 * 24 * 15;
+			loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
+			const resp = await cb();
+			client.set(key, JSON.stringify(resp));
+			client.expire(key, ttl);
+			return resp;
 		}
 		loggers.info("Cache hit for: " + key);
 		return JSON.parse(data);

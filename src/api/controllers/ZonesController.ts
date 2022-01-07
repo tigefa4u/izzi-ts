@@ -11,7 +11,6 @@ export const getZoneByLocationId = async (params: { location_id: number }) => {
 		const key = `zone::${params.location_id}`;
 		const result = await Cache.fetch(key, async () => {
 			const res = await Zones.get(params);
-			await Cache.set(key, JSON.stringify(res));
 			return res;
 		});
 

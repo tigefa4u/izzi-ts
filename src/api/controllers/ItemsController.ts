@@ -5,6 +5,7 @@ import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Items from "../models/Items";
 import { get as getCollections } from "../models/Collections";
+import Cache from "cache";
 
 type T = { user_id?: number };
 
@@ -36,7 +37,7 @@ export const getItems: (
 			}
 			Object.assign(filter, { ids });
 		}
-		const result = await Items.get(
+		const result = await Items.getAll(
 			await paginationParams(pageProps),
 			filter
 		);
@@ -53,6 +54,21 @@ export const getItems: (
 			"api.controllers.ItemsController.getItems(): something went wrong",
 			err
 		);
+		return;
+	}
+};
+
+export const getItemById = async (params: { id: number }) => {
+	try {
+		const key = `item::${params.id}`;
+		const result = await Cache.fetch(key, async () => {
+			const resp = await Items.get(params);
+			return resp[0];
+		});
+
+		return result;
+	} catch (err) {
+		loggers.error("api.controllers.ItemsController.getItemById(): something went wrong", err);
 		return;
 	}
 };

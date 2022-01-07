@@ -44,7 +44,6 @@ export const getStageForBattle = async (params: SProps): Promise<BattleCardProps
 				...card,
 				zone_filepath: res.filepath,
 			});
-			await Cache.set(key, JSON.stringify(stageInfo));
 			return stageInfo;
 		});
 

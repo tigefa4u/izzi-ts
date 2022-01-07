@@ -14,7 +14,6 @@ export const getCharacterCardByRank: (params: {
 		const result = await Cache.fetch<CardProps>(key, async () => {
 			let res: CProps = await Cards.get(params);
 			res = res[0];
-			await Cache.set(key, JSON.stringify(res));
 			return res;
 		});
 		return result;

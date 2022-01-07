@@ -25,7 +25,7 @@ export const transformation = {
 	},
 };
 
-export const get: (
+export const getAll: (
   pagination: PaginationProps,
   filter?: Pick<FilterProps, "name" | "ids">
 ) => Promise<ItemProps[]> = async (
@@ -38,10 +38,7 @@ export const get: (
 	const db = connection;
 	const alias = "itemalias";
 	let query = db
-		.select(
-			db.raw(`${tableName}.id, ${tableName}.name, ${tableName}.description, ${tableName}.stats,
-			${tableName}.filepath, ${tableName}.category, ${tableName}.price`)
-		)
+		.select("*")
 		.from(tableName)
 		.as(alias);
 
@@ -58,6 +55,16 @@ export const get: (
 		.from(query);
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
+
+	return query;
+};
+
+export const get = async (params: { id: number }): Promise<ItemProps[]> => {
+	const db = connection;
+	const query = db
+		.select("*")
+		.from(tableName)
+		.where(params);
 
 	return query;
 };

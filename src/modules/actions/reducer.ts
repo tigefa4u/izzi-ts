@@ -9,6 +9,7 @@ import { compare } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
 import { collection } from "modules/commands/rpg/inventory";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
+import { itemshop } from "modules/commands/rpg/items/shop";
 import { lottery } from "modules/commands/rpg/misc";
 import { packs } from "modules/commands/rpg/packs";
 import { premium } from "modules/commands/rpg/premium";
@@ -59,7 +60,8 @@ const commandMap: CommandMapProps = {
 	compare: compare,
 	cards: cards,
 	status: status,
-	skins: skins
+	skins: skins,
+	itemshop: itemshop
 };
 
 export default commandMap;

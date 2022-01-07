@@ -3,7 +3,7 @@ import { StatRelationProps } from "@customTypes/abilities";
 import { CharacterStatProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
 import { ItemProps } from "@customTypes/items";
-import { getItems } from "api/controllers/ItemsCollection";
+import { getItems } from "api/controllers/ItemsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -96,6 +96,7 @@ export const itemCollection = async ({
 		context.channel.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
+		return;
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.items.itemCollection(): something went wrong",
