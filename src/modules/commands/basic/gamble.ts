@@ -3,7 +3,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
-import { GAMBLE_EMOJIS } from "helpers/constants";
+import { BET_LIMIT, GAMBLE_EMOJIS } from "helpers/constants";
 import loggers from "loggers";
 
 const bucket = [
@@ -27,18 +27,21 @@ const validateBetArgs = function (args: string | undefined) {
 	return index.name;
 };
 
-export const bet = async ({ message, args = [], options }: BaseProps) => {
+export const bet = async ({ context, args = [], options }: BaseProps) => {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const betAmount = parseInt(args.shift() || "0");
-		if (isNaN(betAmount) || betAmount <= 0 || betAmount > 50000) {
-			return message.channel.sendMessage("Invalid Bet amount");
+		if (isNaN(betAmount) || betAmount <= 0 || betAmount > BET_LIMIT) {
+			context.channel.sendMessage(
+				`Invalid Bet amount. You cannot bet more than __${BET_LIMIT}__ gold ${emoji.gold}`
+			);
+			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) throw new Error("User not found FATAL ERROR");
 		if (user.gold < betAmount)
-			return message.reply(" You do not have suffient gold to bet.");
+			return context.reply(" You do not have suffient gold to bet.");
 		const coinFlip = validateBetArgs(args.shift());
 		if (!coinFlip) throw new Error("Coin flip error");
 		user.gold = Math.floor(user.gold - betAmount);
@@ -46,16 +49,14 @@ export const bet = async ({ message, args = [], options }: BaseProps) => {
 		let flipString;
 		if (betFlip) flipString = "heads";
 		else flipString = "tails";
-		const embed = createEmbed(message.member);
+		const embed = createEmbed();
 		if (coinFlip === flipString) {
 			const winAmount = Math.floor(betAmount * randomNumber(1.7, 1.9, true));
 			user.gold = user.gold + winAmount;
 			embed
 				.setTitle("Success!")
 				.setDescription(
-					`It was **${flipString}!**\n\ncongratulations! ${emoji.celebration} you won __${
-						winAmount
-					}__g`
+					`It was **${flipString}!**\n\ncongratulations! ${emoji.celebration} you won __${winAmount}__g`
 				)
 				.setThumbnail(GAMBLE_EMOJIS.win);
 		} else {
@@ -67,10 +68,13 @@ export const bet = async ({ message, args = [], options }: BaseProps) => {
 				.setThumbnail(GAMBLE_EMOJIS.loss);
 		}
 		await updateRPGUser({ user_tag: author.id }, { gold: user.gold });
-		message.channel.sendMessage(embed);
+		context.channel.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("module.commands.basic.gamble.bet: something went wrong", err);
+		loggers.error(
+			"module.commands.basic.gamble.bet(): something went wrong",
+			err
+		);
 		return;
 	}
 };

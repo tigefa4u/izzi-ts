@@ -3,10 +3,10 @@ import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
 export const handleClientEvents = (client: Client) => {
-	client.on("messageCreate", (message: Message) => {
-		if (message.author.bot || message.channel.type === "DM" || !message.guild) return;
+	client.on("messageCreate", (context: Message) => {
+		if (context.author.bot || context.channel.type === "DM" || !context.guild) return;
 		try {
-			handleMessage(client, message);
+			handleMessage(client, context);
 		} catch (err) {
 			console.log(err);
 		}

@@ -2,7 +2,7 @@ import { BaseProps, CommandMapProps } from "@customTypes/command";
 import commandMap from "modules/actions/reducer";
 
 export const inventory = async function ({
-	message,
+	context,
 	client,
 	command,
 	args = [],
@@ -11,7 +11,7 @@ export const inventory = async function ({
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -22,7 +22,7 @@ export const inventory = async function ({
 };
 
 export const information = async function({
-	message,
+	context,
 	client,
 	args = [],
 	command,
@@ -31,7 +31,7 @@ export const information = async function({
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -42,7 +42,7 @@ export const information = async function({
 };
 
 export const gamble = async function({
-	message,
+	context,
 	client,
 	args = [],
 	command,
@@ -51,7 +51,7 @@ export const gamble = async function({
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -62,11 +62,11 @@ export const gamble = async function({
 };
 
 export const profile = async function({
-	message, client, command, options, args = [] 
+	context, client, command, options, args = [] 
 }: BaseProps) {
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -77,12 +77,12 @@ export const profile = async function({
 };
 
 export const marriage = async function ({
-	message, client, command, args = [], options 
+	context, client, command, args = [], options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			options
@@ -92,12 +92,12 @@ export const marriage = async function ({
 };
 
 export const dungeons = async function ({
-	message, client, command, args = [], options 
+	context, client, command, args = [], options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -108,12 +108,12 @@ export const dungeons = async function ({
 };
 
 export const shop = async function ({
-	message, client, command, args = [], options 
+	context, client, command, args = [], options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -124,12 +124,12 @@ export const shop = async function ({
 };
 
 export const guilds = async function ({
-	message, client, command, args = [], options 
+	context, client, command, args = [], options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			client,
 			args,
 			command,
@@ -140,12 +140,12 @@ export const guilds = async function ({
 };
 
 export const miscellaneous = async function ({
-	message, args = [], client, command, options 
+	context, args = [], client, command, options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function")
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			args,
 			client,
 			options 
@@ -154,12 +154,12 @@ export const miscellaneous = async function ({
 };
 
 export const pvp = async function ({
-	message, args = [], client, command, options 
+	context, args = [], client, command, options 
 }: BaseProps) {
 	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function")
 		commandMap[command?.name as keyof CommandMapProps]({
-			message,
+			context,
 			args,
 			client,
 			options 

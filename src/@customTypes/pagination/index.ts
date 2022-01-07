@@ -4,11 +4,11 @@ export type PaginationProps = {
 }
 
 export type PageProps = {
-    current_page: number;
-    per_page: number;
+    currentPage: number;
+    perPage: number;
 }
 
 export interface PagingMetadata extends PageProps {
-    total_count: number;
-    total_pages: number;
+    totalCount: number;
+    totalPages: number;
 }

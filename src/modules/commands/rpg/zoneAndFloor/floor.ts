@@ -1,0 +1,170 @@
+import { AuthorProps, ChannelProp } from "@customTypes";
+import { CharacterStatProps } from "@customTypes/characters";
+import { BaseProps } from "@customTypes/command";
+import { BattleCardProps } from "@customTypes/stages";
+import { UserProps } from "@customTypes/users";
+import { pageFunc } from "api/controllers/PagingController";
+import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
+import { getStageForBattle } from "api/controllers/StagesController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { getZoneByLocationId } from "api/controllers/ZonesController";
+import { createAttachment } from "commons/attachments";
+import { createEmbed } from "commons/embeds";
+import { Client } from "discord.js";
+import { emojiMap } from "emojis";
+import { baseStatRatio, calcPower, prepareAbilityDescription } from "helpers";
+import { createSingleCanvas } from "helpers/canvas";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import loggers from "loggers";
+import { titleCase } from "title-case";
+
+async function prepareStageStats(params: {
+  rank: string;
+  stageInfo: BattleCardProps;
+}) {
+	const PLStats = await getPowerLevelByRank({ rank: params.rank });
+	if (!PLStats) return;
+	const stats = {} as CharacterStatProps;
+	const statsKeys = Object.keys(params.stageInfo.stats);
+	statsKeys.forEach((stat) => {
+		let statVal = params.stageInfo.stats[stat as keyof CharacterStatProps];
+		if ([ "critical", "evasion", "accuracy" ].includes(stat))
+			Object.assign(stats, { [stat]: statVal });
+		else {
+			statVal = baseStatRatio(statVal, PLStats.rank);
+			const plVal = calcPower(PLStats, params.stageInfo.level, statVal);
+			Object.assign(stats, { [stat]: plVal });
+		}
+	});
+	return stats;
+}
+
+async function handleNextFloor(params: {
+  user: UserProps;
+  fl: string;
+  channel: ChannelProp;
+}) {
+	const { user, fl } = params;
+
+	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
+	if (
+		(user.floor == user.max_floor && fl == "n") ||
+    parseInt(fl) > user.max_floor
+	) {
+		embed.setDescription(
+			`Summoner **${user.username}**, you have not unlocked this floor yet!`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	} else {
+		if (fl == "n") user.floor = user.floor + 1;
+		else {
+			user.floor = parseInt(fl);
+		}
+	}
+	await updateRPGUser({ user_tag: user.user_tag }, { floor: user.floor });
+	const stage = await getStageForBattle({
+		location_id: user.ruin,
+		floor: user.floor,
+	});
+	if (!stage) return;
+	const stats = await prepareStageStats({
+		rank: stage.rank,
+		stageInfo: stage,
+	});
+	const passiveEmoji = emojiMap(stage.abilityname);
+	const classEmoji = emojiMap(stage.type);
+	const cardCanvas = await createSingleCanvas(stage, false);
+	if (!cardCanvas) return;
+	const attachment = createAttachment(cardCanvas.createJPEGStream(), "img.jpg");
+	const zoneAttachment = createAttachment(stage.zone_filepath, "zone.jpg");
+	embed
+		.setTitle(`Travelled to Arena [${user.ruin}-${user.floor}]`)
+		.setDescription(
+			`**:crossed_swords: FLOOR GUARDIAN:\n__${titleCase(stage.rank)}__ Level ${
+				stage.level
+			} ${titleCase(stage.name)}**\n**Element Type:** ${
+				classEmoji ? classEmoji : ""
+			}\n**RANK:** ${titleCase(stage.rank)}\n**HP:** ${
+				stats?.strength
+			}\n**ATK:** ${stats?.vitality}\n**INT:** ${
+				stats?.intelligence
+			}\n**DEF:** ${stats?.defense}\n**SPD:** ${
+				stats?.dexterity
+			}\n\n**Ability**\n${passiveEmoji ? passiveEmoji : ""} **${titleCase(
+				stage?.abilityname
+			)}** ${stage.is_passive ? "[PSV]" : ""}: ${prepareAbilityDescription(
+				stage.abilitydescription,
+				stage.rank
+			)}`
+		)
+		.setImage("attachment://img.jpg")
+		.setThumbnail("attachment://zone.jpg")
+		.attachFiles([ attachment, zoneAttachment ]);
+	return embed;
+}
+
+async function handleZoneFloors(params: {
+  user: UserProps;
+  channel: ChannelProp;
+  author: AuthorProps;
+  client: Client;
+}) {
+	const zone = await getZoneByLocationId({ location_id: params.user.ruin });
+	const stages: string[] = [];
+	Array(params.user.max_floor)
+		.fill(0)
+		.map((v, i) => {
+			stages.push(`Stage | ${params.user.ruin} - ${i + 1}\n\n`);
+		});
+	const title = "Stages/Floors";
+	const description = `All the stages in **${titleCase(
+		zone?.name || ""
+	)}** you have unlocked are listed below.`;
+	const pageName = "Stage";
+	await pageFunc(stages, params.channel, params.author, {
+		client: params.client,
+		title,
+		description,
+		pageName,
+		list: [],
+		filepath: zone?.filepath
+	});
+	return;
+}
+
+export const floor = async ({ context, client, options, args }: BaseProps) => {
+	try {
+		const author = options?.author;
+		if (!author) return;
+		const user = await getRPGUser({ user_tag: author.id });
+		if (!user) return;
+		const fl = args.shift();
+		if (!fl) {
+			await handleZoneFloors({
+				user,
+				client,
+				author,
+				channel: context.channel 
+			});
+			return;
+		}
+		const embed = await handleNextFloor({
+			user,
+			fl,
+			channel: context.channel,
+		});
+		if (!embed) return;
+		embed.setAuthor({
+			name: author.username,
+			iconURL: author.displayAvatarURL(),
+		});
+		context.channel.sendMessage(embed);
+	} catch (err) {
+		loggers.error(
+			"modules.commands.rpg.zoneAndFloor.floor(): something went wrong",
+			err
+		);
+		return;
+	}
+};

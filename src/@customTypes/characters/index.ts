@@ -9,6 +9,7 @@ export type CharacterStatProps = {
     evasion: number;
     accuracy: number;
     precision: number;
+    critical: number;
 }
 
 export type CharacterProps = {
@@ -27,7 +28,7 @@ export type CharacterDetailsProps = CharacterProps & {
     is_passive: boolean;
 }
 
-export type CharactersReturnType = CharacterDetailsProps[] | [] | undefined;
+export type CharactersReturnType = CharacterDetailsProps[] | [];
 
 type IgnoreCharacterProps = "created_at" | "updated_at" | "passive_id" | "stats"
 

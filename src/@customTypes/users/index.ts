@@ -20,6 +20,8 @@ export type UserProps = {
 	raid_pass: number;
 	max_raid_pass: number;
 	is_married: boolean;
+	is_active: boolean;
+	is_banned: boolean;
 	orbs: number;
 	vote_streak: number;
 	mana_refilled_at: string;

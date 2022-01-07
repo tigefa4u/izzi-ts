@@ -81,30 +81,31 @@ export const transformation = {
 };
 
 export const get: (params: UserParams) => Promise<UserProps[] | undefined> = async (params) => {
-	try {
-		return await connection.select("*").from(tableName).where(params);
-	} catch (err) {
-		return;
-	}
+	return await connection.select("*").from(tableName).where(params);
 };
+
 export const create: (data: UserCreateProps) => Promise<UserProps> = async (
 	data
 ) => {
-	try {
-		return await connection(tableName)
-			.insert(data, "*")
-			.then((res) => res[0]);
-	} catch (err) {
-		return;
-	}
+	return await connection(tableName)
+		.insert(data, "*")
+		.then((res) => res[0]);
 };
+
 export const update: (
   params: UserParams,
   data: UserUpdateProps
 ) => Promise<UserProps | undefined> = async (params, data) => {
-	try {
-		return await connection(tableName).where(params).update(data);
-	} catch (err) {
-		return;
+	return await connection(tableName).where(params).update(data);
+};
+
+export const getPlayerCount = async (params?: Pick<UserProps, "is_active">): Promise<{ count: string }[]> => {
+	const db = connection;
+	let query = db(tableName);
+
+	if (params?.is_active) {
+		query = query.where(params);
 	}
+
+	return query.count();
 };

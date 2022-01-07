@@ -19,20 +19,20 @@ async function getProfileInfo(key: string, id: string) {
 }
 
 export const mana = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("mana", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}/${result.metadata.max_mana}**__ mana`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.mana: something went wrong",
+			"commands.rpg.profile.profileInfo.mana(): something went wrong",
 			err
 		);
 		return;
@@ -40,20 +40,20 @@ export const mana = async function ({
 };
 
 export const exp = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("exp", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}/${result.metadata.max_exp}**__ EXP`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}/${result.metadata.max_exp}__ **EXP**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.exp: something went wrong",
+			"commands.rpg.profile.profileInfo.exp(): something went wrong",
 			err
 		);
 		return;
@@ -61,20 +61,20 @@ export const exp = async function ({
 };
 
 export const level = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("level", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** is currently level __**${result.data}**__`
+		context.channel.sendMessage(
+			`**${author.username}** is currently level __${result.data}__`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.level: something went wrong",
+			"commands.rpg.profile.profileInfo.level(): something went wrong",
 			err
 		);
 		return;
@@ -82,21 +82,21 @@ export const level = async function ({
 };
 
 export const permits = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("raid_pass", author.id);
-		message.channel.sendMessage(
+		context.channel.sendMessage(
 			`**${author.username}** currently has` + " " +
-			`__**${result.data}/${result.metadata.max_permit}**__ raid permits`
+			`__${result.data}/${result.metadata.max_permit}__ **raid permits**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.permits: something went wrong",
+			"commands.rpg.profile.profileInfo.permits(): something went wrong",
 			err
 		);
 		return;
@@ -104,20 +104,20 @@ export const permits = async function ({
 };
 
 export const shards = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("shards", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}**__ ${emoji.shard} shards`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}__ ${emoji.shard} **shards**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.shards: something went wrong",
+			"commands.rpg.profile.profileInfo.shards(): something went wrong",
 			err
 		);
 		return;
@@ -125,20 +125,20 @@ export const shards = async function ({
 };
 
 export const orbs = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("orbs", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}**__ ${emoji.blueorb} blue orbs`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}__ ${emoji.blueorb} **blue orbs**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.orbs: something went wrong",
+			"commands.rpg.profile.profileInfo.orbs(): something went wrong",
 			err
 		);
 		return;
@@ -146,20 +146,20 @@ export const orbs = async function ({
 };
 
 export const points = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("izzi_points", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}**__ ${emoji.izzipoints} Izzi Points`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}__ ${emoji.izzipoints} **Izzi Points**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.points: something went wrong",
+			"commands.rpg.profile.profileInfo.points(): something went wrong",
 			err
 		);
 		return;
@@ -167,20 +167,20 @@ export const points = async function ({
 };
 
 export const gold = async function ({
-	message,
+	context,
 	options,
-}: Pick<BaseProps, "message" | "options">) {
+}: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options?.author;
 		if (!author) return;
 		const result = await getProfileInfo("gold", author.id);
-		message.channel.sendMessage(
-			`**${author.username}** currently has __**${result.data}**__ ${emoji.gold} gold`
+		context.channel.sendMessage(
+			`**${author.username}** currently has __${result.data}__ ${emoji.gold} **gold**`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.gold: something went wrong",
+			"commands.rpg.profile.profileInfo.gold(): something went wrong",
 			err
 		);
 		return;

@@ -1,3 +1,6 @@
+import { PLProps } from "@customTypes/powerLevel";
+import connection from "db";
+
 const tableName = "ranks";
 export const transformation = {
 	id: {
@@ -21,4 +24,14 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+};
+
+export const get = async (params: { rank: string }): Promise<PLProps[]> => {
+	const db = connection;
+	const query = await db
+		.select("*")
+		.from(tableName)
+		.where(params);
+
+	return query;
 };

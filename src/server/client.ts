@@ -33,10 +33,22 @@ import "../module";
 
 const client = new discord.Client({
 	partials: [ "MESSAGE", "REACTION", "CHANNEL" ],
-	messageSweepInterval: 2,
-	messageCacheLifetime: 2,
 	retryLimit: 5,
 	intents: [ discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES ],
+	sweepers: {
+		messages: {
+			lifetime: 2,
+			interval: 2
+		},
+		threads: {
+			lifetime: 2,
+			interval: 2
+		},
+		invites: {
+			lifetime: 2,
+			interval: 2
+		}
+	}
 	// restRequestTimeout: 1000 * 25
 });
 

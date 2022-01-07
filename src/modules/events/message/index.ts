@@ -1,14 +1,16 @@
-import { CommandCategoryProps, CommandMapProps } from "@customTypes/command";
+import { CommandCategoryProps } from "@customTypes/command";
 import { Client, Message } from "discord.js";
 import commandCategory from "commandCategories/index";
 import { getCommand } from "api/controllers/CommandsController";
+import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
+import { sanitizeArgs } from "helpers";
 
-const prefix = "tt";
 
-const handleMessage = async (client: Client, message: Message) => {
-	const { content, channel } = message;
+const handleMessage = async (client: Client, context: Message) => {
+	const { content } = context;
 	const args = content.toLowerCase().split(/\s+/);
-	if (args[0] !== prefix || !args[1]) return;
+	const botId = `<@!${DISCORD_CLIENT_ID}>`;
+	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) return;
 	const command = await getCommand(args[1]);
 	if (!command) return;
 	args.shift();
@@ -18,10 +20,10 @@ const handleMessage = async (client: Client, message: Message) => {
 		return;
 	commandCategory[command?.type as keyof CommandCategoryProps]({
 		client,
-		message,
+		context,
 		command,
-		args,
-		options: { author: message.author }
+		args: sanitizeArgs(args),
+		options: { author: context.author }
 	});
 	return;
 };

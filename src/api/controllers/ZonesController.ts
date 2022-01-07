@@ -1,0 +1,49 @@
+import { ResponseWithPagination } from "@customTypes";
+import { PageProps } from "@customTypes/pagination";
+import { ZoneProps } from "@customTypes/zones";
+import Cache from "cache";
+import { paginationForResult, paginationParams } from "helpers/pagination";
+import loggers from "loggers";
+import * as Zones from "../models/Zones";
+
+export const getZoneByLocationId = async (params: { location_id: number }) => {
+	try {
+		const key = `zone::${params.location_id}`;
+		const result = await Cache.fetch(key, async () => {
+			const res = await Zones.get(params);
+			await Cache.set(key, JSON.stringify(res));
+			return res;
+		});
+
+		return result;
+	} catch (err) {
+		loggers.error(
+			"api.controllers.ZonesController.getZoneByLocationId(): something went wrong",
+			err
+		);
+		return;
+	}
+};
+
+export const getAllZones = async (
+	params = {},
+	filter: PageProps
+): Promise<ResponseWithPagination<ZoneProps[]> | undefined> => {
+	try {
+		const result = await Zones.getAll(await paginationParams(filter));
+		const pagination = await paginationForResult({
+			data: result,
+			query: filter,
+		});
+		return {
+			data: result,
+			metadata: pagination,
+		};
+	} catch (err) {
+		loggers.error(
+			"api.controllers.ZonesController.getAllZones(): something went wrong",
+			err
+		);
+		return;
+	}
+};

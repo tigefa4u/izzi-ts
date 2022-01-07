@@ -45,6 +45,7 @@ export const get: (params: CardParams) => Promise<CardProps[]> = async function 
 	const db = connection;
 	return db.select("*").from(tableName).where(params);
 };
+
 export const getRandomCard: (
   params: CardParams,
   limit: number
@@ -67,6 +68,18 @@ export const getRandomCard: (
 		query = query.where(`${tableName}.is_random`, "true");
 	}
 	query = query.orderByRaw("random()").limit(limit);
+
+	return query;
+};
+
+export const getBySeries: (params: {
+	series: string;
+}) => Promise<CardProps[]> = async function(params) {
+	const db = connection;
+	const query = db
+		.select(db.raw(`distinct ${tableName}.character_id`))
+		.from(tableName)
+		.where(`${tableName}.series`, "ilike", `%${params.series}%`);
 
 	return query;
 };

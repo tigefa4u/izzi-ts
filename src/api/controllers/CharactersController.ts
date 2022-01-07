@@ -1,4 +1,4 @@
-import { FilterProps } from "@customTypes";
+import { FilterProps, ResponseWithPagination } from "@customTypes";
 import {
 	CharacterCardProps,
 	CharacterDetailsProps,
@@ -8,15 +8,18 @@ import loggers from "loggers";
 import * as Characters from "../models/Characters";
 import { getCharacterCardByRank } from "./CardsController";
 import { BASE_RANK } from "helpers/constants";
+import { getBySeries } from "api/models/Cards";
+import { PageProps } from "@customTypes/pagination";
+import { paginationForResult, paginationParams } from "helpers/pagination";
 
 export const getCharacterById: (params: {
-  id: string;
+  id: number;
 }) => Promise<CharacterDetailsProps | undefined> = async function (params) {
 	try {
 		return await Characters.getCharacterById(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacterById: something went wrong ",
+			"api.controllers.getCharacterById(): something went wrong ",
 			err
 		);
 		return;
@@ -27,14 +30,14 @@ export const getCharacters: (
   params: FilterProps
 ) => Promise<CharactersReturnType> = async function (params: FilterProps) {
 	try {
-		return await Characters.getCharacters(params);
+		return await Characters.get(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacters: something went wrong for params:- " +
+			"api.controllers.getCharacters(): something went wrong for params:- " +
         JSON.stringify(params),
 			err
 		);
-		return;
+		return [];
 	}
 };
 
@@ -46,7 +49,7 @@ export const getCharacterInfo: (
       | CharacterCardProps
       | PromiseLike<CharacterCardProps | undefined>
       | undefined = {} as CharacterCardProps;
-		const result = await Characters.getCharacters(filter);
+		const result = await Characters.get(filter);
 		if (result && result.length > 0) {
 			const character = result[0];
 			const card = await getCharacterCardByRank({
@@ -61,18 +64,41 @@ export const getCharacterInfo: (
 		return characterInfo;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacterInfo: something went wrong",
+			"api.controllers.getCharacterInfo(): something went wrong",
 			err
 		);
 		return;
 	}
 };
 
-export const getDex: (filter: Pick<FilterProps, "abilityname" | "series">) => Promise<any> = async function(filter) {
-    try {
-
-    } catch (err) {
-        loggers.error("api.controllers.CharactersController.getDex: something went wrong", err)
-        return;
-    }
-}
+export const getDex: (
+  filter: Pick<FilterProps, "abilityname" | "series">,
+  pageProps: PageProps
+) => Promise<ResponseWithPagination<CharacterDetailsProps[]> | undefined> = async function (filter, pageProps) {
+	try {
+		let character_ids: number[] = [];
+		if (filter.series) {
+			const cards = await getBySeries({ series: filter.series });
+			character_ids = cards.map((ca) => ca.character_id);
+		}
+		const result = await Characters.getCharactersForDex({
+			ids: character_ids,
+			...filter 
+		}, 
+		await paginationParams(pageProps));
+		const pagination = await paginationForResult<CharacterDetailsProps>({
+			data: result,
+			query: pageProps
+		});
+		return {
+			data: result,
+			metadata: pagination
+		};
+	} catch (err) {
+		loggers.error(
+			"api.controllers.CharactersController.getDex(): something went wrong",
+			err
+		);
+		return;
+	}
+};

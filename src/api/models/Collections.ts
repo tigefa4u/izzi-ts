@@ -1,4 +1,8 @@
-import { CollectionCreateProps, CollectionParams, CollectionProps } from "@customTypes/collections";
+import {
+	CollectionCreateProps,
+	CollectionParams,
+	CollectionProps,
+} from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
 
@@ -69,34 +73,32 @@ export const transformation = {
 	},
 };
 
-export const getCollections = async function (
+export const get = async function (
 	params: CollectionParams,
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
 	}
-) {
-	try {
-		const character_ids = params.character_ids;
-		delete params.character_ids;
-		const db = connection;
-		let query = db
-			.select("id")
-			.from(tableName)
-			.where(params);
+): Promise<CollectionProps[]> {
+	const character_ids = params.character_ids;
+	delete params.character_ids;
+	const db = connection;
+	let query = db.select("*").from(tableName).where(params);
 
-		if (character_ids) {
-			query = query.whereIn("character_id", character_ids);
-		}
-
-		query = query.limit(pagination.limit).offset(pagination.offset);
-		return query;
-	} catch (err) {
-		return;
+	if (character_ids) {
+		query = query.whereIn("character_id", character_ids);
 	}
+
+	query = query.limit(pagination.limit).offset(pagination.offset);
+	return query;
 };
 
-export const createCollection: (data: CollectionCreateProps) => Promise<CollectionProps> = async (data) => {
+export const create: (
+  data: CollectionCreateProps | CollectionCreateProps[]
+) => Promise<CollectionProps> = async (data) => {
+	console.log({ data });
 	const db = connection;
-	return await db(tableName).insert(data, "*").then((res) => res[0]);
+	return await db(tableName)
+		.insert(data, "*")
+		.then((res) => res[0]);
 };

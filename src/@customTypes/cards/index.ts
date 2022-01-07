@@ -2,7 +2,7 @@ import { IgnoreProps } from "@customTypes";
 import { CharacterDetailsProps } from "@customTypes/characters";
 
 export type CardProps = {
-    id: string;
+    id: number;
 	filepath: string;
 	copies: number;
 	series: string;

@@ -6,23 +6,23 @@ import { BOT_VOTE_LINK, IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
 import loggers from "loggers";
 import { help } from ".";
 
-export const server = ({ message }: BaseProps) => {
+export const server = ({ context }: BaseProps) => {
 	try {
-		message.channel.sendMessage(
+		context.channel.sendMessage(
 			`Join our Official Server for any assistance.\n${OFFICIAL_SERVER_LINK}` +
         `\nYou can also checkout ${IZZI_WEBSITE} for more detailed information.`
 		);
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.basic.info.server: something went wrong",
+			"modules.commands.basic.info.server(): something went wrong",
 			err
 		);
 		return;
 	}
 };
 
-export const daily = async ({ message, client, options }: BaseProps) => {
+export const daily = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options?.author;
 		if (!author) return;
@@ -32,7 +32,7 @@ export const daily = async ({ message, client, options }: BaseProps) => {
 		const remainingTime =
       (new Date().valueOf() - new Date(timestamp).valueOf()) / 1000 / 60;
 		const remainingHours = 24 - Math.ceil(remainingTime / 60);
-		const embed = createEmbed(message.member);
+		const embed = createEmbed();
 		embed
 			.setTitle(
 				`Daily Sign in:- (${
@@ -58,24 +58,24 @@ export const daily = async ({ message, client, options }: BaseProps) => {
           "You get (10 to 12) IP if premium and Your mana also gets refilled as you vote."
 			)
 			.setThumbnail(client.user?.displayAvatarURL() || "");
-		message.channel.sendMessage(embed);
+		context.channel.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("module.commands.basic.info.daily: something went wrong", err);
+		loggers.error("module.commands.basic.info.daily(): something went wrong", err);
 		return;
 	}
 };
 
-export const donate = ({ message, client }: BaseProps) => {
+export const donate = ({ context, client }: BaseProps) => {
 	try {
 		help({
-			message,
+			context,
 			client,
 			args: [ "donate" ] 
 		});
 		return;
 	} catch (err) {
-		loggers.error("module.commands.basic.info.donate: something went wrong", err);
+		loggers.error("module.commands.basic.info.donate(): something went wrong", err);
 		return;
 	}
 };

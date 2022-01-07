@@ -28,7 +28,7 @@ export const transformation = {
 export const getAll: () => Promise<CommandProps[]> = async function() {
 	return await connection(tableName);
 };
-export const getCommand: (key: string) => Promise<CommandProps> = async function(key) {
+export const findOne: (key: string) => Promise<CommandProps> = async function(key) {
 	const result = await connection.raw(`select * from ${tableName} where alias::jsonb @> '"${key}"'`)
 		.then((res) => res.rows);
  

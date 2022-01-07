@@ -53,7 +53,7 @@ export const createSingleCanvas: (
 		return canvas;
 	} catch (err) {
 		loggers.error(
-			"helpers.canvas.createSingleCanvas: something went wrong",
+			"helpers.canvas.createSingleCanvas(): something went wrong",
 			err
 		);
 		return;

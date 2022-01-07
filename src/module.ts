@@ -1,37 +1,39 @@
 import {
-	DMChannel, MessageAttachment, MessageButton, MessageEmbed, NewsChannel, TextChannel, ThreadChannel 
+	DMChannel, Message, MessageActionRow, MessageAttachment, MessageEmbed, NewsChannel, TextChannel, ThreadChannel
 } from "discord.js";
-import implementSendMessage from "implementations/sendMessage";
+import implementSendMessage, { editMessage as implementEditMessage } from "implementations/messageContext";
 import { CustomEmbedProps } from "@customTypes/embed";
 
-type customProps = string | CustomEmbedProps;
-console.log("loading module");
+type CustomProps = string | CustomEmbedProps;
 declare module "discord.js" {
     interface TextChannel {
-        sendMessage: (content: customProps) => Promise<Message>;
+        sendMessage: (content: CustomProps) => Promise<Message>;
     }
     interface DMChannel {
-        sendMessage: (content: customProps) => Promise<Message>;
+        sendMessage: (content: CustomProps) => Promise<Message>;
     }
     interface ThreadChannel {
-        sendMessage: (content: customProps) => Promise<Message>;
+        sendMessage: (content: CustomProps) => Promise<Message>;
     }
     interface NewsChannel {
-        sendMessage: (content: customProps) => Promise<Message>;
+        sendMessage: (content: CustomProps) => Promise<Message>;
     }
     interface MessageEmbed {
         attachments: MessageAttachment[];
         isConfirmation: boolean;
         isPagination: boolean;
-        buttons: MessageButton[];
+        buttons: MessageActionRow;
         attachFiles: (attachments: MessageAttachment[]) => MessageEmbed;
-        setButtons: (buttons: MessageButton[]) => MessageEmbed;
+        setButtons: (buttons: MessageActionRow) => MessageEmbed;
         setConfirmation: (bool: boolean) => MessageEmbed;
         setPagination: (bool: boolean) => MessageEmbed;
     }
+    interface Message {
+        editMessage: (content: CustomProps) => Promise<Message>;
+    }
 }
 
-TextChannel.prototype.sendMessage = function(content: customProps) {
+TextChannel.prototype.sendMessage = function(content: CustomProps) {
 	return implementSendMessage(this, content);
 };
 DMChannel.prototype.sendMessage = function() {
@@ -47,7 +49,7 @@ MessageEmbed.prototype.attachFiles = function(attachments: MessageAttachment[]) 
 	this.attachments = attachments;
 	return this;
 };
-MessageEmbed.prototype.setButtons = function (buttons: MessageButton[]) {
+MessageEmbed.prototype.setButtons = function (buttons: MessageActionRow) {
 	this.buttons = buttons;
 	return this;
 };
@@ -58,4 +60,7 @@ MessageEmbed.prototype.setConfirmation = function(bool: boolean) {
 MessageEmbed.prototype.setPagination = function(bool: boolean) {
 	this.isPagination = bool;
 	return this;
+};
+Message.prototype.editMessage = function(content: CustomProps) {
+	return implementEditMessage(this, content);
 };

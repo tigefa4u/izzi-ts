@@ -3,12 +3,12 @@ import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createCollection } from "api/controllers/CollectionsController";
 import { createUser } from "api/controllers/UsersController";
-import { getRandomCard } from "api/models/Cards";
 
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { checkExistingAccount, validateAccountCreatedAt } from "helpers";
 import {
+	DEFAULT_ERROR_TITLE,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_RANK,
@@ -19,6 +19,7 @@ import {
 import loggers from "loggers";
 import { createAttachment } from "commons/attachments";
 import { createSingleCanvas } from "helpers/canvas";
+import { getRandomCard } from "api/controllers/CardsController";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -38,6 +39,7 @@ async function startUserJourney(author: AuthorProps) {
 		},
 		1
 	);
+	if (!card) return;
 	const cardDetails = card[0];
 	const collectionBodyParams = {
 		r_exp: STARTER_CARD_R_EXP,
@@ -62,15 +64,15 @@ async function startUserJourney(author: AuthorProps) {
 }
 
 export const start: (params: BaseProps) => void = async ({
-	message,
+	context,
 	client,
 	options,
 }) => {
 	try {
 		const author = options?.author;
 		if (!author) return;
-		const embed = createEmbed(message.member)
-			.setTitle("Error :no_entry:")
+		const embed = createEmbed()
+			.setTitle(DEFAULT_ERROR_TITLE)
 			.setThumbnail(client.user?.displayAvatarURL() || "")
 			.setAuthor(author.username, author.displayAvatarURL());
 
@@ -79,7 +81,7 @@ export const start: (params: BaseProps) => void = async ({
 			embed.setDescription(
 				"You have already started your journey in the Xenverse"
 			);
-			message.channel.sendMessage(embed);
+			context.channel.sendMessage(embed);
 			return;
 		}
 
@@ -88,10 +90,11 @@ export const start: (params: BaseProps) => void = async ({
 			embed.setDescription(
 				"Your discord account must be atleast 60 days old, in order to start your journey in the Xenverse!"
 			);
-			message.channel.sendMessage(embed);
+			context.channel.sendMessage(embed);
 			return;
 		}
 		const cardDetails = await startUserJourney(author);
+		if (!cardDetails) return;
 		const canvas = await createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",
@@ -115,11 +118,11 @@ export const start: (params: BaseProps) => void = async ({
           "\nGood Luck, Happy Collecting!"
 			);
 
-		message.channel.sendMessage(embed);
+		context.channel.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.startJourney.start: something went wrong",
+			"modules.commands.rpg.startJourney.start(): something went wrong",
 			err
 		);
 		return;

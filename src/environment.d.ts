@@ -10,6 +10,7 @@ declare global {
       REDIS_HOST: string;
       REDIS_PORT: string;
       REDIS_PASSWORD: string;
+      REDIS_USERNAME: string;
       NODE_ENV: "development" | "production";
       DISCORD_TEST_BOT: string;
       DISCORD_BOT_TOKEN: string;
@@ -27,6 +28,7 @@ declare global {
       TOTAL_SHARDS: string | "auto"; // total shards spawned on all machines together
       SHARD_LIST: string; // list of shard ids
       PRIVACY_POLICY: string;
+      DISCORD_CLIENT_ID: string;
     }
   }
 }

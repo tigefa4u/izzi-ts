@@ -3,6 +3,7 @@ import {
 	CharacterDetailsProps,
 	CharactersReturnType,
 } from "@customTypes/characters";
+import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
 
 const tableName = "characters";
@@ -35,8 +36,9 @@ export const transformation = {
 		columnName: "updated_at",
 	},
 };
+
 export const getCharacterById: (params: {
-  id: string;
+  id: number;
 }) => Promise<CharacterDetailsProps> = async function (params) {
 	const db = connection;
 	const query = db
@@ -46,13 +48,14 @@ export const getCharacterById: (params: {
 		)
 		.from(tableName)
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`)
-		.where("id", params.id)
+		.where(`${tableName}.id`, params.id)
 		.then((res) => res[0]);
 
 	return query;
 };
-export const getCharacters: (
-  params: FilterProps,
+
+export const get: (
+  params: Omit<FilterProps, "ids">,
 ) => Promise<CharactersReturnType> = async function (
 	params,
 ) {
@@ -80,6 +83,37 @@ export const getCharacters: (
 	} else if (typeof params.abilityname === "object") {
 		query = query.where(`${abilities}.name`, "~", `^(${params.abilityname.join("|")}).*`);
 	}
+
+	return query;
+};
+
+export const getCharactersForDex: (
+	filter: Pick<FilterProps, "ids" | "abilityname">,
+	pagination: PaginationProps
+) => Promise<CharacterDetailsProps[]> = async function(filter, pagination = {
+	limit: 10,
+	offset: 0 
+}) {
+	const db = connection;
+	const alias = "dexalias";
+	let query = db
+		.select(
+			db.raw(`${tableName}.id, ${tableName}.name, ${tableName}.type, ${tableName}.stats,
+        	${abilities}.name as abilityname, ${abilities}.description as abilitydescription`)
+		)
+		.from(tableName)
+		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`)
+		.as(alias);
+	if (filter.ids && filter.ids.length > 0) {
+		query = query.whereIn(`${tableName}.id`, filter.ids);
+	}
+	if (filter.abilityname) {
+		query = query.where(`${abilities}.name`, "ilike", `%${filter.abilityname}%`);
+	}
+	query = db.select(db.raw(`${alias}.*, count(*) over() as total_count`))
+		.from(query);
+
+	query = query.limit(pagination.limit).offset(pagination.offset);
 
 	return query;
 };

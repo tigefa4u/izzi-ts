@@ -1,7 +1,7 @@
 import { IgnoreProps } from "@customTypes";
 
 export type CollectionProps = {
-	id: string;
+	id: number;
 	user_id: number;
 	character_id: number;
 	character_level: number;
@@ -18,6 +18,8 @@ export type CollectionProps = {
 }
 
 export type CollectionParams = {
+	is_item: boolean;
+	is_on_market: boolean;
     id?: string;
     ids?: string[];
     user_id?: number;

@@ -1,3 +1,4 @@
+import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
 import { ElementTypeColorProps, StarLenProps } from "./helperTypes";
 
 export const BASE_XP = 10;
@@ -11,6 +12,7 @@ export const STARTER_CARD_LEVEL = 20;
 export const STARTER_CARD_EXP = 1;
 export const STARTER_CARD_R_EXP = Math.floor(BASE_XP * STARTER_CARD_LEVEL ** XP_GAIN_EXPONENT);
 export const STARTER_GOLD = 0;
+export const DEFAULT_ERROR_TITLE = "Error :no_entry:";
 
 export const starlen: StarLenProps = {
 	silver: {
@@ -65,3 +67,62 @@ export const GAMBLE_EMOJIS = {
 };
 
 export const HOURLY_MANA_REGEN = [ 5, 10, 15, 20 ];
+
+export const REACTIONS: ReactionsProps = {
+	next: {
+		emoji: "➡️",
+		label: "next" 
+	},
+	previous: {
+		emoji: "⬅️",
+		label: "previous" 
+	},
+	bin: {
+		emoji: "🗑️",
+		label: "bin",
+		style: "DANGER"
+	},
+	confirm: {
+		emoji: "✅",
+		label: "confirm",
+		style: "SUCCESS"
+	},
+	cancel: {
+		emoji: "❌",
+		label: "cancel",
+		style: "DANGER"
+	}
+};
+export const REACTIONS_DEFAULT_STYLE = "PRIMARY";
+
+export const LOTTERY_PRICE  = 1000;
+export const LEVEL_UP_MANA_GAIN = 2;
+export const LEVEL_UP_EXP_MULTIPLIER = 47;
+export const GOLD_LIMIT = 5000000;
+export const BET_LIMIT = 50000;
+export const DEFAULT_PACK = {
+	num: 5,
+	cost: 1500,
+	cardPerPage: 10,
+	rank: "platinum",
+	rank_id: 3
+};
+
+export const PAGE_FILTER = {
+	currentPage: 1,
+	perPage: 10
+};
+
+export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
+	silver: 200,
+	gold: 250,
+	platinum: 300,
+	diamond: 400,
+	legend: 550,
+	divine: 750,
+	immortal: 1000,
+	exclusive: 1000,
+	ultimate: 1000
+};
+
+export const ORB_INTEREST_RATE = .7;

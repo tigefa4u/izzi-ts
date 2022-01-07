@@ -11,6 +11,7 @@ import { getFloorsByCharacterId } from "api/controllers/StagesController";
 import { Client, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 
 async function prepareCinfoDetails(
 	client: Client,
@@ -65,25 +66,21 @@ async function prepareCinfoDetails(
 	return embed;
 }
 
-export const cinfo = async ({ message, client, args, options }: BaseProps) => {
+export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const author = options?.author || message.author;
-		console.time("chara");
+		const author = options?.author;
+		if (!author) return;
 		const characterInfo = await getCharacterInfo({ name: args.join(" ") });
-		console.timeEnd("chara");
-		let embed = createEmbed(message.member);
+		let embed = createEmbed();
 		if (!characterInfo) {
 			embed
-				.setTitle("Error :no_entry:")
+				.setTitle(DEFAULT_ERROR_TITLE)
 				.setDescription("We could not find the Character you are looking for");
 
-			message.channel.sendMessage(embed);
+			context.channel.sendMessage(embed);
 			return;
 		}
-		console.time("location");
 		const location = await getFloorsByCharacterId({ character_id: characterInfo.id, });
-		console.timeEnd("location");
-		console.time("embed-data");
 		embed = await prepareCinfoDetails(
 			client,
 			embed,
@@ -91,12 +88,11 @@ export const cinfo = async ({ message, client, args, options }: BaseProps) => {
 			location,
 			{ author }
 		);
-		console.timeEnd("embed-data");
-		message.channel.sendMessage(embed);
+		context.channel.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardinfo.cinfo: something went wrong",
+			"modules.commands.rpg.cardinfo.cinfo(): something went wrong",
 			err
 		);
 		return;

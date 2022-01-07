@@ -55,3 +55,15 @@ export const calcPercentRatio = (num: number, rank: string) => {
 	// num = Math.round((num + Number.EPSILON) * 100) / 100;
 	// return Math.floor(num);
 };
+
+export const statRelationMap = {
+	vitality: "ATK",
+	defense: "DEF",
+	dexterity: "SPD",
+	intelligence: "INT",
+	strength: "HP",
+	critical: "CRIT",
+	accuracy: "ACC",
+	evasion: "EVA",
+	precision: "PREC"
+};

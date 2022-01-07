@@ -1,9 +1,9 @@
 import winstonLogger from "./winston";
 
 const error = (errMessage: string, err: unknown) => {
-	let errorMessage = "Unknown Error";
+	let errorMessage: string | undefined = "Unknown Error";
 	if (err instanceof Error) {
-		errorMessage = err.message;
+		errorMessage = err.stack;
 	}
 	console.error(errMessage, errorMessage);
 	// winstonLogger.error(errorMessage + JSON.stringify(errorMessage));

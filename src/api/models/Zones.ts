@@ -1,3 +1,5 @@
+import { PaginationProps } from "@customTypes/pagination";
+import { ZoneProps } from "@customTypes/zones";
 import connection from "db";
 
 const tableName = "ruins";
@@ -28,4 +30,30 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+};
+
+export const get = async (params: { location_id: number }): Promise<ZoneProps> => {
+	const db = connection;
+	const query = db
+		.select("*")
+		.from(tableName)
+		.where(`${tableName}.location_id`, params.location_id)
+		.then((res) => res[0]);
+
+	return query;
+};
+
+export const getAll = async (pagination: PaginationProps = {
+	limit: 10,
+	offset: 0
+}): Promise<ZoneProps[]> => {
+	const db = connection;
+	let query = db
+		.select(db.raw(`${tableName}.*, count(*) over() as total_count`))
+		.from(tableName)
+		.orderBy(`${tableName}.location_id`, "asc");
+
+	query = query.limit(pagination.limit).offset(pagination.offset);
+
+	return query;
 };
