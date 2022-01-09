@@ -1,4 +1,4 @@
-import { Interaction, Message, MessageButtonStyleResolvable } from "discord.js";
+import { Client, Interaction, Message, MessageButtonStyleResolvable } from "discord.js";
 import { PagingMetadata } from "./pagination";
 
 export type IgnoreProps = "id" | "created_at" | "updated_at"
@@ -57,4 +57,15 @@ export type AssetImageProps = {
     absolutepath: string;
     dimensions: string;
     ext: string;
+}
+
+export type ConfirmationInteractionParams<T> = {
+    author: AuthorProps;
+    channel: ChannelProp;
+    client: Client;
+    extras?: T
+}
+
+export type ConfirmationInteractionOptions = {
+    isConfirm: boolean;
 }

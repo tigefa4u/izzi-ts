@@ -7,7 +7,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { createSingleCanvas } from "helpers/canvas";
-import { BASE_XP, DEFAULT_ERROR_TITLE, DEFAULT_PACK } from "helpers/constants";
+import { BASE_XP, DEFAULT_ERROR_TITLE, DEFAULT_PACK, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
@@ -63,7 +63,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 			"card.jpg"
 		);
 		embed
-			.setTitle(`Success ${emoji.celebration}`)
+			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`You have successfully spent __${cost}__ gold ${
 					emoji.gold

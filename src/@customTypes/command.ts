@@ -48,7 +48,7 @@ export type CommandMapProps = {
 	status: (params: BaseProps) => void;
 	skins: (params: BaseProps) => void;
 	itemshop: (params: BaseProps) => void;
-	// market: (params: BaseProps) => void;
+	market: (params: BaseProps) => void;
 	// redirect: (params: BaseProps) => void;
     // TODO: below commands
 	// info: (params: BaseProps) => void;

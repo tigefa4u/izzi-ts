@@ -48,6 +48,9 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> | Re
 			value = value.split(",");
 			args = args.slice(args.length);
 		}
+		if (value.length > 5) {
+			value.splice(0, 5);
+		}
 		if (index >= 0) {
 			Object.assign(params, { [argMap[index].name]: value });
 		}

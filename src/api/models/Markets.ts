@@ -1,3 +1,6 @@
+import { PaginationProps } from "@customTypes/pagination";
+import connection from "db";
+
 const tableName = "markets";
 export const transformation = {
 	id: {
@@ -27,4 +30,18 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+};
+
+export const getAll = async (params: { collection_ids: number[] }, pagination: PaginationProps = {
+	limit: 10,
+	offset: 0
+}) => {
+	const db = connection;
+	const query = db
+		.select(db.raw(`${tableName}.*, count(*) over() as total_count`))
+		.whereIn(`${tableName}.collection_ids`, params.collection_ids)
+		.limit(pagination.limit)
+		.offset(pagination.offset);
+
+	return query;
 };

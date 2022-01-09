@@ -7,7 +7,7 @@ import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, ORB_INTEREST_RATE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, ORB_INTEREST_RATE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
@@ -75,7 +75,7 @@ async function validateAndProcessResolveSkin(params: P, options?: O) {
 			params.id
 		);
 		embed
-			.setTitle(`Success ${emoji.celebration}`)
+			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`You have successfully resolved **${titleCase(
 					skin.name

@@ -1,13 +1,13 @@
 import {
-	CollectionCreateProps,
 	CollectionParams,
 	CollectionProps,
+	ICollectionCreateProps,
 } from "@customTypes/collections";
 import loggers from "loggers";
 import * as Collections from "../models/Collections";
 
 export const createCollection: (
-  data: CollectionCreateProps | CollectionCreateProps[]
+	data: ICollectionCreateProps
 ) => Promise<CollectionProps[] | CollectionProps | undefined> = async function (data) {
 	try {
 		return await Collections.create(data);

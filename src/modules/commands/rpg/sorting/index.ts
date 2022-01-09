@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { SortProps } from "@customTypes/sorting";
 import { createEmbed } from "commons/embeds";
-import emoji from "emojis/emoji";
+import { DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { delSortCache, setSortCache } from "./sortCache";
 
@@ -64,7 +64,7 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
 				name: author.username,
 				iconURL: author.displayAvatarURL(),
 			})
-			.setTitle(`Success ${emoji.celebration}`)
+			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setThumbnail(client.user?.displayAvatarURL() || "")
 			.setDescription(
 				"Successfully updated collections to be sorted by" +

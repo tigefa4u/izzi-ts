@@ -2,8 +2,7 @@ import { AuthorProps, ChannelProp } from "@customTypes";
 import { getSkinCollection, getSkinCollectionById } from "api/controllers/SkinCollectionController";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
-import emoji from "emojis/emoji";
-import { PAGE_FILTER } from "helpers/constants";
+import { DEFAULT_SUCCESS_TITLE, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createSkinList } from "helpers/embedLists/skin";
 import loggers from "loggers";
@@ -76,7 +75,7 @@ export const reset = (params: {
 	try {
 		delSkinArr(params.author.id);
 		const embed = createEmbed()
-			.setTitle(`Success ${emoji.celebration}`)
+			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription("Successfully reset all skins");
 
 		params.channel?.sendMessage(embed);
@@ -154,7 +153,7 @@ export const choose = async (params: {
 		}
 		setSkinArr(params.author.id, skinArr);
 		// await redisClient.set(`selected-skin-${author.id}`, JSON.stringify(skinArr));
-		embed.setTitle(`Success ${emoji.celebration}`)
+		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Successfully selected Skin Art ${titleCase(skin.name)}`);
 		params.channel?.sendMessage(embed);
 		return;

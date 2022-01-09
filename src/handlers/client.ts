@@ -1,4 +1,5 @@
 import { Client, Interaction, Message } from "discord.js";
+import loggers from "loggers";
 import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
@@ -40,7 +41,7 @@ export const handleClient = (client: Client) => {
 				// }, 1000 * 60 * 60 * 2);
 			}
 		} catch (err) {
-			console.log(err);
+			loggers.error("handlers.handleClient(): APP CRASHED", err);
 			return;
 		}
 	});

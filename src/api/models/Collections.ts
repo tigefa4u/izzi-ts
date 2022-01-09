@@ -1,7 +1,7 @@
 import {
-	CollectionCreateProps,
 	CollectionParams,
 	CollectionProps,
+	ICollectionCreateProps,
 } from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
@@ -73,7 +73,25 @@ export const transformation = {
 	},
 };
 
-export const get = async function (
+export const get = async (params: CollectionParams): Promise<CollectionProps[]> => {
+	const character_ids = params.character_ids;
+	delete params.character_ids;
+	const db = connection;
+	let query = db.select("*").from(tableName).where(params);
+
+	if (character_ids) {
+		query = query.whereIn("character_id", character_ids);
+	}
+	if (typeof params.rank === "string") {
+		query = query.where(`${tableName}.rank`, params.rank);
+	} else if (typeof params.rank === "object") {
+		query = query.where(`${tableName}.rank`, "~", `^(${params.rank.join("|")}).*`);
+	}
+
+	return query;	
+};
+
+export const getAll = async function (
 	params: CollectionParams,
 	pagination: PaginationProps = {
 		limit: 10,
@@ -94,7 +112,7 @@ export const get = async function (
 };
 
 export const create: (
-  data: CollectionCreateProps | CollectionCreateProps[]
+	data: ICollectionCreateProps
 ) => Promise<CollectionProps> = async (data) => {
 	console.log({ data });
 	const db = connection;

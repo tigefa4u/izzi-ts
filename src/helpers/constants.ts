@@ -1,4 +1,5 @@
 import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
+import emoji from "emojis/emoji";
 import { ElementTypeColorProps, StarLenProps } from "./helperTypes";
 
 export const BASE_XP = 10;
@@ -13,6 +14,7 @@ export const STARTER_CARD_EXP = 1;
 export const STARTER_CARD_R_EXP = Math.floor(BASE_XP * STARTER_CARD_LEVEL ** XP_GAIN_EXPONENT);
 export const STARTER_GOLD = 0;
 export const DEFAULT_ERROR_TITLE = "Error :no_entry:";
+export const DEFAULT_SUCCESS_TITLE = `Success ${emoji.celebration}`;
 
 export const starlen: StarLenProps = {
 	silver: {
