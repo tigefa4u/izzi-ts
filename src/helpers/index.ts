@@ -6,6 +6,7 @@ import { AuthorProps } from "@customTypes";
 import { BASE_RANK } from "./constants";
 import { BaseProps } from "@customTypes/command";
 import { PLProps } from "@customTypes/powerLevel";
+import { MessageComponentInteraction } from "discord.js";
 
 export const prepareAbilityDescription = (desc = "", rank?: string) => {
 	return desc
@@ -54,20 +55,21 @@ export const checkExistingAccount = async (id: string) => {
 };
 
 export const buttonInteractionFilter = (id: string) => {
-	return (interaction: any) => interaction.user.id === id;
+	return (interaction: MessageComponentInteraction) =>
+		interaction.user.id === id;
 };
 
-export const getMentionedUser = async (context: BaseProps["context"]) => {
-	const mentionedUser = context.mentions.users.first();
-	if (!mentionedUser) return;
-	const user = await getRPGUser({ user_tag: mentionedUser.id });
-	if (user) user.username = mentionedUser.username;
-	return user;
+export const getMentionedChannel = async (
+	context: BaseProps["context"],
+	id: string
+) => {
+	const channel = context.guild?.channels.cache.get(id);
+	return channel;
 };
 
 type T = {
-	[key: string]: number;
-}
+  [key: string]: number;
+};
 const baseStatsRatioPercent: T = {
 	silver: 40,
 	gold: 60,
@@ -84,13 +86,21 @@ export const baseStatRatio = (stat: number, rank: string) =>
 // the stat ratio is for level 1
 	Math.floor(stat + stat * (baseStatsRatioPercent[rank] / 100));
 
-export const calcPower = (levelStats: PLProps, currentLevel: number, statValue: number) => {
+export const calcPower = (
+	levelStats: PLProps,
+	currentLevel: number,
+	statValue: number
+) => {
 	// stat = (stat at max level / number of levels * current level) + initial value
 	const { max_power, max_level } = levelStats;
 	return Math.floor((max_power / max_level) * currentLevel) + statValue;
 };
 
-export const calcStat = (stat: number, character_level: number, levelPower: PLProps) => {
+export const calcStat = (
+	stat: number,
+	character_level: number,
+	levelPower: PLProps
+) => {
 	const temp = baseStatRatio(stat, levelPower.rank);
 	// compute max power since there's a % inc with each level
 	levelPower.max_power = Math.round(
@@ -103,8 +113,44 @@ export const sanitizeArgs = (args: string[]) => {
 	args.map((val, i) => {
 		const isNum = Number(val);
 		if (isNum) {
-			args[i] = Math.abs(parseInt(val)).toString();
+			if (val.length > 16) {
+				args[i] = BigInt(val).toString().replace("n", "").replace("-", "");
+			} else {
+				args[i] = Math.abs(parseInt(val)).toString();
+			}
 		}
 	});
 	return args;
+};
+
+export const delay = async (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));
+
+export const getIdFromMentionedString = (id: string) => {
+	return id.replace(/<@!/, "").replace(/>/, "");
+};
+
+export const probability = (chances: number[]) => {
+	let sum = 0;
+	chances.forEach(function (chance) {
+		sum += chance;
+	});
+	const rand = Math.random();
+	let chance = 0;
+	for (let i = 0; i < chances.length; i++) {
+		chance += chances[i] / sum;
+		if (rand < chance) {
+			return i;
+		}
+	}
+
+	// should never be reached unless sum of probabilities is less than 1
+	// due to all being zero or some being negative probabilities
+	return -1;
+};
+
+export const getMemberPermissions = async (context: BaseProps["context"], id: string) => {
+	const member = await context.guild?.members.fetch(id);
+	const permissions = member?.permissions.serialize();
+	return permissions;
 };

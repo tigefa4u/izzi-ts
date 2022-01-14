@@ -130,9 +130,9 @@ export const resolveSkin = async (params: {
 				}
 			}
 		);
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
+
+		embed.setButtons(buttons);
 
 		params.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;

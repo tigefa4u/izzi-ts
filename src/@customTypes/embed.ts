@@ -1,4 +1,5 @@
-import { MessageActionRow, MessageAttachment, MessageEmbed } from "discord.js";
+import { AuthorProps } from "@customTypes";
+import { Client, MessageActionRow, MessageAttachment, MessageEmbed } from "discord.js";
 
 export interface CustomEmbedProps extends MessageEmbed {
     attachments: MessageAttachment[];
@@ -11,4 +12,4 @@ export interface CustomEmbedProps extends MessageEmbed {
     setPagination: (bool: boolean) => CustomEmbedProps;
 }
 
-export type EmbedProps = () => MessageEmbed;
+export type EmbedProps = (author?: AuthorProps, client?: Client) => MessageEmbed;

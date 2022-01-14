@@ -1,5 +1,6 @@
-import { Client, Interaction, Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import loggers from "loggers";
+import handleInteraction from "modules/events/interaction";
 import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
@@ -13,8 +14,9 @@ export const handleClientEvents = (client: Client) => {
 		}
 	});
 
-	client.on("interactionCreate", (interaction: Interaction) => {
+	client.on("interactionCreate", (interaction) => {
 		if (!interaction.isCommand()) return;
+		handleInteraction(client, interaction);
 	});
 };
 

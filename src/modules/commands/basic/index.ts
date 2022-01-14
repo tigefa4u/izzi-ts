@@ -3,16 +3,15 @@ import { BaseProps, CommandProps } from "@customTypes/command";
 import { getAllCommands } from "api/controllers/CommandsController";
 import { createEmbed } from "commons/embeds";
 import { BOT_INVITE_LINK, IZZI_WEBSITE, PRIVACY_POLICY_URL } from "../../../environment";
-import { Client, EmbedFieldData, Message } from "discord.js";
+import { Client, EmbedFieldData } from "discord.js";
 
-function prepareSingleCommandEmbed(context: Message, client: Client, command: CommandProps) {
-	const embed = createEmbed()
+function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
+	const embed = createEmbed(undefined, client)
 		.setTitle(
 			`Command: ${command.name} (Shortcuts: ${command.alias
 				.map((i) => i)
 				.join(", ")})\n${command.usage ?? ""}`
 		)
-		.setThumbnail(client.user?.displayAvatarURL() || "")
 		.setDescription((command.description || "This command probably does what it says").replace(/\\n/g, "\n"));
 	
 	return embed;
@@ -27,7 +26,7 @@ function prepareHelpDesc() {
 }
 
 export const ping = async ({ context, client }: BaseProps) => {
-	context.channel.sendMessage(
+	context.channel?.sendMessage(
 		`:ping_pong: Ping: **\`\`${
 			Date.now() - context.createdTimestamp
 		}ms\`\`** WS: **\`\`${Math.round(client.ws.ping)}ms\`\`**`
@@ -35,22 +34,24 @@ export const ping = async ({ context, client }: BaseProps) => {
 };
 
 export const invite = async ({ context, client }: BaseProps) => {
-	const embed = createEmbed();
+	const embed = createEmbed(undefined, client);
 	embed
-		.setAuthor("Izzi", client?.user?.displayAvatarURL())
+		.setAuthor({
+			name: "IzzI",
+			iconURL: client?.user?.displayAvatarURL()
+		})
 		.setDescription(
 			`Invite izzi into your server through the link:- ${BOT_INVITE_LINK}`
 		);
 
 	if (client.user) {
 		embed
-			.setThumbnail(client?.user?.displayAvatarURL())
 			.setImage(client?.user?.displayAvatarURL());
 	}
-	context.channel.sendMessage(embed);
+	context.channel?.sendMessage(embed);
 };
 
-export const help = async ({ context, client, args = [] }: BaseProps) => {
+export const help = async ({ context, client, args = [], options }: BaseProps) => {
 	const cmd = args.shift();
 	const allCommands = await getAllCommands();
 	if (!allCommands) return;
@@ -58,8 +59,8 @@ export const help = async ({ context, client, args = [] }: BaseProps) => {
 		const index = allCommands?.findIndex((c) => c.alias.includes(cmd)) || -1;
 		if (index >= 0) {
 			const command = allCommands[index];
-			const newEmbed = prepareSingleCommandEmbed(context, client, command);
-			context.channel.sendMessage(newEmbed);
+			const newEmbed = prepareSingleCommandEmbed(client, command);
+			context.channel?.sendMessage(newEmbed);
 		}
 		return;
 	}
@@ -79,18 +80,15 @@ export const help = async ({ context, client, args = [] }: BaseProps) => {
 			inline: true,
 		});
 	});
-	const embed = createEmbed()
+	const embed = createEmbed(options.author, client)
 		.setTitle(":crossed_swords: Bot Commands :crossed_swords:")
-		.setThumbnail(client.user?.displayAvatarURL() || "")
 		.setDescription(prepareHelpDesc())
 		.addFields(fields)
 		.addField(
 			"Usage",
 			"**```iz help {command} for more info about the command.```**"
 		)
-		.setFooter(
-			"Filters include -n (name) -r (rank) -t (element type) -a (ability)"
-		);
-	context.channel.sendMessage(embed);
+		.setFooter({ text: "Filters include -n (name) -r (rank) -t (element type) -a (ability)" });
+	context.channel?.sendMessage(embed);
 	return;
 };

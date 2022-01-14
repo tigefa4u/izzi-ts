@@ -7,8 +7,7 @@ import { resolveSkin } from "./resolver";
 
 export const skins = ({ context, args, client, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const opt = args.shift() || "show";
 		const subcommand = filterSubCommands(opt, subcommands);
 		const params = {

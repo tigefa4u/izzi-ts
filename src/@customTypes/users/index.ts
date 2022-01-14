@@ -23,6 +23,7 @@ export type UserProps = {
 	is_active: boolean;
 	is_banned: boolean;
 	orbs: number;
+	shards: number;
 	vote_streak: number;
 	mana_refilled_at: string;
 	raid_permit_refilled_at: string;
@@ -32,7 +33,7 @@ export type UserProps = {
 }
 
 export type UserParams = {
-    id?: string;
+    id?: number;
     user_tag?: string;
     is_deleted?: boolean;
     is_banned?: boolean;

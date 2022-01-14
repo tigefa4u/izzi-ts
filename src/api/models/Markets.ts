@@ -1,7 +1,13 @@
+import { FilterProps } from "@customTypes";
+import { IMarketProps, MarketCreateProps } from "@customTypes/market";
 import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
 
 const tableName = "markets";
+const collections = "collections";
+const characters = "characters";
+const abilities = "passives";
+const cards = "cards";
 export const transformation = {
 	id: {
 		type: "number",
@@ -32,16 +38,103 @@ export const transformation = {
 	},
 };
 
-export const getAll = async (params: { collection_ids: number[] }, pagination: PaginationProps = {
-	limit: 10,
-	offset: 0
-}) => {
+export const getAll = async (
+	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type">,
+	pagination: PaginationProps = {
+		limit: 10,
+		offset: 0,
+	}
+): Promise<IMarketProps[]> => {
 	const db = connection;
-	const query = db
-		.select(db.raw(`${tableName}.*, count(*) over() as total_count`))
-		.whereIn(`${tableName}.collection_ids`, params.collection_ids)
-		.limit(pagination.limit)
-		.offset(pagination.offset);
+	const alias = "marketalias";
+	let query = db
+		.select(
+			db.raw(`${tableName}.*, ${collections}.rank, ${characters}.name, ${abilities}.name as abilityname,
+			${collections}.souls, ${characters}.type, ${collections}.character_level`)
+		)
+		.from(tableName)
+		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)
+		.innerJoin(characters, `${collections}.character_id`, `${characters}.id`)
+		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
+		.as(alias);
+
+	if (typeof params.name === "string") {
+		query = query.where(`${characters}.name`, "ilike", `%${params.name}%`);
+	} else if (typeof params.name === "object") {
+		query = query.where(
+			`${characters}.name`,
+			"~",
+			`^(${params.name.join("|")}).*`
+		);
+	}
+	if (typeof params.type === "string") {
+		query = query.where(`${tableName}.type`, "ilike", `%${params.type}%`);
+	} else if (typeof params.type === "object") {
+		query = query.where(
+			`${tableName}.type`,
+			"~",
+			`^(${params.type.join("|")}).*`
+		);
+	}
+	if (typeof params.abilityname === "string") {
+		query = query.where(
+			`${abilities}.name`,
+			"ilike",
+			`%${params.abilityname}%`
+		);
+	} else if (typeof params.abilityname === "object") {
+		query = query.where(
+			`${abilities}.name`,
+			"~",
+			`^(${params.abilityname.join("|")}).*`
+		);
+	}
+	if (typeof params.rank === "string") {
+		query = query.where(`${collections}.rank`, "ilike", `%${params.rank}%`);
+	} else if (typeof params.rank === "object") {
+		query = query.where(
+			`${collections}.rank`,
+			"~",
+			`^(${params.rank.join("|")}).*`
+		);
+	}
+
+	query = db
+		.select(db.raw(`${alias}.*, count(*) over() as total_count`))
+		.from(query);
+
+	query = query.limit(pagination.limit).offset(pagination.offset);
 
 	return query;
+};
+
+export const getMarketCollection = async (params: {
+	is_on_market: boolean;
+	collection_id: number;
+}): Promise<IMarketProps> => {
+	const db = connection;
+	const query = db
+		.select(
+			db.raw(`${tableName}.*, ${collections}.rank, ${characters}.name, ${abilities}.name as abilityname,
+			${collections}.souls, ${characters}.type, ${collections}.character_level,
+			${cards}.filepath`)
+		)
+		.from(tableName)
+		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)
+		.innerJoin(characters, `${collections}.character_id`, `${characters}.id`)
+		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
+		.innerJoin(cards, `${characters}.id`, `${cards}.character_id`)
+		.where(`${collections}.is_on_market`, params.is_on_market)
+		.where(`${tableName}.collection_id`, params.collection_id)
+		.then((res) => res[0]);
+
+	return query;
+};
+
+export const del = async (params: { id: number }) => {
+	return await connection(tableName).where(params).del();
+};
+
+export const create = async (data: MarketCreateProps) => {
+	return await connection(tableName).insert(data);
 };

@@ -11,6 +11,7 @@ import {
 } from "api/controllers/CollectionsController";
 import { getItemById } from "api/controllers/ItemsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
@@ -24,13 +25,14 @@ async function validateItem(
 	id: number,
 	channel: ChannelProp,
 	client: ConfirmationInteractionParams<undefined>["client"],
-	user_id?: number
+	user_id: number
 ) {
 	const item = await getItemById({ id });
 	const embed = createEmbed()
 		.setTitle(DEFAULT_ERROR_TITLE)
 		.setThumbnail(client.user?.displayAvatarURL() || "");
 	if (!item) {
+		loggers.info("Item not found for ID: " + id);
 		embed.setDescription("We could not find the item you were looking for.");
 
 		channel?.sendMessage(embed);
@@ -42,9 +44,17 @@ async function validateItem(
 		user_id: user_id,
 		item_id: id,
 	});
-	if (duplicateItem) {
+	if (duplicateItem && duplicateItem.length > 0) {
+		loggers.info(
+			"Duplicate item for item ID: " +
+        id +
+        ", DUP ID: " +
+        duplicateItem[0].id +
+        " for user: " +
+        user_id
+		);
 		embed.setDescription(
-			"You already own this item. Equip this item to use it in battle."
+			"You already own this item. Equip the item to use it in battle."
 		);
 		channel?.sendMessage(embed);
 		return;
@@ -124,21 +134,24 @@ export const purchaseItem = async ({
 			validateAndPurchaseItem,
 			(data, opts) => {
 				if (data) {
+					const attachment = createAttachment(data.filepath, "item.jpg");
 					const desc = `Are you sure you want to purchase **${titleCase(
 						data.name
 					)}** for __${data.price}__ gold ${emoji.gold}`;
-					embed = createConfirmationEmbed(author, client).setDescription(desc)
-						.setThumbnail(data.filepath);
+					embed = createConfirmationEmbed(author, client)
+						.setDescription(desc)
+						.setThumbnail("attachment://item.jpg")
+						.attachFiles([ attachment ]);
 				}
 				if (opts?.isDelete) {
 					sentMessage.delete();
 				}
 			}
 		);
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
-		context.channel.sendMessage(embed).then((msg) => {
+		if (!buttons) return;
+
+		embed.setButtons(buttons);
+		context.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
 		return;

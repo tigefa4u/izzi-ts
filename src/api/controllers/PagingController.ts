@@ -53,7 +53,7 @@ export const pageFunc = async <T>(
 	const filter = PAGE_FILTER;
 	const totalCount = array.length;
 	const totalPages = Math.ceil(totalCount / filter.perPage);
-	let embed = createEmbed();
+	let embed = createEmbed(author);
 	let sentMessage: Message;
 	const buttons = await paginatorInteraction<{ array: T[] }, T[], P>(
 		channel,
@@ -92,9 +92,9 @@ export const pageFunc = async <T>(
 			totalPages,
 		}
 	);
-	if (buttons) {
-		embed.setButtons(buttons);
-	}
+	if (!buttons) return;
+
+	embed.setButtons(buttons);
 
 	channel?.sendMessage(embed).then((msg) => {
 		sentMessage = msg;

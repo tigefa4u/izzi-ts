@@ -69,8 +69,7 @@ export const start: (params: BaseProps) => void = async ({
 	options,
 }) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const embed = createEmbed()
 			.setTitle(DEFAULT_ERROR_TITLE)
 			.setThumbnail(client.user?.displayAvatarURL() || "")
@@ -81,7 +80,7 @@ export const start: (params: BaseProps) => void = async ({
 			embed.setDescription(
 				"You have already started your journey in the Xenverse"
 			);
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 
@@ -90,7 +89,7 @@ export const start: (params: BaseProps) => void = async ({
 			embed.setDescription(
 				"Your discord account must be atleast 60 days old, in order to start your journey in the Xenverse!"
 			);
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		const cardDetails = await startUserJourney(author);
@@ -118,7 +117,7 @@ export const start: (params: BaseProps) => void = async ({
           "\nGood Luck, Happy Collecting!"
 			);
 
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

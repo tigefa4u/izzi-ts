@@ -4,7 +4,7 @@ import { PageProps } from "@customTypes/pagination";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Items from "../models/Items";
-import { get as getCollections } from "../models/Collections";
+import { getAll as getCollections } from "../models/Collections";
 import Cache from "cache";
 
 type T = { user_id?: number };

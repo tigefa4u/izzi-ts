@@ -13,8 +13,7 @@ import { titleCase } from "title-case";
 
 export const packs = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		let num = Number(args.shift());
 		if (isNaN(num)) {
 			num = 1;
@@ -33,7 +32,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		if (!user) return;
 		if (user.gold < cost) {
 			embed.setDescription("You do not have sufficient gold to purchase packs");
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		user.gold = user.gold - cost;
@@ -73,7 +72,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 			)
 			.setThumbnail("attachment://card.jpg")
 			.attachFiles([ attachment ]);
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.packs.packs(): something went wrong", err);

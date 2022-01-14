@@ -27,7 +27,7 @@ export const emotions =  async ({ context, command }: BaseProps) => {
 	// const embed = createEmbed()
 	// 	.setImage("attachment://gif.gif")
 	// 	.attachFiles(attachment);
-	// context.channel.sendMessage(embed);
+	// context.channel?.sendMessage(embed);
 	throw new Error("Unimplemented");
 };
 export const actions = async function ({ context, command, endPhrase, args }: any) {
@@ -54,7 +54,7 @@ export const actions = async function ({ context, command, endPhrase, args }: an
 	// 					.map((i) => i)
 	// 					.join(", ")}]\n[Usage] **\`\`${cmd.usage}\`\`**`
 	// 			);
-	// 		context.channel.sendMessage(errorEmbed).catch((err) => {
+	// 		context.channel?.sendMessage(errorEmbed).catch((err) => {
 	// 			logger.error(JSON.stringify(err));
 	// 			return;
 	// 		});
@@ -70,7 +70,7 @@ export const actions = async function ({ context, command, endPhrase, args }: an
 	// 		.setDescription(text)
 	// 		.setImage("attachment://gif.gif")
 	// 		.attachFiles(attachment);
-	// 	context.channel.sendMessage(embed);
+	// 	context.channel?.sendMessage(embed);
 	// 	return;
 	// } catch (err) {
 	// 	return;

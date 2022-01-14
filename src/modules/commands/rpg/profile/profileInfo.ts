@@ -23,10 +23,9 @@ export const mana = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("mana", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana**`
 		);
 		return;
@@ -44,10 +43,9 @@ export const exp = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("exp", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}/${result.metadata.max_exp}__ **EXP**`
 		);
 		return;
@@ -65,10 +63,9 @@ export const level = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("level", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** is currently level __${result.data}__`
 		);
 		return;
@@ -86,10 +83,9 @@ export const permits = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("raid_pass", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has` + " " +
 			`__${result.data}/${result.metadata.max_permit}__ **raid permits**`
 		);
@@ -108,10 +104,9 @@ export const shards = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("shards", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}__ ${emoji.shard} **shards**`
 		);
 		return;
@@ -129,10 +124,9 @@ export const orbs = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("orbs", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}__ ${emoji.blueorb} **blue orbs**`
 		);
 		return;
@@ -150,10 +144,9 @@ export const points = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("izzi_points", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}__ ${emoji.izzipoints} **Izzi Points**`
 		);
 		return;
@@ -171,10 +164,9 @@ export const gold = async function ({
 	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const result = await getProfileInfo("gold", author.id);
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}__ ${emoji.gold} **gold**`
 		);
 		return;

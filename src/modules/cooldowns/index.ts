@@ -1,5 +1,5 @@
+import { ChannelProp } from "@customTypes";
 import Cache from "cache";
-import { Message } from "discord.js";
 
 type T = {
 	timestamp: string;
@@ -38,7 +38,7 @@ export const clearCooldown = async (key: string, command: string) => {
 	}
 };
 export const sendCommandCDResponse = (
-	channel: Message["channel"],
+	channel: ChannelProp,
 	data: T,
 	key: string,
 	command: string
@@ -53,7 +53,7 @@ export const sendCommandCDResponse = (
 		}
 		const remainingHours = Math.floor(remainingMS / 60);
 		const remainingMinutes = Math.floor(remainingMS % 60);
-		channel.sendMessage(
+		channel?.sendMessage(
 			`This command is on cooldown, you can try again in ${
 				remainingHours ?? ""
 			}:${remainingMinutes ?? ""}:${remainingSec.toFixed(0)}`

@@ -128,3 +128,20 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 };
 
 export const ORB_INTEREST_RATE = .7;
+export const MARKET_COMMISSION = .08;
+export const BASE_ORBS_COUNT = 20;
+export const MARRIAGE_BONUS = 2000;
+export const INPUT_CHARACTERS_MAX_COUNT = 20;
+export const GUILD_CREATION_COST = 200000;
+export const GUILD_BASE_STATS = {
+	vitality: 0.25,
+	defense: 0.31,
+	dexterity: 0.32,
+	intelligence: 0.25,
+	strength: 0.45,
+};
+
+export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
+
+export const GUILD_MARKET_IDS = [ 2, 5 ];
+export const GUILD_MAX_DONATION = 1000000;

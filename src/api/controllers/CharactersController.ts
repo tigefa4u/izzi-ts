@@ -52,9 +52,15 @@ export const getCharacterInfo: (
 		const result = await Characters.get(filter);
 		if (result && result.length > 0) {
 			const character = result[0];
+			let rank = BASE_RANK;
+			if (typeof filter.rank === "string") {
+				rank = filter.rank;
+			} else if (typeof filter.rank === "object") {
+				rank = filter.rank[0];
+			}
 			const card = await getCharacterCardByRank({
 				character_id: character.id,
-				rank: BASE_RANK,
+				rank: rank,
 			});
 			Object.assign(characterInfo, {
 				...card,

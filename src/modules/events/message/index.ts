@@ -8,7 +8,7 @@ import { sanitizeArgs } from "helpers";
 
 const handleMessage = async (client: Client, context: Message) => {
 	const { content } = context;
-	const args = content.toLowerCase().split(/\s+/);
+	let args = content.toLowerCase().split(/\s+/);
 	const botId = `<@!${DISCORD_CLIENT_ID}>`;
 	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) return;
 	const command = await getCommand(args[1]);
@@ -18,6 +18,10 @@ const handleMessage = async (client: Client, context: Message) => {
 		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
 	)
 		return;
+	if (command.name === "guild") {
+		args = content.split(/\s+/);
+		args.shift();
+	}
 	commandCategory[command?.type as keyof CommandCategoryProps]({
 		client,
 		context,

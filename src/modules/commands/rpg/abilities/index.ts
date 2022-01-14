@@ -14,8 +14,7 @@ import { fetchParamsFromArgs } from "utility/forParams";
 
 export const ability = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const filter = PAGE_FILTER;
@@ -53,11 +52,11 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 					}
 				},
 			);
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
 
-		context.channel.sendMessage(embed).then((msg) => {
+		embed.setButtons(buttons);
+
+		context.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
 	} catch (err) {

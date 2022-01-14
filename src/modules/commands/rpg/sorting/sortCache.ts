@@ -2,7 +2,7 @@ import { SortProps } from "@customTypes/sorting";
 import Cache from "cache";
 
 export const setSortCache = async (key: string, data: SortProps) => {
-	const expiresIn = 1000 * 60 * 60 * 24 * 30;
+	const expiresIn = 60 * 60 * 24 * 30;
 	Cache.expire && await Cache.expire(key, expiresIn);
 	await Cache.set(key, JSON.stringify(data));
 	return;

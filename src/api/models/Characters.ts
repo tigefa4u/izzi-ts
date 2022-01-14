@@ -55,7 +55,7 @@ export const getCharacterById: (params: {
 };
 
 export const get: (
-  params: Omit<FilterProps, "ids">,
+  params: FilterProps,
 ) => Promise<CharactersReturnType> = async function (
 	params,
 ) {
@@ -82,6 +82,9 @@ export const get: (
 		query = query.where(`${abilities}.name`, "ilike", `%${params.abilityname}%`);
 	} else if (typeof params.abilityname === "object") {
 		query = query.where(`${abilities}.name`, "~", `^(${params.abilityname.join("|")}).*`);
+	}
+	if (params.ids && params.ids.length > 0) {
+		query = query.whereIn(`${tableName}.id`, params.ids);
 	}
 
 	return query;

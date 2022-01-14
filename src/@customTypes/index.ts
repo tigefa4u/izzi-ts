@@ -1,4 +1,4 @@
-import { Client, Interaction, Message, MessageButtonStyleResolvable } from "discord.js";
+import { Client, CommandInteraction, Message, MessageButtonStyleResolvable } from "discord.js";
 import { PagingMetadata } from "./pagination";
 
 export type IgnoreProps = "id" | "created_at" | "updated_at"
@@ -13,14 +13,14 @@ export type FilterProps = {
     category?: string;
 }
 
-export type AuthorProps = Message["author"] | Interaction["user"]
+export type AuthorProps = Message["author"] | CommandInteraction["user"]
 
 export type ResponseWithPagination<T> = {
     data: T,
     metadata: PagingMetadata
 }
 
-export type ChannelProp = Message["channel"] | Interaction["channel"]
+export type ChannelProp = Message["channel"] | CommandInteraction["channel"]
 
 export type ReactionsProps = {
     [key: string]: {
@@ -31,7 +31,7 @@ export type ReactionsProps = {
 }
 
 export type ParamsFromArgsRT<T> = {
-    [key in keyof T]: string | number | boolean;
+    [key in keyof T]: T[key];
 }
 
 export type XPGainPerRankProps = {
@@ -68,4 +68,8 @@ export type ConfirmationInteractionParams<T> = {
 
 export type ConfirmationInteractionOptions = {
     isConfirm: boolean;
+}
+
+export type EmbedEditOptions = {
+    reattachOnEdit?: boolean;
 }

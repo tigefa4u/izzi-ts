@@ -36,15 +36,10 @@ export const createEmbedList = ({
 	description,
 	pageName,
 }: DexEmbedProps) => {
-	const embed = createEmbed();
+	const embed = createEmbed(author, client);
 	embed
 		.setTitle(title)
 		.setDescription(description)
-		.setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		})
-		.setThumbnail(client.user?.displayAvatarURL() || "")
 		.setFooter({
 			text: `Page: ${
 				currentPage > totalPages ? 0 : currentPage

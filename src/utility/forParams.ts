@@ -20,11 +20,15 @@ const argMap = [
 	{
 		name: "rank",
 		alias: [ "-r", "-rank" ]
+	},
+	{
+		name: "category",
+		alias: [ "-c", "category" ]
 	}
 ];
 
-export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> | Record<string, never> => {
-	const params = {};
+export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
+	const params = {} as ParamsFromArgsRT<T>;
 	for (let i = 0; i < args.length; i++) {
 		const temp = args.shift();
 		if (!temp) break;

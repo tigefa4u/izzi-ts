@@ -1,6 +1,6 @@
-import { Client, Interaction } from "discord.js";
+import { Client, CommandInteraction } from "discord.js";
 
-const handleInteraction = (client: Client, interaction: Interaction) => {
+const handleInteraction = (client: Client, interaction: CommandInteraction) => {
 	return;
 };
 

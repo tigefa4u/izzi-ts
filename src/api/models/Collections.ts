@@ -1,6 +1,7 @@
 import {
 	CollectionParams,
 	CollectionProps,
+	CollectionUpdateProps,
 	ICollectionCreateProps,
 } from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
@@ -114,9 +115,22 @@ export const getAll = async function (
 export const create: (
 	data: ICollectionCreateProps
 ) => Promise<CollectionProps> = async (data) => {
-	console.log({ data });
 	const db = connection;
 	return await db(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);
+};
+
+export const update = async (params: Pick<CollectionParams, "id" | "ids">, data: CollectionUpdateProps) => {
+	if (!params.id || !params.ids) return;
+	const db = connection;
+	let query = db(tableName);
+
+	if (params.id) {
+		query = query.where(params);
+	} else if (params.ids) {
+		query = query.whereIn(`${tableName}.id`, params.ids);
+	}
+
+	return query.update(data);
 };

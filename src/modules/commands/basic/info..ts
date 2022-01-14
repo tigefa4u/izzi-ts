@@ -8,7 +8,7 @@ import { help } from ".";
 
 export const server = ({ context }: BaseProps) => {
 	try {
-		context.channel.sendMessage(
+		context.channel?.sendMessage(
 			`Join our Official Server for any assistance.\n${OFFICIAL_SERVER_LINK}` +
         `\nYou can also checkout ${IZZI_WEBSITE} for more detailed information.`
 		);
@@ -24,15 +24,14 @@ export const server = ({ context }: BaseProps) => {
 
 export const daily = async ({ context, client, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const timestamp = user.voted_at;
 		const remainingTime =
       (new Date().valueOf() - new Date(timestamp).valueOf()) / 1000 / 60;
 		const remainingHours = 24 - Math.ceil(remainingTime / 60);
-		const embed = createEmbed();
+		const embed = createEmbed(options.author, client);
 		embed
 			.setTitle(
 				`Daily Sign in:- (${
@@ -45,7 +44,6 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 						: "Resets Every 24 hours"
 				})`
 			)
-			.setAuthor(author.username, author.displayAvatarURL())
 			.setDescription(
 				`Vote for izzi here:-\n${BOT_VOTE_LINK}\n\n` +
           " " +
@@ -56,9 +54,8 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married!" +
           " " +
           "You get (10 to 12) IP if premium and Your mana also gets refilled as you vote."
-			)
-			.setThumbnail(client.user?.displayAvatarURL() || "");
-		context.channel.sendMessage(embed);
+			);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error("module.commands.basic.info.daily(): something went wrong", err);
@@ -66,12 +63,13 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 	}
 };
 
-export const donate = ({ context, client }: BaseProps) => {
+export const donate = ({ context, client, options }: BaseProps) => {
 	try {
 		help({
 			context,
 			client,
-			args: [ "donate" ] 
+			args: [ "donate" ],
+			options 
 		});
 		return;
 	} catch (err) {

@@ -4,8 +4,7 @@ import loggers from "loggers";
 
 export const collection = async ({ context, client, args = [], options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		console.time("inv");
 		const collections = await getCollection({
 			user_id: 54,

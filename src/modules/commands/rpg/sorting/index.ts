@@ -36,12 +36,11 @@ const getSortMap = () => {
 
 export const sort = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const key = `sort::${author.id}`;
 		if (args[0] === "reset") {
 			delSortCache(key);
-			context.channel.sendMessage("Successfully reset sorting order");
+			context.channel?.sendMessage("Successfully reset sorting order");
 			return;
 		}
 		const sortMap = getSortMap();
@@ -74,7 +73,7 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
           }__ in **${params.sortOrder.toUpperCase()}** order!`
 			);
 
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.sorting.sort(): something went wrong",

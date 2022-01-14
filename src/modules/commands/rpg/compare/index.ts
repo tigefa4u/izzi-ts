@@ -39,8 +39,7 @@ export const compare = async ({
 	options,
 }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const embed = createEmbed();
 		embed
 			.setTitle(DEFAULT_ERROR_TITLE)
@@ -56,7 +55,7 @@ export const compare = async ({
 		const charanames = charaArgs.split(",");
 		if (charanames.length > 3) {
 			embed.setDescription("You cannot compare more than 3 Cards");
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		const characters = await getCharacters({ name: charanames });
@@ -65,7 +64,7 @@ export const compare = async ({
 			embed.setTitle("Base Stats")
 				.addFields(list);
             
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 	} catch (err) {

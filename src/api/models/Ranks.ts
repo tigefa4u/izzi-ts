@@ -8,6 +8,10 @@ export const transformation = {
 		autoIncrement: true,
 	},
 	rank: { type: "string", },
+	rankId: {
+		type: "number",
+		columnName: "rank_id" 
+	},
 	maxPower: {
 		type: "number",
 		columnName: "max_power",

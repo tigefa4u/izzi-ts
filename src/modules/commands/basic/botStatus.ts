@@ -8,19 +8,13 @@ import loggers from "loggers";
 export const status = async ({ context, client, options }: BaseProps) => {
 	try {
 		if (!OWNER_DISCORDID) return;
-		const author = options?.author;
-		if (!author) return;
-		const embed = createEmbed();
+		const author = options.author;
+		const embed = createEmbed(author, client);
 		const totalPlayers = await getTotalPlayers();
 		const activePlayers = await getTotalPlayers({ is_active: true });
 		const owner = await client.users.fetch(OWNER_DISCORDID);
 		embed
 			.setTitle("izzi Stats")
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			})
-			.setThumbnail(client.user?.displayAvatarURL() || "")
 			.addFields([
 				{
 					name: ":ping_pong: ws ping",
@@ -55,7 +49,7 @@ export const status = async ({ context, client, options }: BaseProps) => {
 				}
 			])
 			.setFooter({ text: `developed by: ${owner.username}#${owner.discriminator}` });
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

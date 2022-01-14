@@ -6,7 +6,7 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
-import { prepareAbilityDescription } from "helpers";
+import { delay, prepareAbilityDescription } from "helpers";
 import { getFloorsByCharacterId } from "api/controllers/StagesController";
 import { Client, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
@@ -14,13 +14,10 @@ import { CharacterCardProps } from "@customTypes/characters";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 
 async function prepareCinfoDetails(
-	client: Client,
 	embed: MessageEmbed,
 	characterInfo: CharacterCardProps,
 	location?: NormalizeFloorProps,
-	options?: BaseProps["options"],
 ) {
-	const author = options?.author;
 	const abilityEmoji = emojiMap(characterInfo?.abilityname);
 	const elementTypeEmoji = emojiMap(characterInfo?.type);
 	const cardCanvas = await createSingleCanvas(characterInfo, true);
@@ -30,7 +27,6 @@ async function prepareCinfoDetails(
 		"cinfo.jpg"
 	);
 	embed
-		.setAuthor(author?.username || "", author?.displayAvatarURL())
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
 			`**Series:** ${titleCase(characterInfo.series)}\n**Card Copies:** ${
@@ -60,35 +56,30 @@ async function prepareCinfoDetails(
 			}:** ${prepareAbilityDescription(characterInfo.abilitydescription)}`
 		)
 		.setImage("attachment://cinfo.jpg")
-		.attachFiles([ attachment ])
-		.setThumbnail(client.user?.displayAvatarURL() || "");
+		.attachFiles([ attachment ]);
     
 	return embed;
 }
 
 export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
 		const characterInfo = await getCharacterInfo({ name: args.join(" ") });
-		let embed = createEmbed();
+		let embed = createEmbed(options.author, client);
 		if (!characterInfo) {
 			embed
 				.setTitle(DEFAULT_ERROR_TITLE)
 				.setDescription("We could not find the Character you are looking for");
 
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		const location = await getFloorsByCharacterId({ character_id: characterInfo.id, });
 		embed = await prepareCinfoDetails(
-			client,
 			embed,
 			characterInfo,
 			location,
-			{ author }
 		);
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

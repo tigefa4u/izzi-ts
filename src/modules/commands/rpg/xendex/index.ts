@@ -13,8 +13,7 @@ import { fetchParamsFromArgs } from "utility/forParams";
 
 export const dex = async ({ context, client, options, args }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const filter = PAGE_FILTER;
 		const params = fetchParamsFromArgs(args);
 		let embed = createEmbed();
@@ -50,11 +49,11 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 					}
 				}
 			);
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
 
-		context.channel.sendMessage(embed).then((msg) => {
+		embed.setButtons(buttons);
+
+		context.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
 		return;

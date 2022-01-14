@@ -19,8 +19,7 @@ export const itemshop = async ({
 	options,
 }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const shop = args.shift();
 		if (shop === "buy") {
 			purchaseItem({
@@ -68,11 +67,11 @@ export const itemshop = async ({
     		sentMessage.editMessage(embed);
     	}
     });
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
 
-		context.channel.sendMessage(embed).then((msg) => {
+		embed.setButtons(buttons);
+
+		context.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
 		return;

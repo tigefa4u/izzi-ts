@@ -39,8 +39,7 @@ export const itemCollection = async ({
 	options,
 }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const params = fetchParamsFromArgs(args);
@@ -89,11 +88,11 @@ export const itemCollection = async ({
     	},
     	{ withCollection: true }
     );
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
 
-		context.channel.sendMessage(embed).then((msg) => {
+		embed.setButtons(buttons);
+
+		context.channel?.sendMessage(embed).then((msg) => {
 			sentMessage = msg;
 		});
 		return;
@@ -112,8 +111,7 @@ export const itemInfo = async ({
 	options,
 }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const pageFilter = PAGE_FILTER;
 		const itemRes = await getItems({ name: args.join(" ") }, pageFilter);
 		if (!itemRes) return;
@@ -136,7 +134,7 @@ export const itemInfo = async ({
 			.attachFiles([ attachment ])
 			.setThumbnail("attachment://item.jpg");
 
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

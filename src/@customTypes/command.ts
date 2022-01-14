@@ -1,17 +1,18 @@
 import { AuthorProps } from "@customTypes";
-import { Client, Interaction, Message } from "discord.js";
+import { Client, CommandInteraction, Message } from "discord.js";
 
 export type BaseProps = {
-    context: Message;
+    context: Message | CommandInteraction;
     client: Client;
     command?: CommandProps;
     args: string[];
-    options?: {
-        author?: AuthorProps,
+    options: {
+        author: AuthorProps,
     }
 }
 
 export type CommandMapProps = {
+	collection: (params: BaseProps) => void; // TODO
     ping: (params: BaseProps) => void;
     invite: (params: BaseProps) => void;
     cinfo: (params: BaseProps) => void;
@@ -27,7 +28,6 @@ export type CommandMapProps = {
     permits: (params: BaseProps) => void;
     gold: (params: BaseProps) => void;
 	start: (params: BaseProps) => void;
-	collection: (params: BaseProps) => void; // TODO
 	hourly: (params: BaseProps) => void;
 	server: (params: BaseProps) => void;
 	daily: (params: BaseProps) => void;
@@ -49,11 +49,16 @@ export type CommandMapProps = {
 	skins: (params: BaseProps) => void;
 	itemshop: (params: BaseProps) => void;
 	market: (params: BaseProps) => void;
-	// redirect: (params: BaseProps) => void;
+	redirect: (params: BaseProps) => void;
+	consume: (params: BaseProps) => void;
+	leaderboard: (params: BaseProps) => void;
+	propose: (params: BaseProps) => void;
+	divorce: (params: BaseProps) => void;
+	guild: (params: BaseProps) => void;
+	crate: (params: BaseProps) => void;
+
     // TODO: below commands
 	// info: (params: BaseProps) => void;
-	// propose: (params: BaseProps) => void;
-	// divorce: (params: BaseProps) => void;
 	// select: (params: BaseProps) => void;
 	// battle: (params: BaseProps) => void;
 	// pvp: (params: BaseProps) => void;
@@ -64,16 +69,12 @@ export type CommandMapProps = {
 	// enchantment: (params: BaseProps) => void;
 	// team: (params: BaseProps) => void;
 	// raid: (params: BaseProps) => void;
-	// guild: (params: BaseProps) => void;
 	// evolution: (params: BaseProps) => void;
 	// event: (params: BaseProps) => void;
-	// leaderboard: (params: BaseProps) => void;
 	// dungeon: (params: BaseProps) => void;
 	// favorite: (params: BaseProps) => void;
-	// consume: (params: BaseProps) => void;
-	// crate: (params: BaseProps) => void;
 	// sacrifice: (params: BaseProps) => void;
-	// customize: (params: BaseProps) => void;
+	// customize: (params: BaseProps) => void; // removed
 }
 
 export type CommandProps = {

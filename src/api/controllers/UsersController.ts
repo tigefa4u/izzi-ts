@@ -64,6 +64,7 @@ export const getRPGUser: (params: Pick<UserProps, "user_tag">) => Promise<UserPr
 			loggers.info("api.controllers.UsersController.getRPGUser: User not found " + params.user_tag);
 			return;
 		}
+		if (user.is_banned) return;
 		// await hydrateUserCache(user);
 		return user;
 		// }

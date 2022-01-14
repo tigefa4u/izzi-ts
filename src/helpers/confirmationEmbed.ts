@@ -3,13 +3,8 @@ import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 
 export const createConfirmationEmbed = (author: AuthorProps, client: Client) => {
-	const embed = createEmbed()
-		.setTitle("CONFIRMATION")
-		.setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL()
-		})
-		.setThumbnail(client.user?.displayAvatarURL() || "");
+	const embed = createEmbed(author, client)
+		.setTitle("Confirmation :exclamation:");
 
 	return embed;
 };

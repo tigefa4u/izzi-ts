@@ -5,11 +5,18 @@ import { help, invite, ping } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
 import { ability } from "modules/commands/rpg/abilities";
 import { cinfo } from "modules/commands/rpg/cardinfo";
+import { redirect } from "modules/commands/rpg/cardSpawn/redirect";
 import { compare } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
+import { consume } from "modules/commands/rpg/consumeOrbsToShards";
+import { crate } from "modules/commands/rpg/crates";
+import { guild } from "modules/commands/rpg/guild";
 import { collection } from "modules/commands/rpg/inventory";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
 import { itemshop } from "modules/commands/rpg/items/shop";
+import { leaderboard } from "modules/commands/rpg/leaderboard";
+import { market } from "modules/commands/rpg/market";
+import { divorce, propose } from "modules/commands/rpg/marriage";
 import { lottery } from "modules/commands/rpg/misc";
 import { packs } from "modules/commands/rpg/packs";
 import { premium } from "modules/commands/rpg/premium";
@@ -31,7 +38,7 @@ const commandMap: CommandMapProps = {
 	cinfo: cinfo,
 	help: help,
 	bet: bet,
-	profile: profile,
+	profile: profile, // TODO
 	start: start,
 	mana: mana,
 	points: points,
@@ -41,7 +48,7 @@ const commandMap: CommandMapProps = {
 	level: level,
 	orbs: orbs,
 	permits: permits,
-	collection: collection,
+	collection: collection, // TODO
 	hourly: hourly,
 	daily: daily,
 	server: server,
@@ -61,7 +68,15 @@ const commandMap: CommandMapProps = {
 	cards: cards,
 	status: status,
 	skins: skins,
-	itemshop: itemshop
+	itemshop: itemshop,
+	market: market,
+	redirect: redirect,
+	consume: consume,
+	leaderboard: leaderboard,
+	divorce: divorce,
+	propose: propose,
+	crate: crate,
+	guild: guild,
 };
 
 export default commandMap;

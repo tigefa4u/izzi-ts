@@ -18,10 +18,10 @@ export type CollectionProps = {
 };
 
 export type CollectionParams = {
-  is_item: boolean;
-  is_on_market: boolean;
-  id?: string;
-  ids?: string[];
+  is_item?: boolean;
+  is_on_market?: boolean;
+  id?: number;
+  ids?: number[];
   user_id?: number;
   rank?: string | string[];
   character_id?: number;

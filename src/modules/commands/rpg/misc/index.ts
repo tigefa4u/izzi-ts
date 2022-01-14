@@ -15,8 +15,7 @@ type T = {
 
 export const lottery = async ({ context, client, options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const cd = await getCooldown(author.id, "lottery");
 		if (cd) {
 			sendCommandCDResponse(context.channel, cd, author.id, "lottery");
@@ -31,7 +30,7 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 
 		if (user.gold < LOTTERY_PRICE) {
 			embed.setDescription("You do not have enough gold to play the Lottery!");
-			context.channel.sendMessage(embed);
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		user.gold = user.gold - LOTTERY_PRICE;
@@ -70,7 +69,7 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		}
 		await setCooldown(author.id, "lottery", 900);
 		embed.setDescription(desc);
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

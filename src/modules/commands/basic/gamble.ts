@@ -29,11 +29,10 @@ const validateBetArgs = function (args: string | undefined) {
 
 export const bet = async ({ context, args = [], options }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const betAmount = parseInt(args.shift() || "0");
 		if (isNaN(betAmount) || betAmount <= 0 || betAmount > BET_LIMIT) {
-			context.channel.sendMessage(
+			context.channel?.sendMessage(
 				`Invalid Bet amount. You cannot bet more than __${BET_LIMIT}__ gold ${emoji.gold}`
 			);
 			return;
@@ -49,7 +48,7 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 		let flipString;
 		if (betFlip) flipString = "heads";
 		else flipString = "tails";
-		const embed = createEmbed();
+		const embed = createEmbed(author);
 		if (coinFlip === flipString) {
 			const winAmount = Math.floor(betAmount * randomNumber(1.7, 1.9, true));
 			user.gold = user.gold + winAmount;
@@ -68,7 +67,7 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 				.setThumbnail(GAMBLE_EMOJIS.loss);
 		}
 		await updateRPGUser({ user_tag: author.id }, { gold: user.gold });
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

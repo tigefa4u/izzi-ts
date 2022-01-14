@@ -104,9 +104,9 @@ async function handleZones(params: {
 			}
 		}
 	);
-	if (buttons) {
-		embed.setButtons(buttons);
-	}
+	if (!buttons) return;
+
+	embed.setButtons(buttons);
 
 	params.channel?.sendMessage(embed).then((msg) => {
 		sentMessage = msg;
@@ -116,8 +116,7 @@ async function handleZones(params: {
 
 export const zone = async ({ context, client, options, args }: BaseProps) => {
 	try {
-		const author = options?.author;
-		if (!author) return;
+		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const zn = args.shift();
@@ -144,7 +143,7 @@ export const zone = async ({ context, client, options, args }: BaseProps) => {
 			name: author.username,
 			iconURL: author.displayAvatarURL()
 		});
-		context.channel.sendMessage(embed);
+		context.channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error("modules.commands.rpg.zoneAndFloor.zone(): something went wrong", err);
 		return;

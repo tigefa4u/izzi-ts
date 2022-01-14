@@ -126,4 +126,9 @@ export type EmojiProps = {
 	dreameater: " <:dreameater:890562182440427591>",
 	staffofmedana: "<:staffofmedana:890562183291887636>",
 	lunarwand: "<:lunarwand:890562182960541737>",
+	beginner: ":beginner:",
+	crossedswords: ":crossed_swords:",
+	heart: ":heart:",
+	dash: ":dash:",
+	radiobutton: ":radio_button:"
 }

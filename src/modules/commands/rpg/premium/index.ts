@@ -2,12 +2,13 @@ import { BaseProps } from "@customTypes/command";
 import loggers from "loggers";
 import { help } from "modules/commands/basic";
 
-export const premium = ({ context, client }: BaseProps) => {
+export const premium = ({ context, client, options }: BaseProps) => {
 	try {
 		help({
 			context,
 			client,
-			args: [ "premium" ]
+			args: [ "premium" ],
+			options
 		});
 		return;
 	} catch (err) {

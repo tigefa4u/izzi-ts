@@ -18,7 +18,7 @@ const Cache: CacheProps = {
 	fetch: async <T>(key: string, cb: () => Promise<T>) => {
 		const data = await client.get(key);
 		if (!data) {
-			const ttl = 1000 * 60 * 60 * 24 * 15;
+			const ttl = 60 * 60 * 24 * 15;
 			loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
 			const resp = await cb();
 			client.set(key, JSON.stringify(resp));
