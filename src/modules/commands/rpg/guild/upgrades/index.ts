@@ -1,0 +1,211 @@
+import {
+	ConfirmationInteractionOptions,
+	ConfirmationInteractionParams,
+} from "@customTypes";
+import { BaseProps } from "@customTypes/command";
+import { GuildStatProps } from "@customTypes/guilds";
+import {
+	delGuildItems,
+	getAllGuildItems,
+	updateGuildItem,
+} from "api/controllers/GuildItemsController";
+import { updateGuild } from "api/controllers/GuildsController";
+import { getRPGUser } from "api/controllers/UsersController";
+import { createEmbed } from "commons/embeds";
+import { Message } from "discord.js";
+import { createConfirmationEmbed } from "helpers/confirmationEmbed";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	GUILD_ITEM_PROPERTIES,
+	GUILD_MARKET_IDS,
+	GUILD_MAX_LEVEL,
+	SEAL_ID,
+	SOUL_ID,
+} from "helpers/constants";
+import loggers from "loggers";
+import { titleCase } from "title-case";
+import { confirmationInteraction } from "utility/ButtonInteractions";
+import { verifyMemberPermissions } from "..";
+
+async function validateAndUpgradeGuild(
+	params: ConfirmationInteractionParams<{
+    context: BaseProps["context"];
+    user_id: number;
+  }>,
+	options?: ConfirmationInteractionOptions
+) {
+	const context = params.extras?.context;
+	if (!params.extras?.user_id || !context) return;
+	const validGuild = await verifyMemberPermissions({
+		context: context,
+		author: params.author,
+		params: [ "is_leader", "is_vice_leader" ],
+		isOriginServer: true,
+		isAdmin: true,
+		extras: { user_id: params.extras.user_id },
+	});
+	if (!validGuild) return;
+	if (validGuild.guild.guild_level >= GUILD_MAX_LEVEL) {
+		context.channel?.sendMessage(
+			"Your guild has already reached the maximum level in the Xenverse!"
+		);
+		return;
+	}
+	const guilditems = await getAllGuildItems(
+		{
+			guild_id: validGuild.guild.id,
+			ids: GUILD_MARKET_IDS,
+		},
+		{
+			currentPage: 1,
+			perPage: 2,
+		}
+	);
+	const souls = guilditems?.data.filter((it) => it.item_id === SOUL_ID)[0];
+	const seals = guilditems?.data.filter((it) => it.item_id === SEAL_ID)[0];
+	const missingItems = guilditems?.data.reduce((acc: string[], r) => {
+		if (!GUILD_MARKET_IDS.includes(r.item_id)) {
+			let missingItem = "";
+			if (SOUL_ID === r.item_id) {
+				missingItem = GUILD_ITEM_PROPERTIES.SOUL_ID;
+			} else {
+				missingItem = GUILD_ITEM_PROPERTIES.SEAL_ID;
+			}
+			acc.push(missingItem);
+		}
+		return acc;
+	}, []);
+
+	const embed = createEmbed(params.author, params.client)
+		.setTitle(DEFAULT_ERROR_TITLE);
+	if ((missingItems || []).length > 0) {
+		embed.setDescription(
+			`The following items are required to harvest souls!\n\n${missingItems
+				?.map((i) => `**__${titleCase(i)}__**`)
+				.join("\n")}`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	if (!souls || !seals) return;
+	const reqSouls = validGuild.guild.guild_level * 3;
+	if (souls.quantity < reqSouls) {
+		embed.setDescription(
+			`You do not have sufficient souls to evolve your guild __${souls.quantity}/${reqSouls}__ souls`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	const reqSeals = Math.ceil(reqSouls / 5);
+	if (seals.quantity < reqSeals) {
+		embed.setDescription(
+			`You do not have sufficient Dark Seal to harvest souls __${seals.quantity}/${reqSeals}__ seals`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	if (options?.isConfirm) {
+		souls.quantity = souls.quantity - reqSouls;
+		seals.quantity = seals.quantity - reqSeals;
+		if (souls.quantity <= 0) {
+			await delGuildItems({
+				guild_id: validGuild.guild.id,
+				id: souls.id,
+			});
+		} else {
+			await updateGuildItem({ id: souls.id }, { quantity: souls.quantity });
+		}
+		if (seals.quantity <= 0) {
+			await delGuildItems({
+				guild_id: validGuild.guild.id,
+				id: seals.id,
+			});
+		} else {
+			await updateGuildItem({ id: seals.id }, { quantity: seals.quantity });
+		}
+		validGuild.guild.guild_level = validGuild.guild.guild_level + 1;
+		if (validGuild.guild.guild_level % 8 === 0) {
+			validGuild.guild.max_members = validGuild.guild.max_members + 1;
+		}
+		const stats = validGuild.guild.guild_stats;
+		if (!stats) return;
+		Object.keys(stats).forEach((stat) => {
+			// inc stats by .15 rather than 30% every 8th level
+			const incVal = stats[stat as keyof GuildStatProps] + 0.15;
+			Object.assign(stats, { [stat]: Math.round((incVal + Number.EPSILON) * 100) / 100, });
+		});
+		await updateGuild(
+			{ id: validGuild.guild.id },
+			{
+				guild_stats: stats,
+				guild_level: validGuild.guild.guild_level,
+				max_members: validGuild.guild.max_members,
+			}
+		);
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`Congratulations Summoner! you have successfully consumed __${reqSouls}__ souls ` +
+          `and __${reqSeals}__ seals and increased your guild level to ` +
+          `**level __${validGuild.guild.guild_level}__** ` +
+          "as well as increasing its bonus stats!"
+			);
+
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	return {
+		reqSeals,
+		reqSouls,
+	};
+}
+
+export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
+	try {
+		const author = options.author;
+		const user = await getRPGUser({ user_tag: author.id });
+		if (!user) return;
+		let embed = createEmbed(author, client);
+		let sentMessage: Message;
+		const params = {
+			channel: context.channel,
+			author,
+			client,
+			extras: {
+				context,
+				user_id: user.id,
+			},
+		};
+		const buttons = await confirmationInteraction(
+			context.channel,
+			author.id,
+			params,
+			validateAndUpgradeGuild,
+			(data, opts) => {
+				if (data) {
+					embed = createConfirmationEmbed(author, client).setDescription(
+						`Are you sure you want to consume __${data.reqSouls}__ Souls ` +
+                        `and ${data.reqSeals} Dark Seals to evolve the bonus stats of your guild?`
+					);
+				}
+				if (opts?.isDelete) {
+					sentMessage.delete();
+				}
+			}
+		);
+		if (!buttons) return;
+
+		embed.setButtons(buttons);
+		context.channel?.sendMessage(embed).then((msg) => {
+			sentMessage = msg;
+		});
+		return;
+	} catch (err) {
+		loggers.error(
+			"modules.commands.rpg.guild.upgrades.upgradeGuild(): something went wrong",
+			err
+		);
+		return;
+	}
+};

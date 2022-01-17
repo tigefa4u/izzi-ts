@@ -12,13 +12,13 @@ export type GuildProps = {
   prefix: string;
   gold: number;
   points: number;
-  is_active?: boolean;
-  is_deleted?: boolean;
-  is_banned?: boolean;
+  guild_level: number;
+  max_members: number;
+  is_active: boolean;
+  is_deleted: boolean;
+  is_banned: boolean;
   ban_reason?: string;
   metadata?: string; // guild previous stats (on delete)
-  guild_level?: number;
-  max_members?: number;
   banner?: string;
 };
 
@@ -40,3 +40,5 @@ export type GuildMemberAndItemCountProps = {
   type: "items" | "members";
   count: number;
 };
+
+export type GuildStatProps = GuildProps["guild_stats"];

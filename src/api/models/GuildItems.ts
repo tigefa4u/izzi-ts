@@ -36,7 +36,8 @@ export const del = async (params: GuildItemParams) => {
 
 export const get = async (params: GuildItemParams): Promise<GuildItemResponseProps[]> => {
 	const db = connection;
-	let query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description`))
+	let query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description,
+	${guildMarkets}.filepath, ${guildMarkets}.price,`))
 		.from(tableName)
 		.where(`${tableName}.guild_id`, params.guild_id)
 		.innerJoin(guildMarkets, `${tableName}.item_id`, `${guildMarkets}.id`);
@@ -56,7 +57,8 @@ export const getAll = async (params: Omit<GuildItemParams, "id">, pagination: Pa
 	offset: 0
 }): Promise<GuildItemResponseProps[]> => {
 	const db = connection;
-	const query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description,
+	const query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description, 
+		${guildMarkets}.filepath, ${guildMarkets}.price,
 		count(*) over() as total_count`))
 		.from(tableName)
 		.innerJoin(guildMarkets, `${tableName}.item_id`, `${guildMarkets}.id`)

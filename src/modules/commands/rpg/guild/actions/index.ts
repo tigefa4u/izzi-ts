@@ -47,6 +47,10 @@ export const addGuild = async ({ context, args, options, client }: BaseProps) =>
 				points: 0,
 				prefix: BOT_PREFIX,
 				is_active: true,
+				max_members: 15,
+				guild_level: 0,
+				is_banned: false,
+				is_deleted: false
 			});
 			return;
 		}

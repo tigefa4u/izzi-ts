@@ -8,7 +8,7 @@ export type GuildItemProps = {
 };
 
 export type GuildItemResponseProps = GuildItemProps &
-  Pick<GuildMarketProps, "description" | "name">;
+  Pick<GuildMarketProps, "description" | "name" | "price" | "filepath">;
 
 export type GuildItemParams = {
   guild_id: number;

@@ -19,6 +19,8 @@ import { guildItems } from "./items";
 import { vdemote, vpromote } from "./promotions";
 import { itemMarket } from "./shop";
 import { subcommands } from "./subcommands";
+import { upgradeGuild } from "./upgrades";
+import { upgradeCard } from "./upgrades/card";
 
 export const guild = async ({ context, client, args, options }: BaseProps) => {
 	try {
@@ -57,6 +59,10 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 			itemMarket(params);
 		} else if (subcommand === "donate") {
 			donateToGuild(params);
+		} else if (subcommand === "upgrade") {
+			upgradeGuild(params);
+		} else if (subcommand === "souls") {
+			upgradeCard(params);
 		}
 		return;
 	} catch (err) {
