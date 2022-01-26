@@ -1,3 +1,7 @@
+import { BanProps } from "@customTypes/bans";
+import connection from "db";
+
+const tableName = "bans";
 export const transformation =  {
 	id: {
 		type: "number",
@@ -12,7 +16,11 @@ export const transformation =  {
 		columnName: "ban_reason"
 	},
 	banLength: {
-		type: "string",
+		type: "number",
 		columnName: "ban_length"
 	}
+};
+
+export const get = async (params: { user_tag: string }): Promise<BanProps[]> => {
+	return await connection(tableName).where(params);
 };

@@ -4,6 +4,10 @@ import commandCategory from "commandCategories/index";
 import { getCommand } from "api/controllers/CommandsController";
 import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
 import { sanitizeArgs } from "helpers";
+import { getRPGUser } from "api/controllers/UsersController";
+import { createEmbed } from "commons/embeds";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { checkUserBanned } from "../checkUserBanned";
 
 
 const handleMessage = async (client: Client, context: Message) => {
@@ -22,6 +26,8 @@ const handleMessage = async (client: Client, context: Message) => {
 		args = content.split(/\s+/);
 		args.shift();
 	}
+	const isValid = await checkUserBanned(context, client, context.author, command.name);
+	if (!isValid) return;
 	commandCategory[command?.type as keyof CommandCategoryProps]({
 		client,
 		context,

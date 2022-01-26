@@ -12,13 +12,13 @@ export type BaseProps = {
 }
 
 export type CommandMapProps = {
-	collection: (params: BaseProps) => void; // TODO
+	// collection: (params: BaseProps) => void; // TODO
     ping: (params: BaseProps) => void;
     invite: (params: BaseProps) => void;
     cinfo: (params: BaseProps) => void;
     help: (params: BaseProps) => void;
     bet: (params: BaseProps) => void;
-    profile: (params: BaseProps) => void;
+    // profile: (params: BaseProps) => void; // TODO
     mana: (params: BaseProps) => void;
     exp: (params: BaseProps) => void;
     level: (params: BaseProps) => void;

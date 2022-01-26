@@ -38,7 +38,7 @@ const commandMap: CommandMapProps = {
 	cinfo: cinfo,
 	help: help,
 	bet: bet,
-	profile: profile, // TODO
+	// profile: profile, // TODO
 	start: start,
 	mana: mana,
 	points: points,
@@ -48,7 +48,7 @@ const commandMap: CommandMapProps = {
 	level: level,
 	orbs: orbs,
 	permits: permits,
-	collection: collection, // TODO
+	// collection: collection, // TODO
 	hourly: hourly,
 	daily: daily,
 	server: server,
