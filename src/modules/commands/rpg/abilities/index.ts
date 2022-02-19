@@ -15,7 +15,7 @@ import { fetchParamsFromArgs } from "utility/forParams";
 export const ability = async ({ context, client, args, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const filter = PAGE_FILTER;
 		const params = fetchParamsFromArgs(args);

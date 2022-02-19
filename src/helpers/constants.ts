@@ -1,6 +1,6 @@
 import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
 import emoji from "emojis/emoji";
-import { ElementTypeColorProps, StarLenProps } from "./helperTypes";
+import { ElementTypeColorProps, RanksMetaProps } from "./helperTypes";
 
 export const BASE_XP = 10;
 
@@ -16,37 +16,50 @@ export const STARTER_GOLD = 0;
 export const DEFAULT_ERROR_TITLE = "Error :no_entry:";
 export const DEFAULT_SUCCESS_TITLE = `Success ${emoji.celebration}`;
 
-export const starlen: StarLenProps = {
+export const ranksMeta: RanksMetaProps = {
 	silver: {
 		size: 1,
+		rank_id: 1,
 		color: "#b6c7be",
 	},
 	gold: {
 		size: 2,
+		rank_id: 2,
 		color: "#c89e50",
 	},
 	platinum: {
 		size: 3,
+		rank_id: 3,
 		color: "#298077",
 	},
 	diamond: {
 		size: 4,
+		rank_id: 4,
 		color: "#73c0d3",
 	},
 	legend: {
 		size: 5,
+		rank_id: 5,
 		color: "#c11b17",
 	},
 	divine: {
 		size: 6,
+		rank_id: 6,
 		color: "#c35817",
 	},
 	immortal: {
 		size: 7,
+		rank_id: 7,
 		color: "#b641c4",
 	},
-	exclusive: { size: 8, },
-	ultimate: { size: 9, },
+	exclusive: {
+		size: 8,
+		rank_id: 8, 
+	},
+	ultimate: {
+		size: 9,
+		rank_id: 9,
+	},
 };
 
 export const elementTypeColors: ElementTypeColorProps = {
@@ -139,6 +152,7 @@ export const GUILD_BASE_STATS = {
 	dexterity: 0.32,
 	intelligence: 0.25,
 	strength: 0.45,
+	// itemstats: {}
 };
 
 export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
@@ -152,3 +166,34 @@ export const GUILD_ITEM_PROPERTIES = {
 	SOUL_ID: "souls",
 	SEAL_ID: "seals"
 };
+
+export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+	year: "2-digit",
+	month: "short",
+	day: "numeric"
+};
+
+export const MANA_PER_BATTLE = 5;
+
+export const CANVAS_DEFAULTS = {
+	width: 2250,
+	height: 2000,
+	cardWidth: 750,
+	cardHeight: 1000,
+	iconWidth: 64,
+	iconHeight: 64
+};
+
+export const EMBED_DEFAULT_COLOR = 13148872;
+
+export const BATTLE_ROUNDS_COUNT = 15;
+
+export const REQUIRED_TRADE_LEVEL = 8;
+
+export const MAX_TEAMS_ALLOWED = 5;
+
+export const SPBT_REQUIRED_MANA = 2;
+
+export const MAX_RAID_LOBBY_MEMBERS = 6;
+export const PERMIT_PER_RAID = 2;
+export const MAX_ENERGY_PER_RAID = 25;

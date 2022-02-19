@@ -18,3 +18,14 @@ export const getPowerLevelByRank = async (params: { rank: string }): Promise<PLP
 		return;
 	}
 };
+
+export const getPowerLevelByRankId = async (params: { rank_id: number }): Promise<PLProps | undefined> => {
+	try {
+		let res: PLProps[] | PLProps = await Ranks.get(params);
+		res = res[0];
+		return res;
+	} catch (err) {
+		loggers.error("api.controllers.PowerLevelController.getPowerLevelByRank(): something went wrong", err);
+		return;
+	}
+};

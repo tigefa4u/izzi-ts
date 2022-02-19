@@ -4,17 +4,24 @@ import commandCategory from "commandCategories/index";
 import { getCommand } from "api/controllers/CommandsController";
 import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
 import { sanitizeArgs } from "helpers";
-import { getRPGUser } from "api/controllers/UsersController";
-import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import { checkUserBanned } from "../checkUserBanned";
-
+import { dropCollectables } from "modules/collectables";
 
 const handleMessage = async (client: Client, context: Message) => {
 	const { content } = context;
 	let args = content.toLowerCase().split(/\s+/);
 	const botId = `<@!${DISCORD_CLIENT_ID}>`;
-	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) return;
+	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) {
+		if (context.guild?.id) {
+			dropCollectables({
+				client,
+				author: context.author,
+				guild: context.guild,
+				channel: context.channel
+			});
+		}
+		return;
+	}
 	const command = await getCommand(args[1]);
 	if (!command) return;
 	args.shift();
@@ -22,7 +29,7 @@ const handleMessage = async (client: Client, context: Message) => {
 		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
 	)
 		return;
-	if (command.name === "guild") {
+	if (command.name === "guild" || command.name === "team") {
 		args = content.split(/\s+/);
 		args.shift();
 	}

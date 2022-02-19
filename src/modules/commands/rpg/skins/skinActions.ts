@@ -107,8 +107,7 @@ export const choose = async (params: {
 			.setTitle("Error :no_entry:")
 			.setThumbnail(params.client.user?.displayAvatarURL() || "");
 		if (skinArr) {
-			// skinArr = JSON.parse(skinArr);
-			skin = skinArr.filter((c: any) => c.id === Number(id))[0];
+			skin = skinArr.filter((c) => c.id === Number(id))[0];
 			if (skin) {
 				embed.setDescription(`Summoner **${params.author.username}**, this skin is already in use`);
 				params.channel?.sendMessage(embed);
@@ -132,7 +131,7 @@ export const choose = async (params: {
 				spbtSkin = skin;
 			}
 		}
-		const index = skinArr.findIndex((i: any) => i.character_id === skin?.character_id);
+		const index = skinArr.findIndex((i) => i.character_id === skin?.character_id);
 		if (index >= 0) {
 			skinArr[index] = skin;
 		} else {
@@ -143,7 +142,7 @@ export const choose = async (params: {
 			if (!spbtSkinArr) {
 				spbtSkinArr = [];
 			}
-			const idx = spbtSkinArr.findIndex((x: any) => x.character_id === spbtSkin.character_id);
+			const idx = spbtSkinArr.findIndex((x) => x.character_id === spbtSkin.character_id);
 			if (idx >= 0) {
 				spbtSkinArr[idx] = spbtSkin;
 			} else {
@@ -152,7 +151,7 @@ export const choose = async (params: {
 			setSkinArr("spbt-skins", spbtSkinArr);
 		}
 		setSkinArr(params.author.id, skinArr);
-		// await redisClient.set(`selected-skin-${author.id}`, JSON.stringify(skinArr));
+
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Successfully selected Skin Art ${titleCase(skin.name)}`);
 		params.channel?.sendMessage(embed);

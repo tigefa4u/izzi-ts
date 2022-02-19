@@ -6,9 +6,9 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
-import { delay, prepareAbilityDescription } from "helpers";
+import { prepareStatsDesc } from "helpers";
 import { getFloorsByCharacterId } from "api/controllers/StagesController";
-import { Client, MessageEmbed } from "discord.js";
+import { MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
@@ -18,7 +18,6 @@ async function prepareCinfoDetails(
 	characterInfo: CharacterCardProps,
 	location?: NormalizeFloorProps,
 ) {
-	const abilityEmoji = emojiMap(characterInfo?.abilityname);
 	const elementTypeEmoji = emojiMap(characterInfo?.type);
 	const cardCanvas = await createSingleCanvas(characterInfo, true);
 	if (!cardCanvas) throw "Unable to create canvas";
@@ -26,6 +25,12 @@ async function prepareCinfoDetails(
 		cardCanvas.createJPEGStream(),
 		"cinfo.jpg"
 	);
+	const statsPrep = {
+		...characterInfo.stats,
+		abilityname: characterInfo.abilityname,
+		abilitydescription: characterInfo.abilitydescription,
+		is_passive: characterInfo.is_passive
+	};
 	embed
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
@@ -45,15 +50,7 @@ async function prepareCinfoDetails(
 					: characterInfo.series.includes("event")
 						? "Event"
 						: "None"
-			}\n**RANK:** Silver\n**ATK:** ${characterInfo.stats.vitality}\n**HP:** ${
-				characterInfo.stats.strength
-			}\n**DEF:** ${characterInfo.stats.defense}\n**SPD:** ${
-				characterInfo.stats.dexterity
-			}\n**INT:** ${characterInfo.stats.intelligence}\n\n**Ability**\n${
-				abilityEmoji ? abilityEmoji : ""
-			} **${titleCase(characterInfo.abilityname)} ${
-				characterInfo.is_passive ? "[PSV]" : ""
-			}:** ${prepareAbilityDescription(characterInfo.abilitydescription)}`
+			}\n**RANK:** Silver\n${prepareStatsDesc(statsPrep)}`
 		)
 		.setImage("attachment://cinfo.jpg")
 		.attachFiles([ attachment ]);

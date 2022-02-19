@@ -31,8 +31,8 @@ async function processConfirmationAndGetOrbs(
 	const user = await getRPGUser({ user_tag: author.id });
 	if (!user) return;
 	user.orbs = user.orbs + resolvableOrbs;
-	await delSkinCollection({ id });
-	await updateRPGUser({ user_tag: user.user_tag }, { orbs: user.orbs });
+	await Promise.all([ delSkinCollection({ id }), 
+		updateRPGUser({ user_tag: user.user_tag }, { orbs: user.orbs }) ]);
 
 	const skinArr = getSkinArr(author.id);
 	if (skinArr) {

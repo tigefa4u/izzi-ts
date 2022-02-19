@@ -122,6 +122,7 @@ export type EmojiProps = {
 	feather: "<:feather:859771547279687680>",
 	skull: "<:skull:859771546229932042>",
 	shield: "<:shield:859771545974341633>",
+	shield2: ":shield:",
 	gem: "<:style4:872539468576489482>",
 	dreameater: " <:dreameater:890562182440427591>",
 	staffofmedana: "<:staffofmedana:890562183291887636>",
@@ -131,4 +132,18 @@ export type EmojiProps = {
 	heart: ":heart:",
 	dash: ":dash:",
 	radiobutton: ":radio_button:"
+	shoppingcart: ":shopping_cart:",
+	favorite: ":star2:"
+	moneybag: ":moneybag:",
+	guildic: ":card_index:",
+	expic: ":european_castle:",
+	manaic: ":droplet:",
+	marriageic: ":ring:",
+	dagger: ":dagger:",
+	permitsic: ":ticket:",
+	zoneic: ":map:",
+	hasmorespeed: ":small_red_triangle:",
+	angry: "💢",
+	tradeic :":mailbox_with_mail:",
+	renewaltaekwondo: "<:renewaltaekwondo:942164541775683676>"
 }

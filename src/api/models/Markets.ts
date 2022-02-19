@@ -131,8 +131,22 @@ export const getMarketCollection = async (params: {
 	return query;
 };
 
-export const del = async (params: { id: number }) => {
-	return await connection(tableName).where(params).del();
+export const del = async (params: { id?: number; collection_ids?: number | number[] }) => {
+	if (!params.id && !params.collection_ids) return;
+	const db = connection;
+	let query = db(tableName);
+
+	if (params.id) {
+		query = query.where(params);
+	} else if (params.collection_ids) {
+		if (typeof params.collection_ids === "number") {
+			query = query.where(`${tableName}.id`, params.collection_ids);
+		} else if (typeof params.collection_ids === "object") {
+			query = query.whereIn(`${tableName}.collection_id`, params.collection_ids);
+		}
+	}
+
+	return await query.del();
 };
 
 export const create = async (data: MarketCreateProps) => {

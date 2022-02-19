@@ -4,16 +4,22 @@ import { bet } from "modules/commands/basic/gamble";
 import { help, invite, ping } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
 import { ability } from "modules/commands/rpg/abilities";
+import { battle } from "modules/commands/rpg/adventure";
 import { cinfo } from "modules/commands/rpg/cardinfo";
 import { redirect } from "modules/commands/rpg/cardSpawn/redirect";
+import { cardCollection } from "modules/commands/rpg/collections";
+import { favorite } from "modules/commands/rpg/collections/favorite";
+import { getCardInfo } from "modules/commands/rpg/collections/info";
+import { selectCard } from "modules/commands/rpg/collections/select";
 import { compare } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
 import { consume } from "modules/commands/rpg/consumeOrbsToShards";
 import { crate } from "modules/commands/rpg/crates";
+import { evolveCard } from "modules/commands/rpg/evolution";
 import { guild } from "modules/commands/rpg/guild";
-import { collection } from "modules/commands/rpg/inventory";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
 import { itemshop } from "modules/commands/rpg/items/shop";
+import { equip, unEquip } from "modules/commands/rpg/items/useItems";
 import { leaderboard } from "modules/commands/rpg/leaderboard";
 import { market } from "modules/commands/rpg/market";
 import { divorce, propose } from "modules/commands/rpg/marriage";
@@ -25,9 +31,15 @@ import {
 	mana, exp, level, gold, shards, points, orbs, permits 
 } from "modules/commands/rpg/profile/profileInfo";
 import { start } from "modules/commands/rpg/profile/startJourney";
+import { updateIzziProfile } from "modules/commands/rpg/profile/update";
+import { raidActions } from "modules/commands/rpg/raids";
 import { give, hourly } from "modules/commands/rpg/resource";
+import { sacrificeCard } from "modules/commands/rpg/sacrifice";
 import { skins } from "modules/commands/rpg/skins";
 import { sort } from "modules/commands/rpg/sorting";
+import { spbt } from "modules/commands/rpg/spbt";
+import { team } from "modules/commands/rpg/team";
+import { trade } from "modules/commands/rpg/trades";
 import { dex } from "modules/commands/rpg/xendex";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
@@ -38,7 +50,7 @@ const commandMap: CommandMapProps = {
 	cinfo: cinfo,
 	help: help,
 	bet: bet,
-	// profile: profile, // TODO
+	profile: profile,
 	start: start,
 	mana: mana,
 	points: points,
@@ -48,7 +60,6 @@ const commandMap: CommandMapProps = {
 	level: level,
 	orbs: orbs,
 	permits: permits,
-	// collection: collection, // TODO
 	hourly: hourly,
 	daily: daily,
 	server: server,
@@ -63,7 +74,7 @@ const commandMap: CommandMapProps = {
 	floor: floor,
 	zone: zone,
 	packs: packs,
-	sort: sort,
+	// sort: sort,
 	compare: compare,
 	cards: cards,
 	status: status,
@@ -77,6 +88,20 @@ const commandMap: CommandMapProps = {
 	propose: propose,
 	crate: crate,
 	guild: guild,
+	collection: cardCollection,
+	info: getCardInfo,
+	select: selectCard,
+	equip: equip,
+	unequip: unEquip,
+	favorite: favorite,
+	battle: battle, // partial completion
+	trade: trade, // partial completion
+	sacrifice: sacrificeCard,
+	evolution: evolveCard,
+	team: team,
+	update: updateIzziProfile,
+	spbt: spbt,
+	raid: raidActions
 };
 
 export default commandMap;

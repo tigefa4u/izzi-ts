@@ -18,7 +18,7 @@ export const removeCardFromMarket = async ({
 	try {
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const marketCard = await validateMarketCard(
 			id,

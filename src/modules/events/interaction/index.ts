@@ -5,13 +5,13 @@ import { CommandCategoryProps } from "@customTypes/command";
 import { checkUserBanned } from "../checkUserBanned";
 import { sanitizeArgs } from "helpers";
 
-const handleInteraction = async (client: Client, context: CommandInteraction) => {
-	await context.deferReply({ ephemeral: false });
+const handleCommandInteraction = async (client: Client, context: CommandInteraction) => {
+	await context.deferReply({ ephemeral: true });
 	const options = context.options;
 	const content = options.getString("options");
 	let args = [ "iz", ...(content || "").split(/\s+/) ];
 	const command = await getCommand(context.commandName);
-	context.editReply({ content: "Command used" });
+	await context.editReply({ content: "." });
 	if (!command) return;
 	if (
 		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
@@ -32,4 +32,4 @@ const handleInteraction = async (client: Client, context: CommandInteraction) =>
 	return;
 };
 
-export default handleInteraction;
+export default handleCommandInteraction;

@@ -1,20 +1,20 @@
 import { CharacterCanvasProps } from "@customTypes/canvas";
 import { createCanvas, loadImage, Canvas } from "canvas";
 import loggers from "loggers";
-import { elementTypeColors, starlen } from "./constants";
+import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
 export const createSingleCanvas: (
   card: CharacterCanvasProps,
   isNotStar: boolean
 ) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
 	try {
-		const canvas = createCanvas(750, 1000);
+		const canvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
 		const ctx = canvas.getContext("2d");
 		// ctx.fillStyle = "#000000";
 		// ctx.fillRect(0, 0, canvas.width, canvas.height);
 		const image = await loadImage(card.filepath);
 		const border = await loadImage("./assets/images/border.png");
-		const borderCanvas = createCanvas(750, 1000);
+		const borderCanvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
@@ -38,12 +38,12 @@ export const createSingleCanvas: (
 			multiplier = 25;
 		}
 		if (!isNotStar) {
-			for (let i = 0; i < starlen[card.rank].size; i++) {
+			for (let i = 0; i < ranksMeta[card.rank].size; i++) {
 				ctx.drawImage(
 					starCanvas,
 					i * num +
             canvas.width / 2 -
-            multiplier * (starlen[card.rank].size + 1),
+            multiplier * (ranksMeta[card.rank].size + 1),
 					canvas.height - 150,
 					num,
 					num

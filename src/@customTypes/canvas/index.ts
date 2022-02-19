@@ -1,5 +1,4 @@
 import { CardProps } from "@customTypes/cards";
-import { CharacterCardProps, } from "@customTypes/characters";
 
 type T = {
   difficultyIcon?: string;

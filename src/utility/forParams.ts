@@ -24,6 +24,18 @@ const argMap = [
 	{
 		name: "category",
 		alias: [ "-c", "category" ]
+	},
+	{
+		name: "is_favorite",
+		alias: [ "-fav" ]
+	},
+	{
+		name: "is_on_market",
+		alias: [ "-mk" ]
+	},
+	{
+		name: "difficulty",
+		alias: [ "-d", "-difficulty" ]
 	}
 ];
 

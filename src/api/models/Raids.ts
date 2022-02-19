@@ -1,4 +1,16 @@
+import { FilterProps } from "@customTypes";
+import { PaginationProps } from "@customTypes/pagination";
+import {
+	RaidCreateProps,
+	RaidProps,
+	RaidUpdateProps,
+} from "@customTypes/raids";
+import Cache from "cache";
+import connection from "db";
+
 const tableName = "raids";
+const users = "users";
+
 export const transformation = {
 	id: {
 		type: "integer",
@@ -17,11 +29,26 @@ export const transformation = {
 		columnName: "character_level",
 		type: "integer",
 	},
-	lobby: { type: "json", },
-	loot: { type: "json", },
+	lobby: { type: "json" },
+	loot: { type: "json" },
+	stats: { type: "json" },
+	raidBoss: {
+		type: "json",
+		columnName: "raid_boss",
+	},
 	isStart: {
 		type: "boolean",
 		columnName: "is_start",
+		default: false,
+	},
+	isPrivate: {
+		type: "boolean",
+		columnName: "is_private",
+		default: false,
+	},
+	isEvent: {
+		type: "boolean",
+		columnName: "is_event",
 		default: false,
 	},
 	createdAt: {
@@ -32,4 +59,120 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+};
+export const create = async (data: RaidCreateProps): Promise<RaidProps> => {
+	return await connection(tableName)
+		.insert(data, "*")
+		.then((res) => res[0]);
+};
+
+export const get = async (params: { id: number }): Promise<RaidProps[]> => {
+	return await connection.select("*").from(tableName).where(params);
+};
+
+export const update = async (params: { id: number }, data: RaidUpdateProps) => {
+	return await connection(tableName).where({ id: params.id }).update(data);
+};
+
+export const updateLobby = async ({
+	raid_id,
+	index,
+	data,
+}: {
+  raid_id: number;
+  index: number;
+  data: RaidUpdateProps;
+}) => {
+	return connection(tableName)
+		.update({
+			lobby: connection.raw(
+				`jsonb_set(lobby, '{${index}}', '${JSON.stringify(data)}')`
+			),
+		})
+		.where({ id: raid_id });
+};
+
+export const destroy = async (params: { id: number }) => {
+	return await connection(tableName).where({ id: params.id }).del();
+};
+
+export const getAll = async (): Promise<RaidProps[]> => {
+	const raidDisabled = await Cache.get("disable-raids");
+	return await connection(tableName).where({ is_event: raidDisabled ? true : false, });
+};
+
+export const getRaidLobby = async (params: { user_id: number }): Promise<RaidProps[]> => {
+	const db = connection;
+	let query;
+	const raidalias = "raidalias";
+	query = db
+		.select(
+			db.raw(
+				`jsonb_array_elements(${tableName}.lobby) as json_array_elements, ${tableName}.*`
+			)
+		)
+		.from(tableName)
+		.as(raidalias);
+
+	query = await db.raw(`select ${raidalias}.* from (${query}) as ${raidalias} left join ${users} on 
+		(${raidalias}.json_array_elements ->> 'user_id')::int = ${users}.id where ${users}.id = ${params.user_id}`)
+		.then((res) => res.rows);
+
+	return query;
+};
+
+export const getRaids = (
+	filters: FilterProps,
+	pagination: PaginationProps = {
+		limit: 10,
+		offset: 0,
+	}
+): Promise<RaidProps[]> => {
+	const db = connection;
+	const raidAlias = "raidalias";
+	let queryStr = `${tableName}.*`;
+	if (Object.keys(filters).length > 0) {
+		queryStr = `distinct on (${tableName}.id) json_array_elements(${tableName}.raid_boss), ${tableName}.*`;
+	}
+
+	let query = db.select(db.raw(queryStr)).from(tableName);
+
+	query = query
+		.where(`${tableName}.is_start`, false)
+		.where(`${tableName}.is_private`, false)
+		.where(`${tableName}.is_event`, filters.isEvent ? filters.isEvent : false)
+		.as(raidAlias);
+
+	let aliasString = raidAlias;
+	Object.keys(filters).forEach(async (key) => {
+		if (
+			![ "name", "rank", "type", "difficulty" ].includes(key))
+			return;
+
+		const item = filters[key as keyof FilterProps];
+		if (typeof item !== "object") return;
+		const newalias = aliasString + "_" + key;
+		query = db
+			.select(db.raw(`${aliasString}.*`))
+			.from(query)
+			.whereRaw(
+				`${
+					key === "difficulty"
+						? `${aliasString}.stats::json`
+						: `${aliasString}.json_array_elements`
+				} ->> '${key}' similar to '(${item
+					?.map((i) => i)
+					.join("|")})%'`
+			)
+			.as(newalias);
+		aliasString = newalias;
+	});
+
+	query = db
+		.select(db.raw(`${aliasString}.*, count(*) over() as total_count`))
+		.from(query);
+
+	query = query.limit(pagination.limit).offset(pagination.offset);
+
+	return query;
 };

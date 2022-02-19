@@ -23,7 +23,12 @@ import {
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
 
-export const addGuild = async ({ context, args, options, client }: BaseProps) => {
+export const addGuild = async ({
+	context,
+	args,
+	options,
+	client,
+}: BaseProps) => {
 	try {
 		if (!context.guild || !OWNER_DISCORDID) return;
 		const isAdmin = await getMemberPermissions(context, options.author.id).then(
@@ -50,11 +55,13 @@ export const addGuild = async ({ context, args, options, client }: BaseProps) =>
 				max_members: 15,
 				guild_level: 0,
 				is_banned: false,
-				is_deleted: false
+				is_deleted: false,
 			});
 			return;
 		}
-		const embed = createEmbed(options.author, client).setTitle(DEFAULT_ERROR_TITLE);
+		const embed = createEmbed(options.author, client).setTitle(
+			DEFAULT_ERROR_TITLE
+		);
 		if (guildExist.name) {
 			embed.setDescription("A Guild already exists on this server");
 			context.channel?.sendMessage(embed);
@@ -81,33 +88,38 @@ export const addGuild = async ({ context, args, options, client }: BaseProps) =>
 		const initialDonation = 100000;
 		user.gold = user.gold - GUILD_CREATION_COST;
 		owner.gold = owner.gold + initialDonation;
-		await updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold });
-		await updateRPGUser({ user_tag: owner.user_tag }, { gold: owner.gold });
-		await updateGuild(
-			{ id: guildExist.id },
-			{
-				gold: initialDonation,
-				guild_stats: GUILD_BASE_STATS,
-				guild_level: 1,
-				max_members: 15,
-				name,
-			}
-		);
-		await createGuildMember({
-			guild_id: guildExist.id,
-			user_id: user.id,
-			is_leader: true,
-			donation: initialDonation,
-			max_donation: initialDonation,
-			is_vice_leader: false,
-		});
+
+		const promises = [
+			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
+			updateRPGUser({ user_tag: owner.user_tag }, { gold: owner.gold }),
+			updateGuild(
+				{ id: guildExist.id },
+				{
+					gold: initialDonation,
+					guild_stats: GUILD_BASE_STATS,
+					guild_level: 1,
+					max_members: 15,
+					name,
+				}
+			),
+			createGuildMember({
+				guild_id: guildExist.id,
+				user_id: user.id,
+				is_leader: true,
+				donation: initialDonation,
+				max_donation: initialDonation,
+				is_vice_leader: false,
+			}),
+		];
+
+		await Promise.all(promises);
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				"Congratulations! You have successfully created your guild, " +
-                "you can now invite members into your guild using " +
-                "``guild invite <@user>``. " +
-                `Your guild has also been awarded __${initialDonation}__ Gold ${emoji.gold}`
+          "you can now invite members into your guild using " +
+          "``guild invite <@user>``. " +
+          `Your guild has also been awarded __${initialDonation}__ Gold ${emoji.gold}`
 			);
 
 		context.channel?.sendMessage(embed);
@@ -134,7 +146,10 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 		}
 		const name = args.join(" ");
 		if (!name || name.length > 20) return;
-		const user = await getRPGUser({ user_tag: options.author.id });
+		const user = await getRPGUser(
+			{ user_tag: options.author.id },
+			{ cached: true }
+		);
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,
@@ -142,11 +157,13 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 			params: [ "is_leader", "is_vice_leader" ],
 			isOriginServer: true,
 			isAdmin: false,
-			extras: { user_id: user.id }
+			extras: { user_id: user.id },
 		});
 		if (!validGuild) return;
 		await updateGuild({ id: validGuild.guild.id }, { name });
-		context.channel?.sendMessage(`Successfully rename **${validGuild.guild.name}** to **__${name}__**`);
+		context.channel?.sendMessage(
+			`Successfully rename **${validGuild.guild.name}** to **__${name}__**`
+		);
 		return;
 	} catch (err) {
 		loggers.error(
@@ -157,15 +174,22 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 	}
 };
 
-export const setBanner = async ({ context, client, args, options }: BaseProps) => {
+export const setBanner = async ({
+	context,
+	client,
+	args,
+	options,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		const url = args.shift();
 		if (!url || !url.startsWith("https") || url.length > 225) {
-			context.channel?.sendMessage("Invalid url provided (urls must start with ``https://``)");
+			context.channel?.sendMessage(
+				"Invalid url provided (urls must start with ``https://``)"
+			);
 			return;
 		}
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,
@@ -173,16 +197,17 @@ export const setBanner = async ({ context, client, args, options }: BaseProps) =
 			params: [ "is_leader", "is_vice_leader" ],
 			isOriginServer: true,
 			isAdmin: true,
-			extras: { user_id: user.id }
+			extras: { user_id: user.id },
 		});
 		if (!validGuild) return;
 		await updateGuild({ id: validGuild.guild.id }, { banner: url });
-		const thumbnail = context.guild?.iconURL() || client.user?.displayAvatarURL();
+		const thumbnail =
+      context.guild?.iconURL() || client.user?.displayAvatarURL();
 		const embed = createEmbed()
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setAuthor({
 				name: author.username,
-				iconURL: author.displayAvatarURL()
+				iconURL: author.displayAvatarURL(),
 			})
 			.setThumbnail(thumbnail || "")
 			.setDescription("Successfully set Clan Banner!");

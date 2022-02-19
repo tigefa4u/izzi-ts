@@ -1,3 +1,4 @@
+import { SkinProps } from "@customTypes/skins";
 import {
 	createDBTable, delFromDb, getFromDb, insertToDB, updateDb 
 } from "diskStorage/sqlite";
@@ -18,7 +19,7 @@ export const setSkinArr = <T>(tag: string, data: T[]) => {
 	}
 };
 
-export const getSkinArr = (tag: string): any => {
+export const getSkinArr = (tag: string): SkinProps[] | undefined => {
 	try {
 		const row = getFromDb(tableName, tag);
 		if (row) {

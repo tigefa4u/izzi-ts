@@ -47,6 +47,7 @@ async function handleNextFloor(params: {
 	const { user, fl } = params;
 
 	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
+	console.log({ fl });
 	if (
 		(user.floor == user.max_floor && fl == "n") ||
     parseInt(fl) > user.max_floor
@@ -67,7 +68,17 @@ async function handleNextFloor(params: {
 		location_id: user.ruin,
 		floor: user.floor,
 	});
-	if (!stage) return;
+	if (!stage) {
+		params.channel?.sendMessage(
+			`You have moved to Zone ${user.ruin} Floor ${user.floor}, but we were not able to show Arena information`
+		);
+		throw new Error(
+			"Unable to view floor for: location ID: " +
+        user.ruin +
+        " Floor: " +
+        user.floor
+		);
+	}
 	const stats = await prepareStageStats({
 		rank: stage.rank,
 		stageInfo: stage,
@@ -128,7 +139,7 @@ async function handleZoneFloors(params: {
 		description,
 		pageName,
 		list: [],
-		filepath: zone?.filepath
+		filepath: zone?.filepath,
 	});
 	return;
 }
@@ -144,7 +155,7 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 				user,
 				client,
 				author,
-				channel: context.channel 
+				channel: context.channel,
 			});
 			return;
 		}

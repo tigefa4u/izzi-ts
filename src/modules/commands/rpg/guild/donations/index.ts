@@ -4,7 +4,11 @@ import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, GUILD_MAX_DONATION } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	GUILD_MAX_DONATION,
+} from "helpers/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
 
@@ -39,7 +43,7 @@ export const donateToGuild = async ({
 			params: [],
 			isOriginServer: true,
 			isAdmin: false,
-			extras: { user_id: user.id }
+			extras: { user_id: user.id },
 		});
 		if (!validGuild) return;
 		user.gold = user.gold - donation;
@@ -49,31 +53,45 @@ export const donateToGuild = async ({
 			orbPerDonation = Math.floor(donation / 1000);
 			user.orbs = user.orbs + orbPerDonation;
 		}
-		await updateRPGUser({ user_tag: user.user_tag }, {
-			gold: user.gold,
-			orbs: user.orbs 
-		});
-		await updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold });
 		validGuild.member.donation = validGuild.member.donation
 			? validGuild.member.donation + donation
 			: 0 + donation;
 		validGuild.member.max_donation = validGuild.member.max_donation
 			? validGuild.member.max_donation + donation
 			: 0 + donation;
-		await updateGuildMember({ id: validGuild.member.id }, {
-			donation: validGuild.member.donation,
-			max_donation: validGuild.member.max_donation,
-		});
-		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Summoner ${
-				author.username
-			}, you have successfully donated __${donation}__ Gold ${emoji.gold} to your guild **${
-				validGuild.guild.name
-			}**!${
-				orbPerDonation > 0
-					? ` You have also received __${orbPerDonation}__${emoji.blueorb} Blue Orbs`
-					: ""
-			}`);
+
+		const promises = [
+			updateRPGUser(
+				{ user_tag: user.user_tag },
+				{
+					gold: user.gold,
+					orbs: user.orbs,
+				}
+			),
+			updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold }),
+			updateGuildMember(
+				{ id: validGuild.member.id },
+				{
+					donation: validGuild.member.donation,
+					max_donation: validGuild.member.max_donation,
+				}
+			),
+		];
+
+		await Promise.all(promises);
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`Summoner ${
+					author.username
+				}, you have successfully donated __${donation}__ Gold ${
+					emoji.gold
+				} to your guild **${validGuild.guild.name}**!${
+					orbPerDonation > 0
+						? ` You have also received __${orbPerDonation}__${emoji.blueorb} Blue Orbs`
+						: ""
+				}`
+			);
 
 		context.channel?.sendMessage(embed);
 		return;

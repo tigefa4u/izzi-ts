@@ -63,7 +63,7 @@ export const get: (
 	let query = db
 		.select(
 			db.raw(`${tableName}.id, ${tableName}.name, ${tableName}.type, ${tableName}.stats,
-        ${abilities}.name as abilityname, ${abilities}.description as abilitydescription`)
+        ${abilities}.name as abilityname, ${abilities}.description as abilitydescription, ${abilities}.is_passive`)
 		)
 		.from(tableName)
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`);

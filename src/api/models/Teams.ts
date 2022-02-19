@@ -1,3 +1,6 @@
+import { TeamCreateProps, TeamProps, TeamUpdateData, TeamUpdateParams } from "@customTypes/teams";
+import connection from "db";
+
 const tableName = "teams";
 export const transformation = {
 	id: {
@@ -19,4 +22,20 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+};
+
+export const get = async (params: Partial<TeamUpdateParams>): Promise<TeamProps[]> => {
+	return await connection(tableName).where(params);
+};
+
+export const update = async (params: TeamUpdateParams, data: Partial<TeamUpdateData>) => {
+	return await connection(tableName).where(params).update(data);
+};
+
+export const create = async (data: TeamCreateProps) => {
+	return await connection(tableName).insert(data);
+};
+
+export const del = async (params: TeamUpdateParams) => {
+	return await connection(tableName).where(params).del();
 };

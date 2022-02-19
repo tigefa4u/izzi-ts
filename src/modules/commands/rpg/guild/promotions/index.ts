@@ -22,9 +22,9 @@ export const vpromote = async ({
 		const id = args.shift();
 		if (!id) return;
 		const mentionedId = getIdFromMentionedString(id);
-		const mentionedUser = await getRPGUser({ user_tag: mentionedId });
+		const mentionedUser = await getRPGUser({ user_tag: mentionedId }, { cached: true });
 		if (!mentionedUser) return;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,
@@ -85,7 +85,7 @@ export const vdemote = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,

@@ -1,4 +1,5 @@
 import { Client, CommandInteraction, Message, MessageButtonStyleResolvable } from "discord.js";
+import { CharacterStatProps } from "./characters";
 import { PagingMetadata } from "./pagination";
 
 export type IgnoreProps = "id" | "created_at" | "updated_at"
@@ -11,6 +12,11 @@ export type FilterProps = {
     series?: string;
     ids?: number[];
     category?: string;
+    rank_ids?: number | number[];
+    is_favorite?: boolean;
+    is_on_market?: boolean;
+    difficulty?: string[];
+    isEvent?: boolean;
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]
@@ -72,4 +78,34 @@ export type ConfirmationInteractionOptions = {
 
 export type EmbedEditOptions = {
     reattachOnEdit?: boolean;
+}
+
+export type OverallStatsProps = CharacterStatProps & {
+    vitalityBonus?: number;
+    defenseBonus?: number;
+    dexterityBonus?: number;
+    strengthBonus?: number;
+    intellegenceBonus?: number;
+    effective?: number;
+    originalHp?: number;
+}
+
+export type MapProps = {
+	[key: string]: string;
+}
+
+export type SafeParseQueryProps<Q, A> = {
+    query: {
+        [key in keyof Q]: Q[key];
+    };
+    attributes: {
+        [key in keyof A]: {
+            columnName?: string;
+            type: string;
+            default?: string | boolean | number;
+            ref?: string;
+            required?: boolean;
+            autoIncrement?: boolean;
+        };
+    };
 }

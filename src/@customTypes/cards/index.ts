@@ -13,6 +13,7 @@ export type CardProps = {
     is_event: boolean;
     has_event_ended: boolean;
     is_random: boolean;
+	character_level?: number;
 	created_at: string;
 	updated_at: string;
 }
