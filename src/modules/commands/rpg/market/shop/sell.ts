@@ -26,7 +26,7 @@ async function validateAndSellCard(
 	options?: ConfirmationInteractionOptions
 ) {
 	try {
-		const user = await getRPGUser({ user_tag: params.author.id });
+		const user = await getRPGUser({ user_tag: params.author.id }, { cached: true });
 		if (!user) return;
 		const collection = await getCollection({
 			is_item: false,

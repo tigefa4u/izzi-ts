@@ -9,11 +9,11 @@ export const transformation = {
 	},
 	name: {
 		type: "string",
-		required: true
+		required: true,
 	},
 	usage: { type: "string" },
-	alias: { type: Array, },
-	type: { type: "string", },
+	alias: { type: Array },
+	type: { type: "string" },
 	description: { type: "string" },
 	createdAt: {
 		type: "timestamp",
@@ -25,12 +25,17 @@ export const transformation = {
 	},
 };
 
-export const getAll: () => Promise<CommandProps[]> = async function() {
-	return await connection(tableName);
+export const getAll: () => Promise<CommandProps[]> = async function () {
+	return await connection(tableName).where({ is_deleted: false });
 };
-export const findOne: (key: string) => Promise<CommandProps> = async function(key) {
-	const result = await connection.raw(`select * from ${tableName} where alias::jsonb @> '"${key}"'`)
+export const findOne: (key: string) => Promise<CommandProps> = async function (
+	key
+) {
+	const result = await connection
+		.raw(
+			`select * from ${tableName} where alias::jsonb @> '"${key}"' and is_deleted = false`
+		)
 		.then((res) => res.rows);
- 
+
 	return result[0];
 };

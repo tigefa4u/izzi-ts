@@ -5,7 +5,6 @@ import {
 	ConfirmationInteractionParams,
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { UserProps } from "@customTypes/users";
 import {
 	createMarriage,
 	delMarriage,
@@ -15,7 +14,6 @@ import {
 	getRPGUser,
 	getUser,
 	updateRPGUser,
-	updateUser,
 } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -38,15 +36,19 @@ export const divorce = async ({ context, options }: BaseProps) => {
 		}
 		const marriage = await getMarriage({ user_tag: user.user_tag });
 		if (!marriage) {
-			await updateUser({ id: user.id }, { is_married: false });
+			await updateRPGUser({ user_tag: user.user_tag }, { is_married: false });
 			return;
 		}
-		await updateUser({ user_tag: user.user_tag }, { is_married: false });
-		await updateUser({ user_tag: marriage.married_to }, { is_married: false });
-		await delMarriage({ user_tag: user.user_tag });
 		const ttl = 60 * 60 * 23;
-		await setCooldown(user.user_tag, "marriage", ttl);
-		await setCooldown(marriage.married_to, "marriage", ttl);
+		const promises = [
+			updateRPGUser({ user_tag: user.user_tag }, { is_married: false }),
+			updateRPGUser({ user_tag: marriage.married_to }, { is_married: false }),
+			delMarriage({ user_tag: user.user_tag }),
+			setCooldown(user.user_tag, "marriage", ttl),
+			setCooldown(marriage.married_to, "marriage", ttl),
+		];
+
+		await Promise.all(promises);
 		context.reply({ content: "You are now single!" });
 		return;
 	} catch (err) {
@@ -84,7 +86,7 @@ async function validateAndProcessMarriage(
 	if (!context || !mentionId) return;
 	const mentionedUser = await getUser({
 		user_tag: mentionId,
-		is_banned: false 
+		is_banned: false,
 	});
 	if (!mentionedUser) return;
 	if (mentionedUser.is_married) {
@@ -112,20 +114,6 @@ async function validateAndProcessMarriage(
 		mentionedUser.gold = mentionedUser.gold + MARRIAGE_BONUS;
 		user.is_married = true;
 		mentionedUser.is_married = true;
-		await updateRPGUser(
-			{ user_tag: user.user_tag },
-			{
-				gold: user.gold,
-				is_married: user.is_married,
-			}
-		);
-		await updateRPGUser(
-			{ user_tag: mentionedUser.user_tag },
-			{
-				gold: mentionedUser.gold,
-				is_married: mentionedUser.is_married,
-			}
-		);
 		const marriageArr = [
 			{
 				user_tag: user.user_tag,
@@ -136,10 +124,26 @@ async function validateAndProcessMarriage(
 				married_to: user.user_tag,
 			},
 		];
-		await createMarriage(marriageArr);
+		await Promise.all([
+			updateRPGUser(
+				{ user_tag: user.user_tag },
+				{
+					gold: user.gold,
+					is_married: user.is_married,
+				}
+			),
+			updateRPGUser(
+				{ user_tag: mentionedUser.user_tag },
+				{
+					gold: mentionedUser.gold,
+					is_married: mentionedUser.is_married,
+				}
+			),
+			createMarriage(marriageArr),
+		]);
 		context.channel?.sendMessage(
 			`Yay! ${emoji.celebration}, You are not married to ${mentionedUser.username}` +
-            `\nYou both have received __${MARRIAGE_BONUS}__ ${emoji.gold}`
+        `\nYou both have received __${MARRIAGE_BONUS}__ ${emoji.gold}`
 		);
 	}
 	return mentionedUser;

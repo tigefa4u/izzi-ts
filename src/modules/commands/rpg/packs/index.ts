@@ -7,7 +7,12 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { createSingleCanvas } from "helpers/canvas";
-import { BASE_XP, DEFAULT_ERROR_TITLE, DEFAULT_PACK, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import {
+	BASE_XP,
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_PACK,
+	DEFAULT_SUCCESS_TITLE,
+} from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
@@ -38,7 +43,6 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		user.gold = user.gold - cost;
 		const card = await getRandomCard({ rank: DEFAULT_PACK.rank }, 1);
 		if (!card) return;
-		await updateRPGUser({ user_tag: author.id }, { gold: user.gold });
 		const cardDetails = card[0];
 		const collections = [] as CollectionCreateProps[];
 		Array(DEFAULT_PACK.cardPerPage * num)
@@ -55,7 +59,11 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 					is_item: false,
 				});
 			});
-		await createCollection(collections);
+
+		await Promise.all([
+			updateRPGUser({ user_tag: author.id }, { gold: user.gold }),
+			createCollection(collections),
+		]);
 		const canvas = await createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",

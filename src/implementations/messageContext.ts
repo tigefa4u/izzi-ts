@@ -1,10 +1,8 @@
 import {
-	Interaction,
 	Message, MessageActionRow, MessageAttachment, MessageEmbed, TextChannel 
 } from "discord.js";
 import { CustomEmbedProps } from "@customTypes/embed";
 import { EmbedEditOptions } from "@customTypes";
-import { BaseProps } from "@customTypes/command";
 
 type Props = TextChannel;
 type ResponseObjectProps = {
@@ -39,7 +37,9 @@ const sendMessage: (
   content: string | CustomEmbedProps
 ) => Promise<Message> = function (channel, content) {
 	const responseObj = getResponseObj(content);
-	return channel.send(responseObj);
+	return channel.send(responseObj).catch((err) => {
+		throw err;
+	});
 };
 
 export const editMessage: (
@@ -48,7 +48,9 @@ export const editMessage: (
 	options?: EmbedEditOptions
 ) => Promise<Message> = function (context, content, options) {
 	const responseObj = getResponseObj(content, options);
-	return context.edit(responseObj);
+	return context.edit(responseObj).catch((err) => {
+		throw err;
+	});
 };
 
 export default sendMessage;

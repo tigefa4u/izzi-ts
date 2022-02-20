@@ -132,7 +132,22 @@ const emoji: EmojiProps = {
 	crossedswords: ":crossed_swords:",
 	heart: ":heart:",
 	dash: ":dash:",
-	radiobutton: ":radio_button:"
+	radiobutton: ":radio_button:",
+	shoppingcart: ":shopping_cart:",
+	favorite: ":star2:",
+	moneybag: ":moneybag:",
+	guildic: ":card_index:",
+	expic: ":european_castle:",
+	manaic: ":droplet:",
+	marriageic: ":ring:",
+	dagger: ":dagger:",
+	permitsic: ":ticket:",
+	zoneic: ":map:",
+	shield2: ":shield:",
+	hasmorespeed: ":small_red_triangle:",
+	angry: "💢",
+	tradeic: ":mailbox_with_mail:",
+	renewaltaekwondo: "<:renewaltaekwondo:942164541775683676>"
 };
 
 export default emoji;

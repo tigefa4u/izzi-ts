@@ -30,7 +30,7 @@ export const transformation = {
 	},
 };
 
-export const get = async (params: { rank: string }): Promise<PLProps[]> => {
+export const get = async (params: { rank?: string; rank_id?: number }): Promise<PLProps[]> => {
 	const db = connection;
 	const query = await db
 		.select("*")

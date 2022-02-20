@@ -13,7 +13,7 @@ export const createSkinList = (
 			name: `\`\`#${i + 1 + (currentPage - 1) * perPage}\`\` ${titleCase(
 				skin.name
 			)} | ID: ${skin.id}`,
-			value: `Choose this skin by typing \`\`iz skin choose ${skin.id}\`\``,
+			value: `Choose this skin by typing \`\`skin choose ${skin.id}\`\``,
 		});
 	});
 

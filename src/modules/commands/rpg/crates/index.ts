@@ -76,8 +76,7 @@ async function openCrate({ context, client, args, options }: BaseProps) {
 				});
 			}
 		}
-		await delCrate({ id });
-		await createCollection(collectionBody);
+		await Promise.all([ delCrate({ id }), createCollection(collectionBody) ]);
 		const embed = createEmbed(author, client)
 			.setTitle(`${emoji.crateopen} CRATE OPENED`)
 			.setDescription(

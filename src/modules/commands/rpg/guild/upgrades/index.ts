@@ -164,7 +164,7 @@ async function validateAndUpgradeGuild(
 export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		let embed = createEmbed(author, client);
 		let sentMessage: Message;

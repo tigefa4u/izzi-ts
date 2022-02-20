@@ -5,7 +5,7 @@ import { Client, EmbedFieldData, Message } from "discord.js";
 import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { clientSidePagination } from "helpers/pagination";
-import cloneDeep from "lodash/cloneDeep";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 
 type P = {
@@ -21,7 +21,7 @@ async function paginatorFunc<G>(
 	options?: P
 ): Promise<ResponseWithPagination<G[]> | undefined> {
 	if (!options) return;
-	const array = cloneDeep(params.array);
+	const array = clone(params.array);
 	const result = clientSidePagination(
 		array,
 		filter.currentPage,

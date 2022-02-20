@@ -1,0 +1,289 @@
+import {
+	ConfirmationInteractionOptions,
+	ConfirmationInteractionParams,
+} from "@customTypes";
+import { CharacterCanvasProps } from "@customTypes/canvas";
+import { BaseProps } from "@customTypes/command";
+import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
+import {
+	deleteCollection,
+	updateCollection,
+} from "api/controllers/CollectionsController";
+import { delFromMarket } from "api/controllers/MarketsController";
+import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { createAttachment } from "commons/attachments";
+import { createEmbed } from "commons/embeds";
+import { Message } from "discord.js";
+import emoji from "emojis/emoji";
+import { createSingleCanvas } from "helpers/canvas";
+import { createConfirmationEmbed } from "helpers/confirmationEmbed";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import loggers from "loggers";
+import { titleCase } from "title-case";
+import { confirmationInteraction } from "utility/ButtonInteractions";
+
+type T = {
+  [key: number]: number;
+};
+const soulMap: T = {
+	5: 1.3,
+	6: 1.65,
+	7: 1.85,
+	8: 1.85,
+};
+
+function getReqSouls(rank_id: number): number {
+	let op = "ceil",
+		multiplier = 1.85;
+	if (rank_id <= 4) {
+		multiplier = 1.2;
+		op = "floor";
+	} else {
+		multiplier = soulMap[rank_id as keyof T];
+	}
+	if (op === "ceil") {
+		return Math.ceil(rank_id ** multiplier);
+	}
+	return Math.floor(rank_id ** multiplier);
+}
+
+async function verifyAndProcessSacrifice(
+	params: ConfirmationInteractionParams<{
+    id: number;
+    sacrificeId: number;
+  }>,
+	options?: ConfirmationInteractionOptions
+) {
+	const id = params.extras?.id;
+	const sacrificeId = params.extras?.sacrificeId;
+	if (!id || !sacrificeId) return;
+	const user = await getRPGUser({ user_tag: params.author.id });
+	if (!user) return;
+	const collections = await getCardInfoByRowNumber({
+		row_number: [ id, sacrificeId ],
+		user_id: user.id,
+		user_tag: params.author.id,
+	});
+	if (!collections || collections.length < 2) {
+		params.channel?.sendMessage(
+			"We could not find the card you were looking for!"
+		);
+		return;
+	}
+	const card = collections.filter((c) => Number(c.row_number) === id).pop();
+	const cardToConsume = collections
+		.filter((c) => Number(c.row_number) === sacrificeId)
+		.pop();
+	if (!card || !cardToConsume) {
+		params.channel?.sendMessage(
+			"We could not find the card you were looking for!"
+		);
+		return;
+	}
+	const embed = createEmbed(params.author, params.client).setTitle(
+		DEFAULT_ERROR_TITLE
+	);
+	if (card.rank_id >= 9) {
+		embed.setDescription(
+			"This card has already reached its max Evolution and cannot absorb souls!"
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	} else if (card.rank_id < 4) {
+		embed.setDescription("Your card must be of Diamond rank to absorb souls");
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	const reqSouls = getReqSouls(card.rank_id);
+	const cost = 1000;
+	if (card.souls >= reqSouls) {
+		embed.setDescription(
+			"Your card already has the souls required to be used in Evolution. " +
+        `Type \`\`evo ${id}\`\` to Evolve your card.`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	if (user.gold < cost) {
+		embed.setDescription("You do not have enough gold to sacrifice your card!");
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	if (card.rank_id !== cardToConsume.rank_id) {
+		embed.setDescription("Both copies must be of same rank and max level");
+		params.channel?.sendMessage(embed);
+		return;
+	}
+
+	const cardCanvas = {
+		...card,
+		is_event: false,
+		is_logo: false,
+		is_random: false,
+		copies: 1,
+		series: "",
+		shard_cost: 0,
+		has_event_ended: false,
+	} as CharacterCanvasProps;
+
+	if (options?.isConfirm) {
+		const powerLevel = await getPowerLevelByRank({ rank: card.rank });
+		if (!powerLevel) {
+			loggers.error("Power Level not found for rank: " + card.rank, {});
+			params.channel?.sendMessage("Card sacrifice exited unexpectedly.");
+			return;
+		}
+		if (
+			card.character_level < powerLevel.max_level ||
+      cardToConsume.character_level < powerLevel.max_level ||
+      card.character_id !== cardToConsume.character_id
+		) {
+			embed.setDescription(
+				`Both copies must be **Level __${powerLevel.max_level}__** before it can used in soul sacrifice!`
+			);
+			params.channel?.sendMessage(embed);
+			return;
+		}
+
+		const promises = [];
+		// delete card from market and team
+		delFromMarket({ collection_ids: cardToConsume.id }).then(async () => {
+			loggers.info(
+				"Sacrifice card: " +
+          JSON.stringify(cardToConsume) +
+          " Upgrade card: " +
+          JSON.stringify(card)
+			);
+			promises.push(
+				deleteCollection({ id: cardToConsume.id }),
+				updateCollection({ id: card.id }, { souls: reqSouls })
+			);
+		});
+		user.gold = user.gold - cost;
+		if (user.selected_card_id === cardToConsume.id) {
+			user.selected_card_id = null;
+		}
+		promises.push(updateRPGUser(
+			{ user_tag: user.user_tag },
+			{
+				gold: user.gold,
+				selected_card_id: user.selected_card_id,
+			}
+		));
+		await Promise.all(promises);
+		const canvas = await createSingleCanvas(cardCanvas, false);
+		if (!canvas) {
+			params.channel?.sendMessage(
+				"Your card has absorbed souls! " +
+          "but we were not able to display the information"
+			);
+			return;
+		}
+		const attachment = createAttachment(canvas.createJPEGStream(), "card.jpg");
+
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`Congratulations Summoner! Your __${titleCase(card.rank)}__ **Level ${
+					card.character_level
+				}** ${titleCase(
+					card.name
+				)} has successfully absorbed __${reqSouls}__ Souls!`
+			)
+			.attachFiles([ attachment ])
+			.setThumbnail("attachment://card.jpg");
+
+		params.channel?.sendMessage(embed);
+		return;
+	}
+
+	return {
+		card,
+		cardToConsume,
+		cardCanvas,
+		cost,
+		reqSouls,
+	};
+}
+
+export const sacrificeCard = async ({
+	context,
+	args,
+	options,
+	client,
+}: BaseProps) => {
+	try {
+		const author = options.author;
+		const id = Number(args.shift());
+		const sacrificeId = Number(args.shift());
+		if (!id || !sacrificeId) return;
+		const params = {
+			client,
+			author,
+			channel: context.channel,
+			extras: {
+				id,
+				sacrificeId,
+			},
+		};
+		let embed = createEmbed();
+		let sentMessage: Message;
+		const buttons = await confirmationInteraction(
+			context.channel,
+			author.id,
+			params,
+			verifyAndProcessSacrifice,
+			async (data, opts) => {
+				if (data) {
+					const canvas = await createSingleCanvas(data.cardCanvas, false);
+					if (!canvas) {
+						context.channel?.sendMessage(
+							"Unable to evolve this card, try again later"
+						);
+						throw new Error("Unable to create card canvas for confirmation");
+					}
+					const attachment = createAttachment(
+						canvas.createJPEGStream(),
+						"card.jpg"
+					);
+					embed = createConfirmationEmbed(author, client)
+						.setTitle(
+							`${emoji.crossedswords} SOUL SACRIFICE ${emoji.crossedswords}`
+						)
+						.setDescription(
+							`You are spending __${data.cost}__ Gold ${
+								emoji.gold
+							} and Consuming 1x __${titleCase(
+								data.cardToConsume.rank
+							)}__ **${titleCase(data.cardToConsume.name)}**, absorbing __${
+								data.reqSouls
+							}__ Souls to Evolve your __${titleCase(
+								data.card.rank
+							)}__ **Level ${data.card.character_level}** ${titleCase(
+								data.card.name
+							)}`
+						)
+						.setThumbnail("attachment://card.jpg")
+						.attachFiles([ attachment ]);
+				}
+				if (opts?.isDelete) {
+					sentMessage.delete();
+				}
+			}
+		);
+		if (!buttons) return;
+
+		embed.setButtons(buttons);
+		context.channel?.sendMessage(embed).then((msg) => {
+			sentMessage = msg;
+		});
+		return;
+	} catch (err) {
+		loggers.error(
+			"modules.commands.rpg.sacrifice.index.sacrificeCard(): something went wrong",
+			err
+		);
+		return;
+	}
+};

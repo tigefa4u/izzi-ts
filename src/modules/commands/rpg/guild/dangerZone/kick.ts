@@ -13,9 +13,9 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 		const id = args.shift();
 		if (!id) return;
 		const mentionId = getIdFromMentionedString(id);
-		const mentionedUser = await getRPGUser({ user_tag: mentionId });
+		const mentionedUser = await getRPGUser({ user_tag: mentionId }, { cached: true });
 		if (!mentionedUser) return;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,

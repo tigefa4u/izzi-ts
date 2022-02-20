@@ -13,7 +13,7 @@ import { verifyMemberPermissions } from "..";
 export const guildItems = async ({ context, options, client }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,

@@ -39,7 +39,7 @@ async function validateAndInviteMember(
 		sendCommandCDResponse(params.channel, cd, id, "leave-guild");
 		return;
 	}
-	const mentionedUser = await getRPGUser({ user_tag: id });
+	const mentionedUser = await getRPGUser({ user_tag: id }, { cached: true });
 	if (!mentionedUser) return;
 	const mentionedMember = await getGuildMember({ user_id: mentionedUser.id });
 	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
@@ -51,7 +51,7 @@ async function validateAndInviteMember(
 		context.channel?.sendMessage(embed);
 		return;
 	}
-	const user = await getRPGUser({ user_tag: author.id });
+	const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 	if (!user) return;
 	const validGuild = await verifyMemberPermissions({
 		context,

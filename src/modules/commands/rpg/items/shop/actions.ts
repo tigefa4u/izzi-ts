@@ -91,12 +91,14 @@ async function validateAndPurchaseItem(
 	}
 	if (options?.isConfirm) {
 		user.gold = user.gold - item.price;
-		await updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold });
-		await createCollection({
-			user_id: user.id,
-			is_item: true,
-			item_id: item.id,
-		});
+		await Promise.all([
+			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
+			createCollection({
+				user_id: user.id,
+				is_item: true,
+				item_id: item.id,
+			}),
+		]);
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(

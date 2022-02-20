@@ -1,7 +1,7 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
 import loggers from "loggers";
-import handleInteraction from "modules/events/interaction";
+import handleCommandInteraction from "modules/events/interaction";
 import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
@@ -16,8 +16,9 @@ export const handleClientEvents = (client: Client) => {
 	});
 
 	client.on("interactionCreate", (interaction) => {
-		if (!interaction.isCommand()) return;
-		handleInteraction(client, interaction);
+		if (interaction.isCommand()) {
+			handleCommandInteraction(client, interaction);
+		}
 	});
 };
 
@@ -25,7 +26,7 @@ export const handleClient = (client: Client) => {
 	// handleGuildEvents(client, discord);
 	client.on("ready", async () => {
 		console.log("listening");
-		registerSlashCommands(client);
+		// registerSlashCommands(client);
 		client?.user?.setPresence({
 			activities: [ {
 				name: IZZI_WEBSITE,

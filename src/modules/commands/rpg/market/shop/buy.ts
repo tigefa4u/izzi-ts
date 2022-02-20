@@ -34,7 +34,8 @@ async function processPurchase(
 	buyer: UserProps,
 	dealer: UserProps,
 	seller: UserProps,
-	total: number
+	total: number,
+	id: number
 ) {
 	// commission
 	const commission = Math.floor(total * MARKET_COMMISSION);
@@ -43,10 +44,22 @@ async function processPurchase(
 
 	buyer.gold = buyer.gold - total;
 	seller.gold = seller.gold + cost;
-	await updateRPGUser({ user_tag: dealer.user_tag }, { gold: dealer.gold });
-	await updateRPGUser({ user_tag: buyer.user_tag }, { gold: buyer.gold });
-	await updateRPGUser({ user_tag: seller.user_tag }, { gold: seller.gold });
+	if (seller.selected_card_id === id) {
+		seller.selected_card_id = null;
+	}
+	const promises = [
+		updateRPGUser({ user_tag: dealer.user_tag }, { gold: dealer.gold }),
+		updateRPGUser({ user_tag: buyer.user_tag }, { gold: buyer.gold }),
+		updateRPGUser(
+			{ user_tag: seller.user_tag },
+			{
+				gold: seller.gold,
+				selected_card_id: seller.selected_card_id,
+			}
+		),
+	];
 
+	await Promise.all(promises);
 	return cost;
 }
 
@@ -61,14 +74,18 @@ async function notifySeller(
 		buyer,
 		dealer,
 		seller,
-		marketCard.price
+		marketCard.price,
+		marketCard.id
 	);
-	loggers.info("Notifying seller of Market Purchase: " + JSON.stringify({
-		seller: seller.user_tag,
-		buyer: buyer.user_tag,
-		totalCost,
-		price: marketCard.price
-	}));
+	loggers.info(
+		"Notifying seller of Market Purchase: " +
+      JSON.stringify({
+      	seller: seller.user_tag,
+      	buyer: buyer.user_tag,
+      	totalCost,
+      	price: marketCard.price,
+      })
+	);
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
 		.setThumbnail(marketCard.filepath)
@@ -84,10 +101,7 @@ async function notifySeller(
 	DMUser(client, embed, seller.user_tag);
 }
 
-function notifyBuyer(
-	channel: ChannelProp,
-	marketCard: IMarketProps
-) {
+function notifyBuyer(channel: ChannelProp, marketCard: IMarketProps) {
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
 		.setThumbnail(marketCard.filepath)
@@ -116,7 +130,7 @@ async function validateAndPurchaseCard(
 		buyer.id,
 		{
 			notFoundError: true,
-			cardOwnerError: true
+			cardOwnerError: true,
 		}
 	);
 	if (!marketCard) return;
@@ -152,10 +166,13 @@ async function validateAndPurchaseCard(
 			return;
 		}
 		notifySeller(buyer, dealer, seller, marketCard, params.client);
-		await updateCollection({ id: marketCard.collection_id }, {
-			user_id: buyer.id,
-			is_on_market: false
-		});
+		await updateCollection(
+			{ id: marketCard.collection_id },
+			{
+				user_id: buyer.id,
+				is_on_market: false,
+			}
+		);
 		await delFromMarket({ id: marketCard.id });
 		notifyBuyer(params.channel, marketCard);
 		return;

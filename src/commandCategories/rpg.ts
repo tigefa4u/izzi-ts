@@ -64,6 +64,7 @@ export const gamble = async function({
 export const profile = async function({
 	context, client, command, options, args = [] 
 }: BaseProps) {
+	args = args.slice(1);
 	if (typeof commandMap[command?.name as keyof CommandMapProps] === "function") {
 		commandMap[command?.name as keyof CommandMapProps]({
 			context,
@@ -153,7 +154,7 @@ export const miscellaneous = async function ({
 	return;
 };
 
-export const pvp = async function ({
+export const adventure = async function ({
 	context, args = [], client, command, options 
 }: BaseProps) {
 	args = args.slice(1);

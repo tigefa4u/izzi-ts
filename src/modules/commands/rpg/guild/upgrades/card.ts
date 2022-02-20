@@ -185,7 +185,7 @@ export const upgradeCard = async ({
 		if (!collectionId || isNaN(collectionId)) return;
 		let numOfSouls = Number(args.shift());
 		if (isNaN(numOfSouls) || numOfSouls <= 0 || numOfSouls > 20) numOfSouls = 1;
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		let embed = createEmbed(author, client);
 		let sentMessage: Message;

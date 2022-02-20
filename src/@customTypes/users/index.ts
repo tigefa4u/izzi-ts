@@ -15,13 +15,18 @@ export type UserProps = {
 	ruin: number;
 	max_ruin: number;
 	max_ruin_floor: number;
-	selected_card_id: number
-	selected_team_id: number;
+	selected_card_id?: number | null;
+	selected_team_id?: number | null;
 	raid_pass: number;
 	max_raid_pass: number;
 	is_married: boolean;
 	is_active: boolean;
 	is_banned: boolean;
+	is_premium: boolean;
+	premium_since: string;
+	premium_days: number;
+	premium_days_left: number;
+	izzi_points: number;
 	orbs: number;
 	shards: number;
 	vote_streak: number;

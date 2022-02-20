@@ -1,8 +1,7 @@
+import { MapProps } from "@customTypes";
 import emoji from "./emoji";
 
-type T = { [key: string]: string }
-
-const emojis: T = {
+const emojis: MapProps = {
 	"elemental strike": emoji.elementalstrike,
 	fast: emoji.fast,
 	chronobreak: emoji.chronobreak,
@@ -94,6 +93,7 @@ const emojis: T = {
 	"dream eater": emoji.dreameater,
 	"lunar wand": emoji.lunarwand,
 	"staff of medana": emoji.staffofmedana,
+	"renewal taekwondo": emoji.renewaltaekwondo
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

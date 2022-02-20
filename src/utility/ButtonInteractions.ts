@@ -1,10 +1,12 @@
-import { ChannelProp, ResponseWithPagination } from "@customTypes";
+import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
 import { MessageActionRow } from "discord.js";
-import { buttonInteractionFilter } from "helpers";
+import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
+
+
 
 export const paginatorInteraction: <P, T, O = Record<string, never>>(
   channel: ChannelProp,
@@ -16,21 +18,27 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
   options?: O
 ) => Promise<MessageActionRow | undefined> = async (channel, authorId, params, filter, fetch, callback, options) => {
 	try {
+		const prevLabel = REACTIONS.previous.label + "_" + generateUUID(4);
+		const nextLabel = REACTIONS.next.label + "_" + generateUUID(4);
+		const binLabel = REACTIONS.bin.label + "_" + generateUUID(4);
 		const buttons = new MessageActionRow().addComponents(
-			createButton(REACTIONS.previous.label, { emoji: REACTIONS.previous.emoji }),
-			createButton(REACTIONS.next.label, { emoji: REACTIONS.next.emoji }),
-			createButton(REACTIONS.bin.label, {
+			createButton(prevLabel, { emoji: REACTIONS.previous.emoji }),
+			createButton(nextLabel, { emoji: REACTIONS.next.emoji }),
+			createButton(binLabel, {
 				style: REACTIONS.bin.style,
 				emoji: REACTIONS.bin.emoji,
 			})
 		);
-		const collectorFilter = buttonInteractionFilter(authorId);
+		const collectorFilter = interactionFilter(authorId, verifyFilter, {
+			prevLabel,
+			nextLabel,
+			binLabel
+		});
 
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
 			maxComponents: 10, // Max number of clicks
 		});
-
 		let result = await fetch(params, filter, options);
 		callback(result);
 		const totalPages = result?.metadata.totalPages || 0;
@@ -39,15 +47,15 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			switch (id) {
-				case REACTIONS.bin.label: {
+				case binLabel: {
 					callback(null, { isDelete: true });
 					return;
 				}
-				case REACTIONS.next.label: {
+				case nextLabel: {
 					filter.currentPage < totalPages && (filter.currentPage += 1);
 					break;
 				}
-				case REACTIONS.previous.label: {
+				case prevLabel: {
 					filter.currentPage > 1 && (filter.currentPage -= 1);
 					break;
 				}
@@ -75,17 +83,22 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 	options?: O & { isConfirm: boolean }
 ): Promise<MessageActionRow | undefined> => {
 	try {
+		const confirmLabel = REACTIONS.confirm.label + "_" + generateUUID(4);
+		const cancelLabel = REACTIONS.confirm.label + "_" + generateUUID(4);
 		const buttons = new MessageActionRow().addComponents(
-			createButton(REACTIONS.cancel.label, {
-				emoji: REACTIONS.cancel.emoji,
-				style: REACTIONS.cancel.style 
-			}),
-			createButton(REACTIONS.confirm.label, {
+			createButton(confirmLabel, {
 				emoji: REACTIONS.confirm.emoji,
 				style: REACTIONS.confirm.style 
+			}),
+			createButton(cancelLabel, {
+				emoji: REACTIONS.cancel.emoji,
+				style: REACTIONS.cancel.style 
 			})
 		);
-		const collectorFilter = buttonInteractionFilter(authorId);
+		const collectorFilter = interactionFilter(authorId, verifyFilter, {
+			cancelLabel,
+			confirmLabel
+		});
 		
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
@@ -99,11 +112,11 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			switch (id) {
-				case REACTIONS.cancel.label: {
+				case confirmLabel: {
 					callback(null, { isDelete: true });
 					break;
 				}
-				case REACTIONS.confirm.label: {
+				case cancelLabel: {
 					options = Object.assign({}, options);
 					options.isConfirm = true;
 					await fetch(params, options);
@@ -116,6 +129,47 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.confirmationInteraction(): something went wrong", err);
+		return;
+	}
+};
+
+export const collectableInteraction = async <P>(
+	channel: ChannelProp,
+	params: P,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
+	callback: () => void
+) => {
+	try {
+		const label = REACTIONS.confirm.label + "_" + generateUUID(4);
+		const buttons = new MessageActionRow().addComponents(
+			createButton(label, {
+				style: "PRIMARY",
+				label: "Claim"
+			})
+		);
+		const collector = channel?.createMessageComponentCollector({
+			filter: (Interaction) => verifyFilter(Interaction.customId, { label }),
+			maxComponents: 1 
+		});
+		collector?.on("collect", async (buttonInteraction) => {
+			buttonInteraction.deferUpdate();
+			const id = buttonInteraction.customId;
+			switch (id) {
+				case label: {
+					fetch({
+						...params,
+						user_tag: buttonInteraction.user.id,
+						channel
+					});
+					callback();
+					break;
+				}
+			}
+			return;
+		});
+		return buttons;
+	} catch (err) {
+		loggers.error("utility.ButtonInteractions.collectableInteraction(): something went wrong", err);
 		return;
 	}
 };

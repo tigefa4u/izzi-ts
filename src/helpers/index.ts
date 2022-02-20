@@ -2,11 +2,29 @@ import _ from "lodash";
 import { NormalizeFloorProps, StageProps } from "@customTypes/stages";
 import { calcPercentRatio } from "./ability";
 import { getRPGUser } from "api/controllers/UsersController";
-import { AuthorProps } from "@customTypes";
+import { AuthorProps, MapProps, OverallStatsProps } from "@customTypes";
 import { BASE_RANK } from "./constants";
 import { BaseProps } from "@customTypes/command";
 import { PLProps } from "@customTypes/powerLevel";
 import { MessageComponentInteraction } from "discord.js";
+import { CharacterStatProps } from "@customTypes/characters";
+import { emojiMap } from "emojis";
+import { titleCase } from "title-case";
+import { GuildStatProps } from "@customTypes/guilds";
+import { BattleStats } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
+
+export const generateUUID = (n: number): string => {
+	const add = 1;
+	let max = 12 - add;
+	if (n > max) {
+		return generateUUID(max) + generateUUID(n - max);
+	}
+	max = Math.pow(10, n + add);
+	const min = max / 10; // Math.pow(10, n) basically
+	const number = Math.floor(Math.random() * (max - min + 1)) + min;
+	return ("" + number).substring(add);
+};
 
 export const prepareAbilityDescription = (desc = "", rank?: string) => {
 	return desc
@@ -49,14 +67,32 @@ export const validateAccountCreatedAt = (author: AuthorProps) => {
 };
 
 export const checkExistingAccount = async (id: string) => {
-	const userFound = await getRPGUser({ user_tag: id });
+	const userFound = await getRPGUser({ user_tag: id }, { cached: true });
 	if (userFound) return true;
 	return false;
 };
 
-export const buttonInteractionFilter = (id: string) => {
-	return (interaction: MessageComponentInteraction) =>
-		interaction.user.id === id;
+export const verifyFilter = (id: string, propsToVerify: MapProps): boolean => {
+	let flag = false;
+	const isValid = Object.keys(propsToVerify).filter((k) => id === propsToVerify[k]);
+	if (isValid.length > 0) {
+		flag = true;
+	}
+	return flag;
+};
+
+export const interactionFilter = (
+	id: string,
+	cb?: (id: string, props: MapProps) => boolean,
+	props?: MapProps
+) => {
+	return (interaction: MessageComponentInteraction) => {
+		let isValid = interaction.user.id === id;
+		if (cb) {
+			isValid = isValid && cb(interaction.customId, props || {});
+		}
+		return isValid;
+	};
 };
 
 export const getMentionedChannel = async (
@@ -111,12 +147,20 @@ export const calcStat = (
 
 export const sanitizeArgs = (args: string[]) => {
 	args.map((val, i) => {
-		const isNum = Number(val);
-		if (isNum) {
-			if (val.length > 16) {
-				args[i] = BigInt(val).toString().replace("n", "").replace("-", "");
+		const num = Number(val);
+		if (num) {
+			if (num <= 0) {
+				args.splice(i, 1);
+				return;
+			}
+			if (val.length < 24) {
+				if (val.length > 16) {
+					args[i] = BigInt(val).toString().replace("n", "").replace("-", "");
+				} else {
+					args[i] = Math.abs(parseInt(val)).toString();
+				}
 			} else {
-				args[i] = Math.abs(parseInt(val)).toString();
+				args.splice(i, 1);
 			}
 		}
 	});
@@ -149,8 +193,140 @@ export const probability = (chances: number[]) => {
 	return -1;
 };
 
-export const getMemberPermissions = async (context: BaseProps["context"], id: string) => {
+export const getMemberPermissions = async (
+	context: BaseProps["context"],
+	id: string
+) => {
 	const member = await context.guild?.members.fetch(id);
 	const permissions = member?.permissions.serialize();
 	return permissions;
+};
+
+type G = {
+  abilityname: string;
+  abilitydescription?: string;
+  itemname?: string;
+  itemdescription?: string;
+  is_passive?: boolean;
+};
+
+export const prepareStatsDesc = <T extends OverallStatsProps>(
+	stats: T & G,
+	rank = "silver"
+) => {
+	const desc = `**ATK:** ${stats.vitality}${
+		stats.vitalityBonus ? ` (-${stats.vitalityBonus})` : ""
+	}\n**HP:** ${stats.strength}${
+		stats.strengthBonus ? ` (-${stats.strengthBonus})` : ""
+	}\n**DEF:** ${stats.defense}${
+		stats.defenseBonus ? ` (-${stats.defenseBonus})` : ""
+	}\n**SPD:** ${stats.dexterity}${
+		stats.dexterityBonus ? ` (-${stats.dexterityBonus})` : ""
+	}\n**INT:** ${stats.intelligence}${
+		stats.intellegenceBonus ? ` (-${stats.intellegenceBonus})` : ""
+	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
+		stats.abilityname || ""
+	)} ${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
+		stats.abilitydescription,
+		rank
+	)}${
+		stats.itemname
+			? `\n${emojiMap(stats.itemname)} **${titleCase(stats.itemname)}:** ${
+				stats.itemdescription
+			}`
+			: ""
+	}`;
+
+	return desc;
+};
+
+export const overallStats = (params: {
+  stats: CharacterStatProps;
+  character_level: number;
+  powerLevel: PLProps;
+  guildStats?: GuildStatProps;
+  isForBattle?: boolean;
+}): OverallStatsProps => {
+	const {
+		stats, character_level, powerLevel, guildStats, isForBattle 
+	} =
+    params;
+	const keys = Object.keys(stats);
+	const totalStats = {} as OverallStatsProps;
+	keys.forEach((stat) => {
+		if (
+			[ "critical", "accuracy", "evasion", "effective", "precision" ].includes(
+				stat
+			)
+		) {
+			Object.assign(totalStats, { [stat]: stats[stat as keyof CharacterStatProps], });
+		} else {
+			Object.assign(totalStats, {
+				[stat]: calcStat(
+					stats[stat as keyof CharacterStatProps],
+					character_level,
+					powerLevel
+				),
+			});
+			if (guildStats) {
+				Object.assign(totalStats, {
+					[stat]: Math.ceil(
+						totalStats[stat as keyof CharacterStatProps] +
+              totalStats[stat as keyof CharacterStatProps] *
+                guildStats[stat as keyof GuildStatProps]
+					),
+				});
+				Object.assign(totalStats, {
+					[`${stat}Bonus`]: Math.floor(
+						stats[stat as keyof CharacterStatProps] *
+              (guildStats[stat as keyof GuildStatProps] / 100)
+					),
+				});
+			}
+			if (isForBattle === true) {
+				if (stat === "strength") {
+					Object.assign(totalStats, {
+						[stat]: Math.round(
+							totalStats[stat as keyof CharacterStatProps] * 10
+						),
+						originalHp: Math.round(
+							totalStats[stat as keyof CharacterStatProps] * 10
+						),
+					});
+				} else {
+					Object.assign(totalStats, {
+						[stat]: Math.round(
+							totalStats[stat as keyof CharacterStatProps] * 3
+						),
+					});
+				}
+			}
+		}
+	});
+
+	return totalStats;
+};
+
+export const preparePlayerBase = ({
+	id,
+	playerStats,
+	name,
+	card
+}: {
+	id: string;
+	card: CollectionCardInfoProps;
+	name: string;
+	playerStats: BattleStats["totalStats"];
+}) => {
+	const baseStats: BattleStats = {
+		id,
+		cards: [],
+		name,
+		totalStats: playerStats
+	};
+	baseStats.cards[0] = undefined;
+	baseStats.cards[1] = card;
+	baseStats.cards[2] = undefined;
+
+	return baseStats;
 };
