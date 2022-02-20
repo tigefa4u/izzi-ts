@@ -2,6 +2,9 @@
 #All you need to know
 
 # IMPORTANT
+INSTALL BETTER SQLITE3 on UBUNTU
+sudo apt-get install build-essential
+
 REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - USE OLD PROJECT TO CREATE NEW MIGRATIONS
 - While installing canvas on ubuntu run the command "sudo npm config set user 0"
