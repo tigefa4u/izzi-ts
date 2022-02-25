@@ -49,6 +49,8 @@ export const guildItems = async ({ context, options, client }: BaseProps) => {
 						description: "All the items in your guild are shown below.",
 						pageName: "items"
 					});
+				} else {
+					embed.setDescription("Your guild currently has no items. Purchase items from the Guild Market!");
 				}
 				if (opts?.isDelete && sentMessage) {
 					sentMessage.delete();
@@ -62,9 +64,10 @@ export const guildItems = async ({ context, options, client }: BaseProps) => {
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

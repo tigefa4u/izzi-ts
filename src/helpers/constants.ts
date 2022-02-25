@@ -129,15 +129,15 @@ export const PAGE_FILTER = {
 };
 
 export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
-	silver: 200,
-	gold: 250,
-	platinum: 300,
-	diamond: 400,
-	legend: 550,
-	divine: 750,
-	immortal: 1000,
-	exclusive: 1000,
-	ultimate: 1000
+	silver: 100,
+	gold: 150,
+	platinum: 200,
+	diamond: 250,
+	legend: 300,
+	divine: 450,
+	immortal: 500,
+	exclusive: 800,
+	ultimate: 800
 };
 
 export const ORB_INTEREST_RATE = .7;
@@ -197,3 +197,24 @@ export const SPBT_REQUIRED_MANA = 2;
 export const MAX_RAID_LOBBY_MEMBERS = 6;
 export const PERMIT_PER_RAID = 2;
 export const MAX_ENERGY_PER_RAID = 25;
+export const ENERGY_PER_ATTACK = 10;
+export const HOURS_PER_RAID = 4;
+
+export const DUNGEON_DEFAULTS = {
+	r_exp: 50,
+	exp: 0,
+	wins: 0,
+	loss: 0,
+	division: 1,
+	rank_id: 1,
+	rank: "duke",
+	numberOfDivisions: 3,
+	numberOfRanks: 5
+};
+
+export const BATTLES_PER_CHANNEL = 3;
+
+export const USER_XP_GAIN_PER_BATTLE = 4;
+
+export const MAX_GOLD_IN_TRADE = 10000000;
+export const MAX_CARDS_IN_TRADE = 1000;

@@ -1,7 +1,11 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
-import { getSkinCollection, getSkinCollectionById } from "api/controllers/SkinCollectionController";
+import {
+	getSkinCollection,
+	getSkinCollectionById,
+} from "api/controllers/SkinCollectionController";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
+import { IZZI_WEBSITE } from "environment";
 import { DEFAULT_SUCCESS_TITLE, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createSkinList } from "helpers/embedLists/skin";
@@ -11,10 +15,10 @@ import { paginatorInteraction } from "utility/ButtonInteractions";
 import { delSkinArr, getSkinArr, setSkinArr } from "./skinCache";
 
 export const show = async (params: {
-    author: AuthorProps;
-    channel: ChannelProp;
-    client: Client;
-    args?: string[];
+  author: AuthorProps;
+  channel: ChannelProp;
+  client: Client;
+  args?: string[];
 }) => {
 	try {
 		const filter = PAGE_FILTER;
@@ -24,53 +28,64 @@ export const show = async (params: {
 		}
 		let embed = createEmbed();
 		let sentMessage: Message;
-        	const buttons = 
-			await paginatorInteraction(
-				params.channel,
-				params.author.id,
-				{ user_tag: params.author.id },
-				filter,
-				getSkinCollection,
-				(data, options) => {
-					if (data) {
-						const list = createSkinList(data.data, data.metadata.currentPage, data.metadata.perPage);
-						embed = createEmbedList({
-							author: params.author,
-							list,
-							currentPage: data.metadata.currentPage,
-							totalPages: data.metadata.totalPages,
-							totalCount: data.metadata.totalCount,
-							client: params.client,
-							pageCount: data.data.length,
-							title: "Skin Collection",
-							description: "All the skins you own are shown below.",
-							pageName: "Skin"
-						});
-					}
-					if (options?.isDelete && sentMessage) {
-						sentMessage.delete();
-					}
-					if (options?.isEdit) {
-						sentMessage.editMessage(embed);
-					}
+		const buttons = await paginatorInteraction(
+			params.channel,
+			params.author.id,
+			{ user_tag: params.author.id },
+			filter,
+			getSkinCollection,
+			(data, options) => {
+				if (data) {
+					const list = createSkinList(
+						data.data,
+						data.metadata.currentPage,
+						data.metadata.perPage
+					);
+					embed = createEmbedList({
+						author: params.author,
+						list,
+						currentPage: data.metadata.currentPage,
+						totalPages: data.metadata.totalPages,
+						totalCount: data.metadata.totalCount,
+						client: params.client,
+						pageCount: data.data.length,
+						title: "Skin Collection",
+						description: "All the skins you own are shown below.",
+						pageName: "Skin",
+					});
+				} else {
+					embed.setDescription(
+						`You do not have any skins. You can purchase skins from ${IZZI_WEBSITE}/skins`
+					);
 				}
-			);
+				if (options?.isDelete && sentMessage) {
+					sentMessage.delete();
+				}
+				if (options?.isEdit) {
+					sentMessage.editMessage(embed);
+				}
+			}
+		);
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
 
-		params.channel?.sendMessage(embed).then((msg) => {
+		const msg = await params.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 	} catch (err) {
-		loggers.error("modules.commands.rpg.skins.skinActions.show(): something went wrong", err);
+		loggers.error(
+			"modules.commands.rpg.skins.skinActions.show(): something went wrong",
+			err
+		);
 		return;
 	}
 };
 
 export const reset = (params: {
-    author: AuthorProps;
-    channel: ChannelProp;
+  author: AuthorProps;
+  channel: ChannelProp;
 }) => {
 	try {
 		delSkinArr(params.author.id);
@@ -81,16 +96,19 @@ export const reset = (params: {
 		params.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.skins.skinActions.reset(): something went wrong", err);
+		loggers.error(
+			"modules.commands.rpg.skins.skinActions.reset(): something went wrong",
+			err
+		);
 		return;
 	}
 };
 
 export const choose = async (params: {
-    author: AuthorProps;
-    channel: ChannelProp;
-    client: Client;
-    args?: string[];
+  author: AuthorProps;
+  channel: ChannelProp;
+  client: Client;
+  args?: string[];
 }) => {
 	try {
 		const id = params.args?.shift();
@@ -100,16 +118,19 @@ export const choose = async (params: {
 		let skin: any;
 		let spbtSkin: any;
 		const embed = createEmbed();
-		embed.setAuthor({
-			name: params.author.username,
-			iconURL: params.author.displayAvatarURL()
-		})
+		embed
+			.setAuthor({
+				name: params.author.username,
+				iconURL: params.author.displayAvatarURL(),
+			})
 			.setTitle("Error :no_entry:")
 			.setThumbnail(params.client.user?.displayAvatarURL() || "");
 		if (skinArr) {
 			skin = skinArr.filter((c) => c.id === Number(id))[0];
 			if (skin) {
-				embed.setDescription(`Summoner **${params.author.username}**, this skin is already in use`);
+				embed.setDescription(
+					`Summoner **${params.author.username}**, this skin is already in use`
+				);
 				params.channel?.sendMessage(embed);
 				return;
 			}
@@ -119,7 +140,7 @@ export const choose = async (params: {
 		if (!skin) {
 			skin = await getSkinCollectionById({
 				user_tag: params.author.id,
-				id: Number(id)
+				id: Number(id),
 			});
 			if (!skin) {
 				embed.setDescription(`We could not find the skin you were looking for.
@@ -131,7 +152,9 @@ export const choose = async (params: {
 				spbtSkin = skin;
 			}
 		}
-		const index = skinArr.findIndex((i) => i.character_id === skin?.character_id);
+		const index = skinArr.findIndex(
+			(i) => i.character_id === skin?.character_id
+		);
 		if (index >= 0) {
 			skinArr[index] = skin;
 		} else {
@@ -142,7 +165,9 @@ export const choose = async (params: {
 			if (!spbtSkinArr) {
 				spbtSkinArr = [];
 			}
-			const idx = spbtSkinArr.findIndex((x) => x.character_id === spbtSkin.character_id);
+			const idx = spbtSkinArr.findIndex(
+				(x) => x.character_id === spbtSkin.character_id
+			);
 			if (idx >= 0) {
 				spbtSkinArr[idx] = spbtSkin;
 			} else {
@@ -152,12 +177,16 @@ export const choose = async (params: {
 		}
 		setSkinArr(params.author.id, skinArr);
 
-		embed.setTitle(DEFAULT_SUCCESS_TITLE)
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Successfully selected Skin Art ${titleCase(skin.name)}`);
 		params.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.skins.skinActions.choose(): something went wrong", err);
+		loggers.error(
+			"modules.commands.rpg.skins.skinActions.choose(): something went wrong",
+			err
+		);
 		return;
 	}
 };

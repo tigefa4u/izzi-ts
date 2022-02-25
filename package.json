@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node .",
-    "dev": "ts-node-dev -r dotenv/config src/server/shard.ts"
+    "dev": "ts-node-dev -r dotenv/config src/server/shard.ts",
+    "flush:cooldown": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/index.ts"
   },
   "keywords": [
     "izzi",

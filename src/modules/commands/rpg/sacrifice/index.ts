@@ -116,16 +116,7 @@ async function verifyAndProcessSacrifice(
 		return;
 	}
 
-	const cardCanvas = {
-		...card,
-		is_event: false,
-		is_logo: false,
-		is_random: false,
-		copies: 1,
-		series: "",
-		shard_cost: 0,
-		has_event_ended: false,
-	} as CharacterCanvasProps;
+	const cardCanvas = card;
 
 	if (options?.isConfirm) {
 		const powerLevel = await getPowerLevelByRank({ rank: card.rank });
@@ -275,9 +266,10 @@ export const sacrificeCard = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

@@ -33,10 +33,7 @@ const baseLoot: any = {
 			loot: {
 				gold: randomNumber(13000, 15000),
 				extraGold: randomNumber(16000, 18000),
-				drop: {
-                	shards: randomNumber(10, 14),
-                	orbs: randomNumber(1000, 2000),
-				}
+				drop: { shards: randomNumber(10, 14), }
 			}
 		}
 	},
@@ -63,11 +60,6 @@ const baseLoot: any = {
 						rank_id: 3,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 					},
-					{
-						rank: "diamond",
-						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
-					},
 				],
 				rare: [
 					{
@@ -87,7 +79,7 @@ const baseLoot: any = {
 				extraGold: randomNumber(20000, 22000),
 				drop: {
 					shard: randomNumber(15, 18),
-					orbs: randomNumber(1000, 2000),
+					orbs: randomNumber(2, 3),
 				}
 			}
 		}
@@ -115,11 +107,6 @@ const baseLoot: any = {
 						rank_id: 3,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 					},
-					{
-						rank: "diamond",
-						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
-					},
 				],
 				rare: [
 					{
@@ -144,8 +131,8 @@ const baseLoot: any = {
 				gold: randomNumber(21000, 24000),
 				extraGold: randomNumber(25000, 27000),
 				drop: {
-					shard: randomNumber(20, 25),
-					orbs: randomNumber(1000, 2000),
+					shard: randomNumber(20, 32),
+					orbs: randomNumber(3, 4),
 				}
 			}
 		}
@@ -178,11 +165,6 @@ const baseLoot: any = {
 						rank_id: 1,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 					},
-					{
-						rank: "legend",
-						rank_id: 5,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
-					},
 				],
 				rare: [
 					{
@@ -208,7 +190,7 @@ const baseLoot: any = {
 				extraGold: randomNumber(29000, 30000),
 				drop: {
 					shard: randomNumber(27, 40),
-					orbs: randomNumber(1000, 2000),
+					orbs: randomNumber(3, 5),
 				}
 			}
 		}

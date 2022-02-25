@@ -95,6 +95,8 @@ async function handleZones(params: {
 					description: "All the Zones available in the Xenverse are shown below.",
 					pageName: "Zone"
 				});
+			} else {
+				embed.setDescription("No data available");
 			}
 			if (options?.isDelete && sentMessage) {
 				sentMessage.delete();
@@ -108,9 +110,10 @@ async function handleZones(params: {
 
 	embed.setButtons(buttons);
 
-	params.channel?.sendMessage(embed).then((msg) => {
+	const msg = await params.channel?.sendMessage(embed);
+	if (msg) {
 		sentMessage = msg;
-	});
+	}
 	return;
 }
 

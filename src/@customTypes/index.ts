@@ -17,6 +17,7 @@ export type FilterProps = {
     is_on_market?: boolean;
     difficulty?: string[];
     isEvent?: boolean;
+    limit?: number | number[];
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]

@@ -1,19 +1,30 @@
-import { RandomCardProps } from "@customTypes/cards";
-import { CharacterStatProps } from "@customTypes/characters";
+import { OverallStatsProps } from "@customTypes";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 
 export type RaidActionProps = BaseProps & {
     isEvent: boolean;
 }
 
+type L = {
+    user_tag: string;
+    username: string;
+    level: number;
+    energy: number;
+    total_energy: number;
+    total_damage: number;
+    total_attack: number;
+    timestamp: number;
+    is_leader: boolean;
+    user_id: number;
+    votes?: number;
+    is_ready?: boolean;
+    kickVotes?: {
+        [user_id: number]: boolean;
+    };
+};
 export type RaidLobbyProps = {
-    user_id: number,
-    energy: number,
-    total_energy: number,
-    total_damage: number,
-    total_attack: number,
-    timestamp: number,
-    is_leader: boolean,
+    [user_id: number]: L;
 }
 
 export type RaidLootProps = {
@@ -24,12 +35,12 @@ export type RaidLootProps = {
             rank: string;
             rank_id: number;
             number: number;
-        }[],
+        }[];
         event?: {
             shards: number;
             orbs: number;
         }
-    },
+    };
     rare?: {
         rank: string;
         rank_id: number;
@@ -43,7 +54,7 @@ export type RaidStatsProps = {
         bosses: number;
         boss_level: number;
         power_level: number;
-        stats: CharacterStatProps;
+        stats: OverallStatsProps;
     };
     remaining_strength: number;
     original_strength: number;
@@ -53,26 +64,27 @@ export type RaidStatsProps = {
 
 export type RaidProps = {
     id: number;
-    lobby: RaidLobbyProps[];
+    lobby: RaidLobbyProps;
     loot: RaidLootProps;
     stats: RaidStatsProps;
-    raid_boss: RandomCardProps[];
+    raid_boss: CollectionCardInfoProps[];
     is_event: boolean;
     is_start: boolean;
     is_private: boolean;
+    json_array_elements?: L;
 }
 
 export type RaidCreateProps = {
-    lobby: string;
-    loot: string;
-    stats: string;
+    lobby: RaidLobbyProps;
+    loot: RaidLootProps;
+    stats: RaidStatsProps;
     raid_boss: string;
     is_event: boolean;
     is_start: boolean;
     is_private: boolean;
 }
 
-export type RaidUpdateProps = Partial<RaidCreateProps>
+export type RaidUpdateProps = Partial<Omit<RaidCreateProps, "json_array_elements">>
 
 export type PrepareLootProps = {
     loot: RaidLootProps;

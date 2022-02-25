@@ -1,4 +1,4 @@
-import { CollectionCardInfoProps } from "@customTypes/collections";
+import { CollectionCardInfoByRowNumberParams, CollectionCardInfoProps } from "@customTypes/collections";
 import { SkinProps } from "@customTypes/skins";
 import loggers from "loggers";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
@@ -7,7 +7,7 @@ import { getCharacterInfo } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
 export const getCardInfoByRowNumber = async (
-	params: { row_number: number | number[]; user_id: number, user_tag?: string; }
+	params: CollectionCardInfoByRowNumberParams
 ): Promise<CollectionCardInfoProps[] | undefined> => {
 	try {
 		let skinArr: undefined | SkinProps[];

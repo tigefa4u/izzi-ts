@@ -1,6 +1,7 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
 import loggers from "loggers";
+import { handleDiscordServerJoin, handleDiscordServerLeave } from "modules/events/guild";
 import handleCommandInteraction from "modules/events/interaction";
 import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
@@ -19,6 +20,14 @@ export const handleClientEvents = (client: Client) => {
 		if (interaction.isCommand()) {
 			handleCommandInteraction(client, interaction);
 		}
+	});
+
+	client.on("guildCreate", (guild) => {
+		handleDiscordServerJoin(client, guild);
+	});
+
+	client.on("guildDelete", (guild) => {
+		handleDiscordServerLeave(guild);
 	});
 };
 

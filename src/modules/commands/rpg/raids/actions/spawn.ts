@@ -3,24 +3,27 @@ import { CollectionCardInfoProps } from "@customTypes/collections";
 import { RaidActionProps, RaidStatsProps } from "@customTypes/raids";
 import { getRandomCard } from "api/controllers/CardsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { Canvas } from "canvas";
+import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
+import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { createBattleCanvas } from "helpers/adventure";
 import { createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE, MAX_ENERGY_PER_RAID, PERMIT_PER_RAID } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, PERMIT_PER_RAID } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse } from "modules/cooldowns";
+import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import { titleCase } from "title-case";
+import { prepareInitialLobbyMember, prepareRaidBossEmbedDesc } from "..";
 import { computeRank } from "../computeBoss";
 
 export const spawnRaid = async ({
 	context, options, client, args, isEvent 
 }: RaidActionProps) => {
 	try {
-		console.log({ args });
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
@@ -87,7 +90,7 @@ export const spawnRaid = async ({
 				souls: 1,
 				rank_id: 0
 			};
-		}).filter(Boolean)) as CollectionCardInfoProps[];
+		})) as CollectionCardInfoProps[];
 		const stats = await prepareTotalOverallStats({
 			collections: raidBosses,
 			isBattle: false 
@@ -97,7 +100,8 @@ export const spawnRaid = async ({
 		}
 		const dt = new Date();
 		const reducedLevel = raidBosses.reduce((acc, r) => {
-			return { character_level: acc.character_level + r.character_level };
+			acc.character_level = acc.character_level + r.character_level;
+			return acc;
 		}, { character_level: 0 } as { character_level: number });
 
 		const totalBossLevel: number = reducedLevel.character_level;
@@ -113,36 +117,34 @@ export const spawnRaid = async ({
 			difficulty: computedBoss.difficulty,
 			timestamp: dt.setHours(dt.getHours() + 1)
 		} as RaidStatsProps;
-		const lobby = [];
+		let lobby = {};
 		if (isPrivate) {
-			lobby.push(getLobbyLeader(user.id));
+			lobby = prepareInitialLobbyMember(user.id, user.user_tag, user.username, user.level, true);
 		}
 		const raid = await createRaid({
-			stats: JSON.stringify(raidStats),
-			lobby: JSON.stringify(lobby),
+			stats: raidStats,
+			lobby: lobby,
 			is_start: false,
 			is_event: isEvent,
 			is_private: isPrivate,
 			raid_boss: JSON.stringify(raidBosses),
-			loot: JSON.stringify(computedBoss.loot)
+			loot: computedBoss.loot
 		});
 		if (!raid) return;
+		user.raid_pass = user.raid_pass - PERMIT_PER_RAID;
+		updateRPGUser({ user_tag: user.user_tag }, { raid_pass: user.raid_pass });
+		setCooldown(
+			author.id,
+			CDKey,
+			user.is_premium ? 9000 : 60 * 60 * 3
+		);
 		let bossCanvas: Canvas | undefined;
 		if (isEvent) {
-			const card = {
-				...raidBosses[0],
-				is_logo: false,
-				copies: 1,
-				series: "",
-				shard_cost: 0,
-				is_event: isEvent,
-				has_event_ended: false,
-				is_random: true
-			} as CharacterCanvasProps;
-			bossCanvas = await createSingleCanvas(card, false);
+			bossCanvas = await createSingleCanvas(raidBosses[0], false);
 		} else {
-			bossCanvas = await createBattleCanvas(raidBosses);
+			bossCanvas = await createBattleCanvas(raidBosses, { isSingleRow: true });
 		}
+
 		const raidEmbed = createEmbed(author, client)
 			.setTitle(`Raid ID: ${raid.id}`);
 		if (!bossCanvas) {
@@ -150,27 +152,31 @@ export const spawnRaid = async ({
             `Use \`\`${isEvent ? "ev" : "rd"} ${isPrivate ? " view`` to view the raid boss" : 
             	` join ${raid.id} to take on this raid boss!`}`);
 			context.channel?.sendMessage(raidEmbed);
+			return;
 		}
-		DMUser(client, "Rat", author.id);
+		const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
+
+		embed.setTitle(`${emoji.warning} Raid Spawned! ${emoji.warning} [${titleCase(computedBoss.difficulty)}]`)
+			.setDescription(prepareRaidBossEmbedDesc(raid, isEvent))
+			.setImage("attachment://boss.jpg")
+			.attachFiles([ attachment ]);
+
+		let footerDesc = `use ${isEvent ? "ev" : "rd"} join ${raid.id} to take on this ${
+			isEvent ? "Event" : "Raid"
+		} Boss Challenge! If this spawn isn't claimed in an hour it will despawn.`;
+		if (isPrivate) {
+			footerDesc = `You have automatically joined this ${
+				isEvent ? "event" : "raid"
+			} challenge! Invite others to join your conquest using ${
+				isEvent ? "ev" : "rd"
+			} invite <@user>\nLobby Code: ${raid.id}`;
+		}
+
+		embed.setFooter({ text: footerDesc });
+		DMUser(client, embed, author.id);
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.spawnRaid(): something went wrong", err);
 		return;
 	}
 };
-
-function getLobbyLeader(user_id: number) {
-	return {
-		user_id,
-		energy: MAX_ENERGY_PER_RAID,
-		total_energy: MAX_ENERGY_PER_RAID,
-		total_damage: 0,
-		total_attack: 0,
-		timestamp: new Date().getTime(),
-		is_leader: true,
-	};
-}
-
-function prepareRaidBossEmbed() {
-	return "";
-}

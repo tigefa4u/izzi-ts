@@ -148,6 +148,8 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 						client,
 					});
 					return;
+				} else {
+					embed.setDescription("You do not have any crates. Participate in dungeon battles to earn more!");
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);
@@ -160,7 +162,10 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed);
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
+			sentMessage = msg;
+		}
 		return;
 	} catch (err) {
 		loggers.error(

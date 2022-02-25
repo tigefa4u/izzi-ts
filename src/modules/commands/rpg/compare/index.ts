@@ -32,7 +32,7 @@ function computeCharacterStats(array: CharacterDetailsProps[]) {
 	return fields;
 }
 
-export const compare = async ({
+export const compareCards = async ({
 	context,
 	client,
 	args,

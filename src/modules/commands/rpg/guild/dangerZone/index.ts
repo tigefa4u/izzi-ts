@@ -33,19 +33,20 @@ async function validateAndDisbandGuild(
 	});
 	if (!validGuild) return;
 	if (options?.isConfirm) {
-		await delAllGuildMembers({ guild_id: validGuild.guild.id });
-		await delGuildItems({ guild_id: validGuild.guild.id });
-		await updateGuild(
-			{ id: validGuild.guild.id },
-			{
-				gold: 0,
-				guild_stats: null,
-				metadata: JSON.stringify(validGuild.guild.guild_stats),
-				guild_level: 0,
-				name: null,
-				points: 0,
-			}
-		);
+		await Promise.all([ delAllGuildMembers({ guild_id: validGuild.guild.id }),
+			delGuildItems({ guild_id: validGuild.guild.id }),
+			updateGuild(
+				{ id: validGuild.guild.id },
+				{
+					gold: 0,
+					guild_stats: null,
+					metadata: JSON.stringify(validGuild.guild.guild_stats),
+					guild_level: 0,
+					name: null,
+					points: 0,
+				}
+			) ]);
+		
 		params.extras.context.channel?.sendMessage(
 			"You have disbanded your guild."
 		);
@@ -92,9 +93,10 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(
@@ -174,9 +176,10 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

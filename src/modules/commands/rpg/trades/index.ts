@@ -5,7 +5,7 @@ import {
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { TradeQueueProps } from "@customTypes/trade";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, getUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
@@ -18,6 +18,10 @@ import {
 } from "helpers/constants";
 import loggers from "loggers";
 import { confirmationInteraction } from "utility/ButtonInteractions";
+import { addToTrade } from "./actions/add";
+import { cancelTrade } from "./actions/cancel";
+import { confirmTrade } from "./actions/confirm";
+import { viewTrade } from "./actions/view";
 import * as queue from "./queue";
 
 function getInTrade(traderId: string, tradeeId: string) {
@@ -45,9 +49,15 @@ async function clearTrade(
 	return;
 }
 
-function prepareQueue(id: string, username: string): TradeQueueProps {
+function prepareQueue(
+	id: string,
+	username: string,
+	user_id: number
+): TradeQueueProps {
 	return {
 		[id]: {
+			user_id,
+			user_tag: id,
 			username,
 			hasConfirmed: false,
 			queue: [],
@@ -60,6 +70,8 @@ async function validateAndConfirmTrade(
 	params: ConfirmationInteractionParams<{
     mentionId: string;
     mentionUsername: string;
+    mentionUserId: number;
+    userId: number;
   }>,
 	options?: ConfirmationInteractionOptions
 ) {
@@ -93,14 +105,26 @@ async function validateAndConfirmTrade(
 	}
 	if (options?.isConfirm) {
 		const tradeId = generateUUID(4);
-		loggers.info(`Trade initiated for users: ${params.author.id} & ${mentionId}, Trade ID: ${tradeId}`);
-		await queue.setTrade(params.author.id, tradeId);
-		await queue.setTrade(mentionId, tradeId);
+		loggers.info(
+			`Trade initiated for users: ${params.author.id} & ${mentionId}, Trade ID: ${tradeId}`
+		);
 		const tradeQueue = {
-			...prepareQueue(params.author.id, params.author.username),
-			...prepareQueue(mentionId, params.extras?.mentionUsername || ""),
+			...prepareQueue(
+				params.author.id,
+				params.author.username,
+				params.extras?.userId || 0
+			),
+			...prepareQueue(
+				mentionId,
+				params.extras?.mentionUsername || "",
+				params.extras?.mentionUserId || 0
+			),
 		};
-		await queue.setTradeQueue(tradeId, tradeQueue);
+		await Promise.all([
+			queue.setTrade(params.author.id, tradeId),
+			queue.setTrade(mentionId, tradeId),
+			queue.setTradeQueue(tradeId, tradeQueue),
+		]);
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
@@ -108,9 +132,13 @@ async function validateAndConfirmTrade(
           "Use ``trade add card(s) <filter>`` to add card(s) into your trade queue.\n" +
           "Use `` tr confirm/cancel`` to confirm/cancel your trade. " +
           "Use ``iz trade view`` to view the trade. " +
-          "You can use ``tr add cards -l <num>`` to specify the number of cards you want to add."
+          "You can use ``tr add cards -l <num>`` to specify the number of cards you want to add." +
+		  "\n**__NOTE:__ Your selected card(s) for floor battles will not be traded.**"
 			)
-			.setFooter({ text: "Your trade will auto expire in 10mins" });
+			.setFooter({
+				text: "Your trade will auto expire in 10mins",
+				iconURL: author.displayAvatarURL() 
+			});
 
 		params.channel?.sendMessage(embed);
 		return;
@@ -123,6 +151,70 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		const author = options.author;
 		const mentionId = getIdFromMentionedString(args.shift() || "");
 		if (!mentionId || mentionId === author.id) return;
+		const [ userTradeId, mentionedUserTradeId ] = await getInTrade(
+			author.id,
+			mentionId
+		);
+		const embed = createEmbed(author, client);
+		if (userTradeId) {
+			const tradeQueue = await queue.getTradeQueue(userTradeId);
+			if (!tradeQueue) {
+				await Promise.all([ queue.delFromQueue(userTradeId), queue.delFromTrade(author.id) ]);
+				context.channel?.sendMessage("Unable to process trade. try again later");
+				return;
+			}
+			const tradeActionParams = {
+				channel: context.channel,
+				args,
+				client,
+				author,
+				tradeQueue,
+				tradeId: userTradeId
+			};
+			if (mentionId === "add") {
+				addToTrade(tradeActionParams);
+				return;
+			} else if (mentionId === "view") {
+				viewTrade(tradeActionParams);
+				return;
+			} else if (mentionId === "cancel") {
+				cancelTrade(tradeActionParams);
+				return;
+			} else if (mentionId === "confirm") {
+				confirmTrade(tradeActionParams);
+				return;
+			}
+
+			embed
+				.setTitle(DEFAULT_ERROR_TITLE)
+				.setDescription(
+					`Summoner **${author.username}** You is currently in trade. ` +
+					"Use ``tr cancel/confirm`` to cancel/confirm the trade"
+				);
+			context.channel?.sendMessage(embed);
+			return;
+		}
+		const mentionedUser = await getUser({
+			user_tag: mentionId,
+			is_banned: false,
+		});
+		if (!mentionedUser) return;
+		if (mentionedUser.level < REQUIRED_TRADE_LEVEL) {
+			context.channel?.sendMessage(
+				`Summoner **${mentionedUser.username}**, must be atleast level __${REQUIRED_TRADE_LEVEL}__ to trade`
+			);
+			return;
+		}
+		if (mentionedUserTradeId) {
+			embed
+				.setTitle(DEFAULT_ERROR_TITLE)
+				.setDescription(
+					`Summoner **${mentionedUser.username}** is currently in trade. ` +
+				"Use ``tr cancel/confirm`` to cancel/confirm the trade"
+				);
+			context.channel?.sendMessage(embed);
+			return;	
+		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (user.level < REQUIRED_TRADE_LEVEL) {
@@ -131,14 +223,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 			);
 			return;
 		}
-		const mentionedUser = await getRPGUser({ user_tag: mentionId });
-		if (!mentionedUser) return;
-		if (mentionedUser.level < REQUIRED_TRADE_LEVEL) {
-			context.channel?.sendMessage(
-				`Summoner **${mentionedUser.username}**, must be atleast level __${REQUIRED_TRADE_LEVEL}__ to trade`
-			);
-			return;
-		}
+
 		const params = {
 			channel: context.channel,
 			author,
@@ -146,13 +231,14 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 			extras: {
 				mentionId,
 				mentionUsername: mentionedUser.username,
+				userId: user.id,
+				mentionUserId: mentionedUser.id,
 			},
 		};
-		const embed = createEmbed(author, client);
 		let sentMessage: Message;
 		const buttons = await confirmationInteraction(
 			context.channel,
-			author.id,
+			mentionId,
 			params,
 			validateAndConfirmTrade,
 			(data, opts) => {
@@ -161,8 +247,8 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 						.setTitle(`Trade Request ${emoji.tradeic}`)
 						.setDescription(
 							`Hey **${mentionedUser.username}** ${emoji.calm}` +
-                            `\n**${author.username}** has requested for a Trade. ` +
-                            `React with ${REACTIONS.confirm.emoji} to initiate a trade.`
+                `\n**${author.username}** has requested for a Trade. ` +
+                `React with ${REACTIONS.confirm.emoji} to initiate a trade.`
 						);
 				}
 				if (opts?.isDelete) {
@@ -173,9 +259,10 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

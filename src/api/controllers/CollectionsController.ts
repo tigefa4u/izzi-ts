@@ -1,5 +1,4 @@
 import { FilterProps, ResponseWithPagination } from "@customTypes";
-import { CharactersReturnType } from "@customTypes/characters";
 import {
 	CollectionParams,
 	CollectionProps,
@@ -42,7 +41,7 @@ export const createCollection: (
 };
 
 export const getCollection: (
-  params: CollectionParams
+  params: CollectionParams & { limit?: number }
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
 		const result = await Collections.get(params);

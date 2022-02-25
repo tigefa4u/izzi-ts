@@ -10,18 +10,19 @@ export const delFromQueue = async (key: string) => {
 };
 
 export const setTrade = async (key: string, value: string) => {
-	return await Cache.set(`intrade-${key}`, value);
+	await Cache.set(`intrade-${key}`, value);
+	setTradeTTL(`intrade-${key}`);
+	return value;
 };
 
 export const setTradeQueue = async (key: string, value: TradeQueueProps) => {
 	await Cache.set(`tradequeue-${key}`, JSON.stringify(value));
+	setTradeTTL(`tradequeue-${key}`);
 	return value;
 };
 
-export const getTrade = async (key: string): Promise<string | undefined> => {
-	const trade = await Cache.get(`intrade-${key}`);
-	if (trade) return JSON.parse(trade);
-	return;
+export const getTrade = async (key: string): Promise<string | null> => {
+	return await Cache.get(`intrade-${key}`);
 };
 
 export const getTradeQueue = async (key: string): Promise<TradeQueueProps | undefined> => {

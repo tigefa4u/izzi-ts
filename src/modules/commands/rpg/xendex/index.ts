@@ -40,6 +40,8 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 							description: "All the cards on The XenDex that match your requirements are shown below.",
 							pageName: "Dex"
 						});
+					} else {
+						embed.setDescription("No data available");
 					}
 					if (options?.isDelete && sentMessage) {
 						sentMessage.delete();
@@ -53,9 +55,10 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

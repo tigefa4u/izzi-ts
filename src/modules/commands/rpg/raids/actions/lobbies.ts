@@ -42,6 +42,8 @@ export const raidLobbies = async ({
                             "requirements are shown below.",
 						title: `${isEvent ? "Event" : "Raid"} Lobbies`,
 					});
+				} else {
+					embed.setDescription("No lobbies available");
 				}
 				if (options?.isDelete && sentMessage) {
 					sentMessage.delete();
@@ -55,9 +57,10 @@ export const raidLobbies = async ({
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.raidLobbies(): something went wrong", err);

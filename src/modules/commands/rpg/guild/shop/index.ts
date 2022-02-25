@@ -46,6 +46,8 @@ export const itemMarket = async ({ context, client, args, options }: BaseProps) 
 						description: "All the items on the Guild Global Market are shown below.",
 						pageName: "items"
 					});
+				} else {
+					embed.setDescription("No items available");
 				}
 				if (opts?.isDelete && sentMessage) {
 					sentMessage.delete();
@@ -58,9 +60,10 @@ export const itemMarket = async ({ context, client, args, options }: BaseProps) 
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.guild.shop.itemMarket(): something went wrong", err);

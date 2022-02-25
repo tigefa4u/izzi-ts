@@ -33,6 +33,7 @@ export type CollectionParams = {
   character_ids?: number[];
   item_id?: number;
   is_favorite?: boolean;
+  exclude_ids?: number[];
 };
 
 export type ItemCollectionCreateProps = Pick<
@@ -40,7 +41,10 @@ export type ItemCollectionCreateProps = Pick<
   "item_id" | "is_item" | "user_id"
 >;
 
-export type CollectionUpdateProps = Omit<Partial<CollectionProps>, IgnoreProps | "item_id"> & {
+export type CollectionUpdateProps = Omit<
+  Partial<CollectionProps>,
+  IgnoreProps | "item_id"
+> & {
   item_id?: number | null;
 };
 
@@ -63,10 +67,10 @@ export type ICollectionCreateProps =
 export type CollectionReturnType = CollectionProps & {
   abilityname: string;
   abilitydescription: string;
-	name: string;
-	type: string;
+  name: string;
+  type: string;
   itemname?: string;
-}
+};
 
 export type CollectionCardInfoProps = CollectionReturnType & {
   filepath: string;
@@ -74,5 +78,16 @@ export type CollectionCardInfoProps = CollectionReturnType & {
   itemdescription?: string;
   characterInfo?: CharacterCanvasProps;
   is_passive?: boolean;
-  itemStats?: CharacterStatProps;
-}
+  itemStats?: CharacterStatProps & { resist?: number };
+};
+
+export type AbilityStatStackProps = {
+  [key in keyof CharacterStatProps as `${key}Temp` | `${key}Inc`]: number;
+};
+
+export type CollectionCardInfoByRowNumberParams = {
+  row_number: number | number[];
+  user_id: number;
+  user_tag?: string;
+  exclude_ids?: number[];
+};

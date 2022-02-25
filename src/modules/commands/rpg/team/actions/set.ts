@@ -9,7 +9,7 @@ import { createEmbed } from "commons/embeds";
 import { findDuplicateCollectionInTeamsAndUpdate } from "helpers/teams";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { groupByKey } from "utility";
+import { reorderObjectKey } from "utility";
 import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu, showTeam } from "..";
 
 async function handleTeamSet(
@@ -34,7 +34,7 @@ async function handleTeamSet(
 		return;
 	}
 	const filteredTeams = await findDuplicateCollectionInTeamsAndUpdate(teams, collection.id, team.id);
-	const teamsMap = groupByKey(filteredTeams, "id");
+	const teamsMap = reorderObjectKey(filteredTeams, "id");
 	if (!teamsMap) {
 		params.channel?.sendMessage("Unable to process team");
 		throw new Error(`Team not found for id: ${team.id} in teams map: ${JSON.stringify(teamsMap)}`);

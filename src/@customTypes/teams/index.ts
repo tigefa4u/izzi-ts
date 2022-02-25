@@ -1,4 +1,5 @@
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import { GuildStatProps } from "@customTypes/guilds";
 
 export type TeamMeta = { collection_id: number | null; position: number; };
 
@@ -23,4 +24,12 @@ export type TeamUpdateData = {
 export type PrepareTotalOverallStats = {
     collections: CollectionCardInfoProps[];
     isBattle: boolean;
+    guildStats?: GuildStatProps;
+}
+
+export type PrepareSkewedCollectionsForBattleProps = {
+    collections: CollectionCardInfoProps[];
+    id: string;
+    name: string;
+    team?: TeamProps;
 }

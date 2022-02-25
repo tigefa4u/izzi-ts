@@ -36,6 +36,10 @@ const argMap = [
 	{
 		name: "difficulty",
 		alias: [ "-d", "-difficulty" ]
+	},
+	{
+		name: "limit",
+		alias: [ "-l" ]
 	}
 ];
 

@@ -112,11 +112,11 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			switch (id) {
-				case confirmLabel: {
+				case cancelLabel: {
 					callback(null, { isDelete: true });
 					break;
 				}
-				case cancelLabel: {
+				case confirmLabel: {
 					options = Object.assign({}, options);
 					options.isConfirm = true;
 					await fetch(params, options);

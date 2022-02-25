@@ -98,16 +98,7 @@ async function verifyAndProcessEvolution(
 		params.channel?.sendMessage(embed);
 		return;
 	}
-	const cardCanvas = {
-		...cardToEvolve,
-		is_event: false,
-		is_logo: false,
-		is_random: false,
-		copies: 1,
-		series: "",
-		shard_cost: 0,
-		has_event_ended: false,
-	} as CharacterCanvasProps;
+	const cardCanvas = cardToEvolve;
 	if (cardToEvolve.souls < reqSouls) {
 		embed.setDescription(
 			`You do not have sufficient souls to evolve this card! **[${cardToEvolve.souls}/${reqSouls}]**`
@@ -235,9 +226,10 @@ export const evolveCard = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

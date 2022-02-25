@@ -55,7 +55,9 @@ export const randomNumber = (num1: number, num2: number, float = false) => {
 };
 
 export const randomElementFromArray = <T>(array: T[]) => {
-	return _.sample<T>(array);
+	const sample = _.sample<T>(array);
+	if (!sample)  return array[0];
+	return sample;
 };
 
 export const validateAccountCreatedAt = (author: AuthorProps) => {

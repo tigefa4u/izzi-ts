@@ -51,11 +51,11 @@ export const preparePlayerStats = async ({
 	}
 	const playerStats = {
 		health: prepareHPBar(),
-		critDamage: 1,
+		criticalDamage: 1,
 		effective: 1,
 		character_level: characterLevel,
 		...statsToAssign,
-	};
+	} as BattleStats["totalStats"];
 
 	return playerStats;
 };
@@ -129,11 +129,13 @@ export const prepareBattleDesc = ({
 				.map((i) => i)
 				.join("")}\n`
 			: ""
-	}Level: ${playerStats.totalStats.character_level}\n**${playerStats.totalStats.strength} / ${
-		playerStats.totalStats.originalHp
-	} ${emoji.hp}**\n${playerStats.totalStats.health
-		.map((i) => i)
-		.join("")}\n\n**${enemyStats.name}**\nElement Type: ${filterEnemyCards
+	}Level: ${playerStats.totalStats.character_level}\n**${
+		playerStats.totalStats.strength
+	} / ${playerStats.totalStats.originalHp} ${
+		emoji.hp
+	}**\n${playerStats.totalStats.health.map((i) => i).join("")}\n\n**${
+		enemyStats.name
+	}**\nElement Type: ${filterEnemyCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
 		.join(" ")}\n${
 		filterEnemyCards.length === 1
@@ -154,7 +156,13 @@ export const prepareBattleDesc = ({
 };
 
 export const createBattleCanvas = async (
-	cards: (CollectionCardInfoProps | undefined)[]
+	cards: (
+    | Pick<CollectionCardInfoProps, "filepath" | "type" | "rank">
+    | undefined
+  )[],
+	extras?: {
+    isSingleRow: boolean;
+  }
 ) => {
 	if (!Array.isArray(cards)) return;
 	const canvas = createCanvas(CANVAS_DEFAULTS.width, CANVAS_DEFAULTS.height);
@@ -172,7 +180,15 @@ export const createBattleCanvas = async (
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
+		const dh = extras?.isSingleRow
+			? canvas.height
+			: canvas.height / 2;
 		for (let i = 0; i < cards.length; i++) {
+			const starIconPosition = extras?.isSingleRow
+				? dh - 150
+				: dh * Math.floor(i / 3) + 220 * 3.7;
+
+			const dy = extras?.isSingleRow ? 0 : (canvas.height / 2) * Math.floor(i / 3);
 			if (!cards[i]) continue;
 			const path = "./assets/images/star.png";
 			const star = await loadImage(path);
@@ -190,16 +206,16 @@ export const createBattleCanvas = async (
 				ctx.drawImage(
 					image,
 					(canvas.width / 3) * (i % 3),
-					(canvas.height / 2) * Math.floor(i / 3),
+					dy,
 					canvas.width / 3,
-					canvas.height / 2
+					dh
 				);
 				ctx.drawImage(
 					borderCanvas,
 					(canvas.width / 3) * (i % 3),
-					(canvas.height / 2) * Math.floor(i / 3),
+					dy,
 					canvas.width / 3,
-					canvas.height / 2
+					dh
 				);
 				for (let j = 0; j < (ranksMeta[cards[i]?.rank || ""] || {}).size; j++) {
 					ctx.drawImage(
@@ -208,7 +224,7 @@ export const createBattleCanvas = async (
               canvas.width / 3 / 2 +
               (canvas.width / 3) * (i % 3) -
               20 * ((ranksMeta[cards[i]?.rank || ""] || {}).size + 1),
-						(canvas.height / 2) * Math.floor(i / 3) + 220 * 3.7,
+						starIconPosition,
 						48,
 						48
 					);

@@ -145,5 +145,6 @@ export type EmojiProps = {
 	hasmorespeed: ":small_red_triangle:",
 	angry: "💢",
 	tradeic :":mailbox_with_mail:",
-	renewaltaekwondo: "<:renewaltaekwondo:942164541775683676>"
+	renewaltaekwondo: "<:renewaltaekwondo:942164541775683676>",
+	warning: ":warning:",
 }

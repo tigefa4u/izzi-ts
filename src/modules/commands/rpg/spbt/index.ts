@@ -4,7 +4,6 @@ import { BaseProps } from "@customTypes/command";
 import { getRandomCard } from "api/controllers/CardsController";
 import { createCollection } from "api/controllers/CollectionsController";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
-import { getTeamById } from "api/controllers/TeamsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
@@ -17,16 +16,31 @@ import {
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 } from "helpers/constants";
-import { prepareTeamForBattle } from "helpers/teams";
+import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	clearCooldown,
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { simulateBattle } from "../adventure/battle";
+import { simulateBattle } from "../adventure/battle/battle";
 import { getSkinArr } from "../skins/skinCache";
+import * as battleInChannel from "../adventure/battle/battlesPerChannelState";
 
 export const spbt = async ({ options, context, client }: BaseProps) => {
 	try {
 		const author = options.author;
+		const _battlesInChannel = battleInChannel.validateBattlesInChannel(
+			context.channel?.id || ""
+		);
+		if (_battlesInChannel === undefined) return;
+		let _inBattle = await getCooldown(author.id, "mana-battle");
+		if (_inBattle) {
+			context.channel?.sendMessage("Your battle is still in progress, try again later");
+			return;
+		}
 		const cd = await getCooldown(author.id, "spbt");
 		if (cd) {
 			sendCommandCDResponse(context.channel, cd, author.id, "spbt");
@@ -44,27 +58,14 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
           `You do not have enough mana to continue **[${user.mana} / ${SPBT_REQUIRED_MANA}]**`
 			);
 		}
-		const team = await getTeamById({
-			user_id: user.id,
-			id: user.selected_team_id,
-		});
-		if (!team) {
-			context.channel?.sendMessage(
-				"We were unable to find your Team, please reset your teams!"
-			);
-			return;
-		}
-		const playerTeamStats = await prepareTeamForBattle({
-			team,
-			user_id: user.id,
-			id: user.user_tag,
-		});
-		if (!playerTeamStats) {
-			context.channel?.sendMessage(
-				`We are unable to prepare __Team ${team.name}__. Please reset your team`
-			);
-			return;
-		}
+		const teamPrepared = await validateAndPrepareTeam(
+			user.id,
+			user.user_tag,
+			user.selected_team_id,
+			context.channel
+		);
+		const playerTeamStats = teamPrepared?.stats;
+		if (!playerTeamStats) return;
 		const cardTypes = [ "exclusive", "ultimate" ];
 		const probs = [ 50, 50 ];
 		const rank = cardTypes[probability(probs)];
@@ -111,18 +112,32 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 			card: enemyCard,
 			name: `XeneX's ${titleCase(enemyCard.name)}`,
 		});
+		_inBattle = await getCooldown(author.id, "mana-battle");
+		if (_inBattle) return;
 		user.mana = user.mana - SPBT_REQUIRED_MANA;
-		await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
+		if (user.mana < 0) user.mana = 0;
+		await Promise.all([
+			updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
+			setCooldown(author.id, "spbt", 2700),
+			setCooldown(author.id, "mana-battle", 60 * 5),
+		]);
 		const battleStatus = await simulateBattle({
 			context,
 			playerStats: playerTeamStats,
 			enemyStats: enemyBase,
 			title: "__XeneX Special Battle__",
 		});
-		setCooldown(author.id, "spbt", 2700);
+		clearCooldown(author.id, "mana-battle");
+		if (battleStatus?.isForfeit) return;
 		if (battleStatus?.isVictory) {
 			enemyCard.name = enemyBase.name;
-			processVictoryAndSendEmbed(author, client, context.channel, enemyCard, user.id);
+			processVictoryAndSendEmbed(
+				author,
+				client,
+				context.channel,
+				enemyCard,
+				user.id
+			);
 			return;
 		} else {
 			sendBattleStatusEmbed(author, client, context.channel);
@@ -184,6 +199,12 @@ async function processVictoryAndSendEmbed(
 	} ${enemyCard.name}** in battle!\n•You have received 1 __${titleCase(
 		card.rank
 	)}__ copy of **${titleCase(card.name)}**`;
-	sendBattleStatusEmbed(author, client, channel, desc, `Victory ${emoji.celebration}!`);
+	sendBattleStatusEmbed(
+		author,
+		client,
+		channel,
+		desc,
+		`Victory ${emoji.celebration}!`
+	);
 	return;
 }

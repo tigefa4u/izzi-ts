@@ -43,6 +43,8 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 							description: "All Abilities that match your requirements are shown below.",
 							title: "Abilities"
 						});
+					} else {
+						embed.setDescription("No data available");
 					}
 					if (options?.isDelete && sentMessage) {
 						sentMessage.delete();
@@ -56,9 +58,10 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 	} catch (err) {
 		loggers.error("modules.commands.rpg.abilities.ability(): something went wrong", err);
 		return;

@@ -32,9 +32,7 @@ function safeParseParams(params: FilterProps & { user_id: number }) {
 		const ids = parseRankId(params.rank);
 		if (ids) {
 			if (typeof ids === "object") {
-				params.rank_ids = ids
-					.filter(Boolean)
-					.map(Number);
+				params.rank_ids = ids.filter(Boolean).map(Number);
 			} else {
 				params.rank_ids = ids;
 			}
@@ -91,10 +89,14 @@ export const cardCollection = async ({
 						pageCount: data.data.length,
 						pageName: "Collection",
 						description:
-		      "All Cards in your inventory that match your" +
-		      "requirements are shown below.",
+              "All Cards in your inventory that match your" +
+              "requirements are shown below.",
 						title: "Collections",
 					});
+				} else {
+					embed.setDescription(
+						"You currently have no collections. Start claiming cards to go on your journey in the Xenverse!"
+					);
 				}
 				if (options?.isDelete && sentMessage) {
 					sentMessage.delete();
@@ -108,9 +110,10 @@ export const cardCollection = async ({
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

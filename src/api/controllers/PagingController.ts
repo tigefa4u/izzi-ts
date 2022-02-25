@@ -5,6 +5,7 @@ import { Client, EmbedFieldData, Message } from "discord.js";
 import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { clientSidePagination } from "helpers/pagination";
+import loggers from "loggers";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 
@@ -50,53 +51,61 @@ export const pageFunc = async <T>(
 	author: AuthorProps,
 	options: O
 ) => {
-	const filter = PAGE_FILTER;
-	const totalCount = array.length;
-	const totalPages = Math.ceil(totalCount / filter.perPage);
-	let embed = createEmbed(author);
-	let sentMessage: Message;
-	const buttons = await paginatorInteraction<{ array: T[] }, T[], P>(
-		channel,
-		author.id,
-		{ array },
-		filter,
-		paginatorFunc,
-		(data, opts) => {
-			if (data) {
-				const desc = `${options.description}\n\n${data.data.map((i) => i).join("")}`;
-				embed = createEmbedList({
-					author,
-					list: options.list,
-					currentPage: data.metadata.currentPage,
-					totalPages,
-					totalCount,
-					title: options.title,
-					description: desc,
-					pageName: options.pageName,
-					pageCount: data.data.length,
-					client: options.client
-				});
-				if (options.filepath) {
-					embed.setThumbnail(options.filepath);
+	try {
+		const filter = PAGE_FILTER;
+		const totalCount = array.length;
+		const totalPages = Math.ceil(totalCount / filter.perPage);
+		let embed = createEmbed(author);
+		let sentMessage: Message;
+		const buttons = await paginatorInteraction<{ array: T[] }, T[], P>(
+			channel,
+			author.id,
+			{ array },
+			filter,
+			paginatorFunc,
+			(data, opts) => {
+				if (data) {
+					const desc = `${options.description}\n\n${data.data.map((i) => i).join("")}`;
+					embed = createEmbedList({
+						author,
+						list: options.list,
+						currentPage: data.metadata.currentPage,
+						totalPages,
+						totalCount,
+						title: options.title,
+						description: desc,
+						pageName: options.pageName,
+						pageCount: data.data.length,
+						client: options.client
+					});
+					if (options.filepath) {
+						embed.setThumbnail(options.filepath);
+					}
+				} else {
+					embed.setDescription("No data available");
 				}
+				if (opts?.isDelete && sentMessage) {
+					sentMessage.delete();
+				}
+				if (opts?.isEdit) {
+					sentMessage.editMessage(embed);
+				}
+			},
+			{
+				totalCount,
+				totalPages,
 			}
-			if (opts?.isDelete && sentMessage) {
-				sentMessage.delete();
-			}
-			if (opts?.isEdit) {
-				sentMessage.editMessage(embed);
-			}
-		},
-		{
-			totalCount,
-			totalPages,
+		);
+		if (!buttons) return;
+
+		embed.setButtons(buttons);
+
+		const msg = await channel?.sendMessage(embed);
+		if (msg) {
+			sentMessage = msg;
 		}
-	);
-	if (!buttons) return;
-
-	embed.setButtons(buttons);
-
-	channel?.sendMessage(embed).then((msg) => {
-		sentMessage = msg;
-	});
+	} catch (err) {
+		loggers.error("api.controllers.PagingController.pageFunc(): something went wrong", err);
+		throw err;
+	}
 };

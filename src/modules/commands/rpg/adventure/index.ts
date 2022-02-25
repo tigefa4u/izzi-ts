@@ -1,4 +1,4 @@
-import { BattleStats } from "@customTypes/adventure";
+import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getCardForBattle } from "api/controllers/CollectionInfoController";
@@ -10,12 +10,27 @@ import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
 import { DEFAULT_ERROR_TITLE, MANA_PER_BATTLE } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { simulateBattle } from "./battle";
+import { simulateBattle } from "./battle/battle";
+import { processBattleResult } from "./battle/battleResult";
+import * as battlePerChannel from "./battle/battlesPerChannelState";
 
 export const battle = async ({ context, args, options, client }: BaseProps) => {
 	try {
+		const battlesInChannel = battlePerChannel.validateBattlesInChannel(
+			context.channel?.id || ""
+		);
+		if (battlesInChannel === undefined) return;
 		const author = options.author;
+		let inBattle = await getCooldown(author.id, "mana-battle");
+		if (inBattle) {
+			context.channel?.sendMessage(
+				"Your battle is still in progress. " +
+				"(If you have completed your battle and are still seeing this, please try again in 1 minute)"
+			);
+			return;
+		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (!user.selected_card_id) {
@@ -66,12 +81,8 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		});
 		if (!card) return;
 
-		const battleCardDetails = {
+		const battleCardDetails: RPGBattleCardDetailProps = {
 			selected_card_id: user.selected_card_id,
-			itemDetails: {
-				name: card.itemname,
-				stats: card.itemStats,
-			},
 			floor: user.floor,
 			ruin: user.ruin,
 			max_ruin: user.max_ruin,
@@ -151,13 +162,32 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			name: `Enemy's ${titleCase(enemyCard.name)}`,
 			card: enemyCard,
 		});
+		inBattle = await getCooldown(author.id, "mana-battle");
+		if (inBattle) return;
 		user.mana = user.mana - MANA_PER_BATTLE;
-		await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
-		simulateBattle({
+		if (user.mana < 0) user.mana = 0;
+		await Promise.all([ updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
+			setCooldown(author.id, "mana-battle", 60 * 5) ]);
+
+		const result = await simulateBattle({
 			context,
 			playerStats: playerBase,
 			enemyStats: enemyBase,
 			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
+		});
+		clearCooldown(author.id, "mana-battle");
+		if (!result) {
+			context.channel?.sendMessage("Unable to process your battle");
+			return;
+		}
+		if (result.isForfeit) return;
+		processBattleResult({
+			result: { isVictory: result.isVictory || false },
+			card: battleCardDetails,
+			enemyCard,
+			author,
+			multiplier: 1,
+			channel: context.channel
 		});
 	} catch (err) {
 		loggers.error(

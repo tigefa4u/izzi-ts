@@ -4,7 +4,7 @@ import loggers from "loggers";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
 export const createSingleCanvas: (
-  card: CharacterCanvasProps,
+  card: Pick<CharacterCanvasProps, "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank">,
   isNotStar: boolean
 ) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
 	try {

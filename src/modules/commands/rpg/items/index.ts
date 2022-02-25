@@ -64,6 +64,7 @@ export const itemCollection = async ({
     				data.metadata.currentPage,
     				data.metadata.perPage
     			);
+    			console.log(list);
     			embed = createEmbedList({
     				author,
     				list,
@@ -78,6 +79,8 @@ export const itemCollection = async ({
               "requirements are shown below.",
     				title: "Item Collection",
     			});
+    		} else {
+    			embed.setDescription("You currently have no items. You can purchase items using ``itemshop``");
     		}
     		if (options?.isDelete && sentMessage) {
     			sentMessage.delete();
@@ -92,9 +95,10 @@ export const itemCollection = async ({
 
 		embed.setButtons(buttons);
 
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

@@ -5,29 +5,18 @@ import discord from "discord.js";
 import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../environment";
 import { handleClient, handleClientEvents } from "handlers/client";
 import "../module";
+import loggers from "loggers";
+import flushCache from "./autoClear/index";
 
-// app.use(
-//   cors({
-//     // origin: "*",
-//     origin: config.IZZI_WEBSITE
-//   })
-// );
+process.on("unhandledRejection", (error, promise) => {
+	loggers.error("UnhandledRejection: " + error + "promise was: " + promise, error);
+});
 
-// const http = require("http").createServer(app);
-// require("../socket/utils").listen(http);
-
-// const webhook = new Topgg.Webhook("izziwebhookauth");
-
-// process.on("unhandledRejection", (error, promise) => {
-// 	logger.error("UnhandledRejection: " + error + "promise was: " + promise);
-// });
-
-// process.on("uncaughtException", async (error) => {
-// 	logger.error("BOT CRASHED, FATAL ERROR: " + error);
-// 	const cleanup = require("./cleanup");
-// 	await cleanup();
-// 	process.exit(1);
-// });
+process.on("uncaughtException", async (error) => {
+	loggers.error("BOT CRASHED, FATAL ERROR: ", error);
+	await flushCache();
+	process.exit(1);
+});
 
 // process.setMaxListeners(100);
 

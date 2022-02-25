@@ -11,10 +11,11 @@ import { cardCollection } from "modules/commands/rpg/collections";
 import { favorite } from "modules/commands/rpg/collections/favorite";
 import { getCardInfo } from "modules/commands/rpg/collections/info";
 import { selectCard } from "modules/commands/rpg/collections/select";
-import { compare } from "modules/commands/rpg/compare";
+import { compareCards } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
 import { consume } from "modules/commands/rpg/consumeOrbsToShards";
 import { crate } from "modules/commands/rpg/crates";
+import { dungeon } from "modules/commands/rpg/dungeon";
 import { evolveCard } from "modules/commands/rpg/evolution";
 import { guild } from "modules/commands/rpg/guild";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
@@ -33,6 +34,7 @@ import {
 import { start } from "modules/commands/rpg/profile/startJourney";
 import { updateIzziProfile } from "modules/commands/rpg/profile/update";
 import { raidActions } from "modules/commands/rpg/raids";
+import { eventActions } from "modules/commands/rpg/raids/events";
 import { give, hourly } from "modules/commands/rpg/resource";
 import { sacrificeCard } from "modules/commands/rpg/sacrifice";
 import { skins } from "modules/commands/rpg/skins";
@@ -74,8 +76,7 @@ const commandMap: CommandMapProps = {
 	floor: floor,
 	zone: zone,
 	packs: packs,
-	// sort: sort,
-	compare: compare,
+	compare: compareCards,
 	cards: cards,
 	status: status,
 	skins: skins,
@@ -94,14 +95,17 @@ const commandMap: CommandMapProps = {
 	equip: equip,
 	unequip: unEquip,
 	favorite: favorite,
-	battle: battle, // partial completion
-	trade: trade, // partial completion
+	battle: battle,
+	trade: trade,
 	sacrifice: sacrificeCard,
 	evolution: evolveCard,
 	team: team,
 	update: updateIzziProfile,
-	spbt: spbt,
-	raid: raidActions
+	raid: raidActions, // needs testing
+	event: eventActions,
+	dungeon: dungeon
+	// spbt: spbt, // temporarily removed
+	// sort: sort, // removed
 };
 
 export default commandMap;

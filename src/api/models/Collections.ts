@@ -77,13 +77,19 @@ export const transformation = {
 };
 
 export const get = async (
-	params: CollectionParams
+	params: CollectionParams & { limit?: number }
 ): Promise<CollectionProps[]> => {
 	let queryParams = clone(params);
 	const character_ids = queryParams.character_ids;
 	delete queryParams.character_ids;
 	const ids = queryParams.ids;
 	delete queryParams.ids;
+	const exclude_ids = queryParams.exclude_ids;
+	delete queryParams.exclude_ids;
+	const rank = queryParams.rank;
+	delete queryParams.rank;
+	const limit = queryParams.limit;
+	delete queryParams.limit;
 
 	queryParams = safeParseQueryParams({
 		query: queryParams,
@@ -99,14 +105,20 @@ export const get = async (
 	if (character_ids) {
 		query = query.whereIn("character_id", character_ids);
 	}
-	if (typeof queryParams.rank === "string") {
-		query = query.where(`${tableName}.rank`, queryParams.rank);
-	} else if (typeof queryParams.rank === "object") {
+	if (exclude_ids) {
+		query = query.whereNotIn("id", exclude_ids);
+	}
+	if (typeof rank === "string") {
+		query = query.where(`${tableName}.rank`, rank);
+	} else if (typeof rank === "object") {
 		query = query.where(
 			`${tableName}.rank`,
 			"~",
-			`^(${queryParams.rank.join("|")}).*`
+			`^(${rank.join("|")}).*`
 		);
+	}
+	if (limit) {
+		query = query.limit(limit);
 	}
 
 	return query;
@@ -197,6 +209,7 @@ export const update = async (
 export const getByRowNumber = async (params: {
   row_number: number | number[];
   user_id: number;
+  exclude_ids?: number[];
 }): Promise<CollectionProps[]> => {
 	const db = connection;
 	const alias = "collectionalias";
@@ -205,6 +218,10 @@ export const getByRowNumber = async (params: {
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.as(alias);
+	
+	if (params.exclude_ids) {
+		query = query.whereNotIn(`${tableName}.id`, params.exclude_ids);
+	}
 	
 	query = db.select(db.raw(`${alias}.*`))
 		.from(query);

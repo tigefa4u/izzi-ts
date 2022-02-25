@@ -73,7 +73,7 @@ export const profile = async ({
 				user_tag: user.user_tag
 			});
 			if (result) {
-				const card = result[0] as CharacterCanvasProps & CollectionCardInfoProps;
+				const card = result[0];
 				user.itemname = card.itemname;
 				user.name = card.name;
 				const canvas = await createSingleCanvas(card, false);

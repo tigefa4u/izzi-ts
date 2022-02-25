@@ -11,13 +11,14 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { createBattleCanvas, prepareBattleDesc } from "helpers/adventure";
-import { compareDexterity, simulateBattleDescription } from "helpers/battle";
+import { compare, simulateBattleDescription } from "helpers/battle";
 import { BATTLE_ROUNDS_COUNT } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
 import { BattleProcess } from "./battleProcess";
 import { prepareCriticalHitChance, prepareEvadeHitChance } from "./chances";
+import * as battlesPerChannel from "./battlesPerChannelState";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -39,7 +40,13 @@ export const simulateBattle = async ({
 	enemyStats,
 	title = "__TEAM BATTLE__",
 }: SimulateBattleProps) => {
+	if (!context.channel?.id) return;
+	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(context.channel.id);
 	try {
+		if (battlesInChannel === undefined) return;
+		else battlesInChannel = battlesPerChannel.set(context.channel.id, battlesInChannel + 1)
+			.get(context.channel.id);
+
 		const basePlayerStats = clone(playerStats);
 		const baseEnemyStats = clone(enemyStats);
 		const description = prepareBattleDesc({
@@ -73,7 +80,7 @@ export const simulateBattle = async ({
 			throw new Error("Message Object not found to edit battle");
 		}
 		for (let round = 1; round <= BATTLE_ROUNDS_COUNT; round++) {
-			const isPlayerFirst = compareDexterity(
+			const isPlayerFirst = compare(
 				playerStats.totalStats.dexterity,
 				enemyStats.totalStats.dexterity
 			);
@@ -113,6 +120,7 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
+		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
 				roundStats.isVictory = false;
@@ -123,12 +131,13 @@ export const simulateBattle = async ({
 		}
 		if (roundStats?.isForfeit) {
 			context.channel?.sendMessage("You have forfeit the battle");
-			return;
+			return { isForfeit: roundStats.isForfeit };
 		}
 		return roundStats;
 	} catch (err) {
+		battlesPerChannel.autoClear();
 		loggers.error(
-			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
+			"utility.adventure.battle.simulateBattle(): something went wrong",
 			err
 		);
 		return;
@@ -147,7 +156,7 @@ async function simulatePlayerTurns({
 	baseEnemyStats,
 	totalDamage,
 }: PrepareBattleDescriptionProps &
-  BattleProcessProps & {
+  Omit<BattleProcessProps, "opponentStats"> & {
     message: Message;
   }) {
 	let defeated;
@@ -180,7 +189,13 @@ async function simulatePlayerTurns({
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			embed,
 			round,
+			message
 		});
+		if (updatedStats.forfeit) {
+			defeated = playerStats;
+			defeated.isForfeit = true;
+			break;
+		}
 		basePlayerStats = updatedStats.basePlayerStats;
 		baseEnemyStats = updatedStats.baseEnemyStats;
 
@@ -224,7 +239,8 @@ async function simulatePlayerTurns({
 				basePlayerStats,
 				round,
 				embed,
-				isPlayerFirst
+				isPlayerFirst,
+				message
 			});
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
@@ -236,7 +252,8 @@ async function simulatePlayerTurns({
 				basePlayerStats,
 				round,
 				embed,
-				isPlayerFirst
+				isPlayerFirst,
+				message
 			});
 			break;
 		}
@@ -272,9 +289,9 @@ function updateBattleDesc({
 }) {
 	const desc = `${turn === 0 ? `${description}\n` : `**[ROUND ${round}**]\n`}${
 		emoji.fast
-	} ${
+	} **${
 		isPlayerFirst ? playerStats.name : enemyStats.name
-	} deals __${damageDealt}__ damage ${
+	}** deals __${damageDealt}__ damage ${
 		isCriticalHit ? "**CRITICAL HIT**" : ""
 	} ${
 		opponentStats.totalStats.effective < 1
@@ -292,7 +309,7 @@ function updateBattleDesc({
 	return desc;
 }
 
-function getDefeated({ updatedStats, playerStats, enemyStats }: BattleProcessProps & {
+function getDefeated({ updatedStats, playerStats, enemyStats }: Omit<BattleProcessProps, "opponentStats"> & {
     enemyStats: BattleStats;
     updatedStats: BattleUpdatedStats;
 }) {
@@ -316,7 +333,6 @@ function compareHpPercent(
 	player: BattleStats["totalStats"],
 	opponent: BattleStats["totalStats"]
 ) {
-	console.log(player.strength, "rat fuck", opponent.strength);
 	if (player.strength <= 0) {
 		return false;
 	}

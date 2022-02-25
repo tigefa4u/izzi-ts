@@ -1,12 +1,13 @@
 import { FilterProps, ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
-import { RaidProps, RaidUpdateProps, RaidCreateProps } from "@customTypes/raids";
+import { RaidProps, RaidUpdateProps, RaidCreateProps, RaidLobbyProps } from "@customTypes/raids";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Raids from "../models/Raids";
 
 export const createRaid = async (data: RaidCreateProps) => {
 	try {
+		loggers.info("Creating Raid boss: " + JSON.stringify(data));
 		return await Raids.create(data);
 	} catch (err) {
 		loggers.error(
@@ -19,6 +20,7 @@ export const createRaid = async (data: RaidCreateProps) => {
 
 export const updateRaid = async (params: { id: number }, data: RaidUpdateProps) => {
 	try {
+		loggers.info("Updating raid: " + JSON.stringify(params) + " " + JSON.stringify(data));
 		return await Raids.update(params, data);
 	} catch (err) {
 		loggers.error(
@@ -32,9 +34,10 @@ export const updateRaid = async (params: { id: number }, data: RaidUpdateProps) 
 export const updateLobby = async ({ raid_id, index, data }: {
     raid_id: number;
     index: number;
-    data: RaidUpdateProps;
+    data: RaidLobbyProps;
 }) => {
 	try {
+		loggers.info("Updating raid lobby: " + `Raid ID: ${raid_id} > index: ${index} > ${JSON.stringify(data)}`);
 		return await Raids.updateLobby({
 			raid_id,
 			index,
@@ -51,7 +54,8 @@ export const updateLobby = async ({ raid_id, index, data }: {
 
 export const getRaid = async (params: { id: number }) => {
 	try {
-		return await Raids.get(params);
+		const result = await Raids.get(params);
+		return result[0];
 	} catch (err) {
 		loggers.error(
 			"api.controllers.RaidsController.getRaid(): something went wrong",
@@ -63,6 +67,7 @@ export const getRaid = async (params: { id: number }) => {
 
 export const deleteRaid = async (params: { id: number }) => {
 	try {
+		loggers.info("Deleting Raid: " + params.id);
 		return await Raids.destroy(params);
 	} catch (err) {
 		loggers.error(

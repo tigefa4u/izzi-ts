@@ -1,10 +1,11 @@
 import {
+	DMChannel,
 	Message, MessageActionRow, MessageAttachment, MessageEmbed, TextChannel 
 } from "discord.js";
 import { CustomEmbedProps } from "@customTypes/embed";
 import { EmbedEditOptions } from "@customTypes";
 
-type Props = TextChannel;
+type Props = TextChannel | DMChannel;
 type ResponseObjectProps = {
 	content?: string;
 	embeds?: MessageEmbed[];

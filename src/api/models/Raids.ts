@@ -2,6 +2,7 @@ import { FilterProps } from "@customTypes";
 import { PaginationProps } from "@customTypes/pagination";
 import {
 	RaidCreateProps,
+	RaidLobbyProps,
 	RaidProps,
 	RaidUpdateProps,
 } from "@customTypes/raids";
@@ -81,7 +82,7 @@ export const updateLobby = async ({
 }: {
   raid_id: number;
   index: number;
-  data: RaidUpdateProps;
+  data: RaidLobbyProps;
 }) => {
 	return connection(tableName)
 		.update({

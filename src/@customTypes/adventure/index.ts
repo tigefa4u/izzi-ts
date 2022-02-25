@@ -1,7 +1,7 @@
 import { OverallStatsProps } from "@customTypes";
-import { CollectionCardInfoProps } from "@customTypes/collections";
+import { AbilityStatStackProps, CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 
 export type EffectivenessProps = {
     water: { affects: [ "fire" ] };
@@ -23,13 +23,80 @@ export type SimulateBattleProps = {
     title: string;
 }
 
+type StatStateProps = {
+    tempPOM?: number;
+    tempCritPOM?: number;
+    tempAccPB?: number;
+    tempPB?: number;
+    exhNum?: number;
+    critNum?: number;
+    critDamageTemp?: number;
+    domNum?: number;
+    isPB?: boolean;
+    isPOM?: boolean;
+    pomNum?: number;
+    tempEle?: number;
+    tempEleInc?: number;
+}
+
+export type AbilityStackProps = StatStateProps & AbilityStatStackProps & {
+    isWrecker?: boolean;
+    isRage?: boolean;
+    isBerserk?: boolean;
+    isRevit?: boolean;
+    isGuardian?: boolean;
+    isKiller?: boolean;
+    isFuture?: boolean;
+    isEclipse?: boolean;
+    isSpirit?: boolean;
+    isPred?: boolean;
+    isStunned?: boolean;
+    isToxicated?: boolean;
+    isUseWreckerPassive?: boolean;
+    isReflectThornmailDamage?: boolean;
+    isLifesteal?: boolean;
+    lifestealPercent?: number;
+    sleepResistPercent?: number;
+    isSleepResisted?: boolean;
+    restrictResistPercent?: number;
+    isRestrictResisted?: boolean;
+    fs?: number;
+    isAsleep?: boolean;
+    isSurge?: boolean;
+    surgePercent?: number;
+    previousHp?: number;
+    isBstrike?: boolean;
+    predDex?: number;
+    isPlatting?: boolean;
+    isEndure?: boolean;
+    previousRound?: number;
+    isToxic?: boolean;
+    isPoisoned?: boolean;
+    isStack?: boolean;
+    isTB?: boolean;
+    previousDamage?: number;
+    isUseBlizzardPassive?: boolean;
+    isBlizzard?: boolean;
+    isUseFrostPassive?: boolean;
+    isFrost?: boolean;
+    isSB?: boolean;
+    isTornado?: boolean;
+    isUseEvasion?: boolean;
+    isExhaust?: boolean;
+    isRapid?: boolean;
+    isUsePassive?: boolean;
+    isDominator?: boolean;
+    isUseCrusher?: boolean;
+    isPrecision?: boolean;
+}
+
 export type BattleStats = {
     id: string;
     cards: (CollectionCardInfoProps | undefined)[];
     name: string;
-    totalStats: OverallStatsProps & {
+    totalStats: OverallStatsProps & AbilityStackProps & {
         health: string[];
-        critDamage: number;
+        criticalDamage: number;
         effective: number;
         character_level: number;
         isCriticalHit?: boolean;
@@ -51,10 +118,13 @@ export type BattleProcessProps = {
     round: number;
     basePlayerStats: BattleStats;
     baseEnemyStats: BattleStats;
-    opponentStats?: BattleStats;
+    opponentStats: BattleStats;
     playerStats: BattleStats;
     isPlayerFirst: boolean;
     embed: MessageEmbed;
+    message: Message;
+    card?: CollectionCardInfoProps & AbilityStackProps;
+    enemyCard?: CollectionCardInfoProps & AbilityStackProps;
 }
 
 export type BattleUpdatedStats = {
@@ -64,4 +134,13 @@ export type BattleUpdatedStats = {
     isCriticalHit: boolean | undefined;
     basePlayerStats: BattleStats;
     baseEnemyStats: BattleStats;
+}
+
+export type RPGBattleCardDetailProps = CollectionCardInfoProps & {
+    selected_card_id: number;
+    floor: number;
+    ruin: number;
+    max_ruin: number;
+    max_floor: number;
+    max_ruin_floor: number;
 }

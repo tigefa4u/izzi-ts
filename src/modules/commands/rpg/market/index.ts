@@ -69,6 +69,8 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 						client,
 						pageCount: data.data.length,
 					});
+				} else {
+					embed.setDescription("No Cards available");
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);
@@ -81,9 +83,10 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 		return;
 	} catch (err) {
 		loggers.error(

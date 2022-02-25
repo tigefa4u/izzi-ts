@@ -66,13 +66,13 @@ export type CommandMapProps = {
 	evolution: (params: BaseProps) => void;
 	team: (params: BaseProps) => void;
 	update: (params: BaseProps) => void;
-	spbt: (params: BaseProps) => void;
+	// spbt: (params: BaseProps) => void; // temporarily removed
 	raid: (params: BaseProps) => void;
+	event: (params: BaseProps) => void;
+	dungeon: (params: BaseProps) => void;
 
     // TODO: below commands
 	// enchantment: (params: BaseProps) => void;
-	// event: (params: BaseProps) => void;
-	// dungeon: (params: BaseProps) => void;
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed
 	// pvp: (params: BaseProps) => void; // removed

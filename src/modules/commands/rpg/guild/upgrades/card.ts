@@ -220,9 +220,10 @@ export const upgradeCard = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
-		context.channel?.sendMessage(embed).then((msg) => {
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
 			sentMessage = msg;
-		});
+		}
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.guild.upgrades.upgradeCard(): something went wrong",

@@ -52,8 +52,8 @@ declare module "discord.js" {
 TextChannel.prototype.sendMessage = function (content: CustomProps) {
 	return implementSendMessage(this, content);
 };
-DMChannel.prototype.sendMessage = function () {
-	throw new Error("Unimplemented");
+DMChannel.prototype.sendMessage = function (content: CustomProps) {
+	return implementSendMessage(this, content);
 };
 ThreadChannel.prototype.sendMessage = function () {
 	throw new Error("Unimplemented");

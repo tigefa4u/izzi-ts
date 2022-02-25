@@ -4,9 +4,15 @@ import { getTeamById } from "api/controllers/TeamsController";
 import { getRPGUser, getUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString } from "helpers";
-import { prepareTeamForBattle, validateTeam } from "helpers/teams";
+import {
+	prepareTeamForBattle,
+	validateAndPrepareTeam,
+	validateTeam,
+} from "helpers/teams";
 import loggers from "loggers";
-import { simulateBattle } from "modules/commands/rpg/adventure/battle";
+import { simulateBattle } from "../../../adventure/battle/battle";
+import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 
 export const teamBattle = async ({
 	client,
@@ -15,10 +21,23 @@ export const teamBattle = async ({
 	author,
 }: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
 	try {
-		const user = await getRPGUser({ user_tag: author.id });
-		if (!user) return;
+		if (!context.channel?.id) return;
+		const battlesInChannel = battlePerChannel.validateBattlesInChannel(
+			context.channel.id
+		);
+		if (battlesInChannel === undefined) return;
 		const mentionId = getIdFromMentionedString(args.shift() || "");
 		if (!mentionId) return;
+		const [ _inBattle, _mentionIdInBattle ] = await Promise.all([
+			getCooldown(author.id, "in-battle"),
+			getCooldown(mentionId, "in-battle"),
+		]);
+		if (_inBattle || _mentionIdInBattle) {
+			context.channel.sendMessage("One of the summoners' is currently in a team battle");
+			return;
+		}
+		const user = await getRPGUser({ user_tag: author.id });
+		if (!user) return;
 		const mentionedUser = await getUser({
 			user_tag: mentionId,
 			is_banned: false,
@@ -30,40 +49,20 @@ export const teamBattle = async ({
 			);
 			return;
 		}
-		const [ playerTeam, opponentTeam ] = await Promise.all([
-			getTeamById({
-				id: user.selected_team_id,
-				user_id: user.id,
-			}),
-			getTeamById({
-				id: mentionedUser.selected_team_id,
-				user_id: mentionedUser.id,
-			}),
-		]);
-		if (!playerTeam || !validateTeam(playerTeam)) {
-			context.channel?.sendMessage(
-				`Summoner **${author.username}**, Please select a valid Team.`
-			);
-			return;
-		}
-		if (!opponentTeam || !validateTeam(opponentTeam)) {
-			context.channel?.sendMessage(
-				`Summoner **${mentionedUser.username}**, Please select a valid Team.`
-			);
-			return;
-		}
 
 		const [ playerStats, opponentStats ] = await Promise.all([
-			prepareTeamForBattle({
-				team: playerTeam,
-				user_id: user.id,
-				id: user.user_tag,
-			}),
-			prepareTeamForBattle({
-				team: opponentTeam,
-				user_id: mentionedUser.id,
-				id: mentionedUser.user_tag,
-			}),
+			validateAndPrepareTeam(
+				user.id,
+				user.user_tag,
+				user.selected_team_id,
+				context.channel
+			),
+			validateAndPrepareTeam(
+				mentionedUser.id,
+				mentionedUser.user_tag,
+				mentionedUser.selected_team_id,
+				context.channel
+			),
 		]);
 		if (!playerStats) {
 			context.channel?.sendMessage(
@@ -77,19 +76,22 @@ export const teamBattle = async ({
 			);
 			return;
 		}
+		Promise.all([ setCooldown(author.id, "in-battle", 60 * 5), setCooldown(mentionId, "in-battle", 60 * 5) ]);
 		const battleStatus = await simulateBattle({
 			context,
-			playerStats,
-			enemyStats: opponentStats,
+			playerStats: playerStats.stats,
+			enemyStats: opponentStats.stats,
 			title: `__Team Battle Challenge ${author.username} vs ${mentionedUser.username}__`,
 		});
+		Promise.all([ clearCooldown(author.id, "in-battle"), clearCooldown(mentionId, "in-battle") ]);
+		if (battleStatus?.isForfeit) return;
 		sendResultMessage({
 			channel: context.channel,
 			username: author.username,
 			mentionUsername: mentionedUser.username,
 			isVictory: battleStatus?.isVictory || false,
-			opponentTeamName: opponentTeam.name,
-			playerTeamName: playerTeam.name,
+			opponentTeamName: playerStats.name,
+			playerTeamName: opponentStats.name,
 		});
 		return;
 	} catch (err) {

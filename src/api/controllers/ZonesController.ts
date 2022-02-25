@@ -5,6 +5,7 @@ import Cache from "cache";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Zones from "../models/Zones";
+import * as ZoneBackup from "../models/ZoneBackup";
 
 export const getZoneByLocationId = async (params: { location_id: number }) => {
 	try {
@@ -45,4 +46,17 @@ export const getAllZones = async (
 		);
 		return;
 	}
+};
+
+export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_ruin: number; }) => {
+	try {
+		loggers.info("Creating Zone Backup: " + JSON.stringify(data));
+		return await ZoneBackup.createOrUpdate(data);
+	} catch (err) {
+		loggers.error(
+			"api.controllers.ZonesController.createOrUpdateZoneBackup(): something went wrong",
+			err
+		);
+		return;
+	}	
 };
