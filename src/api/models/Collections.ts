@@ -102,10 +102,10 @@ export const get = async (
 	if (ids) {
 		query = query.whereIn("id", ids);
 	}
-	if (character_ids) {
+	if (character_ids && character_ids.length > 0) {
 		query = query.whereIn("character_id", character_ids);
 	}
-	if (exclude_ids) {
+	if (exclude_ids && exclude_ids.length > 0) {
 		query = query.whereNotIn("id", exclude_ids);
 	}
 	if (typeof rank === "string") {
@@ -249,4 +249,15 @@ export const destroy = async (params: Pick<CollectionParams, "id" | "ids">) => {
 	}
 
 	return await query.del();
+};
+
+export const verifyIds = async (params: { user_id: number; ids: number[] }) => {
+	if (!params.user_id) return;
+	const db = connection;
+	const query = db.select("id")
+		.from(tableName)
+		.where(`${tableName}.user_id`, params.user_id)
+		.whereIn(`${tableName}.id`, params.ids);
+
+	return query;
 };

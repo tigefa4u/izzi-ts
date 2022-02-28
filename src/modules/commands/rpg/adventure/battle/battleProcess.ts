@@ -51,8 +51,8 @@ export const BattleProcess = async ({
 	}
 	if (!isDefeated) {
 		damageDealt = getPlayerDamageDealt(
-			basePlayerStats.totalStats,
-			baseEnemyStats.totalStats
+			playerStats.totalStats,
+			opponentStats.totalStats
 		);
 		opponentStats.totalStats.strength =
     opponentStats.totalStats.strength - damageDealt;
@@ -170,7 +170,7 @@ async function processAbililtyOrItemProc({
 			isDefeated
 		};
 	} catch (err) {
-		loggers.error("utility.adventure.battle.battleProcess(): something went wrong", err);
+		loggers.error("modules.commands.rpg.adventure.battle.battleProcess(): something went wrong", err);
 		return { forfeit: true };
 	}
 }

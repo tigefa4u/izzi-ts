@@ -60,7 +60,7 @@ export const joinRaid = async ({
 				user.user_tag,
 				user.username,
 				user.level,
-				false
+				Object.keys(lobby).length <= 0 ? true : false
 			),
 		});
         

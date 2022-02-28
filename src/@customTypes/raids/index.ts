@@ -1,6 +1,7 @@
-import { OverallStatsProps } from "@customTypes";
+import { AuthorProps, OverallStatsProps } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
+import { Client } from "discord.js";
 
 export type RaidActionProps = BaseProps & {
     isEvent: boolean;
@@ -27,26 +28,23 @@ export type RaidLobbyProps = {
     [user_id: number]: L;
 }
 
+export type RaidLootDropProps = {
+    rank: string;
+    rank_id: number;
+    number: number;
+    rate?: number;
+}
 export type RaidLootProps = {
     gold: number;
     extraGold?: number;
     drop: {
-        default?: {
-            rank: string;
-            rank_id: number;
-            number: number;
-        }[];
+        default?: RaidLootDropProps[];
         event?: {
-            shards: number;
+            shard: number;
             orbs: number;
         }
     };
-    rare?: {
-        rank: string;
-        rank_id: number;
-        rate: number;
-        number: number;
-    }[]
+    rare?: RaidLootDropProps[]
 }
 
 export type RaidStatsProps = {
@@ -71,7 +69,7 @@ export type RaidProps = {
     is_event: boolean;
     is_start: boolean;
     is_private: boolean;
-    json_array_elements?: L;
+    lobby_member?: L;
 }
 
 export type RaidCreateProps = {
@@ -84,7 +82,7 @@ export type RaidCreateProps = {
     is_private: boolean;
 }
 
-export type RaidUpdateProps = Partial<Omit<RaidCreateProps, "json_array_elements">>
+export type RaidUpdateProps = Partial<Omit<RaidCreateProps, "lobby_member">>
 
 export type PrepareLootProps = {
     loot: RaidLootProps;
@@ -92,4 +90,11 @@ export type PrepareLootProps = {
     difficulty: string;
     level: number[];
     rank: string[];
+}
+
+export type ProcessRaidLootProps = {
+    raid: RaidProps;
+    author: AuthorProps;
+    client: Client;
+    isEvent?: boolean;
 }

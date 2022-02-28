@@ -6,6 +6,7 @@ import { prepareHPBar } from "helpers/adventure";
 import { processHpBar, relativeDiff } from "helpers/battle";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { prepareRaidTimer } from "..";
 import { validateCurrentRaid } from "./validateRaid";
 
 export const raidParty = async ({
@@ -25,11 +26,6 @@ export const raidParty = async ({
 			context.channel
 		);
 		if (!currentRaid) return;
-		const timer = new Date(currentRaid.stats.timestamp);
-
-		const remainingTime = (timer.valueOf() - new Date().valueOf()) / 1000 / 60;
-		const remainingHours = Math.floor(remainingTime / 60);
-		const remainingMinutes = Math.floor(remainingTime % 60);
 
 		const damageDiff = relativeDiff(
 			currentRaid.stats.remaining_strength,
@@ -47,11 +43,7 @@ export const raidParty = async ({
 
 		const embed = createEmbed(author, client)
 			.setTitle(
-				`Challenger Lobby/Party Timer [${
-					remainingHours > 0 ? `${remainingHours}h` : ""
-				} ${remainingMinutes > 0 ? `${remainingMinutes}m` : ""} | ID: ${
-					currentRaid.id
-				}]`
+				`Challenger Lobby/Party ${prepareRaidTimer(currentRaid)}`
 			)
 			.setDescription(
 				`**Level ${currentRaid.stats.battle_stats.boss_level} ${
@@ -61,7 +53,10 @@ export const raidParty = async ({
 				} / ${currentRaid.stats.original_strength} ${emoji.hp}**\n${fakeHp
 					.map((i) => i)
 					.join("")}\n\n${prepareRaidParty(currentRaid.lobby)}`
-			);
+			).setFooter({
+				text: `Lobby code: ${currentRaid.id}`,
+				iconURL: author.displayAvatarURL()
+			});
 
 		context.channel?.sendMessage(embed);
 		return;
@@ -74,7 +69,7 @@ export const raidParty = async ({
 	}
 };
 
-function prepareRaidParty(lobby: RaidLobbyProps) {
+export function prepareRaidParty(lobby: RaidLobbyProps) {
 	const lobbyMembers: (keyof RaidLobbyProps)[] = Object.keys(lobby).map((k) =>
 		Number(k)
 	);
@@ -97,5 +92,5 @@ function prepareRaidParty(lobby: RaidLobbyProps) {
 		}${!elapsedMinutes && !elapsedHours ? "0" : ""}\n${
 			lobby[l].is_leader ? "Lobby Leader" : ""
 		}`;
-	});
+	}).join("\n\n");
 }

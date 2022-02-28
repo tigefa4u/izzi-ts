@@ -24,7 +24,7 @@ export const toggleLobbyType = async ({
 			context.channel
 		);
 		if (!currentRaid) return;
-		const raidMember = currentRaid.json_array_elements;
+		const raidMember = currentRaid.lobby_member;
 		if (!raidMember?.is_leader) {
 			context.channel?.sendMessage(
 				"You are not allowed to perform this action"

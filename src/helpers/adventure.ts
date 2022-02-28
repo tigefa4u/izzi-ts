@@ -165,7 +165,10 @@ export const createBattleCanvas = async (
   }
 ) => {
 	if (!Array.isArray(cards)) return;
-	const canvas = createCanvas(CANVAS_DEFAULTS.width, CANVAS_DEFAULTS.height);
+	const canvas = createCanvas(
+		CANVAS_DEFAULTS.width,
+		extras?.isSingleRow ? CANVAS_DEFAULTS.height / 2 : CANVAS_DEFAULTS.height
+	);
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -180,15 +183,15 @@ export const createBattleCanvas = async (
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
-		const dh = extras?.isSingleRow
-			? canvas.height
-			: canvas.height / 2;
+		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
 		for (let i = 0; i < cards.length; i++) {
 			const starIconPosition = extras?.isSingleRow
 				? dh - 150
 				: dh * Math.floor(i / 3) + 220 * 3.7;
 
-			const dy = extras?.isSingleRow ? 0 : (canvas.height / 2) * Math.floor(i / 3);
+			const dy = extras?.isSingleRow
+				? 0
+				: (canvas.height / 2) * Math.floor(i / 3);
 			if (!cards[i]) continue;
 			const path = "./assets/images/star.png";
 			const star = await loadImage(path);

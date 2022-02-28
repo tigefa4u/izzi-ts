@@ -2,6 +2,7 @@ import { XPGainPerRankProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createEmbed } from "commons/embeds";
 import { BASE_XP, XP_GAIN_EXPONENT, XP_GAIN_PER_RANK } from "helpers/constants";
+import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 
 export const cards = ({ context, client, args, options }: BaseProps) => {
@@ -30,22 +31,8 @@ export const cards = ({ context, client, args, options }: BaseProps) => {
         reqExp +
         Math.floor(BASE_XP * (baseLevel + levelCounter) ** XP_GAIN_EXPONENT);
 		}
-		const withSameName = {} as XPGainPerRankProps;
-		const withDifferentName = {} as XPGainPerRankProps;
-		Object.keys(XP_GAIN_PER_RANK)
-			.slice(0, 3)
-			.forEach((r) => {
-				Object.assign(withSameName, {
-					[r]: Math.ceil(
-						reqExp / (3 * XP_GAIN_PER_RANK[r as keyof XPGainPerRankProps])
-					),
-				});
-				Object.assign(withDifferentName, {
-					[r]: Math.ceil(
-						reqExp / XP_GAIN_PER_RANK[r as keyof XPGainPerRankProps]
-					),
-				});
-			});
+
+		const { withSameName, withDifferentName } = prepareXpGainObject(reqExp);
 
 		const embed = createEmbed(author, client);
 		embed

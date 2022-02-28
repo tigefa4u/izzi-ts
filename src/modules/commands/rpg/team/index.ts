@@ -17,6 +17,7 @@ import { selectionInteraction } from "utility/SelectMenuInteractions";
 import { teamBattle } from "./actions/battle";
 import { createTeam } from "./actions/create";
 import { removeTeam } from "./actions/remove";
+import { resetTeam } from "./actions/reset";
 import { selectTeam } from "./actions/select";
 import { setTeam } from "./actions/set";
 import { viewTeam } from "./actions/view";
@@ -48,6 +49,8 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 			setTeam(params);
 		} else if (subcommand === "battle") {
 			teamBattle(params);
+		} else if (subcommand === "reset") {
+			resetTeam(params);
 		}
 		return;
 	} catch (err) {
@@ -83,7 +86,7 @@ export async function prepareAndSendTeamMenuEmbed<P>(
 	const embed = createEmbed(author, client)
 		.setTitle(extras?.title || `${author.username}'s Teams`)
 		.setDescription(extras?.description || "A list of all your Teams are shown in the Select Menu");
-
+	
 	const selectMenu = await selectionInteraction(
 		channel,
 		author.id,

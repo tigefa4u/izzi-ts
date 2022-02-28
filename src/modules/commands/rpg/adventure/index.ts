@@ -1,4 +1,4 @@
-import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
+import { RPGBattleCardDetailProps } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getCardForBattle } from "api/controllers/CollectionInfoController";
@@ -8,6 +8,7 @@ import { getZoneByLocationId } from "api/controllers/ZonesController";
 import { createEmbed } from "commons/embeds";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
+import { refetchAndUpdateUserMana } from "helpers/battle";
 import { DEFAULT_ERROR_TITLE, MANA_PER_BATTLE } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -164,10 +165,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		});
 		inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) return;
-		user.mana = user.mana - MANA_PER_BATTLE;
-		if (user.mana < 0) user.mana = 0;
-		await Promise.all([ updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
-			setCooldown(author.id, "mana-battle", 60 * 5) ]);
+		setCooldown(author.id, "mana-battle", 60 * 5);
 
 		const result = await simulateBattle({
 			context,
@@ -176,6 +174,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
 		});
 		clearCooldown(author.id, "mana-battle");
+		refetchAndUpdateUserMana(author.id);
 		if (!result) {
 			context.channel?.sendMessage("Unable to process your battle");
 			return;

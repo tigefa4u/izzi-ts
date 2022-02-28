@@ -218,3 +218,7 @@ export const USER_XP_GAIN_PER_BATTLE = 4;
 
 export const MAX_GOLD_IN_TRADE = 10000000;
 export const MAX_CARDS_IN_TRADE = 1000;
+
+export const SACRIFICE_GOLD_COST = 1350;
+
+export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];

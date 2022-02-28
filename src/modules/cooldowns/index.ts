@@ -8,7 +8,7 @@ type T = {
 export const setCooldown = async (
 	key: string,
 	command: string,
-	cd: number // @params in secs
+	cd = 60 // @params in secs
 ) => {
 	try {
 		const dt = new Date();

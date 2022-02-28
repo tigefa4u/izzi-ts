@@ -19,7 +19,12 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 			}
 		}
 		delete lobby[user.id];
-		await updateRaid({ id: currentRaid.id }, { lobby: lobby });
+		const body = { lobby };
+		if (Object.keys(lobby).length <= 0 && currentRaid.is_start === false) {
+			currentRaid.is_private = false;
+			Object.assign(body, { is_private: currentRaid.is_private });
+		}
+		await updateRaid({ id: currentRaid.id }, body);
 		context.channel?.sendMessage(`You have left the ${isEvent ? "Event" : "Raid"} Challenge`);
 		return;
 	} catch (err) {

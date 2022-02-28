@@ -14,7 +14,7 @@ export const showEnergy = async ({ context, options, client, isEvent }: RaidActi
 			context.channel?.sendMessage(`The ${isEvent ? "Event" : "Raid"} Challenge has not started!`);
 			return;
 		}
-		const member = currentRaid.json_array_elements;
+		const member = currentRaid.lobby_member;
 		context.channel?.sendMessage(`${author.username} currently has __${member?.energy || 0}__ energy`);
 		return;
 	} catch (err) {

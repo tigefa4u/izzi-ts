@@ -19,7 +19,7 @@ import {
 	REACTIONS,
 } from "helpers/constants";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse } from "modules/cooldowns";
+import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -99,6 +99,12 @@ export const inviteToGuild = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "invite-to-guild";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = getIdFromMentionedString(args.shift() || "");
 		if (!id) return;
 		const params = {
@@ -125,6 +131,7 @@ export const inviteToGuild = async ({
 					);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -132,6 +139,7 @@ export const inviteToGuild = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand, 60);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

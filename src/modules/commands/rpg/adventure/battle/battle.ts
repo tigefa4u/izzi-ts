@@ -88,7 +88,7 @@ export const simulateBattle = async ({
 				isPlayerFirst ? playerStats.name : enemyStats.name
 			}** has more __Speed__. It strikes first!`;
 			const updatedDescription = `**[ROUND ${round}]**\n${statusDescription}`;
-			const isEdited = simulateBattleDescription({
+			const isEdited = await simulateBattleDescription({
 				playerStats,
 				enemyStats,
 				description: updatedDescription,
@@ -114,9 +114,11 @@ export const simulateBattle = async ({
 				round,
 				totalDamage,
 			});
+			if (checkIsDefeated.totalDamage) {
+				totalDamage = checkIsDefeated.totalDamage;
+			}
 			if (checkIsDefeated.defeated) {
 				roundStats = checkIsDefeated.defeated;
-				totalDamage = checkIsDefeated.totalDamage;
 				break;
 			}
 		}
@@ -137,7 +139,7 @@ export const simulateBattle = async ({
 	} catch (err) {
 		battlesPerChannel.autoClear();
 		loggers.error(
-			"utility.adventure.battle.simulateBattle(): something went wrong",
+			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
 			err
 		);
 		return;
@@ -215,7 +217,7 @@ async function simulatePlayerTurns({
 			description,
 			isCriticalHit: updatedStats.isCriticalHit,
 		});
-		const isEdited = simulateBattleDescription({
+		const isEdited = await simulateBattleDescription({
 			playerStats,
 			enemyStats,
 			description: battleDescription,

@@ -82,9 +82,9 @@ export const revitalize = ({
 			playerStats.totalStats.originalHp
 		);
 
-		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
-		opponentStats.totalStats.health = processedHpBar.health;
-		opponentStats.totalStats.strength = processedHpBar.strength;
+		const processedHpBar = processHpBar(playerStats.totalStats, damageDiff);
+		playerStats.totalStats.health = processedHpBar.health;
+		playerStats.totalStats.strength = processedHpBar.strength;
 
 		const desc = `Buffing all allies' **HP**, restores __${restoreDiff}__ ${emoji.heal} health, ` +
         `as well as increasing **ATK** by __${incPercent}%__`;

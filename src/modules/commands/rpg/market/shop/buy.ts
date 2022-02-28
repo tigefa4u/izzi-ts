@@ -26,6 +26,7 @@ import {
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
@@ -187,6 +188,12 @@ export const purchaseCard = async ({
 	author,
 }: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
 	try {
+		const cooldownCommand = "purchase-card";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
 		const params = {
@@ -212,6 +219,7 @@ export const purchaseCard = async ({
 						.setThumbnail(data.filepath);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -219,6 +227,7 @@ export const purchaseCard = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

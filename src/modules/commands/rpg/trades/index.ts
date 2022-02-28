@@ -17,6 +17,7 @@ import {
 	REQUIRED_TRADE_LEVEL,
 } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { addToTrade } from "./actions/add";
 import { cancelTrade } from "./actions/cancel";
@@ -149,6 +150,12 @@ async function validateAndConfirmTrade(
 export const trade = async ({ context, args, options, client }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "trade";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const mentionId = getIdFromMentionedString(args.shift() || "");
 		if (!mentionId || mentionId === author.id) return;
 		const [ userTradeId, mentionedUserTradeId ] = await getInTrade(
@@ -252,6 +259,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 						);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -259,6 +267,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

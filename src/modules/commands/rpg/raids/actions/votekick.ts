@@ -71,6 +71,11 @@ export const voteKickMember = async ({
 				{ id: currentRaid.id },
 				{ lobby: lobby }
 			);
+		} else {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}**, You cannot kick a member who is not afk for more than 30 minutes!`
+			);
+			return;
 		}
 		return;
 	} catch (err) {

@@ -58,3 +58,8 @@ select * from collections limit 1
 create index character_name_type_idx on characters (name, type)
 
 select * from guilds where metadata is not null
+
+JSON Query in where clause
+
+select *, lobby->'1' as member from raids
+ where (lobby->'1'->'user_id')::int = 1

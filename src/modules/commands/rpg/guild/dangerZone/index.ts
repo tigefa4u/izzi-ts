@@ -11,7 +11,7 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import loggers from "loggers";
-import { setCooldown } from "modules/cooldowns";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -58,6 +58,12 @@ async function validateAndDisbandGuild(
 export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "disband-guild";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const params = {
@@ -86,6 +92,7 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 						);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -93,6 +100,7 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;
@@ -142,6 +150,12 @@ async function validateAndLeaveGuild(
 export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "leave-guild";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const params = {
@@ -169,6 +183,7 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 						);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -176,6 +191,7 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

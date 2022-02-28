@@ -84,13 +84,15 @@ export const updateLobby = async ({
   index: number;
   data: RaidLobbyProps;
 }) => {
-	return connection(tableName)
-		.update({
-			lobby: connection.raw(
-				`jsonb_set(lobby, '{${index}}', '${JSON.stringify(data)}')`
-			),
-		})
-		.where({ id: raid_id });
+	return 0;
+	// deprecated
+	// return connection(tableName)
+	// 	.update({
+	// 		lobby: connection.raw(
+	// 			`jsonb_set(lobby, '{${index}}', '${JSON.stringify(data)}')`
+	// 		),
+	// 	})
+	// 	.where({ id: raid_id });
 };
 
 export const destroy = async (params: { id: number }) => {
@@ -104,20 +106,14 @@ export const getAll = async (): Promise<RaidProps[]> => {
 
 export const getRaidLobby = async (params: { user_id: number }): Promise<RaidProps[]> => {
 	const db = connection;
-	let query;
-	const raidalias = "raidalias";
-	query = db
+	const query =  await db
 		.select(
 			db.raw(
-				`jsonb_array_elements(${tableName}.lobby) as json_array_elements, ${tableName}.*`
+				`${tableName}.*, lobby->'${params.user_id}' as lobby_member`
 			)
 		)
 		.from(tableName)
-		.as(raidalias);
-
-	query = await db.raw(`select ${raidalias}.* from (${query}) as ${raidalias} left join ${users} on 
-		(${raidalias}.json_array_elements ->> 'user_id')::int = ${users}.id where ${users}.id = ${params.user_id}`)
-		.then((res) => res.rows);
+		.whereRaw(`(${tableName}.lobby->'${params.user_id}'->'user_id')::int = ${params.user_id}`);
 
 	return query;
 };

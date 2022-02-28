@@ -157,6 +157,12 @@ export const propose = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "propose";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = getIdFromMentionedString(args.shift() || "");
 		if (!id) return;
 		if (author.id === id) return;
@@ -183,6 +189,7 @@ export const propose = async ({
 					);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -190,6 +197,7 @@ export const propose = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

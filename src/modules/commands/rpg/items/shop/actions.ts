@@ -18,6 +18,7 @@ import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 
@@ -119,6 +120,12 @@ export const purchaseItem = async ({
 	author,
 }: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
 	try {
+		const cooldownCommand = "purchase-item";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
 		const params = {
@@ -146,6 +153,7 @@ export const purchaseItem = async ({
 						.attachFiles([ attachment ]);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -153,6 +161,7 @@ export const purchaseItem = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

@@ -14,6 +14,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 
 async function validateAndProcessOrbs(
@@ -71,6 +72,12 @@ export const consume = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "consume-orbs";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		let multiplier = Number(args.shift());
 		if (isNaN(multiplier) || !multiplier || multiplier < 1) multiplier = 1;
 		const totalOrbsConsumable = Math.floor(multiplier) * BASE_ORBS_COUNT;
@@ -95,6 +102,7 @@ export const consume = async ({
 					);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -102,6 +110,7 @@ export const consume = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand, 60);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

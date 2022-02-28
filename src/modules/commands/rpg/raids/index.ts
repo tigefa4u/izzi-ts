@@ -154,7 +154,7 @@ function prepareLoot(
 
 			if (isEvent) {
 				desc =
-          `__${loot.drop.event?.shards}__ Shards ${emoji.shard}` +
+          `__${loot.drop.event?.shard}__ Shards ${emoji.shard}` +
           `\n__${loot.drop.event?.orbs}__ Orbs ${emoji.blueorb}`;
 			} else {
 				desc =
@@ -183,7 +183,7 @@ function prepareLoot(
 							b.name
 						)}** (At ${r.rate}% drop rate)`
 				)
-			)
+			).join("\n")
 			: ""
 	}`;
 
@@ -212,4 +212,18 @@ export function prepareInitialLobbyMember(
 			is_leader: is_leader,
 		},
 	};
+}
+
+export function prepareRaidTimer(currentRaid: RaidProps) {
+	const timer = new Date(currentRaid.stats.timestamp);
+	const remainingTime = (timer.valueOf() - new Date().valueOf()) / 1000 / 60;
+	const remainingHours = Math.floor(remainingTime / 60);
+	const remainingMinutes = Math.floor(remainingTime % 60);
+	const title = `Timer [${
+		remainingHours > 0 ? `${remainingHours}h` : ""
+	} ${remainingMinutes > 0 ? `${remainingMinutes}m` : ""} | ID: ${
+		currentRaid.id
+	}]`;
+
+	return title;
 }

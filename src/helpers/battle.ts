@@ -3,19 +3,22 @@ import {
 	BattleStats,
 	PrepareBattleDescriptionProps,
 } from "@customTypes/adventure";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import gt from "lodash/gt";
+import loggers from "loggers";
 import { clone } from "utility";
 import { prepareBattleDesc } from "./adventure";
+import { MANA_PER_BATTLE } from "./constants";
 
 export const compare = (x1: number, x2: number) => {
 	return gt(x1, x2);
 };
 
-export const simulateBattleDescription = ({
+export const simulateBattleDescription = async ({
 	playerStats,
 	enemyStats,
 	description,
@@ -37,14 +40,16 @@ export const simulateBattleDescription = ({
 	if (!message) throw new Error("Message Object required to edit battle!");
 	newEmbed.setDescription(desc);
 	if (message.editable) {
-		message.editMessage(newEmbed, { reattachOnEdit: true }).catch(err => {
-			throw err;
-		});
+		try {
+			await message.editMessage(newEmbed, { reattachOnEdit: true });
+		} catch (err) {
+			loggers.error("helpers.battle.simulateBattleDescription(): Battle embed update failed: ", err);
+			return;
+		}
 
 		return { edited: true };
 	}
-
-	return false;
+	return;
 };
 
 function recreateBattleEmbed(title: string, description: string) {
@@ -145,4 +150,14 @@ export const sendBattleStatusEmbed = (
 
 export const getRelationalDiff = (x1: number, x2: number) => {
 	return Math.floor(x1 * (x2 / 100));
+};
+
+export const refetchAndUpdateUserMana = async (id: string, manaCost = MANA_PER_BATTLE) => {
+	const user = await getRPGUser({ user_tag: id });
+	if (!user) {
+		throw new Error("User not found, unable to update mana: " + id);
+	}
+	user.mana = user.mana - manaCost;
+	if (user.mana < 0) user.mana = 0;
+	await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
 };

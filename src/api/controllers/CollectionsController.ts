@@ -160,3 +160,16 @@ export const deleteCollection = async (
 		return;
 	}
 };
+
+export const verifyCollectionsById = async (params: { user_id: number; ids: number[] }) => {
+	try {
+		loggers.info("Verifying collections with: " + JSON.stringify(params));
+		return await Collections.verifyIds(params);
+	} catch (err) {
+		loggers.error(
+			"api.controllers.CollectionsController.verifyCollectionsById(): something went wrong",
+			err
+		);
+		return;
+	}	
+};

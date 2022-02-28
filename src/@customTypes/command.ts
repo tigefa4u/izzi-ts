@@ -70,9 +70,9 @@ export type CommandMapProps = {
 	raid: (params: BaseProps) => void;
 	event: (params: BaseProps) => void;
 	dungeon: (params: BaseProps) => void;
+	enchantment: (params: BaseProps) => void;
 
     // TODO: below commands
-	// enchantment: (params: BaseProps) => void;
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed
 	// pvp: (params: BaseProps) => void; // removed

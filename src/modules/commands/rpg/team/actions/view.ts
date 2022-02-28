@@ -49,7 +49,7 @@ export const viewTeam = async ({
 }: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
 	try {
 		const teams = await getAllTeams({ user_id });
-		if (!teams) {
+		if (!teams || teams.length <= 0) {
 			context.channel?.sendMessage(
 				"You do not have any teams. " +
           "Use ``team create <name>`` to create one!"

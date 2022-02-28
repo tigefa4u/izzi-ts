@@ -24,6 +24,7 @@ import {
 	SOUL_ID,
 } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
@@ -164,6 +165,12 @@ async function validateAndUpgradeGuild(
 export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "upgrade-guild";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		let embed = createEmbed(author, client);
@@ -190,6 +197,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 					);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -197,6 +205,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

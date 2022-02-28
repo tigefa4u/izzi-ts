@@ -31,6 +31,7 @@ export const updateRaid = async (params: { id: number }, data: RaidUpdateProps) 
 	}
 };
 
+// FIXME: Isnt going to workg anymore with the new query
 export const updateLobby = async ({ raid_id, index, data }: {
     raid_id: number;
     index: number;

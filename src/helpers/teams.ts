@@ -101,7 +101,7 @@ export const findDuplicateCollectionInTeamsAndUpdate = async (
 
 		return index >= 0;
 	});
-
+	console.log("Finding duplicate collections in teams processed..");
 	return Promise.all(
 		filteredTeams.map(async (team) => {
 			const teamMeta = clone(team.metadata);
@@ -148,6 +148,9 @@ export const validateTeam = (team: TeamProps) => {
 	return true;
 };
 
+/**
+ * Purpose - Prepare Player Team with Guild stats and over all stats 
+ */
 export const prepareTeamForBattle = async ({
 	team,
 	user_id,

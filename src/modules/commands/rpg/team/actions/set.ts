@@ -34,14 +34,21 @@ async function handleTeamSet(
 		return;
 	}
 	const filteredTeams = await findDuplicateCollectionInTeamsAndUpdate(teams, collection.id, team.id);
-	const teamsMap = reorderObjectKey(filteredTeams, "id");
+	const teamsMap = reorderObjectKey(teams, "id");
+	if (filteredTeams && filteredTeams.length > 0) {
+		filteredTeams.forEach((f) => {
+			if (f?.id) {
+				teamsMap[f.id] = f;
+			}
+		});
+	}
 	if (!teamsMap) {
 		params.channel?.sendMessage("Unable to process team");
 		throw new Error(`Team not found for id: ${team.id} in teams map: ${JSON.stringify(teamsMap)}`);
 	}
 	team = teamsMap[team.id];
 	if (!team) return;
-	team.metadata[position] = {
+	team.metadata[position - 1] = {
 		collection_id: collection.id,
 		position,
 	};
@@ -133,7 +140,7 @@ export const setTeam = async ({
 		});
 		if (!collection) return;
 		const teams = await getAllTeams({ user_id });
-		if (!teams) {
+		if (!teams || teams.length <= 0) {
 			context.channel?.sendMessage(
 				"You do not have any teams. " +
           "Use ``team create <name>`` to create one!"

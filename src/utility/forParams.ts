@@ -40,6 +40,10 @@ const argMap = [
 	{
 		name: "limit",
 		alias: [ "-l" ]
+	},
+	{
+		name: "exclude",
+		alias: [ "-ex" ]
 	}
 ];
 

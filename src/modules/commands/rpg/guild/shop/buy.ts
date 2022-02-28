@@ -14,6 +14,7 @@ import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, GUILD_MARKET_IDS } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
@@ -91,6 +92,12 @@ export const buyItem = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "buy-item";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id) || !GUILD_MARKET_IDS.includes(id)) return;
 		const user = await getRPGUser({ user_tag: author.id });
@@ -139,6 +146,7 @@ export const buyItem = async ({
 						.setThumbnail("attachment://item.jpg");
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -146,6 +154,7 @@ export const buyItem = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

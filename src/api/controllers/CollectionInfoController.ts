@@ -10,6 +10,11 @@ export const getCardInfoByRowNumber = async (
 	params: CollectionCardInfoByRowNumberParams
 ): Promise<CollectionCardInfoProps[] | undefined> => {
 	try {
+		if (!params.row_number) {
+			return;
+		} else if (typeof params.row_number === "object" && params.row_number.length <= 0) {
+			return;
+		}
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
 			skinArr = getSkinArr(params.user_tag);

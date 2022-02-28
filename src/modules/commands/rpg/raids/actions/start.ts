@@ -41,13 +41,15 @@ export const startRaid = async ({
 		const lobbyMembers: (keyof RaidLobbyProps)[] = Object.keys(lobby).map((k) =>
 			Number(k)
 		);
+		const challengingDesc = `The ${
+			isEvent ? "Event" : "Raid"
+		} Challenge has started! Defeat the boss to win exciting rewards! Use ${
+			isEvent ? "ev" : "rd"
+		} bt to attack`;
+		context.channel?.sendMessage(challengingDesc);
 		await Promise.all(
 			[ ...lobbyMembers.map((l) => {
-				const desc = `Summoner **${lobby[l].username}**, The ${
-					isEvent ? "Event" : "Raid"
-				} Challenge has started! Defeat the boss to win exciting rewards! Use ${
-					isEvent ? "ev" : "rd"
-				} bt to attack`;
+				const desc = `Summoner **${lobby[l].username}**, ${challengingDesc}`;
 
 				return DMUser(client, desc, lobby[l].user_tag);
 			}), updateRaid({ id: currentRaid.id }, {

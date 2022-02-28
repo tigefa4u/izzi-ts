@@ -7,7 +7,7 @@ import {
 	createUserRank,
 	getUserRank,
 } from "api/controllers/UserRanksController";
-import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { randomElementFromArray } from "helpers";
@@ -28,6 +28,7 @@ import * as battlesInChannel from "../adventure/battle/battlesPerChannelState";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { UserRankProps } from "@customTypes/userRanks";
 import { handleDungeonBattleOutcome } from "./rewards";
+import { refetchAndUpdateUserMana } from "helpers/battle";
 
 export const dungeon = async ({ context, client, options }: BaseProps) => {
 	try {
@@ -97,15 +98,14 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 		inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) return;
 		setCooldown(author.id, "mana-battle", 60 * 5);
-		user.mana = user.mana - MANA_PER_BATTLE;
-		if (user.mana < 0) user.mana = 0;
-		await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
 		const result = await simulateBattle({
 			context,
 			playerStats: playerTeamStats,
 			enemyStats,
 			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`
 		});
+		refetchAndUpdateUserMana(author.id);
+		clearCooldown(author.id, "mana-battle");
 		if (result?.isForfeit) return;
 		handleDungeonBattleOutcome({
 			author,
@@ -114,7 +114,6 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 			result,
 			channel: context.channel
 		});
-		clearCooldown(author.id, "mana-battle");
 	} catch (err) {
 		loggers.error("modules.commands.rpg.dungeon(): something went wrong", err);
 		return;

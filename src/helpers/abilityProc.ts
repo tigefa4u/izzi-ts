@@ -4,7 +4,7 @@ import emoji from "emojis/emoji";
 import { titleCase } from "title-case";
 import { simulateBattleDescription } from "./battle";
 
-export const prepSendAbilityOrItemProcDescription = ({
+export const prepSendAbilityOrItemProcDescription = async ({
 	round,
 	description = "",
 	isDescriptionOnly,
@@ -26,7 +26,7 @@ export const prepSendAbilityOrItemProcDescription = ({
 		)}** ${isItem ? "is equipped with" : "uses"} __${titleCase(emotename)}__ ${emojiMap(emotename)} ${description}`;
 	}
 
-	const hasEdited = simulateBattleDescription({
+	const hasEdited = await simulateBattleDescription({
 		playerStats: isPlayerFirst ? playerStats : enemyStats,
 		enemyStats: isPlayerFirst ? enemyStats : playerStats,
 		description: updatedDescription,
@@ -35,6 +35,7 @@ export const prepSendAbilityOrItemProcDescription = ({
 		totalDamage: 0
 	});
 
+	// FIXME: Need to catch somewhere
 	if (!hasEdited) {
 		throw new Error("Match Forfeit");
 	}

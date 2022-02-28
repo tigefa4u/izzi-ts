@@ -88,7 +88,7 @@ export const processBattleResult = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"utility.adventure.battleResult.processBattleResult(): something went wrong",
+			"modules.commands.rpg.adventure.battleResult.processBattleResult(): something went wrong",
 			err
 		);
 		return;

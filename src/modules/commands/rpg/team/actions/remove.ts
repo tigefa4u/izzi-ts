@@ -6,7 +6,7 @@ import { UserProps } from "@customTypes/users";
 import { deleteTeam, getAllTeams } from "api/controllers/TeamsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import loggers from "loggers";
-import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu } from "..";
+import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu, team } from "..";
 
 async function handleRemoveTeam(
 	params: SelectMenuCallbackParams<{ teams: TeamProps[]; user: UserProps; }>,
@@ -48,7 +48,7 @@ export const removeTeam = async ({ context, client, author, user }: Omit<BasePro
 		if (!revalidateUser) return;
 		user = revalidateUser;
 		const teams = await getAllTeams({ user_id: user.id });
-		if (!teams) {
+		if (!teams || teams.length <= 0) {
 			context.channel?.sendMessage(
 				"You do not have any teams. " +
             "Use ``team create <name>`` to create one!"

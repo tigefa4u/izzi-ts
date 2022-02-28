@@ -18,35 +18,12 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, SACRIFICE_GOLD_COST } from "helpers/constants";
+import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
-
-type T = {
-  [key: number]: number;
-};
-const soulMap: T = {
-	5: 1.3,
-	6: 1.65,
-	7: 1.85,
-	8: 1.85,
-};
-
-function getReqSouls(rank_id: number): number {
-	let op = "ceil",
-		multiplier = 1.85;
-	if (rank_id <= 4) {
-		multiplier = 1.2;
-		op = "floor";
-	} else {
-		multiplier = soulMap[rank_id as keyof T];
-	}
-	if (op === "ceil") {
-		return Math.ceil(rank_id ** multiplier);
-	}
-	return Math.floor(rank_id ** multiplier);
-}
 
 async function verifyAndProcessSacrifice(
 	params: ConfirmationInteractionParams<{
@@ -96,7 +73,7 @@ async function verifyAndProcessSacrifice(
 		return;
 	}
 	const reqSouls = getReqSouls(card.rank_id);
-	const cost = 1000;
+	const cost = SACRIFICE_GOLD_COST;
 	if (card.souls >= reqSouls) {
 		embed.setDescription(
 			"Your card already has the souls required to be used in Evolution. " +
@@ -206,6 +183,12 @@ export const sacrificeCard = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cooldownCommand = "sacrifice-card";
+		const _inProgress = await getCooldown(author.id, cooldownCommand);
+		if (_inProgress) {
+			context.channel?.sendMessage("You can use this command again after a minute.");
+			return;
+		}
 		const id = Number(args.shift());
 		const sacrificeId = Number(args.shift());
 		if (!id || !sacrificeId) return;
@@ -259,6 +242,7 @@ export const sacrificeCard = async ({
 						.attachFiles([ attachment ]);
 				}
 				if (opts?.isDelete) {
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
@@ -266,6 +250,7 @@ export const sacrificeCard = async ({
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
+		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

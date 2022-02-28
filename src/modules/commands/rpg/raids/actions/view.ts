@@ -9,7 +9,7 @@ import { createBattleCanvas } from "helpers/adventure";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { prepareRaidBossEmbedDesc } from "..";
+import { prepareRaidBossEmbedDesc, prepareRaidTimer } from "..";
 import { validateCurrentRaid } from "./validateRaid";
 
 export const viewRaid = async ({ context, client, options, isEvent }: RaidActionProps) => {
@@ -63,10 +63,14 @@ export const prepareRaidViewEmbed = async ({
 
 	const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
 	const embed = createEmbed(author, client);
-	embed.setTitle(`Raid View [${titleCase(currentRaid.stats.difficulty)}]`)
+	embed.setTitle(`Raid View [${titleCase(currentRaid.stats.difficulty)}] ${prepareRaidTimer(currentRaid)}`)
 		.setDescription(prepareRaidBossEmbedDesc(currentRaid, isEvent))
 		.setImage("attachment://boss.jpg")
-		.attachFiles([ attachment ]);
+		.attachFiles([ attachment ])
+		.setFooter({
+			text: `Lobby code: ${currentRaid.id}`,
+			iconURL: author.displayAvatarURL()
+		});
 
 	return embed;
 };

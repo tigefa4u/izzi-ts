@@ -9,7 +9,7 @@ import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { preparePlayerBase, probability, randomNumber } from "helpers";
 import { preparePlayerStats } from "helpers/adventure";
-import { sendBattleStatusEmbed } from "helpers/battle";
+import { refetchAndUpdateUserMana, sendBattleStatusEmbed } from "helpers/battle";
 import {
 	SPBT_REQUIRED_MANA,
 	STARTER_CARD_EXP,
@@ -114,10 +114,7 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 		});
 		_inBattle = await getCooldown(author.id, "mana-battle");
 		if (_inBattle) return;
-		user.mana = user.mana - SPBT_REQUIRED_MANA;
-		if (user.mana < 0) user.mana = 0;
 		await Promise.all([
-			updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
 			setCooldown(author.id, "spbt", 2700),
 			setCooldown(author.id, "mana-battle", 60 * 5),
 		]);
@@ -127,6 +124,7 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 			enemyStats: enemyBase,
 			title: "__XeneX Special Battle__",
 		});
+		refetchAndUpdateUserMana(author.id, SPBT_REQUIRED_MANA);
 		clearCooldown(author.id, "mana-battle");
 		if (battleStatus?.isForfeit) return;
 		if (battleStatus?.isVictory) {

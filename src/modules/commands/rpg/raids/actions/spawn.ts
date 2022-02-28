@@ -15,13 +15,25 @@ import { DEFAULT_ERROR_TITLE, PERMIT_PER_RAID } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { prepareInitialLobbyMember, prepareRaidBossEmbedDesc } from "..";
+import {
+	prepareInitialLobbyMember,
+	prepareRaidBossEmbedDesc,
+	prepareRaidTimer,
+} from "..";
 import { computeRank } from "../computeBoss";
 
 export const spawnRaid = async ({
-	context, options, client, args, isEvent 
+	context,
+	options,
+	client,
+	args,
+	isEvent,
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
@@ -30,11 +42,13 @@ export const spawnRaid = async ({
 		const currentRaid = await getUserRaidLobby({ user_id: user.id });
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (currentRaid) {
-			embed.setDescription(`You are already in a ${
-				isEvent ? "Event" : "Raid"
-			} Challenge! Type \`\`${
-				isEvent ? "ev" : "rd"
-			} bt\`\` to fight the ${isEvent ? "event" : "raid"} boss!`);
+			embed.setDescription(
+				`You are already in a ${
+					isEvent ? "Event" : "Raid"
+				} Challenge! Type \`\`${isEvent ? "ev" : "rd"} bt\`\` to fight the ${
+					isEvent ? "event" : "raid"
+				} boss!`
+			);
 
 			context.channel?.sendMessage(embed);
 			return;
@@ -46,9 +60,11 @@ export const spawnRaid = async ({
 			return;
 		}
 		if (user.raid_pass < PERMIT_PER_RAID) {
-			embed.setDescription(`You do not have enough Permit(s) to spawn a ${
-				isEvent ? "Event" : "Raid"
-			} Boss! __${user.raid_pass} / ${PERMIT_PER_RAID}__`);
+			embed.setDescription(
+				`You do not have enough Permit(s) to spawn a ${
+					isEvent ? "Event" : "Raid"
+				} Boss! __${user.raid_pass} / ${PERMIT_PER_RAID}__`
+			);
 
 			context.channel?.sendMessage(embed);
 			return;
@@ -65,44 +81,59 @@ export const spawnRaid = async ({
 		};
 		let isPrivate = makePrivate[args.shift() || ""];
 		if (!isPrivate) isPrivate = false;
-		const raidBosses = await Promise.all(Array(computedBoss.bosses).fill(0).map(async () => {
-			const rank = randomElementFromArray(computedBoss.rank);
-			const level = randomNumber(computedBoss.level[0], computedBoss.level[1]);
-			const card = await getRandomCard({
-				is_logo: false,
-				rank,
-				is_event: isEvent,
-				is_random: true
-			}, 1);
-			if (!card) return;
-			const raidBoss = card[0];
-			raidBoss.character_level = level;
-			return {
-				...raidBoss,
-				character_id: 0,
-				copies: 1,
-				user_id: 0,
-				is_on_market: false,
-				is_item: false,
-				item_id: 0,
-				exp: 1,
-				r_exp: 1,
-				souls: 1,
-				rank_id: 0
-			};
-		})) as CollectionCardInfoProps[];
+		const raidBosses = (await Promise.all(
+			Array(computedBoss.bosses)
+				.fill(0)
+				.map(async () => {
+					const rank = randomElementFromArray(computedBoss.rank);
+					const level = randomNumber(
+						computedBoss.level[0],
+						computedBoss.level[1]
+					);
+					const card = await getRandomCard(
+						{
+							is_logo: false,
+							rank,
+							is_event: isEvent,
+							// is_random: true,
+						},
+						1
+					);
+					if (!card) return;
+					const raidBoss = card[0];
+					raidBoss.character_level = level;
+					return {
+						...raidBoss,
+						copies: 1,
+						user_id: 0,
+						is_on_market: false,
+						is_item: false,
+						item_id: 0,
+						exp: 1,
+						r_exp: 1,
+						souls: 1,
+						rank_id: 0,
+					};
+				})
+		)) as CollectionCardInfoProps[];
 		const stats = await prepareTotalOverallStats({
 			collections: raidBosses,
-			isBattle: false 
+			isBattle: false,
 		});
 		if (!stats) {
 			throw new Error("Unable to prepare raid boss stats");
 		}
+		if (stats.totalOverallStats.originalHp === 0) {
+			stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
+		}
 		const dt = new Date();
-		const reducedLevel = raidBosses.reduce((acc, r) => {
-			acc.character_level = acc.character_level + r.character_level;
-			return acc;
-		}, { character_level: 0 } as { character_level: number });
+		const reducedLevel = raidBosses.reduce(
+			(acc, r) => {
+				acc.character_level = acc.character_level + r.character_level;
+				return acc;
+			},
+      { character_level: 0 } as { character_level: number }
+		);
 
 		const totalBossLevel: number = reducedLevel.character_level;
 		const raidStats = {
@@ -110,16 +141,24 @@ export const spawnRaid = async ({
 				boss_level: totalBossLevel,
 				bosses: computedBoss.bosses,
 				power_level: stats.totalPowerLevel,
-				stats: stats.totalOverallStats
+				stats: stats.totalOverallStats,
 			},
-			remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-			original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+			remaining_strength:
+        stats.totalOverallStats.strength * (totalBossLevel * 2),
+			original_strength:
+        stats.totalOverallStats.strength * (totalBossLevel * 2),
 			difficulty: computedBoss.difficulty,
-			timestamp: dt.setHours(dt.getHours() + 1)
+			timestamp: dt.setHours(dt.getHours() + 1),
 		} as RaidStatsProps;
 		let lobby = {};
 		if (isPrivate) {
-			lobby = prepareInitialLobbyMember(user.id, user.user_tag, user.username, user.level, true);
+			lobby = prepareInitialLobbyMember(
+				user.id,
+				user.user_tag,
+				user.username,
+				user.level,
+				true
+			);
 		}
 		const raid = await createRaid({
 			stats: raidStats,
@@ -128,16 +167,12 @@ export const spawnRaid = async ({
 			is_event: isEvent,
 			is_private: isPrivate,
 			raid_boss: JSON.stringify(raidBosses),
-			loot: computedBoss.loot
+			loot: computedBoss.loot,
 		});
 		if (!raid) return;
 		user.raid_pass = user.raid_pass - PERMIT_PER_RAID;
 		updateRPGUser({ user_tag: user.user_tag }, { raid_pass: user.raid_pass });
-		setCooldown(
-			author.id,
-			CDKey,
-			user.is_premium ? 9000 : 60 * 60 * 3
-		);
+		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
 		let bossCanvas: Canvas | undefined;
 		if (isEvent) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);
@@ -145,23 +180,39 @@ export const spawnRaid = async ({
 			bossCanvas = await createBattleCanvas(raidBosses, { isSingleRow: true });
 		}
 
-		const raidEmbed = createEmbed(author, client)
-			.setTitle(`Raid ID: ${raid.id}`);
+		const raidEmbed = createEmbed(author, client).setTitle(
+			`Raid ID: ${raid.id}`
+		);
 		if (!bossCanvas) {
-			raidEmbed.setDescription("A Raid boss has been spawned, but we could not DM you the details! " +
-            `Use \`\`${isEvent ? "ev" : "rd"} ${isPrivate ? " view`` to view the raid boss" : 
-            	` join ${raid.id} to take on this raid boss!`}`);
+			raidEmbed.setDescription(
+				"A Raid boss has been spawned, but we could not DM you the details! " +
+          `Use \`\`${isEvent ? "ev" : "rd"} ${
+          	isPrivate
+          		? " view`` to view the raid boss"
+          		: ` join ${raid.id} to take on this raid boss!`
+          }`
+			);
 			context.channel?.sendMessage(raidEmbed);
 			return;
 		}
-		const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
+		const attachment = createAttachment(
+			bossCanvas.createJPEGStream(),
+			"boss.jpg"
+		);
 
-		embed.setTitle(`${emoji.warning} Raid Spawned! ${emoji.warning} [${titleCase(computedBoss.difficulty)}]`)
+		embed
+			.setTitle(
+				`${emoji.warning} Raid Spawned! ${emoji.warning} [${titleCase(
+					computedBoss.difficulty
+				)}] ${prepareRaidTimer(raid)}`
+			)
 			.setDescription(prepareRaidBossEmbedDesc(raid, isEvent))
 			.setImage("attachment://boss.jpg")
 			.attachFiles([ attachment ]);
 
-		let footerDesc = `use ${isEvent ? "ev" : "rd"} join ${raid.id} to take on this ${
+		let footerDesc = `use ${isEvent ? "ev" : "rd"} join ${
+			raid.id
+		} to take on this ${
 			isEvent ? "Event" : "Raid"
 		} Boss Challenge! If this spawn isn't claimed in an hour it will despawn.`;
 		if (isPrivate) {
@@ -172,11 +223,17 @@ export const spawnRaid = async ({
 			} invite <@user>\nLobby Code: ${raid.id}`;
 		}
 
-		embed.setFooter({ text: footerDesc });
+		embed.setFooter({
+			text: footerDesc,
+			iconURL: author.displayAvatarURL(),
+		});
 		DMUser(client, embed, author.id);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.spawnRaid(): something went wrong", err);
+		loggers.error(
+			"modules.commands.rpg.raids.actions.spawnRaid(): something went wrong",
+			err
+		);
 		return;
 	}
 };

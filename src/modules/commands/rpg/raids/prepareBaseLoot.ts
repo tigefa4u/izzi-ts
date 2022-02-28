@@ -33,7 +33,7 @@ const baseLoot: any = {
 			loot: {
 				gold: randomNumber(13000, 15000),
 				extraGold: randomNumber(16000, 18000),
-				drop: { shards: randomNumber(10, 14), }
+				drop: { shard: randomNumber(10, 14), }
 			}
 		}
 	},
@@ -66,7 +66,7 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 5
+						rate: 3
 					}
 				],
 			}
@@ -112,13 +112,13 @@ const baseLoot: any = {
 					{
 						rank: "legend",
 						rank_id: 5,
-						rate: 5,
+						rate: 4,
 						number: 1
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 2.5,
+						rate: 1.5,
 						number: 1,
 					},
 				]
@@ -170,13 +170,13 @@ const baseLoot: any = {
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 8.5,
+						rate: 7.5,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 4,
+						rate: 2.5,
 						number: 1,
 					},
 				],

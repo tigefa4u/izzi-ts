@@ -22,5 +22,9 @@ export const subcommands = [
 	{
 		name: "battle",
 		alias: [ "bt" ]
+	},
+	{
+		name: "reset",
+		alias: []
 	}
 ];

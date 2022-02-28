@@ -1,5 +1,5 @@
 import { RaidActionProps, RaidLobbyProps } from "@customTypes/raids";
-import { updateLobby, updateRaid } from "api/controllers/RaidsController";
+import { updateRaid } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { DEFAULT_SUCCESS_TITLE } from "helpers/constants";
@@ -38,7 +38,7 @@ export const memberReady = async ({
 		if (!leaderId) {
 			throw new Error("Lobby leader not found for raid: " + currentRaid.id);
 		}
-		const member = currentRaid.json_array_elements;
+		const member = currentRaid.lobby_member;
 		if (member?.is_leader) {
 			context.channel?.sendMessage(
 				`Summoner **${author.username}**, you are the Lobby Leader.` +

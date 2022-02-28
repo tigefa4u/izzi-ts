@@ -16,6 +16,7 @@ import { cards } from "modules/commands/rpg/consumableCards";
 import { consume } from "modules/commands/rpg/consumeOrbsToShards";
 import { crate } from "modules/commands/rpg/crates";
 import { dungeon } from "modules/commands/rpg/dungeon";
+import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
 import { guild } from "modules/commands/rpg/guild";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
@@ -103,7 +104,8 @@ const commandMap: CommandMapProps = {
 	update: updateIzziProfile,
 	raid: raidActions, // needs testing
 	event: eventActions,
-	dungeon: dungeon
+	dungeon: dungeon,
+	enchantment: enchantCard,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };
