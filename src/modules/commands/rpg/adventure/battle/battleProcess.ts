@@ -61,6 +61,7 @@ export const BattleProcess = async ({
 	if (playerStats.totalStats.accuracy > opponentStats.totalStats.evasion) {
 		opponentStats.totalStats.isEvadeHit = false;
 	}
+
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,

@@ -310,28 +310,27 @@ function updateBattleDesc({
 		isPlayerFirst ? playerStats.name : enemyStats.name
 	}**`;
 
+	const enemyDesc = `**${
+		isPlayerFirst ? enemyStats.name : playerStats.name
+	}**`;
+
 	if (isStunned) {
 		desc = `${desc} ${playerDesc} is **Stunned** ${emoji.stun}! It cannot attack!`;
 	} else if (isAsleep) {
 		desc = `${desc} ${playerDesc} is **Drowsy** ${emoji.sleep}1 It cannot attack!`;
 	} else if (isEvadeHit) {
-		desc = `${desc} ${
-			isPlayerFirst ? enemyStats.name : playerStats.name
-		} has **Evaded** ${emoji.evasion}, taking no damage!`;
+		desc = `${desc} ${enemyDesc} has **Evaded** ${emoji.evasion}, taking no damage!`;
 	} else {
 		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
-			isCriticalHit ? "**CRITICAL HIT**" : ""
-		} ${
-			opponentStats.totalStats.effective < 1
-				? "it was **Super Effective!**"
-				: opponentStats.totalStats.effective > 1
-					? "but it was not very effective..."
-					: ""
+			isCriticalHit ? "**CRITICAL HIT**" : 
+				opponentStats.totalStats.effective < 1
+					? "it was **Super Effective!**"
+					: opponentStats.totalStats.effective > 1
+						? "but it was not very effective..."
+						: ""
 		}\n${
 			damageDiff !== 0 && turn === 0
-				? `${
-					isPlayerFirst ? enemyStats.name : playerStats.name
-				} strikes back fiercely! ${emoji.angry}`
+				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`
 				: ""
 		}`;
 	}
