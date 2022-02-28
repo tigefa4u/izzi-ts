@@ -13,6 +13,7 @@ import loggers from "loggers";
 import { simulateBattle } from "../../../adventure/battle/battle";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { addTeamEffectiveness } from "helpers/adventure";
 
 export const teamBattle = async ({
 	client,
@@ -76,6 +77,15 @@ export const teamBattle = async ({
 			);
 			return;
 		}
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+			cards: playerStats.stats.cards,
+			enemyCards: opponentStats.stats.cards,
+			playerStats: playerStats.stats.totalStats,
+			opponentStats: opponentStats.stats.totalStats 
+		});
+
+		playerStats.stats.totalStats = effectiveStats;
+		opponentStats.stats.totalStats = opponentEffectiveStats;
 		Promise.all([ setCooldown(author.id, "in-battle", 60 * 5), setCooldown(mentionId, "in-battle", 60 * 5) ]);
 		const battleStatus = await simulateBattle({
 			context,

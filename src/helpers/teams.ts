@@ -180,7 +180,7 @@ export const prepareTeamForBattle = async ({
 		}
 	}
 	return prepareSkewedCollectionsForBattle({
-		collections,
+		collections: clone(collections),
 		team,
 		id,
 		name: `Team ${team.name}`,

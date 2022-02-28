@@ -29,6 +29,7 @@ import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { UserRankProps } from "@customTypes/userRanks";
 import { handleDungeonBattleOutcome } from "./rewards";
 import { refetchAndUpdateUserMana } from "helpers/battle";
+import { addTeamEffectiveness } from "helpers/adventure";
 
 export const dungeon = async ({ context, client, options }: BaseProps) => {
 	try {
@@ -94,6 +95,15 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 			id: "Dungeon Boss",
 			name: "XeneX's Dungeon Boss"
 		});
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+			cards: playerTeamStats.cards,
+			enemyCards: enemyStats.cards,
+			playerStats: playerTeamStats.totalStats,
+			opponentStats: enemyStats.totalStats 
+		});
+
+		playerTeamStats.totalStats = effectiveStats;
+		enemyStats.totalStats = opponentEffectiveStats;
 
 		inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) return;
@@ -114,6 +124,7 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 			result,
 			channel: context.channel
 		});
+		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.dungeon(): something went wrong", err);
 		return;

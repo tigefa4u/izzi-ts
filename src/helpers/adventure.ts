@@ -13,6 +13,7 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { overallStats } from "helpers";
 import loggers from "loggers";
+import { clone } from "utility";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
 export const prepareHPBar = (num = 12) => {
@@ -71,6 +72,47 @@ const effectiveness: EffectivenessProps = {
 	wind: { affects: [ "crystal" ] },
 	dark: { affects: [ "poison" ] },
 	light: { affects: [ "dark" ] },
+};
+
+export const addTeamEffectiveness = async ({
+	cards,
+	enemyCards,
+	playerStats,
+	opponentStats
+}: {
+  cards: (CollectionCardInfoProps | undefined)[];
+  enemyCards: (CollectionCardInfoProps | undefined)[];
+  playerStats: BattleStats["totalStats"];
+  opponentStats: BattleStats["totalStats"];
+}) => {
+	const types = cards.map((c) => String(c?.type)).filter(Boolean);
+	const enemyTypes = enemyCards.map((c) => String(c?.type)).filter(Boolean);
+	let effective = 0;
+	await Promise.all(types.map((t) => enemyTypes.map(async (e) => {
+		const result = await addEffectiveness({
+			playerStats: clone(playerStats),
+			playerType: t,
+			enemyType: e 
+		});
+		if (result.effective > 1) {
+			effective = effective + 1;
+		} else if (result.effective < 1) {
+			effective = effective - 1;
+		}
+		return;
+	})));
+	
+	if (effective > 0) {
+		playerStats.effective = 1.5;
+		opponentStats.effective = 0.5;
+	} else {
+		playerStats.effective = 0.5;
+		opponentStats.effective = 1.5;
+	}
+	return {
+		playerStats,
+		opponentStats 
+	};
 };
 
 export const addEffectiveness = async ({

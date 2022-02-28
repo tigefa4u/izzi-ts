@@ -41,11 +41,15 @@ export const simulateBattle = async ({
 	title = "__TEAM BATTLE__",
 }: SimulateBattleProps) => {
 	if (!context.channel?.id) return;
-	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(context.channel.id);
+	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
+		context.channel.id
+	);
 	try {
 		if (battlesInChannel === undefined) return;
-		else battlesInChannel = battlesPerChannel.set(context.channel.id, battlesInChannel + 1)
-			.get(context.channel.id);
+		else
+			battlesInChannel = battlesPerChannel
+				.set(context.channel.id, battlesInChannel + 1)
+				.get(context.channel.id);
 
 		const basePlayerStats = clone(playerStats);
 		const baseEnemyStats = clone(enemyStats);
@@ -191,7 +195,7 @@ async function simulatePlayerTurns({
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			embed,
 			round,
-			message
+			message,
 		});
 		if (updatedStats.forfeit) {
 			defeated = playerStats;
@@ -216,6 +220,9 @@ async function simulatePlayerTurns({
 			opponentStats: updatedStats.opponentStats,
 			description,
 			isCriticalHit: updatedStats.isCriticalHit,
+			isStunned: updatedStats.isPlayerStunned,
+			isAsleep: updatedStats.isPlayerAsleep,
+			isEvadeHit: updatedStats.isOpponentEvadeHit,
 		});
 		const isEdited = await simulateBattleDescription({
 			playerStats,
@@ -242,7 +249,7 @@ async function simulatePlayerTurns({
 				round,
 				embed,
 				isPlayerFirst,
-				message
+				message,
 			});
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
@@ -255,7 +262,7 @@ async function simulatePlayerTurns({
 				round,
 				embed,
 				isPlayerFirst,
-				message
+				message,
 			});
 			break;
 		}
@@ -277,6 +284,9 @@ function updateBattleDesc({
 	description,
 	damageDiff,
 	isCriticalHit,
+	isStunned,
+	isAsleep,
+	isEvadeHit,
 }: {
   turn: number;
   isPlayerFirst: boolean;
@@ -288,32 +298,54 @@ function updateBattleDesc({
   description?: string;
   damageDiff: number;
   isCriticalHit?: boolean;
+  isEvadeHit?: boolean;
+  isStunned?: boolean;
+  isAsleep?: boolean;
 }) {
-	const desc = `${turn === 0 ? `${description}\n` : `**[ROUND ${round}**]\n`}${
+	let desc = `${turn === 0 ? `${description}\n` : `**[ROUND ${round}**]\n`}${
 		emoji.fast
-	} **${
-		isPlayerFirst ? playerStats.name : enemyStats.name
-	}** deals __${damageDealt}__ damage ${
-		isCriticalHit ? "**CRITICAL HIT**" : ""
-	} ${
-		opponentStats.totalStats.effective < 1
-			? "it was __Super Effective!__"
-			: opponentStats.totalStats.effective > 1
-				? "but it was not very effective..."
-				: ""
-	}\n${
-		damageDiff !== 0 && turn === 0
-			? `${
-				isPlayerFirst ? enemyStats.name : playerStats.name
-			} strikes back fiercely! ${emoji.angry}`
-			: ""
 	}`;
+
+	const playerDesc = `**${
+		isPlayerFirst ? playerStats.name : enemyStats.name
+	}**`;
+
+	if (isStunned) {
+		desc = `${desc} ${playerDesc} is **Stunned** ${emoji.stun}! It cannot attack!`;
+	} else if (isAsleep) {
+		desc = `${desc} ${playerDesc} is **Drowsy** ${emoji.sleep}1 It cannot attack!`;
+	} else if (isEvadeHit) {
+		desc = `${desc} ${
+			isPlayerFirst ? enemyStats.name : playerStats.name
+		} has **Evaded** ${emoji.evasion}, taking no damage!`;
+	} else {
+		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
+			isCriticalHit ? "**CRITICAL HIT**" : ""
+		} ${
+			opponentStats.totalStats.effective < 1
+				? "it was **Super Effective!**"
+				: opponentStats.totalStats.effective > 1
+					? "but it was not very effective..."
+					: ""
+		}\n${
+			damageDiff !== 0 && turn === 0
+				? `${
+					isPlayerFirst ? enemyStats.name : playerStats.name
+				} strikes back fiercely! ${emoji.angry}`
+				: ""
+		}`;
+	}
+
 	return desc;
 }
 
-function getDefeated({ updatedStats, playerStats, enemyStats }: Omit<BattleProcessProps, "opponentStats"> & {
-    enemyStats: BattleStats;
-    updatedStats: BattleUpdatedStats;
+function getDefeated({
+	updatedStats,
+	playerStats,
+	enemyStats,
+}: Omit<BattleProcessProps, "opponentStats"> & {
+  enemyStats: BattleStats;
+  updatedStats: BattleUpdatedStats;
 }) {
 	let defeated;
 	let compareWith;
@@ -322,7 +354,12 @@ function getDefeated({ updatedStats, playerStats, enemyStats }: Omit<BattleProce
 	} else {
 		compareWith = playerStats;
 	}
-	if (compareHpPercent(updatedStats.opponentStats.totalStats, compareWith.totalStats)) {
+	if (
+		compareHpPercent(
+			updatedStats.opponentStats.totalStats,
+			compareWith.totalStats
+		)
+	) {
 		defeated = compareWith;
 	} else {
 		defeated = updatedStats.opponentStats;

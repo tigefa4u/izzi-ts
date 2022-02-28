@@ -8,7 +8,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { preparePlayerBase, probability, randomNumber } from "helpers";
-import { preparePlayerStats } from "helpers/adventure";
+import { addTeamEffectiveness, preparePlayerStats } from "helpers/adventure";
 import { refetchAndUpdateUserMana, sendBattleStatusEmbed } from "helpers/battle";
 import {
 	SPBT_REQUIRED_MANA,
@@ -114,6 +114,16 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 		});
 		_inBattle = await getCooldown(author.id, "mana-battle");
 		if (_inBattle) return;
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+			cards: playerTeamStats.cards,
+			enemyCards: enemyBase.cards,
+			playerStats: playerTeamStats.totalStats,
+			opponentStats: enemyBase.totalStats 
+		});
+
+		playerTeamStats.totalStats = effectiveStats;
+		enemyBase.totalStats = opponentEffectiveStats;
+
 		await Promise.all([
 			setCooldown(author.id, "spbt", 2700),
 			setCooldown(author.id, "mana-battle", 60 * 5),

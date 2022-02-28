@@ -85,13 +85,13 @@ export const thornmail = ({
 			isItem: true,
 		});
 	}
-	let damageDiff, abilityDamage;
+	let damageDiff, itemDamage;
 	if (playerStats.totalStats.isReflectThornmailDamage && round !== 1) {
 		if (!opponentStats.totalStats.originalHp || isNaN(opponentStats.totalStats.originalHp)) {
 			throw new Error("Unprocessable originalHp");
 		}
 		const randomDamage = randomNumber(300, 500);
-		abilityDamage = randomDamage;
+		itemDamage = randomDamage;
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - randomDamage;
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
@@ -125,7 +125,7 @@ export const thornmail = ({
 		opponentStats,
 		basePlayerStats,
 		damageDiff,
-		abilityDamage
+		itemDamage
 	};
 };
 

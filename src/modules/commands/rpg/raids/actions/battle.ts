@@ -16,7 +16,7 @@ import { AuthorProps, ChannelProp } from "@customTypes";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { processHpBar, relativeDiff } from "helpers/battle";
-import { createBattleCanvas, prepareHPBar } from "helpers/adventure";
+import { addTeamEffectiveness, createBattleCanvas, prepareHPBar } from "helpers/adventure";
 import { updateRaid } from "api/controllers/RaidsController";
 import { Canvas } from "canvas";
 import { createSingleCanvas } from "helpers/canvas";
@@ -33,7 +33,7 @@ export const battleRaidBoss = async ({
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
-		const inBattle = await getCooldown(
+		let inBattle = await getCooldown(
 			author.id,
 			`${isEvent ? "event" : "raid"}-battle`
 		);
@@ -87,6 +87,25 @@ export const battleRaidBoss = async ({
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
 		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
 		enemyStats.totalStats.originalHp = currentRaid.stats.original_strength;
+
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+			cards: playerStats.stats.cards,
+			enemyCards: enemyStats.cards,
+			playerStats: playerStats.stats.totalStats,
+			opponentStats: enemyStats.totalStats 
+		});
+
+		playerStats.stats.totalStats = effectiveStats;
+		enemyStats.totalStats = opponentEffectiveStats;
+
+		inBattle = await getCooldown(
+			author.id,
+			`${isEvent ? "event" : "raid"}-battle`
+		);
+		if (inBattle) {
+			context.channel?.sendMessage("Your battle is still in progress");
+			return;
+		}
 		let multiplier = 1;
 		if (args.shift() === "all")
 			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);

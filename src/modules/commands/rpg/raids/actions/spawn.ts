@@ -21,6 +21,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 import { titleCase } from "title-case";
+import { clone } from "utility";
 import {
 	prepareInitialLobbyMember,
 	prepareRaidBossEmbedDesc,
@@ -116,13 +117,15 @@ export const spawnRaid = async ({
 					};
 				})
 		)) as CollectionCardInfoProps[];
+
 		const stats = await prepareTotalOverallStats({
-			collections: raidBosses,
+			collections: clone(raidBosses),
 			isBattle: false,
 		});
 		if (!stats) {
 			throw new Error("Unable to prepare raid boss stats");
 		}
+
 		if (stats.totalOverallStats.originalHp === 0) {
 			stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
 		}

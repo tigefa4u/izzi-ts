@@ -17,6 +17,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
@@ -106,6 +107,11 @@ export const enchantCard = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		const cd = await getCooldown(author.id, "enchant");
+		if (cd) {
+			context.channel?.sendMessage("You can use this command again after a minute");
+			return;
+		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
 		const params: any = fetchParamsFromArgs(args);
@@ -204,6 +210,7 @@ export const enchantCard = async ({
 			confirmAndEnchantCard,
 			(_data, opts) => {
 				if (opts?.isDelete) {
+					clearCooldown(author.id, "enchant");
 					sentMessage.delete();
 				}
 			}
@@ -212,6 +219,7 @@ export const enchantCard = async ({
 		if (buttons) {
 			embed.setButtons(buttons);
 		}
+		setCooldown(author.id, "enchant");
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;
