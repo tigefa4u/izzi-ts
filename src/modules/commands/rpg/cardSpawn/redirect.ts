@@ -65,7 +65,7 @@ export const redirect = async ({
 			if (duplicateChannel) {
 				embed.setDescription(
 					"This channel has already been registered. " +
-            "Use ``/redirect view`` to view all Card Drop Redirect channels."
+            "Use ``redirect view`` to view all Card Drop Redirect channels."
 				);
 				context.channel?.sendMessage(embed);
 				return;

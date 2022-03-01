@@ -10,7 +10,10 @@ export const selectionInteraction = async <P>(
 	authorId: string,
 	options: SelectMenuOptions,
 	params: P,
-	callback: (params: P, value: string) => void
+	callback: (params: P, value: string) => void,
+	extras?: {
+		max: number;
+	}
 ) => {
 	try {
 		const customId = "select_" + generateUUID(4);
@@ -21,8 +24,8 @@ export const selectionInteraction = async <P>(
 
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
-			maxComponents: 1,
-			max: 1
+			maxComponents: extras?.max || 1,
+			max: extras?.max || 1
 		});
 
 		collector?.on("collect", async (interaction) => {

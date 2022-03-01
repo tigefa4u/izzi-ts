@@ -85,6 +85,12 @@ export type CommandProps = {
     alias: string[];
     type: string;
     usage: string;
+	sub_commands: {
+		[key: string]: {
+			title: string;
+			description: string;
+		};
+	};
 }
 
 export type CommandCategoryProps = {

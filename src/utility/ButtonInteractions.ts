@@ -6,8 +6,6 @@ import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
 
-
-
 export const paginatorInteraction: <P, T, O = Record<string, never>>(
   channel: ChannelProp,
   authorId: string,

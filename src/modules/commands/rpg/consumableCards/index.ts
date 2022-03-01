@@ -1,7 +1,7 @@
 import { XPGainPerRankProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createEmbed } from "commons/embeds";
-import { BASE_XP, XP_GAIN_EXPONENT, XP_GAIN_PER_RANK } from "helpers/constants";
+import { BASE_XP, XP_GAIN_EXPONENT } from "helpers/constants";
 import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 

@@ -102,8 +102,8 @@ const commandMap: CommandMapProps = {
 	evolution: evolveCard,
 	team: team,
 	update: updateIzziProfile,
-	raid: raidActions, // needs testing
-	event: eventActions,
+	// raid: raidActions,
+	// event: eventActions,
 	dungeon: dungeon,
 	enchantment: enchantCard,
 	// spbt: spbt, // temporarily removed
