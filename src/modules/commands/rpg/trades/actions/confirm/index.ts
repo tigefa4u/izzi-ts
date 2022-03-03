@@ -32,10 +32,18 @@ async function validateTraderQueue(
 		if (!collections || collections.length !== trader.queue.length) {
 			embed.setDescription(
 				"Trade has been cancelled due to insufficient cards. " +
-          "(Hint: The card you are trying to Trade might be on the Global Market"
+          "(Hint: The card you are trying to Trade might be on the Global Market)"
 			);
 			channel?.sendMessage(embed);
 			return;
+		}
+		if (user.selected_card_id) {
+			const hasSelectedCard = trader.queue.map((q) => q.id).includes(user.selected_card_id);
+			if (hasSelectedCard) {
+				embed.setDescription("Trade has been cancelled. You cannot trade the card you've selected for battle!");
+				channel?.sendMessage(embed);
+				return;
+			}
 		}
 	}
 	if (user.gold < trader.gold) {
@@ -91,26 +99,25 @@ export const confirmTrade = async ({
 		}
 		const trader_1 = tradeQueue[keys[0]];
 		const trader_2 = tradeQueue[keys[1]];
-		loggers.info(
-			`Invoking Trade for ${trader_1.user_tag} & ${
-				trader_2.user_tag
-			} with Data:`
-		);
+		// loggers.info(
+		// 	`Invoking Trade for ${trader_1.user_tag} & ${
+		// 		trader_2.user_tag
+		// 	} with Data: ${JSON.stringify(tradeQueue)}`
+		// );
 		const [ participantOne, participantTow ] = await Promise.all([
 			validateTraderQueue(trader_1, channel),
 			validateTraderQueue(trader_2, channel),
 		]);
 		queue.delFromQueue(tradeId), keys.map((k) => queue.delFromTrade(k));
 		if (!participantOne || !participantTow) return;
-
 		const promises = [];
 		if (trader_1.gold > 0) {
 			participantOne.gold = participantOne.gold - trader_1.gold;
 			participantTow.gold = participantTow.gold + trader_1.gold;
 		}
 		if (trader_2.gold > 0) {
-			participantTow.gold = participantOne.gold - trader_2.gold;
-			participantOne.gold = participantTow.gold + trader_2.gold;
+			participantTow.gold = participantTow.gold - trader_2.gold;
+			participantOne.gold = participantOne.gold + trader_2.gold;
 		}
 		// Update user only if there's gold trade
 		if (trader_1.gold > 0 || trader_2.gold > 0) {
@@ -168,7 +175,7 @@ export const confirmTrade = async ({
 			);
 		}
 		await Promise.all(promises);
-		embed.setDescription("Trade conpleted!");
+		embed.setDescription("Trade completed!");
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {

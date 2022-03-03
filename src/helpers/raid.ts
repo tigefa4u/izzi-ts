@@ -1,5 +1,5 @@
 import { BattleStats } from "@customTypes/adventure";
-import { RaidProps } from "@customTypes/raids";
+import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
 import { prepareHPBar } from "./adventure";
 
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
@@ -16,4 +16,19 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 		cards: isEvent ? [ undefined, raid.raid_boss[0], undefined ] : raid.raid_boss,
 		name: `XeneX's ${isEvent ? "Event" : "Raid"} Boss`
 	} as BattleStats;
+};
+
+export const getLobbyMvp = (lobby: RaidLobbyProps) => {
+	const keys = Object.keys(lobby).map(Number);
+	const maxDmg = Math.max(...keys.map((k) => lobby[k].total_damage));
+	if (maxDmg === 0) {
+		return;
+	}
+	const mvpArr = keys.filter((k) => lobby[k].total_damage === maxDmg);
+	let mvp = mvpArr[0];
+	if (mvpArr.length > 1) {
+		const minAtk = Math.min(...mvpArr.map((k) => lobby[k].total_attack));
+		mvp = mvpArr.filter((k) => lobby[k].total_attack === minAtk)[0];
+	}
+	return mvp;
 };

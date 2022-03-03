@@ -6,7 +6,7 @@ const error = (errMessage: string, err: unknown) => {
 		errorMessage = err.stack;
 	}
 	// console.error(errMessage, errorMessage);
-	winstonLogger.error(errorMessage + JSON.stringify(errorMessage));
+	winstonLogger.error(errMessage + JSON.stringify(errorMessage));
 };
 
 const info = (infoMessage: string) => {

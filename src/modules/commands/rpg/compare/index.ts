@@ -24,7 +24,7 @@ function computeCharacterStats(array: CharacterDetailsProps[]) {
 					`**${statRelationMap[stat as keyof CharacterStatProps]}:** ${
 						character.stats[stat as keyof CharacterStatProps]
 					}`
-			)}`,
+			).join("\n")}`,
 			inline: true
 		});
 	});

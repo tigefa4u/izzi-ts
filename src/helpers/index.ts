@@ -172,8 +172,8 @@ export const sanitizeArgs = (args: string[]) => {
 export const delay = async (ms: number) =>
 	new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getIdFromMentionedString = (id: string) => {
-	return id.replace(/<@!/, "").replace(/>/, "");
+export const getIdFromMentionedString = (id = "") => {
+	return id.replace(/<@!/, "").replace(/<@/, "").replace(/>/, "");
 };
 
 export const probability = (chances: number[]) => {

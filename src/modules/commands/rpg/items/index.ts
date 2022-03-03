@@ -64,7 +64,6 @@ export const itemCollection = async ({
     				data.metadata.currentPage,
     				data.metadata.perPage
     			);
-    			console.log(list);
     			embed = createEmbedList({
     				author,
     				list,
@@ -120,6 +119,7 @@ export const itemInfo = async ({
 		const itemRes = await getItems({ name: args.join(" ") }, pageFilter);
 		if (!itemRes) return;
 		const item = itemRes.data[0];
+		if (!item) return;
 		const preparedStats = prepareItemStats(item.stats);
 		const attachment = createAttachment(item.filepath, "item.jpg");
 		const embed = createEmbed();
@@ -128,7 +128,7 @@ export const itemInfo = async ({
 			.setTitle(titleCase(item.name))
 			.setDescription(
 				"Items give your cards additional stats buffing their abilities\n" +
-          "You can equip an item using ``iz equip -cr 1 -i 1``\n\n" +
+          "You can equip an item using ``equip 1 14``\n\n" +
           `${Object.keys(preparedStats).map(
           	(key) =>
           		`**${key}:** ${preparedStats[key as keyof StatRelationProps]}`

@@ -28,13 +28,13 @@ async function validateAndSellCard(
 ) {
 	try {
 		const user = await getRPGUser({ user_tag: params.author.id }, { cached: true });
-		if (!user) return;
+		if (!user || !params.extras?.id) return;
 		const collection = await getCollection({
 			is_item: false,
 			is_on_market: false,
-			id: params.extras?.id,
+			id: params.extras.id,
 		});
-		if (!collection || collection.length > 0) {
+		if (!collection || collection.length <= 0) {
 			params.channel?.sendMessage(
 				"We could not find the card you were looking for in your collections. :no_entry:"
 			);

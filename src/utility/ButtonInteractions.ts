@@ -5,6 +5,7 @@ import { MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
+import { clone } from "utility";
 
 export const paginatorInteraction: <P, T, O = Record<string, never>>(
   channel: ChannelProp,
@@ -16,6 +17,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
   options?: O
 ) => Promise<MessageActionRow | undefined> = async (channel, authorId, params, filter, fetch, callback, options) => {
 	try {
+		const pageFilter = clone(filter);
 		const prevLabel = REACTIONS.previous.label + "_" + generateUUID(4);
 		const nextLabel = REACTIONS.next.label + "_" + generateUUID(4);
 		const binLabel = REACTIONS.bin.label + "_" + generateUUID(4);
@@ -37,7 +39,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			filter: collectorFilter,
 			maxComponents: 10, // Max number of clicks
 		});
-		let result = await fetch(params, filter, options);
+		let result = await fetch(params, pageFilter, options);
 		callback(result);
 		const totalPages = result?.metadata.totalPages || 0;
 
@@ -50,18 +52,18 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 					return;
 				}
 				case nextLabel: {
-					filter.currentPage < totalPages && (filter.currentPage += 1);
+					pageFilter.currentPage < totalPages && (pageFilter.currentPage += 1);
 					break;
 				}
 				case prevLabel: {
-					filter.currentPage > 1 && (filter.currentPage -= 1);
+					pageFilter.currentPage > 1 && (pageFilter.currentPage -= 1);
 					break;
 				}
 			}
 			if (totalPages <= 1) return;
-			if (filter.currentPage > totalPages) return;
-			if (filter.currentPage < 1) return;
-			result = await fetch(params, filter, options);
+			if (pageFilter.currentPage > totalPages) return;
+			if (pageFilter.currentPage < 1) return;
+			result = await fetch(params, pageFilter, options);
 			callback(result, { isEdit: true });
 			return;
 		});

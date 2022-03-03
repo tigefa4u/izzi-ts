@@ -67,6 +67,9 @@ export const getRandomCard: (
 	} else {
 		query = query.where(`${tableName}.is_random`, "true");
 	}
+	if (!params.series) {
+		query = query.whereNot(`${tableName}.series`, "=", "%xenex%");
+	}
 	query = query.orderByRaw("random()").limit(limit);
 
 	return query;

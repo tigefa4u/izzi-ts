@@ -6,9 +6,15 @@ import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
 import { sanitizeArgs } from "helpers";
 import { checkUserBanned } from "../checkUserBanned";
 import { dropCollectables } from "modules/collectables";
+import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 
 const handleMessage = async (client: Client, context: Message) => {
 	const { content } = context;
+	const cd = await getCooldown(context.author.id, "command-cd");
+	if (cd) {
+		sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
+		return;
+	}
 	let args = content.toLowerCase().split(/\s+/);
 	const botId = `<@!${DISCORD_CLIENT_ID}>`;
 	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) {
@@ -24,6 +30,7 @@ const handleMessage = async (client: Client, context: Message) => {
 	}
 	const command = await getCommand(args[1]);
 	if (!command) return;
+	setCooldown(context.author.id, "command-cd", 1);
 	args.shift();
 	if (
 		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
