@@ -88,7 +88,7 @@ export const sleep = ({
 		const wakeupProb = [ 55, 45 ];
 		if (temp[probability(wakeupProb)]) {
 			opponentStats.totalStats.isAsleep = false;
-			desc = `**__${opponentStats.name}__** has snapped out of ${sleep} **Sleep!**`;
+			desc = `**__${opponentStats.name}__** has snapped out of ${emoji.sleep} **Sleep!**`;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
 				enemyStats: opponentStats,
