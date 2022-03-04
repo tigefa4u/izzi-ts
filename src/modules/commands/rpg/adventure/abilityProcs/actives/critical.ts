@@ -14,7 +14,7 @@ export const pointBlank = ({
 	card,
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Increase the accuracy of all allies by __15%__ as well as increasing crit chances by __30%__
+	// Increase the accuracy of all allies by __35%__ as well as increasing crit chances by __30%__
 	if (round % 2 === 0 && !playerStats.totalStats.isPB) {
 		playerStats.totalStats.isPB = true;
 		if (!basePlayerStats.totalStats.tempPB)
@@ -26,7 +26,7 @@ export const pointBlank = ({
 		basePlayerStats.totalStats.tempPB++;
 		playerStats.totalStats.critical = basePlayerStats.totalStats.critical + crit;
 		if (!basePlayerStats.totalStats.tempAccPB) basePlayerStats.totalStats.tempAccPB = 1;
-		const accPercent = calcPercentRatio(15, card.rank);
+		const accPercent = calcPercentRatio(35, card.rank);
 		const accuracy =
       basePlayerStats.totalStats.accuracy *
       ((basePlayerStats.totalStats.tempAccPB * accPercent) / 100);

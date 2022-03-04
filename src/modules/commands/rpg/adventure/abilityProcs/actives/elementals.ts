@@ -16,11 +16,11 @@ export const elementalStrike = ({
 	card,
 }: any) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Deal __20%__ magic damage based on your **INT** as well as buffing your **INT** by __8%__
+	// Deal __30%__ magic damage based on your **INT** as well as buffing your **INT** by __10%__
 	let damageDiff;
 	let damageDealt;
 	if (round % 2 === 0) {
-		const relDiff = getRelationalDiff(playerStats.totalStats.intelligence, 20);
+		const relDiff = getRelationalDiff(playerStats.totalStats.intelligence, 30);
 		damageDealt = relDiff;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
@@ -30,7 +30,7 @@ export const elementalStrike = ({
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
 		);
-		const incPercent = calcPercentRatio(8, card.rank);
+		const incPercent = calcPercentRatio(10, card.rank);
 		if (!basePlayerStats.totalStats.tempEle) {
 			basePlayerStats.totalStats.tempEle = 1;
 		}
@@ -170,13 +170,13 @@ export const tornado = ({
 	card, 
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
-	// deal bonus __20%__ **Wind** damage based on attack
+	// deal bonus __20%__ **Wind** damage based on attack (damage buff 3x)
 	let abilityDamage, damageDiff;
 	if (round % 2 === 0 && !playerStats.totalStats.isTornado) {
 		playerStats.totalStats.isTornado = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(playerStats.totalStats.vitality, percent);
-		abilityDamage = ratio;
+		abilityDamage = (ratio * 3);
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength < 0) opponentStats.totalStats.strength = 0;
 		damageDiff = relativeDiff(
@@ -184,7 +184,7 @@ export const tornado = ({
 			opponentStats.totalStats.originalHp
 		);
         
-		const desc = `deals __${abilityDamage}__ **Wind** Damage as true damage.`;
+		const desc = `deals __${abilityDamage}__ **True Wind** Damage.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

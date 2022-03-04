@@ -14,8 +14,9 @@ export const surge = ({
 	card,
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
+	// Need to rewird
 	// When your hp is below __45%__. Increase life steal of all alies by __75__% 
-	// as well as buffing **DEF** by __8%__.
+	// as well as applying a bleed on the enemy dealing more damage over time.
 	let desc;
 	const perStr = getRelationalDiff(playerStats.totalStats.originalHp, 45);
 	if (playerStats.totalStats.strength <= perStr && !playerStats.totalStats.isSurge) {
@@ -26,8 +27,9 @@ export const surge = ({
 		const defBuffPercent = calcPercentRatio(8, card.rank);
 		const defIncreaseRatio = getRelationalDiff(playerStats.totalStats.defense, defBuffPercent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defIncreaseRatio;
-		desc = `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__ as well as ` +
-			`buffing its **DEF** by __${defBuffPercent}%__`;
+		desc = `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__`;
+		// as well as ` +
+		// 	`buffing its **DEF** by __${defBuffPercent}%__`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

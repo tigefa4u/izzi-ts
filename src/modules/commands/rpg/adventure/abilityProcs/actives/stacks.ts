@@ -211,7 +211,7 @@ export const blizzard = ({
 	card,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Deal __14%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
+	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
 	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
 	let abilityDamage;
 	if (
@@ -230,7 +230,7 @@ export const blizzard = ({
 
 		const desc = `Decreasing the **SPD** of all enemies by __${percent}%__ ` +
         "as well as Inflicting a stack of **Snow Shards**.\n" +
-        "The shards will deal __(13% - 15%)__ true damage for 3 rounds.";
+        "The shards will deal __(13% - 25%)__ true damage for 3 rounds.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -250,7 +250,7 @@ export const blizzard = ({
 		if (round % 2 === 1 && playerStats.totalStats.isBlizzard)
 			playerStats.totalStats.isBlizzard = false;
 		if (round === 5) playerStats.totalStats.isUseBlizzardPassive = false;
-		const incPercent = calcPercentRatio(14, card.rank);
+		const incPercent = calcPercentRatio(randomNumber(14, 25), card.rank);
 		const relDiff = getRelationalDiff(playerStats.totalStats.vitality, incPercent);
 		abilityDamage = relDiff;
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - relDiff;
@@ -301,7 +301,16 @@ export const frost = ({
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict all enemies with a stack of frost causing your next attack to deal __15%__ 
 	// bonus damage based on your **INT** as well as decreasing the **INT** of all enemies by __8%__
+	// gain a 5% chance of inflicting frost bite
 	let desc, damageDiff, abilityDamage;
+
+	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	if (round == playerStats.totalStats.previousRound) {
+		if (opponentStats.totalStats.isStunned) {
+			opponentStats.totalStats.isStunned = false;
+		}
+	}
+
 	if (round % 2 === 0 && !playerStats.totalStats.isFrost) {
 		playerStats.totalStats.isUseFrostPassive = true;
 		playerStats.totalStats.isFrost = true;
@@ -346,7 +355,18 @@ export const frost = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
+		const frostBiteChances = [ 5, 100 ];
+		const isFrostBite = [ true, false ];
+
 		desc = `**__${opponentStats.name}__** is affected by **Frost**, taking additional __${relDiff}__ damage`;
+
+		if (isFrostBite[probability(frostBiteChances)]) {
+			playerStats.totalStats.previousRound = round;
+			const frostBiteDesc = `and is affected by **Frost bite** ${emoji.frost} unable to move!`;
+			desc = `${desc} ${frostBiteDesc}`;
+			opponentStats.totalStats.isStunned = true;
+		}
+
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

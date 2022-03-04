@@ -190,12 +190,12 @@ export const killerInstincts = ({
 }: any) => {
 	if (!card) return;
 	// need to change
-	// Cast an aura of killer instincts increasing **INT** your by __25%__ as well as 
-	// increasing your **SPD** by __25%__, also gain __5%__ evasion chances.
+	// Cast an aura of killer instincts increasing **INT** your by __30%__ as well as 
+	// increasing your **SPD** by __30%__, also gain __5%__ evasion chances.
 	if (round % 2 === 0 && !playerStats.totalStats.isKiller) {
 		playerStats.totalStats.isKiller = true;
 		const tempRandom = "dexterity";
-		const incPercent = calcPercentRatio(25, card.rank);
+		const incPercent = calcPercentRatio(30, card.rank);
 		[ "intelligence", tempRandom ].map((temp) => {
 			if (!basePlayerStats.totalStats[`${temp}Temp`]) basePlayerStats.totalStats[`${temp}Temp`] = 1;
 			playerStats.totalStats[temp] =
