@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cache from "cache";
 import loggers from "loggers";
-import { AUTH_TOKEN } from "../environment";
 
 export async function request(url: string): Promise<any> {
 	const key = "lb::" + url;
@@ -10,7 +9,7 @@ export async function request(url: string): Promise<any> {
 	else {
 		loggers.info("LB cache miss for: " + key);
 		result = await axios
-			.get(url, { headers: { Authorization: `Bearer ${AUTH_TOKEN}` } })
+			.get(url)
 			.then((res) => res.data.data)
 			.catch((err) => {
 				throw err;

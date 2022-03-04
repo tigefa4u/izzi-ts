@@ -20,6 +20,7 @@ import {
 	STARTER_CARD_R_EXP,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
+import { getLobbyMvp } from "helpers/raid";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey } from "utility";
@@ -73,11 +74,16 @@ export const processRaidLoot = async ({
 					return rewards;
 				}
 				const promises = [
-					initDrops(raid.loot.drop.default, raid, user, lobby[user.id]),
+					initDrops(raid.loot.drop.default, raid, user, false),
 				];
 				if (raid.loot.rare) {
+					const mvpUserId = getLobbyMvp(lobby);
+					let mvp;
+					if (mvpUserId) {
+						mvp = mvpUserId;
+					}
 					promises.push(
-						initDrops(raid.loot.rare, raid, user, lobby[user.id], true)
+						initDrops(raid.loot.rare, raid, user, true, mvp ? lobby[mvp] : undefined)
 					);
 				}
 				const [ defaultDrops, rareDrops ] = await Promise.all(promises);
@@ -212,8 +218,8 @@ async function initDrops(
 	drop: RaidLootDropProps[] = [],
 	raid: RaidProps,
 	user: UserProps,
-	mvp: RaidLobbyProps[number],
-	isRare = false
+	isRare = false,
+	mvp?: RaidLobbyProps[number]
 ) {
 	if (!drop || drop.length <= 0) return [];
 	let array = clone(drop);

@@ -10,21 +10,16 @@ export const createLBEmbedList = (
 	lb: string
 ) => {
 	return Promise.all(
-		array.map(async (item, i) => {
+		array.map((item, i) => {
 			if (lb === "guilds") {
-				const guild: any = await client.shard
-					?.broadcastEval((clt) => clt.guilds.cache.get(item.id))
-					.then((res) => res[0]);
-				if (!guild) return { index: i };
 				return {
-					guild_name: guild.name,
+					guild_name: item.name || item.guild_name || "",
 					index: i,
 				};
 			} else {
-				const user = await client.users.fetch(item.user_tag);
 				return {
-					username: user.username,
-					id: user.id,
+					username: item.username,
+					id: item.id,
 					index: i,
 				};
 			}

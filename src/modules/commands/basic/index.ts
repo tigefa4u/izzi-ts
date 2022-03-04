@@ -43,7 +43,7 @@ function prepareHelpDesc() {
     "\n" +
     `For more information / tutorials you can check out ${IZZI_WEBSITE}` +
     "\n" +
-    `**[Read our Privacy Policy](${PRIVACY_POLICY_URL})**`
+    `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**`
 	);
 }
 
@@ -83,7 +83,7 @@ export const help = async ({
 		const allCommands = await getAllCommands();
 		if (!allCommands) return;
 		if (cmd) {
-			const index = allCommands?.findIndex((c) => c.alias.includes(cmd)) || -1;
+			const index = allCommands.findIndex((c) => c.alias.includes(cmd)) ?? -1;
 			if (index >= 0) {
 				const command = allCommands[index];
 				const newEmbed = prepareSingleCommandEmbed(client, command);

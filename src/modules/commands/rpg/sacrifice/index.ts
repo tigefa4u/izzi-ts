@@ -240,6 +240,8 @@ export const sacrificeCard = async ({
 						)
 						.setThumbnail("attachment://card.jpg")
 						.attachFiles([ attachment ]);
+				} else {
+					embed.setDescription("We cannot Sacrifice your card right now, please try again later.");
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

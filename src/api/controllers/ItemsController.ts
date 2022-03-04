@@ -6,6 +6,7 @@ import loggers from "loggers";
 import * as Items from "../models/Items";
 import { getAll as getCollections } from "../models/Collections";
 import Cache from "cache";
+import { clone } from "utility";
 
 type T = { user_id?: number };
 
@@ -21,6 +22,7 @@ export const getItems: (
 	options = { withCollection: false }
 ) => {
 	try {
+		let collectionTotalCount = 0;
 		if (options.withCollection) {
 			if (!filter.user_id) return;
 			const itemCollection = await getCollections(
@@ -35,12 +37,25 @@ export const getItems: (
 			if (ids.length <= 0) {
 				return;
 			}
+			collectionTotalCount = itemCollection[0].total_count || 0;
 			Object.assign(filter, { ids });
 		}
+		let itemPageProps = clone(pageProps);
+		if (options.withCollection) {
+			itemPageProps = {
+				currentPage: 1,
+				perPage: 20
+			};
+		}
 		const result = await Items.getAll(
-			await paginationParams(pageProps),
+			await paginationParams(itemPageProps),
 			filter
 		);
+		if (options.withCollection && collectionTotalCount) {
+			result.map((item) => {
+				Object.assign(item, { total_count: collectionTotalCount });
+			});
+		}
 		const pagination = await paginationForResult({
 			data: result,
 			query: pageProps,

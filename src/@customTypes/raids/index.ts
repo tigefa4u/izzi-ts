@@ -20,6 +20,7 @@ type L = {
     user_id: number;
     votes?: number;
     is_ready?: boolean;
+    is_mvp?: boolean;
     kickVotes?: {
         [user_id: number]: boolean;
     };

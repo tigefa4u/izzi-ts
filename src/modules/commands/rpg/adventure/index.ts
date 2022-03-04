@@ -28,7 +28,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		if (inBattle) {
 			context.channel?.sendMessage(
 				"Your battle is still in progress. " +
-				"(If you have completed your battle and are still seeing this, please try again in 1 minute)"
+          "(If you have completed your battle and are still seeing this, please try again in 1 minute)"
 			);
 			return;
 		}
@@ -91,6 +91,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			max_ruin_floor: zone.max_floor,
 			...card,
 		};
+
 		const enemyCard = {
 			character_id: zone.character_id,
 			name: zone.name,
@@ -115,6 +116,51 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			updated_at: "",
 			souls: 0,
 		} as CollectionCardInfoProps;
+
+		if (args && (args.shift() || "").toLowerCase() === "all") {
+			const inCd = await getCooldown(author.id, "mana-battle");
+			if (inCd) return;
+			if (
+				battleCardDetails.floor === user.max_floor &&
+        battleCardDetails.ruin === battleCardDetails.max_ruin
+			) {
+				const errorEmbed = createEmbed(author, client);
+				errorEmbed
+					.setTitle("Error :no_entry:")
+					.setDescription("You must battle this floor atleast once!");
+
+				context.channel?.sendMessage(errorEmbed);
+				return;
+			}
+			if (user.mana < MANA_PER_BATTLE) {
+				const newErrorEmbed = createEmbed(author, client);
+				newErrorEmbed
+					.setColor("#f51d11")
+					.setTitle("Error :no_entry:")
+					.setDescription(
+						`You do not have enough mana to proceed! **[${user.mana} / ${MANA_PER_BATTLE}]** Mana`
+					);
+				context.channel?.sendMessage(newErrorEmbed);
+				return;
+			}
+			await setCooldown(author.id, "mana-battle", 1);
+			const multiplier = Math.floor(user.mana / MANA_PER_BATTLE) || 1;
+			processBattleResult({
+				result: { isVictory: true },
+				card: battleCardDetails,
+				enemyCard,
+				author,
+				multiplier: multiplier,
+				channel: context.channel,
+			});
+			user.mana = user.mana - (multiplier * MANA_PER_BATTLE);
+			await Promise.all([
+				updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
+				clearCooldown(author.id, "mana-battle"),
+			]);
+			return;
+		}
+
 		// loggers.info(
 		// 	"Prepared Player and Enemy Battle Card: " +
 		// "Player: " +
@@ -186,7 +232,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			enemyCard,
 			author,
 			multiplier: 1,
-			channel: context.channel
+			channel: context.channel,
 		});
 	} catch (err) {
 		loggers.error(

@@ -200,7 +200,6 @@ export const prepareSkewedCollectionsForBattle = async ({
 		isBattle: true,
 		guildStats: clone(guildStats)
 	});
-	console.log({ totalStats });
 
 	const skewed = collections.reduce(
 		(acc, r) => {

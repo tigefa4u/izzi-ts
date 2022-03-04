@@ -29,16 +29,24 @@ export const favorite = async ({
 			return;
 		}
 		const collectionData = collectionDataByRow[0];
-		collectionData.is_favorite = true;
+		collectionData.is_favorite = !collectionData.is_favorite;
 		await updateCollection(
 			{ id: collectionData.id },
 			{ is_favorite: collectionData.is_favorite }
 		);
-		context.channel?.sendMessage(
-			`Successfully added **${titleCase(
-				collectionData.name
-			)}** to your favorites ${emoji.favorite}`
-		);
+		if (collectionData.is_favorite) {
+			context.channel?.sendMessage(
+				`Successfully added **${titleCase(
+					collectionData.name
+				)}** to your favorites ${emoji.favorite}`
+			);
+		} else {
+			context.channel?.sendMessage(
+				`Successfully removed **${titleCase(
+					collectionData.name
+				)}** from your favorites ${emoji.favorite} collection`
+			);
+		}
 		return;
 	} catch (err) {
 		loggers.error(

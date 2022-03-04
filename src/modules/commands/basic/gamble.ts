@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { randomNumber } from "helpers";
+import { probability, randomNumber } from "helpers";
 import { BET_LIMIT, GAMBLE_EMOJIS } from "helpers/constants";
 import loggers from "loggers";
 
@@ -38,16 +38,13 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id });
-		if (!user) throw new Error("User not found FATAL ERROR");
+		if (!user) throw new Error("User not found FATAL ERROR: " + author.id);
 		if (user.gold < betAmount)
 			return context.reply(" You do not have suffient gold to bet.");
 		const coinFlip = validateBetArgs(args.shift());
-		if (!coinFlip) throw new Error("Coin flip error");
+		if (!coinFlip) return;
 		user.gold = Math.floor(user.gold - betAmount);
-		const betFlip = Math.floor(Math.random() * 2) == 0;
-		let flipString;
-		if (betFlip) flipString = "heads";
-		else flipString = "tails";
+		const flipString = [ "heads", "tails" ][probability([ 50, 50 ])];
 		const embed = createEmbed(author);
 		if (coinFlip === flipString) {
 			const winAmount = Math.floor(betAmount * randomNumber(1.7, 1.9, true));

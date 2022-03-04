@@ -19,6 +19,7 @@ export type CollectionProps = {
   row_number?: number;
   created_at: string;
   updated_at: string;
+  total_count?: number;
 };
 
 export type CollectionParams = {
