@@ -75,7 +75,7 @@ export const dropCollectables = async ({
 }: T) => {
 	try {
 		const dropCard = [ true, false ];
-		const dropRate = [ 4.5, 100 ];
+		const dropRate = [ 2.5, 100 ];
 		if (dropCard[probability(dropRate)]) {
 			const dropChannel = await verifyDropChannels({
 				client,
