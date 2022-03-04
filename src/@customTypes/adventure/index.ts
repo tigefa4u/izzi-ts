@@ -51,7 +51,6 @@ export type AbilityStackProps = StatStateProps & AbilityStatStackProps & {
     isSpirit?: boolean;
     isPred?: boolean;
     isStunned?: boolean;
-    isToxicated?: boolean;
     isUseWreckerPassive?: boolean;
     isReflectThornmailDamage?: boolean;
     isLifesteal?: boolean;

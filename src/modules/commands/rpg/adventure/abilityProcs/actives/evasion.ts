@@ -13,9 +13,14 @@ export const evasion = ({
 	card, 
 }: BattleProcessProps) => {
 	if (!card) return;
+	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : 0;
+	if (round === playerStats.totalStats.previousRound) {
+		playerStats.totalStats.isUseEvasion = false;
+	}
 	// increase evasion of all allies by __20%__ as well as increasing its **SPD** by __15%__
 	if (round % 2 === 0 && !playerStats.totalStats.isUseEvasion) {
 		playerStats.totalStats.isUseEvasion = true;
+		playerStats.totalStats.previousRound = round;
 		if (!basePlayerStats.totalStats.evasionTemp) basePlayerStats.totalStats.evasionTemp = 1;
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio =

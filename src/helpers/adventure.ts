@@ -78,7 +78,7 @@ export const addTeamEffectiveness = async ({
 	cards,
 	enemyCards,
 	playerStats,
-	opponentStats
+	opponentStats,
 }: {
   cards: (CollectionCardInfoProps | undefined)[];
   enemyCards: (CollectionCardInfoProps | undefined)[];
@@ -88,20 +88,24 @@ export const addTeamEffectiveness = async ({
 	const types = cards.map((c) => String(c?.type)).filter(Boolean);
 	const enemyTypes = enemyCards.map((c) => String(c?.type)).filter(Boolean);
 	let effective = 0;
-	await Promise.all(types.map((t) => enemyTypes.map(async (e) => {
-		const result = await addEffectiveness({
-			playerStats: clone(playerStats),
-			playerType: t,
-			enemyType: e 
-		});
-		if (result.effective > 1) {
-			effective = effective + 1;
-		} else if (result.effective < 1) {
-			effective = effective - 1;
-		}
-		return;
-	})));
-	
+	await Promise.all(
+		types.map((t) =>
+			enemyTypes.map(async (e) => {
+				const result = await addEffectiveness({
+					playerStats: clone(playerStats),
+					playerType: t,
+					enemyType: e,
+				});
+				if (result.effective > 1) {
+					effective = effective + 1;
+				} else if (result.effective < 1) {
+					effective = effective - 1;
+				}
+				return;
+			})
+		)
+	);
+
 	if (effective > 0) {
 		playerStats.effective = 1.5;
 		opponentStats.effective = 0.5;
@@ -111,7 +115,7 @@ export const addTeamEffectiveness = async ({
 	}
 	return {
 		playerStats,
-		opponentStats 
+		opponentStats,
 	};
 };
 
@@ -173,9 +177,9 @@ export const prepareBattleDesc = ({
 			: ""
 	}Level: ${playerStats.totalStats.character_level}\n**${
 		playerStats.totalStats.strength
-	} / ${playerStats.totalStats.originalHp} ${
-		emoji.hp
-	}**\n${playerStats.totalStats.health.map((i) => i).join("")}\n\n**${
+	} / ${playerStats.totalStats.originalHp} ${emoji.hp}${prepareAffectedDesc(
+		playerStats
+	)}**\n${playerStats.totalStats.health.map((i) => i).join("")}\n\n**${
 		enemyStats.name
 	}**\nElement Type: ${filterEnemyCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
@@ -190,12 +194,22 @@ export const prepareBattleDesc = ({
 		enemyStats.totalStats.strength
 	} / ${enemyStats.totalStats.originalHp} ${
 		emoji.hp
-	}**\n${enemyStats.totalStats.health
+	} ${prepareAffectedDesc(enemyStats)}**\n${enemyStats.totalStats.health
 		.map((i) => i)
 		.join("")}\n\n${description}`;
 
 	return desc;
 };
+
+function prepareAffectedDesc(playerStats: BattleStats) {
+	const desc = `${playerStats.totalStats.isStunned ? emoji.stun : ""} ${
+		playerStats.totalStats.isAsleep ? emoji.sleep : ""
+	} ${playerStats.totalStats.isRestrictResisted ? emoji.restriction : ""} ${
+		playerStats.totalStats.isPoisoned ? emoji.toxic : ""
+	}`;
+
+	return desc;
+}
 
 export const createBattleCanvas = async (
 	cards: (

@@ -87,7 +87,7 @@ export const spellBook = ({
 	card, 
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
-	let desc, abilityDamage, damageDiff, playerDamageDiff;
+	let desc = "", abilityDamage, damageDiff, playerDamageDiff;
 	if (round % 2 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
 		const temp = randomElementFromArray([
@@ -117,19 +117,6 @@ export const spellBook = ({
 			if (opponentStats.totalStats.strength < 0) opponentStats.totalStats.strength = 0;
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality - ratio;
 			desc = `dealing __${abilityDamage}__ damage ${emoji.elementalstrike} to **__${opponentStats.name}__**`;
-			prepSendAbilityOrItemProcDescription({
-				playerStats,
-				enemyStats: opponentStats,
-				card,
-				message,
-				embed,
-				round,
-				isDescriptionOnly: false,
-				description: desc,
-				totalDamage: 0,
-				isPlayerFirst,
-				isItem: false,
-			}); 
 		}
 		let opponentDamageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
@@ -149,6 +136,20 @@ export const spellBook = ({
 		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, opponentDamageDiff);
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
+		
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+		}); 
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isSB) playerStats.totalStats.isSB = false;
 	return {
@@ -221,10 +222,15 @@ export const eclipse = ({
 	card, 
 }: any) => {
 	if (!card) return;
+	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : 0;
+	if (round === playerStats.totalStats.previousRound) {
+		playerStats.totalStats.isEclipse = false;
+	}
 	// Harness the power of Eclipse and gain knowledge beyond your enemies 
 	// increasing your **INT** by __20%__ as well as **Buffing** the **DEF** of all allies by __10%__.
 	if (round % 3 === 0 && !playerStats.totalStats.isEclipse) {
 		playerStats.totalStats.isEclipse = true;
+		playerStats.totalStats.previousRound = round;
 		if (!basePlayerStats.totalStats.eclipse) basePlayerStats.totalStats.eclipse = 1;
 		// inc atk of the card instead of the whole team
 		playerStats.totalStats.intelligence =

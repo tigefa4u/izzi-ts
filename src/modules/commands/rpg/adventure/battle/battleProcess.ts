@@ -1,9 +1,10 @@
-import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import { AbilityStackProps, BattleProcessProps, BattleStats } from "@customTypes/adventure";
 import {
 	AbilityProcMapProps,
 	AbilityProcReturnType,
 	ItemProcMapProps,
 } from "@customTypes/battle";
+import { stat } from "fs";
 import { delay } from "helpers";
 import {
 	getPlayerDamageDealt,
@@ -14,6 +15,24 @@ import loggers from "loggers";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
+
+type S = BattleStats["totalStats"];
+
+function processLifesteals(stats: S, damageDealt: number, num: number) {
+	const st = clone(stats);
+	if (!st.originalHp) {
+		throw new Error("Unprocessable originalHp");
+	}
+	const relDiff = Math.floor(damageDealt * (num / 100));
+	st.strength = st.strength + relDiff;
+	if (st.strength > st.originalHp) st.strength = st.originalHp;
+	let damageDiff = relativeDiff(st.strength, st.originalHp);
+	if (damageDiff < 0) damageDiff = 0;
+	const processedHpbar = processHpBar(stats, damageDiff);
+	stats.health = processedHpbar.health;
+	stats.strength = processedHpbar.strength;
+	return stats;
+}
 
 function processUnableToAttack<T extends BattleStats>(
 	playerStats: T,
@@ -67,6 +86,21 @@ export const BattleProcess = async ({
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
+		if (playerStats.totalStats.isSurge) {
+			playerStats.totalStats = processLifesteals(
+				playerStats.totalStats,
+				damageDealt,
+				playerStats.totalStats.surgePercent || 85,
+			);
+		}
+		if (playerStats.totalStats.isLifesteal) {
+			playerStats.totalStats = processLifesteals(
+				playerStats.totalStats,
+				damageDealt,
+				playerStats.totalStats.lifestealPercent || 45,
+			);
+		}
+
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
 		if (

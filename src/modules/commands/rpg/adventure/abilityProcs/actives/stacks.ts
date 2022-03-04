@@ -344,6 +344,7 @@ export const frost = ({
 	if (round % 2 === 1 && playerStats.totalStats.isFrost)
 		playerStats.totalStats.isFrost = false;
 	if (playerStats.totalStats.isUseFrostPassive && round % 2 !== 0) {
+		playerStats.totalStats.isUseFrostPassive = false;
 		const damageDealt = getPlayerDamageDealt(playerStats.totalStats, opponentStats.totalStats);
 		const percent = calcPercentRatio(15, card.rank);
 		const relDiff = getRelationalDiff(damageDealt, percent);
