@@ -196,10 +196,11 @@ export const prepareSkewedCollectionsForBattle = async ({
 	guildStats
 }: PrepareSkewedCollectionsForBattleProps & { guildStats?: GuildStatProps; }) => {
 	const totalStats = await prepareTotalOverallStats({
-		collections,
+		collections: clone(collections),
 		isBattle: true,
-		guildStats: guildStats
+		guildStats: clone(guildStats)
 	});
+	console.log({ totalStats });
 
 	const skewed = collections.reduce(
 		(acc, r) => {
