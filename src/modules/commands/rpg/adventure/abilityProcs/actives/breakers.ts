@@ -132,7 +132,7 @@ export const dominator = ({
 	embed,
 	round,
 	isPlayerFirst,
-	basePlayerStats,
+	baseEnemyStats,
 	card,
 }: BattleProcessProps) => {
 	if (!card) return;
@@ -160,6 +160,11 @@ export const dominator = ({
 		);
 		opponentStats.totalStats.intelligence =
       opponentStats.totalStats.intelligence - decRatio;
+	  
+		if (opponentStats.totalStats.intelligence < 0) {
+			opponentStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+		}
+
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
       `it's **ATK** by __${percent}%__ as well as decreasing its **INT** by __${decPercent}%__`;

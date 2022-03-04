@@ -320,6 +320,11 @@ export const frost = ({
 			decPercent
 		);
 		opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - relDiff;
+	
+		if (opponentStats.totalStats.intelligence < 0) {
+			opponentStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+		}
+
 		desc = `Inflicting a stack of **Frost** on **__${opponentStats.name}__** as well as decreasing ` +
         `its **INT** by __${decPercent}%__`;
 		prepSendAbilityOrItemProcDescription({

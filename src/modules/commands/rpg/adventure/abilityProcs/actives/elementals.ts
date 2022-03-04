@@ -37,6 +37,7 @@ export const elementalStrike = ({
 		playerStats.totalStats.intelligence =
       playerStats.totalStats.intelligence -
       (card.stats.tempEleInc || card.stats.intelligence);
+	  
 		const intRelDiff = getRelationalDiff(
 			card.stats.intelligence,
 			basePlayerStats.totalStats.tempEle * incPercent
