@@ -44,7 +44,7 @@ export const processItemStats = (stats: OverallStatsProps, itemStats: I) => {
 		} else {
 			clonedStats[key as keyof OverallStatsProps] =
         (clonedStats[key as keyof OverallStatsProps] || 0) +
-        clonedStats[key as keyof CharacterStatProps];
+        itemStats[key as keyof CharacterStatProps] || 0;
 		}
 	});
 
