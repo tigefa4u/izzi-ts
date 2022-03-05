@@ -150,7 +150,7 @@ export const spellBook = ({
 			isItem: false,
 		}); 
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isSB) playerStats.totalStats.isSB = false;
+	if (round % 2 !== 0 && playerStats.totalStats.isSB) playerStats.totalStats.isSB = false;
 	return {
 		playerStats,
 		opponentStats,

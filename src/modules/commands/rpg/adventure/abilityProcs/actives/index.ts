@@ -79,7 +79,7 @@ export const dragonRage = ({
 			isItem: false,
 		});
 	}
-	if (round % 3 === 1 && playerStats.totalStats.isRage)
+	if (round % 3 !== 0 && playerStats.totalStats.isRage)
 		playerStats.totalStats.isRage = false;
 	return {
 		playerStats,
@@ -146,7 +146,7 @@ export const predator = ({
 			isItem: false,
 		});
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isPred)
+	if (round % 2 !== 0 && playerStats.totalStats.isPred)
 		playerStats.totalStats.isPred = false;
 	return {
 		playerStats,
@@ -266,7 +266,7 @@ export const killerInstincts = ({
 			isItem: false,
 		});
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isKiller)
+	if (round % 2 !== 0 && playerStats.totalStats.isKiller)
 		playerStats.totalStats.isKiller = false;
 	return {
 		playerStats,
@@ -322,7 +322,7 @@ export const futureSight = ({
 			isItem: false,
 		});
 	}
-	if (round % 3 === 1 && playerStats.totalStats.isFuture)
+	if (round % 3 !== 0 && playerStats.totalStats.isFuture)
 		playerStats.totalStats.isFuture = false;
 	return {
 		playerStats,

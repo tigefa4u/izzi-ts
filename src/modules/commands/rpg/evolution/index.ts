@@ -84,7 +84,7 @@ async function verifyAndProcessEvolution(
 		return;
 	}
 	if (options?.isConfirm) {
-		const newRankPL = await getPowerLevelByRankId({ rank_id: cardToEvolve.rank_id, });
+		const newRankPL = await getPowerLevelByRankId({ rank_id: cardToEvolve.rank_id + 1, });
 		if (!newRankPL) {
 			throw new Error(
 				"Failed to fetch Power Level for RANK ID: " + cardToEvolve.rank_id
@@ -108,6 +108,7 @@ async function verifyAndProcessEvolution(
 				{
 					rank: cardToEvolve.rank,
 					rank_id: cardToEvolve.rank_id,
+					souls: 1
 				}
 			),
 		]);
@@ -127,7 +128,7 @@ async function verifyAndProcessEvolution(
 					cardToEvolve.rank
 				)}__ **Level ${cardToEvolve.character_level}** ${titleCase(
 					cardToEvolve.name
-				)} to __${titleCase(cardToEvolve.rank)}__ rank!`
+				)} to __${titleCase(newRankPL.rank)}__ rank!`
 			)
 			.attachFiles([ attachment ])
 			.setThumbnail("attachment://card.jpg");
@@ -174,17 +175,17 @@ export const evolveCard = async ({
 			verifyAndProcessEvolution,
 			async (data, opts) => {
 				if (data) {
-					const canvas = await createSingleCanvas(data.cardCanvas, false);
-					if (!canvas) {
-						context.channel?.sendMessage(
-							"Unable to evolve this card, try again later"
-						);
-						throw new Error("Unable to create card canvas for confirmation");
-					}
-					const attachment = createAttachment(
-						canvas.createJPEGStream(),
-						"card.jpg"
-					);
+					// const canvas = await createSingleCanvas(data.cardCanvas, false);
+					// if (!canvas) {
+					// 	context.channel?.sendMessage(
+					// 		"Unable to evolve this card, try again later"
+					// 	);
+					// 	throw new Error("Unable to create card canvas for confirmation");
+					// }
+					// const attachment = createAttachment(
+					// 	canvas.createJPEGStream(),
+					// 	"card.jpg"
+					// );
 					embed = createConfirmationEmbed(author, client)
 						.setTitle(
 							`${emoji.crossedswords} SOUL SACRIFICE ${emoji.crossedswords}`
@@ -196,10 +197,10 @@ export const evolveCard = async ({
 								data.cardToEvolve.rank
 							)}__ **Level ${data.cardToEvolve.character_level}** ${titleCase(
 								data.cardToEvolve.name
-							)}\n\n**__${data.reqSouls}__ Souls*`
-						)
-						.setThumbnail("attachment://card.jpg")
-						.attachFiles([ attachment ]);
+							)}\n\n**__${data.reqSouls}__ Souls**`
+						);
+					// .setThumbnail("attachment://card.jpg")
+					// .attachFiles([ attachment ]);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

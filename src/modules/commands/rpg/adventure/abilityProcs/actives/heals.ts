@@ -160,7 +160,9 @@ export const guardian = ({
 			isPlayerFirst,
 			isItem: false,
 		}); 
-        
+	}
+	if (round % 2 !== 0 && playerStats.totalStats.isGuardian) {
+		playerStats.totalStats.isGuardian = false;
 	}
 	return {
 		playerStats,

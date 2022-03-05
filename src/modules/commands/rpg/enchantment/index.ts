@@ -52,11 +52,11 @@ async function confirmAndEnchantCard(
 		const ids = computed.accumulator.map((a) => a.id);
 		const collections = await verifyCollectionsById({
 			user_id: user.id,
-			ids: [ ...ids, cardToEnchant.id ],
+			ids: [ ...new Set([ ...ids, cardToEnchant.id  ]) ],
 		});
 		if (
 			!collections ||
-      collections.length !== [ ...ids, cardToEnchant.id ].length
+      collections.length !== [ ...new Set([ ...ids, cardToEnchant.id ]) ].length
 		) {
 			embed.setDescription(
 				"Enchantment has been cancelled due to missing cards"

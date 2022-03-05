@@ -16,6 +16,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { delay } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, SACRIFICE_GOLD_COST } from "helpers/constants";
@@ -210,17 +211,18 @@ export const sacrificeCard = async ({
 			verifyAndProcessSacrifice,
 			async (data, opts) => {
 				if (data) {
-					const canvas = await createSingleCanvas(data.cardCanvas, false);
-					if (!canvas) {
-						context.channel?.sendMessage(
-							"Unable to evolve this card, try again later"
-						);
-						throw new Error("Unable to create card canvas for confirmation");
-					}
-					const attachment = createAttachment(
-						canvas.createJPEGStream(),
-						"card.jpg"
-					);
+					// takes too long
+					// const canvas = await createSingleCanvas(data.cardCanvas, false);
+					// if (!canvas) {
+					// 	context.channel?.sendMessage(
+					// 		"Unable to evolve this card, try again later"
+					// 	);
+					// 	throw new Error("Unable to create card canvas for confirmation");
+					// }
+					// const attachment = createAttachment(
+					// 	canvas.createJPEGStream(),
+					// 	"card.jpg"
+					// );
 					embed = createConfirmationEmbed(author, client)
 						.setTitle(
 							`${emoji.crossedswords} SOUL SACRIFICE ${emoji.crossedswords}`
@@ -237,9 +239,9 @@ export const sacrificeCard = async ({
 							)}__ **Level ${data.card.character_level}** ${titleCase(
 								data.card.name
 							)}`
-						)
-						.setThumbnail("attachment://card.jpg")
-						.attachFiles([ attachment ]);
+						);
+					// .setThumbnail("attachment://card.jpg")
+					// .attachFiles([ attachment ]);
 				} else {
 					embed.setDescription("We cannot Sacrifice your card right now, please try again later.");
 				}
@@ -250,7 +252,7 @@ export const sacrificeCard = async ({
 			}
 		);
 		if (!buttons) return;
-
+		// await delay(2000); // wait till the canvas is prepared
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

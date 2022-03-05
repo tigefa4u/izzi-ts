@@ -1,5 +1,4 @@
 import {
-	AbilityStackProps,
 	BattleProcessProps,
 	BattleStats,
 } from "@customTypes/adventure";
@@ -8,7 +7,6 @@ import {
 	AbilityProcReturnType,
 	ItemProcMapProps,
 } from "@customTypes/battle";
-import { stat } from "fs";
 import { delay } from "helpers";
 import {
 	getPlayerDamageDealt,
@@ -21,6 +19,36 @@ import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
 
 type S = BattleStats["totalStats"];
+type Stack = Pick<
+  S,
+  | "isRage"
+  | "isBerserk"
+  | "isRevit"
+  | "isGuardian"
+  | "isKiller"
+  | "isFuture"
+  | "isEclipse"
+  | "isSpirit"
+  | "isPred"
+>;
+function processStack(stats: Stack) {
+	[
+		"isRage",
+		"isBerserk",
+		"isRevit",
+		"isGuardian",
+		"isKiller",
+		"isFuture",
+		"isEclipse",
+		"isSpirit",
+		"isPred",
+	].map((stat) => {
+		if (stats[stat as keyof Stack]) {
+			stats[stat as keyof Stack] = false;
+		}
+	});
+	return stats as S;
+}
 
 function processLifesteals(stats: S, damageDealt: number, num: number) {
 	const st = clone(stats);
@@ -97,6 +125,7 @@ export const BattleProcess = async ({
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
+		playerStats.totalStats = processStack(playerStats.totalStats);
 		if (playerStats.totalStats.isSurge) {
 			playerStats.totalStats = processLifesteals(
 				playerStats.totalStats,

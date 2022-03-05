@@ -207,7 +207,7 @@ function prepareAffectedDesc(playerStats: BattleStats) {
 		playerStats.totalStats.isAsleep ? emoji.sleep : ""
 	} ${playerStats.totalStats.isRestrictResisted ? emoji.restriction : ""} ${
 		playerStats.totalStats.isPoisoned ? emoji.toxic : ""
-	} ${playerStats.totalStats.isEndure ? emoji.endurance : ""}`;
+	} ${playerStats.totalStats.isEndure ? emoji.endurance : ""} ${playerStats.totalStats.isTB ? emoji.timebomb : ""}`;
 
 	return desc;
 }
