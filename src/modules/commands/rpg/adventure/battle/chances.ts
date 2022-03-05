@@ -34,8 +34,8 @@ export const prepareEvadeHitChance = ({ isPlayerFirst, playerStats, enemyStats }
     isPlayerFirst: boolean;
 }) => {
 	let evadeHitPercent = isPlayerFirst
-		? playerStats.totalStats.evasion
-		: enemyStats.totalStats.evasion;
+		? enemyStats.totalStats.evasion
+		: playerStats.totalStats.evasion;
 
 	let noEvadeHitPercent = 1;
 	if (evadeHitPercent <= 1) {
@@ -44,10 +44,11 @@ export const prepareEvadeHitChance = ({ isPlayerFirst, playerStats, enemyStats }
 	}
 	const evadeChance = [ true, false ];
 	const chance = [ evadeHitPercent, noEvadeHitPercent ];
-	if (evadeChance[probability(chance)])
+	const isHit = evadeChance[probability(chance)];
+	if (isHit)
 		isPlayerFirst
-			? (playerStats.totalStats.isEvadeHit = true)
-			: (enemyStats.totalStats.isEvadeHit = true);
+			? (enemyStats.totalStats.isEvadeHit = true)
+			: (playerStats.totalStats.isEvadeHit = true);
 	else {
 		if (playerStats.totalStats.isEvadeHit) playerStats.totalStats.isEvadeHit = false;
 		if (enemyStats.totalStats.isEvadeHit) enemyStats.totalStats.isEvadeHit = false;

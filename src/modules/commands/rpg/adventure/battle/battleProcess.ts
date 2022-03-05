@@ -1,4 +1,8 @@
-import { AbilityStackProps, BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import {
+	AbilityStackProps,
+	BattleProcessProps,
+	BattleStats,
+} from "@customTypes/adventure";
 import {
 	AbilityProcMapProps,
 	AbilityProcReturnType,
@@ -63,7 +67,9 @@ export const BattleProcess = async ({
 		isAbilityDefeat = false,
 		isAbilitySelfDefeat = false;
 	// "duskblade of draktharr"
-	const { abilityProc, abilityDamage, isDefeated, forfeit } =
+	const {
+		abilityProc, abilityDamage, isDefeated, forfeit, ...rest 
+	} =
     await processAbililtyOrItemProc({
     	baseEnemyStats,
     	basePlayerStats,
@@ -77,6 +83,11 @@ export const BattleProcess = async ({
 	if (forfeit) {
 		return { forfeit };
 	}
+	if (rest.playerStats) {
+		playerStats.totalStats = rest.playerStats.totalStats;
+		opponentStats.totalStats = rest.opponentStats.totalStats;
+	}
+
 	if (playerStats.totalStats.accuracy > opponentStats.totalStats.evasion) {
 		opponentStats.totalStats.isEvadeHit = false;
 	}
@@ -90,14 +101,14 @@ export const BattleProcess = async ({
 			playerStats.totalStats = processLifesteals(
 				playerStats.totalStats,
 				damageDealt,
-				playerStats.totalStats.surgePercent || 85,
+				playerStats.totalStats.surgePercent || 85
 			);
 		}
 		if (playerStats.totalStats.isLifesteal) {
 			playerStats.totalStats = processLifesteals(
 				playerStats.totalStats,
 				damageDealt,
-				playerStats.totalStats.lifestealPercent || 45,
+				playerStats.totalStats.lifestealPercent || 45
 			);
 		}
 
@@ -125,7 +136,6 @@ export const BattleProcess = async ({
 			isAbilitySelfDefeat = true;
 		}
 	}
-
 	// Directly add ability damage to total damage
 	// will cause visual bug
 	// damageDealt = damageDealt + (abilityDamage || 0);
@@ -134,6 +144,7 @@ export const BattleProcess = async ({
 		damageDiff,
 		opponentStats,
 		damageDealt,
+		playerStats,
 		isPlayerStunned: playerStats.totalStats.isStunned,
 		isPlayerAsleep: playerStats.totalStats.isAsleep,
 		isOpponentEvadeHit: opponentStats.totalStats.isEvadeHit,
@@ -142,7 +153,7 @@ export const BattleProcess = async ({
 		baseEnemyStats,
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
-		abilityDamage
+		abilityDamage,
 	};
 };
 
@@ -207,8 +218,9 @@ async function processAbililtyOrItemProc({
 				}
 			}
 
-			if (processUnableToAttack(playerStats, opponentStats) ||
-        		playerStats.totalStats.isRestrictResisted
+			if (
+				processUnableToAttack(playerStats, opponentStats) ||
+        playerStats.totalStats.isRestrictResisted
 			)
 				break;
 

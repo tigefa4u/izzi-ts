@@ -118,6 +118,8 @@ export const simulateBattle = async ({
 				round,
 				totalDamage,
 			});
+			playerStats = checkIsDefeated.playerStats;
+			enemyStats = checkIsDefeated.enemyStats;
 			if (checkIsDefeated.totalDamage) {
 				totalDamage = checkIsDefeated.totalDamage;
 			}
@@ -202,6 +204,13 @@ async function simulatePlayerTurns({
 			defeated.isForfeit = true;
 			break;
 		}
+		if (isPlayerFirst) {
+			playerStats = updatedStats.playerStats;
+			enemyStats = updatedStats.opponentStats;
+		} else {
+			playerStats = updatedStats.opponentStats;
+			enemyStats = updatedStats.playerStats;
+		}
 		basePlayerStats = updatedStats.basePlayerStats;
 		baseEnemyStats = updatedStats.baseEnemyStats;
 
@@ -272,6 +281,8 @@ async function simulatePlayerTurns({
 	return {
 		defeated,
 		totalDamage,
+		playerStats,
+		enemyStats
 	};
 }
 
@@ -327,10 +338,9 @@ function updateBattleDesc({
 			isCriticalHit ? "**CRITICAL HIT**" : 
 				opponentStats.totalStats.effective < 1
 					? "it was **Super Effective!**"
-					: "but it was not very effective..."
-					// opponentStats.totalStats.effective > 1
-					// 	? "but it was not very effective..."
-					// 	: ""
+					: opponentStats.totalStats.effective > 1
+						? "but it was not very effective..."
+						: ""
 		}\n${
 			damageDiff !== 0 && turn === 0
 				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`
