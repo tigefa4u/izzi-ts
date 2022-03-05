@@ -327,9 +327,10 @@ function updateBattleDesc({
 			isCriticalHit ? "**CRITICAL HIT**" : 
 				opponentStats.totalStats.effective < 1
 					? "it was **Super Effective!**"
-					: opponentStats.totalStats.effective > 1
-						? "but it was not very effective..."
-						: ""
+					: "but it was not very effective..."
+					// opponentStats.totalStats.effective > 1
+					// 	? "but it was not very effective..."
+					// 	: ""
 		}\n${
 			damageDiff !== 0 && turn === 0
 				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`

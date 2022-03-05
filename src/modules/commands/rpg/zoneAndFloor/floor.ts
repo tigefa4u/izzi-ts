@@ -47,7 +47,6 @@ async function handleNextFloor(params: {
 	const { user, fl } = params;
 
 	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
-	console.log({ fl });
 	if (
 		(user.floor == user.max_floor && fl == "n") ||
     parseInt(fl) > user.max_floor

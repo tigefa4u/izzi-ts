@@ -146,6 +146,7 @@ export const addEffectiveness = async ({
 				});
 			}
 		}
+		return playerStats;
 	} catch (err) {
 		loggers.error(
 			"helpers.adventure.addEffectiveness(): something went wrong",

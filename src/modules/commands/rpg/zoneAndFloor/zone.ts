@@ -2,7 +2,7 @@ import { AuthorProps, ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
-import { getAllZones, getZoneByLocationId } from "api/controllers/ZonesController";
+import { getAllZones, getMaxLocation, getZoneByLocationId } from "api/controllers/ZonesController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
@@ -32,7 +32,11 @@ async function handleNextZone(params: {
 		else {
 			user.ruin = parseInt(zn);
 		}
-		const maxLocation = 10;
+		const maxLocation = await getMaxLocation();
+		if (!maxLocation) {
+			params.channel?.sendMessage("Unexpected error occured. Please try again later");
+			return;
+		}
 		if (user.ruin > maxLocation) {
 			user.ruin = maxLocation;
 			params.channel?.sendMessage("You've already reached the last zone of XeneX.");

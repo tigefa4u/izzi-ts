@@ -76,7 +76,7 @@ export const processBattleResult = async ({
 					`Rewards ${emoji.moneybag}`,
 					`• You have gained __${resp.userXpGain}__xp and received __${
 						resp.goldReward
-					}__gold ${emoji.gold}\n• __${multiplier}x__ copy of ${titleCase(
+					}__gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(resp.rankReward)} copy of ${titleCase(
 						enemyCard.name
 					)}\n**${titleCase(card.name)}** has also gained __${
 						resp.cardXpGain
@@ -157,6 +157,7 @@ async function processFloorWin({
 		userXpGain: _user.xpGain,
 		cardXpGain: _updatedCard.xpGain,
 		goldReward,
+		rankReward,
 	};
 }
 

@@ -24,7 +24,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		);
 		if (battlesInChannel === undefined) return;
 		const author = options.author;
-		let inBattle = await getCooldown(author.id, "mana-battle");
+		const inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) {
 			context.channel?.sendMessage(
 				"Your battle is still in progress. " +
@@ -209,31 +209,32 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			name: `Enemy's ${titleCase(enemyCard.name)}`,
 			card: enemyCard,
 		});
-		inBattle = await getCooldown(author.id, "mana-battle");
-		if (inBattle) return;
-		setCooldown(author.id, "mana-battle", 60 * 5);
+		console.log("here---", playerBase.totalStats, enemyBase.totalStats);
+		// inBattle = await getCooldown(author.id, "mana-battle");
+		// if (inBattle) return;
+		// setCooldown(author.id, "mana-battle", 60 * 5);
 
-		const result = await simulateBattle({
-			context,
-			playerStats: playerBase,
-			enemyStats: enemyBase,
-			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
-		});
-		clearCooldown(author.id, "mana-battle");
-		refetchAndUpdateUserMana(author.id);
-		if (!result) {
-			context.channel?.sendMessage("Unable to process your battle");
-			return;
-		}
-		if (result.isForfeit) return;
-		processBattleResult({
-			result: { isVictory: result.isVictory || false },
-			card: battleCardDetails,
-			enemyCard,
-			author,
-			multiplier: 1,
-			channel: context.channel,
-		});
+		// const result = await simulateBattle({
+		// 	context,
+		// 	playerStats: playerBase,
+		// 	enemyStats: enemyBase,
+		// 	title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
+		// });
+		// clearCooldown(author.id, "mana-battle");
+		// refetchAndUpdateUserMana(author.id);
+		// if (!result) {
+		// 	context.channel?.sendMessage("Unable to process your battle");
+		// 	return;
+		// }
+		// if (result.isForfeit) return;
+		// processBattleResult({
+		// 	result: { isVictory: result.isVictory || false },
+		// 	card: battleCardDetails,
+		// 	enemyCard,
+		// 	author,
+		// 	multiplier: 1,
+		// 	channel: context.channel,
+		// });
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.adventure.index.battle(): something went wrong",

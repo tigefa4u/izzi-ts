@@ -60,3 +60,18 @@ export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_rui
 		return;
 	}	
 };
+
+export const getMaxLocation = async () => {
+	try {
+		return await Cache.fetch("max::location", async () => {
+			const result = await Zones.getMaxLocation();
+			return result.max;
+		});
+	} catch (err) {
+		loggers.error(
+			"api.controllers.ZonesController.createOrUpdateZoneBackup(): something went wrong",
+			err
+		);
+		return;
+	}	
+};

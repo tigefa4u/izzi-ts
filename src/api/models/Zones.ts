@@ -57,3 +57,8 @@ export const getAll = async (pagination: PaginationProps = {
 
 	return query;
 };
+
+export const getMaxLocation = async (): Promise<{ max: number; }> => {
+	return await connection.raw(`select max(${tableName}.location_id) from ${tableName}`)
+		.then((res) => res.rows[0]);
+};
