@@ -61,7 +61,7 @@ export type AbilityProcMapProps = {
     eclipse: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "future sight": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "killer instincts": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
-    "bone platting": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "bone plating": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "dream eater": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "fighting spirit": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }

@@ -28,10 +28,10 @@ function processLifesteals(stats: S, damageDealt: number, num: number) {
 	if (st.strength > st.originalHp) st.strength = st.originalHp;
 	let damageDiff = relativeDiff(st.strength, st.originalHp);
 	if (damageDiff < 0) damageDiff = 0;
-	const processedHpbar = processHpBar(stats, damageDiff);
-	stats.health = processedHpbar.health;
-	stats.strength = processedHpbar.strength;
-	return stats;
+	const processedHpbar = processHpBar(st, damageDiff);
+	st.health = processedHpbar.health;
+	st.strength = processedHpbar.strength;
+	return st;
 }
 
 function processUnableToAttack<T extends BattleStats>(
@@ -127,7 +127,8 @@ export const BattleProcess = async ({
 	}
 
 	// Directly add ability damage to total damage
-	damageDealt = damageDealt + (abilityDamage || 0);
+	// will cause visual bug
+	// damageDealt = damageDealt + (abilityDamage || 0);
 
 	return {
 		damageDiff,
@@ -141,6 +142,7 @@ export const BattleProcess = async ({
 		baseEnemyStats,
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
+		abilityDamage
 	};
 };
 

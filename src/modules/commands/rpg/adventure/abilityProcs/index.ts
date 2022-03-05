@@ -17,7 +17,7 @@ const AbilityProcMap: AbilityProcMapProps = {
 	tornado: activeAbilities.tornado,
 	"spell book": activeAbilities.spellBook,
 	sleep: activeAbilities.sleep,
-	"bone platting": activeAbilities.bonePlating,
+	"bone plating": activeAbilities.bonePlating,
 	blizzard: activeAbilities.blizzard,
 	revitalize: activeAbilities.revitalize,
 	"rapid fire": activeAbilities.rapidFire,

@@ -88,6 +88,7 @@ export const simulateBattle = async ({
 				playerStats.totalStats.dexterity,
 				enemyStats.totalStats.dexterity
 			);
+			console.log({ isPlayerFirst }, playerStats.totalStats.dexterity, playerStats.totalStats.dexterity);
 			const statusDescription = `${emoji.hasmorespeed} **${
 				isPlayerFirst ? playerStats.name : enemyStats.name
 			}** has more __Speed__. It strikes first!`;
@@ -206,8 +207,10 @@ async function simulatePlayerTurns({
 		baseEnemyStats = updatedStats.baseEnemyStats;
 
 		const damageDealt = updatedStats.damageDealt || 0;
+		const abilityDamage = updatedStats.abilityDamage || 0;
 		if (isPlayerFirst) {
 			totalDamage += damageDealt;
+			totalDamage += abilityDamage;
 		}
 		const battleDescription = updateBattleDesc({
 			isPlayerFirst,

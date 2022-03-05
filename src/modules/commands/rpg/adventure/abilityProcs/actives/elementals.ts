@@ -136,7 +136,6 @@ export const spellBook = ({
 		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, opponentDamageDiff);
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
-		
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
