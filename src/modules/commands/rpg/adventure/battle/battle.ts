@@ -88,7 +88,6 @@ export const simulateBattle = async ({
 				playerStats.totalStats.dexterity,
 				enemyStats.totalStats.dexterity
 			);
-			console.log({ isPlayerFirst }, playerStats.totalStats.dexterity, playerStats.totalStats.dexterity);
 			const statusDescription = `${emoji.hasmorespeed} **${
 				isPlayerFirst ? playerStats.name : enemyStats.name
 			}** has more __Speed__. It strikes first!`;
