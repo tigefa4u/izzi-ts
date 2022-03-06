@@ -220,7 +220,7 @@ export const dreamEater = ({
 			playerStats.totalStats.originalHp
 		);
 
-		const processedHealHpBar = processHpBar(opponentStats.totalStats, healDiff);
+		const processedHealHpBar = processHpBar(playerStats.totalStats, healDiff);
 		playerStats.totalStats.health = processedHealHpBar.health;
 		playerStats.totalStats.strength = processedHealHpBar.strength;
 
