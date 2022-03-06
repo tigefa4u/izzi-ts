@@ -125,6 +125,7 @@ export const BattleProcess = async ({
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
+		playerStats.totalStats.previousDamage = damageDealt;
 		playerStats.totalStats = processStack(playerStats.totalStats);
 		if (playerStats.totalStats.isSurge) {
 			playerStats.totalStats = processLifesteals(
