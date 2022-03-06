@@ -150,7 +150,6 @@ export const spellBook = ({
 			isItem: false,
 		}); 
 	}
-	if (round % 2 !== 0 && playerStats.totalStats.isSB) playerStats.totalStats.isSB = false;
 	return {
 		playerStats,
 		opponentStats,
@@ -200,8 +199,6 @@ export const tornado = ({
 			isItem: false,
 		}); 
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isTornado)
-		playerStats.totalStats.isTornado = false;
 	return {
 		playerStats,
 		opponentStats,

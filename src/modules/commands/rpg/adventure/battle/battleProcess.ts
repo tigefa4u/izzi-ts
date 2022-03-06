@@ -30,6 +30,10 @@ type Stack = Pick<
   | "isEclipse"
   | "isSpirit"
   | "isPred"
+  | "isBstrike"
+  | "isSB"
+  | "isTornado"
+  | "isRestrictResisted"
 >;
 function processStack(stats: Stack) {
 	[
@@ -42,6 +46,10 @@ function processStack(stats: Stack) {
 		"isEclipse",
 		"isSpirit",
 		"isPred",
+		"isBstrike",
+		"isSB",
+		"isTornado",
+		"isRestrictResisted",
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -217,7 +225,6 @@ async function processAbililtyOrItemProc({
 				message,
 				opponentStats,
 			} as BattleProcessProps;
-
 			if (card.itemname) {
 				const itemCallable =
           itemProcMap[card.itemname as keyof ItemProcMapProps];

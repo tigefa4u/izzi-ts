@@ -78,8 +78,6 @@ export const balancingStrike = ({
 			isItem: false,
 		});
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isBstrike)
-		playerStats.totalStats.isBstrike = false;
 	return {
 		playerStats,
 		opponentStats,

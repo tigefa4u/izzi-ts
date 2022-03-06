@@ -1,6 +1,6 @@
 import { RaidActionProps, RaidLobbyProps } from "@customTypes/raids";
 import { updateRaid } from "api/controllers/RaidsController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { HOURS_PER_RAID } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";

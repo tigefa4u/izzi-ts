@@ -97,7 +97,8 @@ export const getCollectionById = async (
 					if (item) {
 						itemOptions = {
 							itemname: item.name,
-							itemdescription: item.description
+							itemdescription: item.description,
+							itemStats: item.stats,
 						};
 					}
 				}
