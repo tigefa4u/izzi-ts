@@ -124,9 +124,13 @@ export const getCollectionById = async (
 };
 
 export const getCardForBattle = async (
-	params: { id: number; user_id: number; }
+	params: { id: number; user_id: number; user_tag: string; }
 ) => {
 	try {
+		let skinArr: undefined | SkinProps[];
+		if (params.user_tag) {
+			skinArr = getSkinArr(params.user_tag);
+		}
 		const result = await Collections.get(params);
 		if (result.length > 0) {
 			const data = result[0];
@@ -136,6 +140,12 @@ export const getCardForBattle = async (
 			});
 			if (!characterInfo) {
 				throw new Error("Character not found for id: " + data.character_id);
+			}
+			if (skinArr) {
+				const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
+				if (idx >= 0) {
+					characterInfo.filepath = skinArr[idx].filepath;
+				}
 			}
 			let itemOptions = {};
 			if (data.item_id) {

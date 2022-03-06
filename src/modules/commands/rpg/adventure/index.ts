@@ -79,6 +79,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		const card = await getCardForBattle({
 			id: user.selected_card_id,
 			user_id: user.id,
+			user_tag: user.user_tag
 		});
 		if (!card) return;
 
