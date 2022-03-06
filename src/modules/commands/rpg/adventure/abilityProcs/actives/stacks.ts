@@ -127,10 +127,10 @@ export const timeBomb = ({
 	// inflict a stack of time bomb which explodes dealing __20%__ bonus damage based on previous damage dealt.
 	if (
 		round % 2 === 0 &&
-    !opponentStats.totalStats.isStack &&
+    !opponentStats.totalStats.isStackTB &&
     !playerStats.totalStats.isTB
 	) {
-		opponentStats.totalStats.isStack = true;
+		opponentStats.totalStats.isStackTB = true;
 		playerStats.totalStats.isTB = true;
 		const desc = `inflicting a stack of **Time Bomb** on **__${opponentStats.name}!__**`;
 		prepSendAbilityOrItemProcDescription({
@@ -150,13 +150,13 @@ export const timeBomb = ({
 	if (round % 2 === 1 && playerStats.totalStats.isTB)
 		playerStats.totalStats.isTB = false;
 	if (
-		opponentStats.totalStats.isStack &&
+		opponentStats.totalStats.isStackTB &&
     opponentStats.totalStats.previousDamage
 	) {
 		const exploded = [ true, false ];
 		const explodeRate = [ 50, 50 ];
 		if (exploded[probability(explodeRate)]) {
-			opponentStats.totalStats.isStack = false;
+			opponentStats.totalStats.isStackTB = false;
 			const percent = calcPercentRatio(20, card.rank);
 			abilityDamage = getRelationalDiff(
 				opponentStats.totalStats.previousDamage,

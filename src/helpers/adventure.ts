@@ -193,9 +193,9 @@ export const prepareBattleDesc = ({
 			: ""
 	}Level: ${enemyStats.totalStats.character_level}\n**${
 		enemyStats.totalStats.strength
-	} / ${enemyStats.totalStats.originalHp} ${
-		emoji.hp
-	} ${prepareAffectedDesc(enemyStats)}**\n${enemyStats.totalStats.health
+	} / ${enemyStats.totalStats.originalHp} ${emoji.hp} ${prepareAffectedDesc(
+		enemyStats
+	)}**\n${enemyStats.totalStats.health
 		.map((i) => i)
 		.join("")}\n\n${description}`;
 
@@ -207,7 +207,9 @@ function prepareAffectedDesc(playerStats: BattleStats) {
 		playerStats.totalStats.isAsleep ? emoji.sleep : ""
 	} ${playerStats.totalStats.isRestrictResisted ? emoji.restriction : ""} ${
 		playerStats.totalStats.isPoisoned ? emoji.toxic : ""
-	} ${playerStats.totalStats.isEndure ? emoji.endurance : ""} ${playerStats.totalStats.isTB ? emoji.timebomb : ""}`;
+	} ${playerStats.totalStats.isEndure ? emoji.endurance : ""} ${
+		playerStats.totalStats.isStackTB ? emoji.timebomb : ""
+	}`;
 
 	return desc;
 }

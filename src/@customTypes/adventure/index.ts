@@ -71,7 +71,7 @@ export type AbilityStackProps = StatStateProps & AbilityStatStackProps & {
     previousRound?: number;
     isToxic?: boolean;
     isPoisoned?: boolean;
-    isStack?: boolean;
+    isStackTB?: boolean;
     isTB?: boolean;
     previousDamage?: number;
     isUseBlizzardPassive?: boolean;
