@@ -190,3 +190,20 @@ export const getTotalPlayers = async (
 		return;
 	}
 };
+
+export const getAllUsers = async (params: { is_premium?: boolean } = {}) => {
+	try {
+		const result = await Users.get({
+			is_banned: false,
+			is_deleted: false,
+			...params
+		});
+		return result;
+	} catch (err) {
+		loggers.error(
+			"api.controllers.UsersController.getAllUsers(): something went wrong",
+			err
+		);
+		return;
+	}	
+};

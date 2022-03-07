@@ -21,12 +21,14 @@ const Cache: CacheProps = {
 			const ttl = 60 * 60 * 24 * 15;
 			loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
 			const resp = await cb();
-			client.set(key, JSON.stringify(resp));
-			client.expire(key, ttl);
+			if (resp) {
+				client.set(key, JSON.stringify(resp));
+				client.expire(key, ttl);
+			}
 			return resp;
 		}
 		loggers.info("Cache hit for: " + key);
-		return JSON.parse(data);
+		return data ? JSON.parse(data) : null;
 	}
 };
 

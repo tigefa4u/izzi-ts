@@ -116,3 +116,16 @@ export const getUserRaidLobby = async (params: { user_id: number }) => {
 		return;
 	}
 };
+
+export const getAllRaids = async () => {
+	try {
+		const result = await Raids.getAll();
+		return result;
+	} catch (err) {
+		loggers.error(
+			"api.controllers.RaidsController.getAllRaids(): something went wrong",
+			err
+		);
+		return;
+	}	
+};

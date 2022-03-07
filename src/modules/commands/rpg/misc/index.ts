@@ -1,12 +1,20 @@
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
-import { getRPGUser, levelUpUser, updateRPGUser } from "api/controllers/UsersController";
+import {
+	getRPGUser,
+	levelUpUser,
+	updateRPGUser,
+} from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { DEFAULT_ERROR_TITLE, LOTTERY_PRICE } from "helpers/constants";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 
 type T = {
   key: string;
@@ -57,17 +65,24 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		});
 
 		embed.setTitle(`Lottery! ${emoji.celebration}`);
-		let desc = `You have spent __${LOTTERY_PRICE}__ gold ${emoji.gold} and won the lottery receiving\n\n` +
-            `__${randomReward.value}__ **${randomReward.key.toUpperCase()}**`;
+		let desc =
+      `You have spent __${LOTTERY_PRICE}__ gold ${emoji.gold} and won the lottery receiving\n\n` +
+      `__${randomReward.value}__ **${randomReward.key.toUpperCase()}**`;
 		if (user.exp >= user.r_exp && randomReward.key === "exp") {
 			const updatedUser = await levelUpUser(user);
-			desc = desc + `You have leveled up! You are now level __${updatedUser.level}__. ` +
-                `We have also refilled your mana __${user.max_mana}__ -> __${updatedUser.max_mana}__`;
+			desc =
+        desc +
+        `You have leveled up! You are now level __${updatedUser.level}__. ` +
+        `We have also refilled your mana __${user.max_mana}__ -> __${updatedUser.max_mana}__`;
 		}
+		const updateObj = { gold: user.gold };
 		if (randomReward.key === "mana" || randomReward.key === "gold") {
-			await updateRPGUser({ user_tag: user.user_tag }, { [randomReward.key]: user[randomReward.key] });
+			Object.assign(updateObj, { [randomReward.key]: user[randomReward.key] });
 		}
-		await setCooldown(author.id, "lottery", 900);
+		await Promise.all([
+			updateRPGUser({ user_tag: user.user_tag }, updateObj),
+			setCooldown(author.id, "lottery", 900),
+		]);
 		embed.setDescription(desc);
 		context.channel?.sendMessage(embed);
 		return;

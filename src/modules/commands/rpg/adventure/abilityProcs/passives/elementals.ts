@@ -56,7 +56,7 @@ export const balancingStrike = ({
 		playerStats.totalStats.health = processedPlayerHpBar.health;
 		playerStats.totalStats.strength = processedPlayerHpBar.strength;
 
-		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, playerDamageDiff);
+		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, opponentDamageDiff);
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 

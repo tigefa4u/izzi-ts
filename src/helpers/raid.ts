@@ -1,5 +1,6 @@
 import { BattleStats } from "@customTypes/adventure";
 import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
+import { updateRaid } from "api/controllers/RaidsController";
 import { prepareHPBar } from "./adventure";
 
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
@@ -31,4 +32,15 @@ export const getLobbyMvp = (lobby: RaidLobbyProps) => {
 		mvp = mvpArr.filter((k) => lobby[k].total_attack === minAtk)[0];
 	}
 	return mvp;
+};
+
+export const refillEnergy = async (id: number, lobby: RaidLobbyProps) => {
+	const keys = Object.keys(lobby).map(Number);
+	keys.map((k) => {
+		if (lobby[k].energy <= lobby[k].total_energy) {
+			lobby[k].energy = lobby[k].energy + 5;
+		}
+	});
+	await updateRaid({ id }, { lobby });
+	return;
 };

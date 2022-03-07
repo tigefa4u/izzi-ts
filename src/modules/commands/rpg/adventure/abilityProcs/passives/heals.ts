@@ -73,9 +73,9 @@ export const chronobreak = ({
 			playerStats.totalStats.strength,
 			playerStats.totalStats.originalHp
 		);
-		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
-		opponentStats.totalStats.health = processedHpBar.health;
-		opponentStats.totalStats.strength = processedHpBar.strength;
+		const processedHpBar = processHpBar(playerStats.totalStats, damageDiff);
+		playerStats.totalStats.health = processedHpBar.health;
+		playerStats.totalStats.strength = processedHpBar.strength;
 		const desc = `causing a temporal rewind restoring __${restoredHp}__ **HP**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

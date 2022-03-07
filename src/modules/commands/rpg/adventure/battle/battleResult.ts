@@ -80,7 +80,7 @@ export const processBattleResult = async ({
 						enemyCard.name
 					)}\n**${titleCase(card.name)}** has also gained __${
 						resp.cardXpGain
-					}__ through this battle!`
+					}xp__ through this battle!`
 				);
 		}
 
