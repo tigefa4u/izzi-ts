@@ -166,9 +166,9 @@ export const BattleProcess = async ({
 
 		await delay(1000);
 	} else {
-		if ((abilityProc?.damageDiff || 0) <= 0) {
+		if ((abilityProc?.damageDiff ?? 1) <= 0) {
 			isAbilityDefeat = true;
-		} else if ((abilityProc?.playerDamageDiff || 0) <= 0) {
+		} else if ((abilityProc?.playerDamageDiff ?? 1) <= 0) {
 			isAbilitySelfDefeat = true;
 		}
 	}

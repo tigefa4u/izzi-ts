@@ -11,6 +11,7 @@ type SProps = { location_id: number; floor: number; }
 
 export const getFloorsByCharacterId: (params: IProps) => Promise<NormalizeFloorProps | undefined> = async (params) => {
 	try {
+		if (!params.character_id) return;
 		const key = "floors::ch-" + params.character_id;
 		const characterFloors = await Cache.get(key);
 		if (characterFloors) return JSON.parse(characterFloors);
