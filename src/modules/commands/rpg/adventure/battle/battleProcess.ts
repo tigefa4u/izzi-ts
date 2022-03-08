@@ -74,12 +74,13 @@ function processLifesteals(stats: S, damageDealt: number, num: number) {
 
 function processUnableToAttack<T extends BattleStats>(
 	playerStats: T,
-	opponentStats: T
+	opponentStats: T,
+	allowProcOnEvadeHit = false
 ) {
 	return (
 		playerStats.totalStats.isAsleep ||
     playerStats.totalStats.isStunned ||
-    opponentStats.totalStats.isEvadeHit
+    allowProcOnEvadeHit === true ? false : opponentStats.totalStats.isEvadeHit
 	);
 }
 
@@ -254,7 +255,7 @@ async function processAbililtyOrItemProc({
 			}
 
 			if (
-				processUnableToAttack(playerStats, opponentStats) ||
+				processUnableToAttack(playerStats, opponentStats, true) ||
         playerStats.totalStats.isRestrictResisted
 			)
 				break;
