@@ -101,13 +101,13 @@ export const findDuplicateCollectionInTeamsAndUpdate = async (
 
 		return index >= 0;
 	});
-	console.log("Finding duplicate collections in teams processed..");
+	loggers.info("Finding duplicate collections in teams processed..");
 	return Promise.all(
 		filteredTeams.map(async (team) => {
 			const teamMeta = clone(team.metadata);
 			const teamMetadata = reorderObjectKey(teamMeta, "position");
 			team.metadata = team.metadata.map((meta) => {
-				if (teamMetadata[meta.position]?.collection_id) {
+				if (teamMetadata[meta.position]?.collection_id === id) {
 					meta = {
 						collection_id: null,
 						position: meta.position,
@@ -115,6 +115,7 @@ export const findDuplicateCollectionInTeamsAndUpdate = async (
 				}
 				return meta;
 			});
+			console.log("updating---", team.metadata);
 			loggers.info(
 				"Duplicate collections found in array: " + JSON.stringify(teamMetadata)
 			);

@@ -99,7 +99,7 @@ export const predator = ({
 	// Increase the **ATK/DEF** by __20%__ as well as increasing its **SPD** by __10%__
 	if (round % 2 === 0 && !playerStats.totalStats.isPred) {
 		playerStats.totalStats.isPred = true;
-		const temp = randomElementFromArray([ "vitality", "defense" ]);
+		const temp = randomElementFromArray([ "vitality", "vitality" ]);
 		if (!basePlayerStats.totalStats[`${temp}TempPred`])
 			basePlayerStats.totalStats[`${temp}TempPred`] = 1;
 		playerStats.totalStats[temp] =
@@ -107,7 +107,7 @@ export const predator = ({
       (card.stats[`${temp}Gain`] || card.stats[temp]);
 		const percent = calcPercentRatio(20, card.rank);
 		const relDiff = getRelationalDiff(
-			card.stats[temp],
+			basePlayerStats.totalStats[temp],
 			basePlayerStats.totalStats[`${temp}TempPred`] * percent
 		);
 		basePlayerStats.totalStats[`${temp}TempPred`] =
