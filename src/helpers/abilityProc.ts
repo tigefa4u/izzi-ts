@@ -21,7 +21,7 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	if (isDescriptionOnly) {
 		updatedDescription = `${updatedDescription} ${description}`;
 	} else {
-		updatedDescription = `${updatedDescription} **${titleCase(
+		updatedDescription = `${updatedDescription} **${playerStats.name} ${titleCase(
 			card?.name || ""
 		)}** ${isItem ? "is equipped with" : "uses"} __${titleCase(emotename)}__ ${emojiMap(emotename)} ${description}`;
 	}
