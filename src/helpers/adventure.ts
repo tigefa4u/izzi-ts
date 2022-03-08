@@ -109,6 +109,9 @@ export const addTeamEffectiveness = async ({
 	if (effective > 0) {
 		playerStats.effective = 1.5;
 		opponentStats.effective = 0.5;
+	} else if (effective === 0) {
+		playerStats.effective = 1;
+		opponentStats.effective = 1;
 	} else {
 		playerStats.effective = 0.5;
 		opponentStats.effective = 1.5;
