@@ -220,6 +220,13 @@ async function simulatePlayerTurns({
 			totalDamage += damageDealt;
 			totalDamage += abilityDamage;
 		}
+		if (updatedStats.isAbilityDefeat) {
+			defeated = updatedStats.opponentStats;
+			break;
+		} else if (updatedStats.isAbilitySelfDefeat) {
+			defeated = updatedStats.playerStats;
+			break;
+		}
 		const battleDescription = updateBattleDesc({
 			isPlayerFirst,
 			round,

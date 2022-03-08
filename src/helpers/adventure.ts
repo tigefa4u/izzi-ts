@@ -107,11 +107,11 @@ export const addTeamEffectiveness = async ({
 	);
 
 	if (effective > 0) {
-		playerStats.effective = 1.2;
-		opponentStats.effective = 0.8;
+		playerStats.effective = 1.5;
+		opponentStats.effective = 0.5;
 	} else {
-		playerStats.effective = 0.8;
-		opponentStats.effective = 1.2;
+		playerStats.effective = 0.5;
+		opponentStats.effective = 1.5;
 	}
 	return {
 		playerStats,
@@ -134,19 +134,18 @@ export const addEffectiveness = async ({
         playerType as keyof EffectivenessProps
 			].affects.findIndex((i) => i === enemyType);
 			if (index >= 0) {
-				playerStats.effective = 1.2;
+				playerStats.effective = 1.5;
 			} else {
 				Object.keys(effectiveness).forEach((type) => {
 					const tempIndex = effectiveness[
             type as keyof EffectivenessProps
 					].affects.findIndex((i) => i === playerType);
 					if (tempIndex >= 0 && type === enemyType) {
-						playerStats.effective = 0.8;
+						playerStats.effective = 0.5;
 					}
 				});
 			}
 		}
-		return playerStats;
 	} catch (err) {
 		loggers.error(
 			"helpers.adventure.addEffectiveness(): something went wrong",

@@ -126,7 +126,6 @@ export const BattleProcess = async ({
 	if (playerStats.totalStats.accuracy > opponentStats.totalStats.evasion) {
 		opponentStats.totalStats.isEvadeHit = false;
 	}
-
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
@@ -274,8 +273,8 @@ async function processAbililtyOrItemProc({
 			await delay(1000);
 			if (abilityProc) {
 				if (
-					(abilityProc.damageDiff && abilityProc.damageDiff <= 0) ||
-          (abilityProc.playerDamageDiff && abilityProc.playerDamageDiff <= 0)
+					((abilityProc.damageDiff ?? 1) <= 0) ||
+					  ((abilityProc.playerDamageDiff ?? 1) <= 0)
 				) {
 					isDefeated = true;
 					break;

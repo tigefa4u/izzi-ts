@@ -32,7 +32,7 @@ export type UserProps = {
 	vote_streak: number;
 	mana_refilled_at: string;
 	raid_permit_refilled_at: string;
-	voted_at: string;
+	voted_at: Date;
 	created_at: string;
 	updated_at: string;
 }
