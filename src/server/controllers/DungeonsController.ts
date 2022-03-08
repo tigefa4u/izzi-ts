@@ -1,0 +1,213 @@
+import { UserRankProps } from "@customTypes/userRanks";
+import Cache from "cache";
+import connection from "db";
+import emoji from "emojis/emoji";
+import { randomNumber } from "helpers";
+import loggers from "loggers";
+import { DMUserViaApi } from "server/pipes/directMessage";
+import { success } from "server/responses";
+import { clone } from "utility";
+
+export const concludeOrStartDungeons = async (req: any, res: any) => {
+	try {
+		const seasonEnd = await Cache.get("dg-season-end");
+		if (seasonEnd) {
+			await Cache.del("dg-season-end");
+			return success(res, { message: "New DG season has started!" });
+		}
+		await Cache.set("dg-season-end", "true");
+		return success(res, { message: "DG Season has ended, and the rewards have been distributed", });
+	} catch (err: any) {
+		return res.status(500).send({
+			error: true,
+			message: err.message,
+		});
+	}
+};
+
+const crates: any = {
+	premium: {
+		category: "premium",
+		price: 0,
+		contents: {
+			cards: {
+				legend: 23,
+				divine: 50,
+				immortal: 20,
+				exclusive: 7 
+			},
+			numberOfCards: randomNumber(1, 3),
+			orbs: randomNumber(150, 300)
+		},
+		is_on_market: false,
+	},
+	legendary: {
+		category: "legendary",
+		price: 0,
+		contents: {
+			cards: {
+				platinum: 15,
+				diamond: 58,
+				legend: 22,
+				divine: 5 
+			},
+			numberOfCards: randomNumber(1, 3),
+			orbs: randomNumber(100, 200)
+		},
+		is_on_market: false,
+	},
+	silver: {
+		category: "silver",
+		price: 0,
+		contents: {
+			cards: {
+				silver: 25,
+				gold: 40,
+				platinum: 35,
+				diamond: 20 
+			},
+			numberOfCards: 10 
+		},
+		is_on_market: false,
+	}
+};
+
+const rewardPerRank: any = {
+	5: {
+		reward: [ {
+			rank: "premium",
+			num: 1
+		}, {
+			rank: "legendary",
+			num: 3
+		} ],
+		message: "- 1x __Premium__ crates\n- 2x __Legendary__ crates"
+	},
+	4: {
+		reward: [ {
+			rank: "legendary",
+			num: 2
+		}, {
+			rank: "silver",
+			num: 4
+		} ],
+		message: "- 1x __Legendary__ crates\n- 4x __Silver__ crates"
+	},
+	3: {
+		reward: [ {
+			rank: "legendary",
+			num: 1
+		}, {
+			rank: "silver",
+			num: 6
+		} ],
+		message: "- 1x __Legendary__ crates\n- 6x __Silver__ crates"
+	},
+};
+const processDGRewards = async () => {
+	const top10 = await getData({ limit: 10 });
+	const userRanks = await getData({ offset: 10 });
+
+	const dataToCreate: any[] = [];
+	await Promise.all(
+		top10.map(async (user, index) => {
+			const winRatio = user.wins / user.loss;
+			const goldReward = Math.floor(winRatio * 500000);
+			console.log("for user: " + user.user_tag + " gold: " + goldReward);
+			await Promise.all(
+				[ ...Array(2).fill("premium"), ...Array(4).fill("legendary") ].map(
+					async (crateCat) => {
+						const crateItem = clone(crates[crateCat]);
+						crateItem.user_tag = user.user_tag;
+						dataToCreate.push(crateItem);
+						return;
+					}
+				)
+			).catch((err) => {
+				loggers.error(
+					"server.controllers.DungeonController.processDGRewards(): something horrible happened:",
+					err
+				);
+				return;
+			});
+			await connection.raw(
+				`update users set gold = gold + ${goldReward} where user_tag = '${user.user_tag}'`
+			);
+
+			const message =
+        `Congratulations Summoner ${
+        	emoji.celebration
+        }! Dungeon Season has ended. You ranked **__#${
+        	index + 1
+        }__** this season and received\n**- __${goldReward}__ Gold ${
+        	emoji.gold
+        }` + "\n- 2x __Premium__ crates\n- 4x __Legendary__ crates**";
+
+			await DMUserViaApi(user.user_tag, { content: message });
+		})
+	);
+
+	await Promise.all(userRanks.map(async (user, index) => {
+		const reward = rewardPerRank[user.rank_id];
+		if (reward) {
+			await Promise.all(reward.reward.map(async (item: any) => {
+				for (let i = 0; i < item.num; i++) {
+					const crateItem = clone(crates[item.rank]);
+					crateItem.user_tag = user.user_tag;
+					dataToCreate.push(crateItem);
+				}
+			}));
+			const message = `Congratulations Summoner ${emoji.celebration}! ` +
+            `Dungeon Season has ended. You ranked **__#${(index + 1) + 10}__** this season and ` +
+            `received\n**${reward.message}**`;
+
+			await DMUserViaApi(user.user_tag, { content: message });
+		}
+	}));
+	await connection("crates").insert(dataToCreate);
+
+	await backupSeasonRanks([ ...top10, ...userRanks ]);
+	await resetDG();
+};
+
+async function resetDG() {
+	await connection.raw("update user_ranks set rank = 'duke', rank_id = 1, exp = 0, wins = 0, " +
+    "loss = 0, r_exp = 50, division = 1");
+}
+
+async function backupSeasonRanks(data: any) {
+	const res = data.map((item: any) => {
+		return  {
+			user_tag: item.user_tag,
+			season: 4,
+			wins: item.wins,
+			loss: item.loss,
+			rank: item.rank,
+			division: item.division
+		};
+	});
+	await connection("season_ranks").insert(res);
+}
+
+const tableName = "user_ranks";
+
+async function getData({
+	limit,
+	offset,
+}: {
+  limit?: number;
+  offset?: number;
+}): Promise<UserRankProps[]> {
+	let query = connection(tableName)
+		.orderBy(`${tableName}.rank_id`, "desc")
+		.orderBy(`${tableName}.division`, "desc")
+		.orderBy(`${tableName}.exp`, "desc")
+		.orderBy(`${tableName}.wins`, "desc");
+	if (limit) {
+		query = query.limit(limit);
+	}
+	if (offset) {
+		query = query.offset(offset);
+	}
+	return await query;
+}

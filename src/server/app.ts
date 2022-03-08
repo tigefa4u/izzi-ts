@@ -1,15 +1,13 @@
 import express from "express";
-import flushBattleCooldowns from "./autoClear";
 import bot from "./routes/bot";
 import webhook from "./routes/webhook";
+import dungeon from "./routes/dungeon";
+import isAuth from "./pipes/auth";
+
+const app = express();
+app.use(express.json());
 
 const webhookAuth = "izziwebhookauth";
-
-async function redisBattleCleanup() {
-	await flushBattleCooldowns();
-	return;
-}
-
 function isWebhookAuth(req: any, res: any, next: any) {
 	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote") {
 		return next();
@@ -21,11 +19,9 @@ function isWebhookAuth(req: any, res: any, next: any) {
 	});
 }
 
-const app = express();
-app.use(express.json());
-
-app.use("/", bot);
-app.use("/", webhook);
+app.use("/", isAuth, bot);
+app.use("/", isWebhookAuth, webhook);
+app.use("/", isAuth, dungeon);
 
 app.listen(5000, () => {
 	console.log("listening for webhook on port 5000");
