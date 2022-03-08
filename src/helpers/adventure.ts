@@ -64,11 +64,11 @@ export const preparePlayerStats = async ({
 const effectiveness: EffectivenessProps = {
 	water: { affects: [ "fire" ] },
 	fire: { affects: [ "grass", "crystal" ] },
-	grass: { affects: [ "ground" ] },
+	grass: { affects: [ "ground", "water" ] },
 	ground: { affects: [ "electric" ] },
 	electric: { affects: [ "water" ] },
-	crystal: { affects: [ "ground" ] },
-	poison: { affects: [ "wind", "grass" ] },
+	crystal: { affects: [ "ground", "light" ] },
+	poison: { affects: [ "wind", "grass", "light" ] },
 	wind: { affects: [ "crystal" ] },
 	dark: { affects: [ "poison" ] },
 	light: { affects: [ "dark" ] },
@@ -107,11 +107,11 @@ export const addTeamEffectiveness = async ({
 	);
 
 	if (effective > 0) {
-		playerStats.effective = 1.5;
-		opponentStats.effective = 0.5;
+		playerStats.effective = 1.2;
+		opponentStats.effective = 0.8;
 	} else {
-		playerStats.effective = 0.5;
-		opponentStats.effective = 1.5;
+		playerStats.effective = 0.8;
+		opponentStats.effective = 1.2;
 	}
 	return {
 		playerStats,
@@ -134,14 +134,14 @@ export const addEffectiveness = async ({
         playerType as keyof EffectivenessProps
 			].affects.findIndex((i) => i === enemyType);
 			if (index >= 0) {
-				playerStats.effective = 1.5;
+				playerStats.effective = 1.2;
 			} else {
 				Object.keys(effectiveness).forEach((type) => {
 					const tempIndex = effectiveness[
             type as keyof EffectivenessProps
 					].affects.findIndex((i) => i === playerType);
 					if (tempIndex >= 0 && type === enemyType) {
-						playerStats.effective = 0.5;
+						playerStats.effective = 0.8;
 					}
 				});
 			}

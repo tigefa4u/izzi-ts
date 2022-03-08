@@ -6,11 +6,11 @@ import { Message, MessageEmbed } from "discord.js";
 export type EffectivenessProps = {
     water: { affects: [ "fire" ] };
 	fire: { affects: [ "grass", "crystal" ] };
-	grass: { affects: [ "ground" ] };
+	grass: { affects: [ "ground", "water" ] };
 	ground: { affects: [ "electric" ] };
 	electric: { affects: [ "water" ] };
-	crystal: { affects: [ "ground" ] };
-	poison: { affects: [ "wind", "grass" ] };
+	crystal: { affects: [ "ground", "light" ] };
+	poison: { affects: [ "wind", "grass", "light" ] };
 	wind: { affects: [ "crystal" ] };
 	dark: { affects: [ "poison" ] };
 	light: { affects: [ "dark" ] };

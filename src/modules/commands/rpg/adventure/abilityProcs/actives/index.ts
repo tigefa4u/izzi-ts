@@ -99,7 +99,7 @@ export const predator = ({
 	// Increase the **ATK/DEF** by __20%__ as well as increasing its **SPD** by __10%__
 	if (round % 2 === 0 && !playerStats.totalStats.isPred) {
 		playerStats.totalStats.isPred = true;
-		const temp = randomElementFromArray([ "vitality", "vitality" ]);
+		const temp = randomElementFromArray([ "vitality", "defense" ]);
 		if (!basePlayerStats.totalStats[`${temp}TempPred`])
 			basePlayerStats.totalStats[`${temp}TempPred`] = 1;
 		playerStats.totalStats[temp] =
