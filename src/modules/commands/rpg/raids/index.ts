@@ -182,7 +182,7 @@ function prepareLoot(
 						`__${r.number}x__ ${titleCase(r.rank)} of **${titleCase(
 							b.name
 						)}** (At ${r.rate}% drop rate)`
-				)
+				).join("\n")
 			).join("\n")
 			: ""
 	}`;
