@@ -28,16 +28,18 @@ export const processUpVote = async (req: any, res: any) => {
 			summoner.shards = summoner.shards + shardReward;
 			summoner.voted_at = new Date();
 
-			let messageStr = "Thank you for voting! You have received " +
-            `__${goldReward}__ Gold, __${passReward}__ Raid Permit(s), __${shardReward}__ ` +
-            `Shards ${emoji.shard} and refilled your mana for dailying.`;
+			let messageStr =
+        "Thank you for voting! You have received " +
+        `__${goldReward}__ Gold ${emoji.gold}, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
+        `__${shardReward}__ ` +
+        `Shards ${emoji.shard} and refilled your mana for dailying.`;
 			const updateObj = {
 				shards: summoner.shards,
 				voted_at: summoner.voted_at,
 				vote_streak: summoner.vote_streak,
 				mana: summoner.mana,
 				gold: summoner.gold,
-				raid_pass: summoner.raid_pass
+				raid_pass: summoner.raid_pass,
 			};
 
 			if (summoner.is_premium) {
@@ -52,7 +54,8 @@ export const processUpVote = async (req: any, res: any) => {
 			await updateRPGUser({ user_tag }, updateObj);
 			desc = messageStr;
 		} else {
-			desc = "Thank you for voting! To receive more rewards " +
+			desc =
+        "Thank you for voting! To receive more rewards " +
         "start your journey in the Xenverse using ``start``";
 		}
 		DMUserViaApi(user_tag, { content: desc });

@@ -9,7 +9,8 @@
     "dev": "ts-node-dev -r dotenv/config src/server/shard.ts",
     "flush:cooldown": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/index.ts",
     "test:redis": "ts-node -r dotenv/config src/server/testRedisConnection.ts",
-    "cronjob": "INVOKE=true ts-node -r dotenv/config src/server/pipes/cronjob.ts"
+    "cronjob": "ts-node -r dotenv/config src/server/pipes/cronjob.ts",
+    "start:server": "ts-node -r dotenv/config src/server/app.ts"
   },
   "keywords": [
     "izzi",

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import bot from "./routes/bot";
 import webhook from "./routes/webhook";
 import dungeon from "./routes/dungeon";
@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 const webhookAuth = "izziwebhookauth";
-function isWebhookAuth(req: any, res: any, next: any) {
+function isWebhookAuth(req: Request, res: Response, next: () => void) {
 	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote") {
 		return next();
 	}
@@ -19,9 +19,9 @@ function isWebhookAuth(req: any, res: any, next: any) {
 	});
 }
 
+app.use("/dblwebhook-secret", isWebhookAuth, webhook);
+app.use("/dungeon", isAuth, dungeon);
 app.use("/", isAuth, bot);
-app.use("/", isWebhookAuth, webhook);
-app.use("/", isAuth, dungeon);
 
 app.listen(5000, () => {
 	console.log("listening for webhook on port 5000");
