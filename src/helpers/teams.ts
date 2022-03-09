@@ -33,14 +33,14 @@ export const prepareTotalOverallStats = async (
 			.map(async (c) => {
 				const powerLevel = await getPowerLevelByRank({ rank: c.rank });
 				if (!powerLevel) return {} as OverallStatsProps;
-				const total = overallStats({
+				const { totalStats: total, baseStats } = overallStats({
 					stats: c.stats,
 					character_level: c.character_level,
 					powerLevel,
 					isForBattle: params.isBattle,
 					guildStats: params.guildStats
 				});
-				c.stats = total;
+				c.stats = baseStats;
 				return total;
 			})
 			.filter(Boolean)
@@ -200,8 +200,10 @@ export const prepareSkewedCollectionsForBattle = async ({
 		isBattle: true,
 		guildStats: clone(guildStats)
 	});
-
-	const skewed = collections.reduce(
+	if (!totalStats) {
+		throw new Error("Unable to calculate total stats");
+	}
+	const skewed = totalStats.collections.reduce(
 		(acc, r) => {
 			return {
 				...r,
@@ -213,13 +215,13 @@ export const prepareSkewedCollectionsForBattle = async ({
 	const battleCards: (CollectionCardInfoProps | undefined)[] = [];
 
 	if (team) {
-		const collectionsMeta = reorderObjectKey(collections, "id");
+		const collectionsMeta = reorderObjectKey(totalStats.collections, "id");
 		// team metadata positions are (1, 2, 3)
 		team.metadata.forEach((m) => {
 			battleCards[m.position - 1] = collectionsMeta[m.collection_id || 0];
 		});
 	} else {
-		battleCards.push(...collections);
+		battleCards.push(...totalStats.collections);
 	}
 	return {
 		totalStats: {

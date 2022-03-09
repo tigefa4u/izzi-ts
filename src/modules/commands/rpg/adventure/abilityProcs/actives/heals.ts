@@ -52,10 +52,10 @@ export const revitalize = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-}: any) => {
+}: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// Restore 20% of missing health of all allies
-	// as well as increase their speed by __10%__
+	// Restore 18% of missing health of all allies
+	// as well as increase their speed by __8%__
 	// atk buff is too much
 	if (round % 3 === 0 && !playerStats.totalStats.isRevit) {
 		playerStats.totalStats.isRevit = true;
@@ -66,17 +66,17 @@ export const revitalize = ({
 		if (restorePoints >= playerStats.totalStats.originalHp)
 			restorePoints = playerStats.totalStats.originalHp;
 		playerStats.totalStats.strength = restorePoints;
-		const temp = "vitality";
-		if (!basePlayerStats.totalStats[`${temp}Temp`]) basePlayerStats.totalStats[`${temp}Temp`] = 1;
-		playerStats.totalStats[temp] =
-        playerStats.totalStats[temp] - (card.stats[`${temp}Inc`] || card.stats[temp]);
+		if (!basePlayerStats.totalStats.vitalityTemp) basePlayerStats.totalStats.vitalityTemp = 1;
+		playerStats.totalStats.vitality =
+        playerStats.totalStats.vitality - (card.stats.vitalityInc || card.stats.vitality);
 		const incPercent = calcPercentRatio(8, card.rank);
 		const ratio =
-    card.stats[temp] *
-    ((basePlayerStats.totalStats[`${temp}Temp`] * incPercent) / 100);
-		basePlayerStats.totalStats[`${temp}Temp`] = basePlayerStats.totalStats[`${temp}Temp`] + 1;
-		const inc = card.stats[temp] + ratio;
-		playerStats.totalStats[temp] = playerStats.totalStats[temp] + inc;
+    card.stats.vitality *
+    ((basePlayerStats.totalStats.vitalityTemp * incPercent) / 100);
+		basePlayerStats.totalStats.vitalityTemp = basePlayerStats.totalStats.vitalityTemp + 1;
+		const inc = card.stats.vitality + ratio;
+		card.stats.vitalityInc = inc;
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + inc;
 		const damageDiff = relativeDiff(
 			playerStats.totalStats.strength,
 			playerStats.totalStats.originalHp

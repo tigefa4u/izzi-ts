@@ -75,7 +75,7 @@ export type CollectionReturnType = CollectionProps & {
 
 export type CollectionCardInfoProps = CollectionReturnType & {
   filepath: string;
-  stats: CharacterStatProps;
+  stats: CharacterStatProps & { vitalityInc?: number; };
   itemdescription?: string;
   characterInfo?: CharacterCanvasProps;
   is_passive?: boolean;

@@ -1,3 +1,4 @@
+import { OverallStatsProps } from "@customTypes";
 import {
 	BattleStats,
 	EffectivenessProps,
@@ -37,28 +38,31 @@ export const preparePlayerStats = async ({
   characterLevel: number;
   rank: string;
   guildStats?: GuildStatProps;
-}): Promise<BattleStats["totalStats"]> => {
+}): Promise<{ playerStats: BattleStats["totalStats"]; baseStats: OverallStatsProps; }> => {
 	const powerLevel = await getPowerLevelByRank({ rank });
-	let statsToAssign = stats;
-	if (powerLevel) {
-		const totalStats = overallStats({
-			stats,
-			character_level: characterLevel,
-			powerLevel,
-			guildStats,
-			isForBattle: true,
-		});
-		statsToAssign = totalStats;
+	if (!powerLevel) {
+		throw new Error("FATAL: Power Level not found for rank: " + rank);
 	}
+	const result = overallStats({
+		stats,
+		character_level: characterLevel,
+		powerLevel,
+		guildStats,
+		isForBattle: true,
+	});
+
 	const playerStats = {
 		health: prepareHPBar(),
 		criticalDamage: 1,
 		effective: 1,
 		character_level: characterLevel,
-		...statsToAssign,
+		...result.totalStats,
 	} as BattleStats["totalStats"];
 
-	return playerStats;
+	return {
+		playerStats,
+		baseStats: result.baseStats 
+	};
 };
 
 const effectiveness: EffectivenessProps = {

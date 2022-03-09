@@ -73,7 +73,7 @@ export const getPlayerDamageDealt = (
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
-    randomNumber(0.85, 1, true);
+    randomNumber(0.87, 1, true); // This was 0.85 before
 	let atk = clone(vitality);
 	let def = clone(defense);
 	atk = atk + Math.floor(playerTotalStats.intelligence * (6 / 100));

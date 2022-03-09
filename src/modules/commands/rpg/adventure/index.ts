@@ -92,7 +92,6 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			max_ruin_floor: zone.max_floor,
 			...card,
 		};
-
 		const enemyCard = {
 			character_id: zone.character_id,
 			name: zone.name,
@@ -123,7 +122,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			if (inCd) return;
 			if (
 				battleCardDetails.floor === user.max_floor &&
-        battleCardDetails.ruin === battleCardDetails.max_ruin
+		battleCardDetails.ruin === battleCardDetails.max_ruin
 			) {
 				const errorEmbed = createEmbed(author, client);
 				errorEmbed
@@ -183,27 +182,29 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			}),
 		];
 
-		let [ playerStats, enemyStats ] = await Promise.all(promises);
+		const [ player, opponent ] = await Promise.all(promises);
 		const [ _playerStats, _enemyStats ] = await Promise.all([
 			addEffectiveness({
 				playerType: card.type,
 				enemyType: enemyCard.type,
-				playerStats,
+				playerStats: player.playerStats,
 			}),
 			addEffectiveness({
 				playerType: enemyCard.type,
 				enemyType: card.type,
-				playerStats: enemyStats,
+				playerStats: opponent.playerStats,
 			}),
 		]);
-		playerStats = _playerStats;
-		enemyStats = _enemyStats;
+		const playerStats = _playerStats;
+		const enemyStats = _enemyStats;
+		card.stats = player.baseStats;
 		const playerBase = preparePlayerBase({
 			id: user.user_tag,
 			playerStats,
 			name: `${author.username}'s ${titleCase(card.name)}`,
 			card,
 		});
+		enemyCard.stats = opponent.baseStats;
 		const enemyBase = preparePlayerBase({
 			id: `zoneboss${user.ruin}${user.floor}`,
 			playerStats: enemyStats,
@@ -236,6 +237,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			multiplier: 1,
 			channel: context.channel,
 		});
+		return;
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.adventure.index.battle(): something went wrong",

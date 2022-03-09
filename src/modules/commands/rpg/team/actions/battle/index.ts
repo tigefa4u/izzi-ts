@@ -83,7 +83,6 @@ export const teamBattle = async ({
 			playerStats: playerStats.stats.totalStats,
 			opponentStats: opponentStats.stats.totalStats 
 		});
-
 		playerStats.stats.totalStats = effectiveStats;
 		opponentStats.stats.totalStats = opponentEffectiveStats;
 		Promise.all([ setCooldown(author.id, "in-battle", 60 * 5), setCooldown(mentionId, "in-battle", 60 * 5) ]);

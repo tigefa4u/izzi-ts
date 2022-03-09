@@ -13,6 +13,7 @@ import { titleCase } from "title-case";
 import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import { clone } from "utility";
 
 export const generateUUID = (n: number): string => {
 	const add = 1;
@@ -248,13 +249,14 @@ export const overallStats = (params: {
   powerLevel: PLProps;
   guildStats?: GuildStatProps;
   isForBattle?: boolean;
-}): OverallStatsProps => {
+}): { totalStats: OverallStatsProps; baseStats: OverallStatsProps; } => {
 	const {
 		stats, character_level, powerLevel, guildStats, isForBattle 
 	} =
     params;
 	const keys = Object.keys(stats);
 	const totalStats = {} as OverallStatsProps;
+	const baseStats = {} as OverallStatsProps;
 	keys.forEach((stat) => {
 		if (
 			[ "critical", "accuracy", "evasion", "effective", "precision" ].includes(
@@ -285,6 +287,9 @@ export const overallStats = (params: {
 					),
 				});
 			}
+
+			Object.assign(baseStats, { [stat]: totalStats[stat as keyof CharacterStatProps] });
+			
 			if (isForBattle === true) {
 				if (stat === "strength") {
 					Object.assign(totalStats, {
@@ -306,7 +311,10 @@ export const overallStats = (params: {
 		}
 	});
 
-	return totalStats;
+	return {
+		totalStats,
+		baseStats 
+	};
 };
 
 export const preparePlayerBase = ({
