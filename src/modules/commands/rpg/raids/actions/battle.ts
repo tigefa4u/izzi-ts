@@ -17,7 +17,7 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { processHpBar, relativeDiff } from "helpers/battle";
 import { addTeamEffectiveness, createBattleCanvas, prepareHPBar } from "helpers/adventure";
-import { updateRaid } from "api/controllers/RaidsController";
+import { getRaid, updateRaid } from "api/controllers/RaidsController";
 import { Canvas } from "canvas";
 import { createSingleCanvas } from "helpers/canvas";
 import { createAttachment } from "commons/attachments";
@@ -126,8 +126,11 @@ export const battleRaidBoss = async ({
 			);
 			return;
 		}
-
-		const updateObj = clone(currentRaid);
+		const refetchRaid = await getRaid({ id: currentRaid.id });
+		if (!refetchRaid) {
+			throw new Error("Unable to validate raid: " + currentRaid.id);
+		}
+		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			context.channel?.sendMessage("You have forfeit the battle");
 			updateObj.lobby = consumeEnergy(
