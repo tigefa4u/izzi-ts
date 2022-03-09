@@ -117,6 +117,7 @@ export const battleRaidBoss = async ({
 			playerStats: playerStats.stats,
 			enemyStats,
 			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
+			isRaid: true
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {

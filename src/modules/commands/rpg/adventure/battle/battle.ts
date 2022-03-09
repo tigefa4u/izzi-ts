@@ -39,7 +39,8 @@ export const simulateBattle = async ({
 	playerStats,
 	enemyStats,
 	title = "__TEAM BATTLE__",
-}: SimulateBattleProps) => {
+	isRaid,
+}: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
 		context.channel.id
@@ -117,6 +118,7 @@ export const simulateBattle = async ({
 				isPlayerFirst,
 				round,
 				totalDamage,
+				isRaid,
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -152,6 +154,25 @@ export const simulateBattle = async ({
 	}
 };
 
+function boostRaidBoss({
+	enemyStats,
+	round,
+}: Pick<PrepareBattleDescriptionProps, "enemyStats"> & { round: number }) {
+	const incRatio = Math.round(
+		enemyStats.totalStats.critical * ((5 * round) / 100)
+	);
+	enemyStats.totalStats.critical = enemyStats.totalStats.critical + incRatio;
+	const critDmgRatio =
+    enemyStats.totalStats.criticalDamage * ((3 * round) / 100);
+	enemyStats.totalStats.criticalDamage =
+    enemyStats.totalStats.criticalDamage + critDmgRatio;
+	return {
+		enemyStats,
+		desc: `**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
+		"its **Critical Hit** chance and **Critical Hit Damage** will increase over time!" 
+	};
+}
+
 async function simulatePlayerTurns({
 	playerStats,
 	enemyStats,
@@ -163,12 +184,36 @@ async function simulatePlayerTurns({
 	basePlayerStats,
 	baseEnemyStats,
 	totalDamage,
+	isRaid,
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     message: Message;
+    isRaid?: boolean;
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
+		if (isRaid && round >= 10) {
+			const boost = boostRaidBoss({
+				enemyStats,
+				round,
+			});
+			enemyStats = boost.enemyStats;
+			if (round === 10 && i === 1) {
+				const isRaidBossEdited = await simulateBattleDescription({
+					playerStats,
+					enemyStats,
+					description: boost.desc,
+					embed,
+					message,
+					totalDamage,
+				});
+				if (!isRaidBossEdited) {
+					defeated = playerStats;
+					defeated.isForfeit = true;
+					break;
+				}
+			}
+		}
 		const criticalHitChances = prepareCriticalHitChance({
 			isPlayerFirst,
 			playerStats,
@@ -289,7 +334,7 @@ async function simulatePlayerTurns({
 		defeated,
 		totalDamage,
 		playerStats,
-		enemyStats
+		enemyStats,
 	};
 }
 
@@ -330,9 +375,7 @@ function updateBattleDesc({
 		isPlayerFirst ? playerStats.name : enemyStats.name
 	}**`;
 
-	const enemyDesc = `**${
-		isPlayerFirst ? enemyStats.name : playerStats.name
-	}**`;
+	const enemyDesc = `**${isPlayerFirst ? enemyStats.name : playerStats.name}**`;
 
 	if (isStunned) {
 		desc = `${desc} ${playerDesc} is **Stunned** ${emoji.stun}! It cannot attack!`;
@@ -342,8 +385,9 @@ function updateBattleDesc({
 		desc = `${desc} ${enemyDesc} has **Evaded** ${emoji.evasion}, taking no damage!`;
 	} else {
 		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
-			isCriticalHit ? "**CRITICAL HIT**" : 
-				opponentStats.totalStats.effective < 1
+			isCriticalHit
+				? "**CRITICAL HIT**"
+				: opponentStats.totalStats.effective < 1
 					? "it was **Super Effective!**"
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
