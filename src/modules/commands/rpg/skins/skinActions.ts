@@ -23,7 +23,7 @@ export const show = async (params: {
 	try {
 		const filter = PAGE_FILTER;
 		const pageNum = params.args?.shift();
-		if (pageNum === "page") {
+		if (pageNum === "-pg") {
 			filter.currentPage = Number(params.args?.shift() || 0);
 		}
 		let embed = createEmbed();

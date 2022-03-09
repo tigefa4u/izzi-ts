@@ -43,31 +43,35 @@ export const getCharacters: (
 
 export const getCharacterInfo: (
   filter: FilterProps
-) => Promise<CharacterCardProps | undefined> = async function (filter) {
+) => Promise<CharacterCardProps[] | undefined> = async function (filter) {
 	try {
-		const characterInfo:
-      | CharacterCardProps
-      | PromiseLike<CharacterCardProps | undefined>
-      | undefined = {} as CharacterCardProps;
 		const result = await Characters.get(filter);
 		if (result && result.length > 0) {
-			const character = result[0];
-			let rank = BASE_RANK;
-			if (typeof filter.rank === "string") {
-				rank = filter.rank;
-			} else if (typeof filter.rank === "object") {
-				rank = filter.rank[0];
-			}
-			const card = await getCharacterCardByRank({
-				character_id: character.id,
-				rank: rank,
-			});
-			Object.assign(characterInfo, {
-				...card,
-				...character,
-			});
+			const allCharacters = await Promise.all(result.map(async (r) => {
+				const characterInfo:
+			  | CharacterCardProps
+			  | PromiseLike<CharacterCardProps | undefined>
+			  | undefined = {} as CharacterCardProps;
+				const character = r;
+				let rank = BASE_RANK;
+				if (typeof filter.rank === "string") {
+					rank = filter.rank;
+				} else if (typeof filter.rank === "object") {
+					rank = filter.rank[0];
+				}
+				const card = await getCharacterCardByRank({
+					character_id: character.id,
+					rank: rank,
+				});
+				Object.assign(characterInfo, {
+					...card,
+					...character,
+				});
+				return characterInfo;
+			}));
+			return allCharacters;
 		}
-		return characterInfo;
+		return;
 	} catch (err) {
 		loggers.error(
 			"api.controllers.getCharacterInfo(): something went wrong",

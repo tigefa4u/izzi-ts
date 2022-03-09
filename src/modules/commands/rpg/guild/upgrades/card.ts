@@ -145,15 +145,16 @@ async function validateAndUpgradeCard(
 		await updateGuildMember({ id: validGuild.member.id }, { donation: validGuild.member.donation });
 		await updateCollection({ id: card.id }, { souls: card.souls });
 
-		const characterInfo = await getCharacterInfo({
+		const charaInfo = await getCharacterInfo({
 			rank: card.rank,
 			ids: [ card.character_id ] 
 		});
-		if (!characterInfo) {
+		if (!charaInfo || charaInfo.length <= 0) {
 			params.channel?.sendMessage(
 				"You have successfully absorbed souls! You are one of the few who failed to receive a success message");
 			return;
-		} 
+		}
+		const characterInfo = charaInfo[0];
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setThumbnail(characterInfo.filepath)

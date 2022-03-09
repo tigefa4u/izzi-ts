@@ -49,10 +49,14 @@ async function validateAndSellCard(
 			{ duplicateError: true }
 		);
 		if (marketCard) return;
-		const characterInfo = await getCharacterInfo({
+		const charaInfo = await getCharacterInfo({
 			ids: [ cardToBeSold.character_id ],
 			rank: cardToBeSold.rank,
 		});
+		if (!charaInfo || charaInfo.length <= 0) {
+			return;
+		}
+		const characterInfo = charaInfo[0];
 		if (options?.isConfirm) {
 			await updateCollection({ id: cardToBeSold.id }, { is_on_market: true });
 			await createMarketCard({
@@ -63,7 +67,7 @@ async function validateAndSellCard(
 			const desc = `You have successfully posted your __${titleCase(
 				cardToBeSold.rank
 			)}__ **Level ${cardToBeSold.character_level} ${titleCase(
-				characterInfo?.name || ""
+				characterInfo.name || ""
 			)}** for sale on the Global Market.`;
 			const embed = createEmbed()
 				.setTitle(DEFAULT_SUCCESS_TITLE)

@@ -22,13 +22,14 @@ export const getCardInfoByRowNumber = async (
 		const result = await Collections.getByRowNumber(params);
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(result.map(async (data) => {
-				const characterInfo = await getCharacterInfo({
+				const charainfo = await getCharacterInfo({
 					ids: [ data.character_id ],
 					rank: data.rank 
 				});
-				if (!characterInfo) {
+				if (!charainfo || charainfo.length <= 0) {
 					throw new Error("Character not found for id: " + data.character_id);
 				}
+				const characterInfo = charainfo[0];
 				if (skinArr) {
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
@@ -78,13 +79,14 @@ export const getCollectionById = async (
 		const result = await Collections.get(params);
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(result.map(async (data) => {
-				const characterInfo = await getCharacterInfo({
+				const charaInfo = await getCharacterInfo({
 					ids: [ data.character_id ],
 					rank: data.rank 
 				});
-				if (!characterInfo) {
+				if (!charaInfo || charaInfo.length <= 0) {
 					throw new Error("Character not found for id: " + data.character_id);
 				}
+				const characterInfo = charaInfo[0];
 				if (skinArr) {
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
@@ -135,13 +137,14 @@ export const getCardForBattle = async (
 		const result = await Collections.get(params);
 		if (result.length > 0) {
 			const data = result[0];
-			const characterInfo = await getCharacterInfo({
+			const charaInfo = await getCharacterInfo({
 				ids: [ data.character_id ],
 				rank: data.rank 
 			});
-			if (!characterInfo) {
+			if (!charaInfo || charaInfo.length <= 0) {
 				throw new Error("Character not found for id: " + data.character_id);
 			}
+			const characterInfo = charaInfo[0];
 			if (skinArr) {
 				const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 				if (idx >= 0) {

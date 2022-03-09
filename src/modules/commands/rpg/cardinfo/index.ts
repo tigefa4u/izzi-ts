@@ -12,6 +12,10 @@ import { MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { AuthorProps, ChannelProp } from "@customTypes";
+import { selectionInteraction } from "utility/SelectMenuInteractions";
+import { SelectMenuCallbackParams, SelectMenuOptions } from "@customTypes/selectMenu";
+import { groupByKey } from "utility";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -60,9 +64,9 @@ async function prepareCinfoDetails(
 
 export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const characterInfo = await getCharacterInfo({ name: args.join(" ") });
-		let embed = createEmbed(options.author, client);
-		if (!characterInfo) {
+		const charaInfo = await getCharacterInfo({ name: args.join(" ") });
+		const embed = createEmbed(options.author, client);
+		if (!charaInfo || charaInfo.length <= 0) {
 			embed
 				.setTitle(DEFAULT_ERROR_TITLE)
 				.setDescription("We could not find the Character you are looking for");
@@ -70,12 +74,36 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const location = await getFloorsByCharacterId({ character_id: characterInfo.id, });
-		embed = await prepareCinfoDetails(
-			embed,
-			characterInfo,
-			location,
+		if (charaInfo.length === 1) {
+			await showCharacterDetails(options.author, charaInfo[0], context.channel);
+			return;
+		}
+		embed.setTitle("Character Info")
+			.setDescription("We found multiple Characters that matched your requirement.");
+	
+		const selectMenuOptions = {
+			menuOptions: charaInfo.map((c) => ({
+				value: c.name,
+				label: c.name.replaceAll(/s/g, "-")
+			}))
+		} as SelectMenuOptions;
+		const selectMenu = await selectionInteraction(
+			context.channel,
+			options.author.id,
+			selectMenuOptions,
+			{
+				channel: context.channel,
+				client,
+				author: options.author,
+				extras: { cards: charaInfo }
+			},
+			handleCharacterSelect
 		);
+
+		if (selectMenu) {
+			embed.setButtons(selectMenu);
+		}
+
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -86,3 +114,26 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		return;
 	}
 };
+
+async function handleCharacterSelect(
+	options: SelectMenuCallbackParams<{ cards: CharacterCardProps[] }>,
+	value: string
+) {
+	if (!options.extras?.cards) return;
+	const cardsMeta = groupByKey(options.extras.cards, "name");
+	const character = cardsMeta[value][0];
+	showCharacterDetails(options.author, character, options.channel);
+	return;
+}
+
+async function showCharacterDetails(author: AuthorProps, character: CharacterCardProps, channel: ChannelProp) {
+	let embed = createEmbed(author);
+	const location = await getFloorsByCharacterId({ character_id: character.id, });
+	embed = await prepareCinfoDetails(
+		embed,
+		character,
+		location,
+	);
+	channel?.sendMessage(embed);
+	return;
+}

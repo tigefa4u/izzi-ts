@@ -34,7 +34,6 @@ async function handleTeamSet(
 		return;
 	}
 	const filteredTeams = await findDuplicateCollectionInTeamsAndUpdate(teams, collection.id, team.id);
-	console.log("DUPLICATES: ", filteredTeams);
 	const teamsMap = reorderObjectKey(teams, "id");
 	if (filteredTeams && filteredTeams.length > 0) {
 		filteredTeams.forEach((f) => {

@@ -94,8 +94,9 @@ export const preComputeRequiredCards = async ({
 		} : null;
 
 		if (name) {
-			const character = await getCharacterInfo({ name });
-			if (character) {
+			const charaInfo = await getCharacterInfo({ name });
+			if (charaInfo && charaInfo.length > 0) {
+				const character = charaInfo[0];
 				const isSameCharacter = card.character_id === character.id;
 				if (isSameCharacter) {
 					character_ids?.push(card.character_id);
