@@ -1,4 +1,4 @@
-import { ChannelProp, ConfirmationInteractionParams } from "@customTypes";
+import { ChannelProp, ConfirmationInteractionParams, FilterProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import {
 	getMarket,
@@ -42,9 +42,13 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 			removeCardFromMarket(subCommandParams);
 			return;
 		}
-		const params = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
 		if (Object.keys(params).length <= 0) return;
 		const filter = PAGE_FILTER;
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = await paginatorInteraction(

@@ -42,11 +42,15 @@ export const itemCollection = async ({
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const params = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
 		Object.assign(params, { user_id: user.id });
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const filter = PAGE_FILTER;
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		const buttons = await paginatorInteraction<
       Pick<FilterProps, "name" | "ids">,
       ItemProps[],

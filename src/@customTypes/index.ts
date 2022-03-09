@@ -18,6 +18,7 @@ export type FilterProps = {
     difficulty?: string[];
     isEvent?: boolean;
     limit?: number | number[];
+    page?: string[];
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]

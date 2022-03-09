@@ -18,7 +18,11 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const filter = PAGE_FILTER;
-		const params = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = 

@@ -118,7 +118,12 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 		const params = fetchParamsFromArgs<{
       user_tag: string;
       category?: CrateCategoryProps;
+	  page?: string[];
     }>(args);
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		Object.assign(params, { user_tag: author.id });
 		let embed = createEmbed(author, client);
 		let sentMessage: Message;

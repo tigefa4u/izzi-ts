@@ -15,7 +15,11 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
 		const filter = PAGE_FILTER;
-		const params = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = 

@@ -44,6 +44,10 @@ const argMap = [
 	{
 		name: "exclude",
 		alias: [ "-ex" ]
+	},
+	{
+		name: "page",
+		alias: [ "-pg" ]
 	}
 ];
 

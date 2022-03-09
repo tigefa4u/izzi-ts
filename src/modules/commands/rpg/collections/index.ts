@@ -64,12 +64,16 @@ export const cardCollection = async ({
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		let params = <FilterProps & { user_id: number }>fetchParamsFromArgs(args);
+		let params = <FilterProps & { user_id: number; }>fetchParamsFromArgs(args);
 		params = safeParseParams(params);
 		Object.assign(params, { user_id: user.id });
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const filter = PAGE_FILTER;
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		const buttons = await paginatorInteraction(
 			context.channel,
 			author.id,

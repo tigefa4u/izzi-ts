@@ -1,3 +1,4 @@
+import { FilterProps } from "@customTypes";
 import { RaidActionProps } from "@customTypes/raids";
 import { getRaidLobbies } from "api/controllers/RaidsController";
 import { createEmbed } from "commons/embeds";
@@ -14,11 +15,15 @@ export const raidLobbies = async ({
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
-		const params = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
 		Object.assign(params, { isEvent });
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const filter = PAGE_FILTER;
+		if (params.page && !isNaN(+params.page[0])) {
+			filter.currentPage = Number(params.page[0]);
+			delete params.page;
+		}
 		const buttons = await paginatorInteraction(
 			context.channel,
 			author.id,
