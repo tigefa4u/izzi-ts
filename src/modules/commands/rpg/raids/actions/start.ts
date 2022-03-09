@@ -1,7 +1,7 @@
 import { RaidActionProps, RaidLobbyProps } from "@customTypes/raids";
 import { updateRaid } from "api/controllers/RaidsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
-import { HOURS_PER_RAID } from "helpers/constants";
+import { HOURS_PER_RAID, PERMIT_PER_RAID } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { validateCurrentRaid } from "./validateRaid";
@@ -48,9 +48,13 @@ export const startRaid = async ({
 		} bt to attack`;
 		context.channel?.sendMessage(challengingDesc);
 		await Promise.all(
-			[ ...lobbyMembers.map((l) => {
+			[ ...lobbyMembers.map(async (l) => {
 				const desc = `Summoner **${lobby[l].username}**, ${challengingDesc}`;
-
+				const member = await getRPGUser({ user_tag: lobby[l].user_tag });
+				if (member) {
+					member.raid_pass = member.raid_pass - PERMIT_PER_RAID;
+					await updateRPGUser({ user_tag: member.user_tag }, { raid_pass: member.raid_pass });
+				}
 				return DMUser(client, desc, lobby[l].user_tag);
 			}), updateRaid({ id: currentRaid.id }, {
 				stats: currentRaid.stats,

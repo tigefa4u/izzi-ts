@@ -1,9 +1,8 @@
-import { CharacterCanvasProps } from "@customTypes/canvas";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { RaidActionProps, RaidStatsProps } from "@customTypes/raids";
 import { getRandomCard } from "api/controllers/CardsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
-import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { getRPGUser } from "api/controllers/UsersController";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -173,8 +172,6 @@ export const spawnRaid = async ({
 			loot: computedBoss.loot,
 		});
 		if (!raid) return;
-		user.raid_pass = user.raid_pass - PERMIT_PER_RAID;
-		updateRPGUser({ user_tag: user.user_tag }, { raid_pass: user.raid_pass });
 		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
 		let bossCanvas: Canvas | undefined;
 		if (isEvent) {
