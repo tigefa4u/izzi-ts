@@ -184,6 +184,6 @@ setInterval(() => {
 
 setInterval(() => {
 	autoKick();
-}, 1000 * 60 * 60);
+}, 1000 * 60 * 5);
 
 console.log("cronjob has started");
