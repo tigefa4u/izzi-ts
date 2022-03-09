@@ -241,6 +241,10 @@ function consumeEnergy(
 	totalDamage = 0
 ) {
 	const member = lobby[user_id];
+	if (!member) {
+		delete lobby[user_id];
+		return lobby;
+	}
 	member.energy = member.energy - Math.floor(multiplier * ENERGY_PER_ATTACK);
 	if (member.energy < 0) member.energy = 0;
 	member.total_attack = member.total_attack + multiplier;

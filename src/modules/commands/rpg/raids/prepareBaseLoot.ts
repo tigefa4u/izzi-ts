@@ -66,7 +66,7 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 3
+						rate: 2.5
 					}
 				],
 			}
@@ -112,7 +112,7 @@ const baseLoot: any = {
 					{
 						rank: "legend",
 						rank_id: 5,
-						rate: 4,
+						rate: 3,
 						number: 1
 					},
 					{
@@ -146,11 +146,6 @@ const baseLoot: any = {
 				extraGold: randomNumber(25000, 30000),
 				drop: [
 					{
-						rank: "diamond",
-						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
-					},
-					{
 						rank: "platinum",
 						rank_id: 3,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
@@ -168,15 +163,21 @@ const baseLoot: any = {
 				],
 				rare: [
 					{
+						rank: "diamond",
+						rank_id: 3,
+						number: randomElementFromArray([ 2, 3 ]) || 1,
+						rate: 6
+					},
+					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 7.5,
+						rate: 4.5,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 2.5,
+						rate: 0.5,
 						number: 1,
 					},
 				],
