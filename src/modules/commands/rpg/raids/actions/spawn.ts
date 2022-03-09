@@ -40,7 +40,7 @@ export const spawnRaid = async ({
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const currentRaid = await getUserRaidLobby({ user_id: user.id });
-		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
 		if (currentRaid) {
 			embed.setDescription(
 				`You are already in a ${

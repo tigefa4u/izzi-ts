@@ -62,7 +62,7 @@ export const prepareRaidViewEmbed = async ({
 	}
 
 	const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
-	const embed = createEmbed(author, client);
+	const embed = createEmbed(author);
 	embed.setTitle(`Raid View [${titleCase(currentRaid.stats.difficulty)}] ${prepareRaidTimer(currentRaid)}`)
 		.setDescription(prepareRaidBossEmbedDesc(currentRaid, isEvent))
 		.setImage("attachment://boss.jpg")
