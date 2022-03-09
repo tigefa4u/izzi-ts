@@ -33,7 +33,7 @@ export const battleRaidBoss = async ({
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
-		let inBattle = await getCooldown(
+		const inBattle = await getCooldown(
 			author.id,
 			`${isEvent ? "event" : "raid"}-battle`
 		);
@@ -94,89 +94,90 @@ export const battleRaidBoss = async ({
 			playerStats: playerStats.stats.totalStats,
 			opponentStats: enemyStats.totalStats 
 		});
-
+		console.log("ENEMY STATS---", playerStats.stats.cards[0]?.stats);
+		console.log("ENENS_____PPP", enemyStats.cards[0]?.souls, enemyStats.totalStats);
 		playerStats.stats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
 
-		inBattle = await getCooldown(
-			author.id,
-			`${isEvent ? "event" : "raid"}-battle`
-		);
-		if (inBattle) {
-			context.channel?.sendMessage("Your battle is still in progress");
-			return;
-		}
-		let multiplier = 1;
-		if (args.shift() === "all")
-			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
-		const damageCap = Math.floor(
-			currentRaid.stats.original_strength * ((multiplier * 12.5) / 100)
-		);
-		setCooldown(author.id, `${isEvent ? "event" : "raid" }-battle`, 60 * 5);
-		const result = await simulateBattle({
-			context,
-			playerStats: playerStats.stats,
-			enemyStats,
-			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
-		});
-		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
-		if (!result) {
-			context.channel?.sendMessage(
-				"Unable to process battle, please try again later"
-			);
-			return;
-		}
-		const refetchRaid = await getRaid({ id: currentRaid.id });
-		if (!refetchRaid) {
-			throw new Error("Unable to validate raid: " + currentRaid.id);
-		}
-		const updateObj = clone(refetchRaid);
-		if (result.isForfeit) {
-			context.channel?.sendMessage("You have forfeit the battle");
-			updateObj.lobby = consumeEnergy(
-				currentRaid.lobby,
-				user.id,
-				multiplier,
-				0
-			);
-		} else {
-			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
-				context.channel?.sendMessage("Unable to calculate total damage");
-				return;
-			}
-			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
-			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
-			updateObj.lobby = consumeEnergy(
-				currentRaid.lobby,
-				user.id,
-				multiplier,
-				result.totalDamage
-			);
+		// inBattle = await getCooldown(
+		// 	author.id,
+		// 	`${isEvent ? "event" : "raid"}-battle`
+		// );
+		// if (inBattle) {
+		// 	context.channel?.sendMessage("Your battle is still in progress");
+		// 	return;
+		// }
+		// let multiplier = 1;
+		// if (args.shift() === "all")
+		// 	multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
+		// const damageCap = Math.floor(
+		// 	currentRaid.stats.original_strength * ((multiplier * 12.5) / 100)
+		// );
+		// setCooldown(author.id, `${isEvent ? "event" : "raid" }-battle`, 60 * 5);
+		// const result = await simulateBattle({
+		// 	context,
+		// 	playerStats: playerStats.stats,
+		// 	enemyStats,
+		// 	title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
+		// });
+		// clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
+		// if (!result) {
+		// 	context.channel?.sendMessage(
+		// 		"Unable to process battle, please try again later"
+		// 	);
+		// 	return;
+		// }
+		// const refetchRaid = await getRaid({ id: currentRaid.id });
+		// if (!refetchRaid) {
+		// 	throw new Error("Unable to validate raid: " + currentRaid.id);
+		// }
+		// const updateObj = clone(refetchRaid);
+		// if (result.isForfeit) {
+		// 	context.channel?.sendMessage("You have forfeit the battle");
+		// 	updateObj.lobby = consumeEnergy(
+		// 		refetchRaid.lobby,
+		// 		user.id,
+		// 		multiplier,
+		// 		0
+		// 	);
+		// } else {
+		// 	if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
+		// 		context.channel?.sendMessage("Unable to calculate total damage");
+		// 		return;
+		// 	}
+		// 	result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
+		// 	if (result.totalDamage > damageCap) result.totalDamage = damageCap;
+		// 	updateObj.lobby = consumeEnergy(
+		// 		refetchRaid.lobby,
+		// 		user.id,
+		// 		multiplier,
+		// 		result.totalDamage
+		// 	);
 
-			updateObj.stats.remaining_strength =
-		updateObj.stats.remaining_strength - result.totalDamage;
-			if (updateObj.stats.remaining_strength < 0)
-				updateObj.stats.remaining_strength = 0;
-		}
-		await Promise.all([ updateRaid({ id: updateObj.id }, {
-			lobby: updateObj.lobby,
-			stats: updateObj.stats
-		}),
-		processRaidLoot({
-			client,
-			author,
-			raid: updateObj,
-			isEvent
-		}) ]);
+		// 	updateObj.stats.remaining_strength =
+		// updateObj.stats.remaining_strength - result.totalDamage;
+		// 	if (updateObj.stats.remaining_strength < 0)
+		// 		updateObj.stats.remaining_strength = 0;
+		// }
+		// await Promise.all([ updateRaid({ id: updateObj.id }, {
+		// 	lobby: updateObj.lobby,
+		// 	stats: updateObj.stats
+		// }),
+		// processRaidLoot({
+		// 	client,
+		// 	author,
+		// 	raid: updateObj,
+		// 	isEvent
+		// }) ]);
 
-		const battleStatus = result as BattleStats;
-		processRaidResult({
-			result: battleStatus,
-			updateObj,
-			author,
-			isEvent,
-			channel: context.channel
-		});
+		// const battleStatus = result as BattleStats;
+		// processRaidResult({
+		// 	result: battleStatus,
+		// 	updateObj,
+		// 	author,
+		// 	isEvent,
+		// 	channel: context.channel
+		// });
 		return;
 	} catch (err) {
 		loggers.error(

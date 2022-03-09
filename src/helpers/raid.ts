@@ -1,13 +1,25 @@
+import { OverallStatsProps } from "@customTypes";
 import { BattleStats } from "@customTypes/adventure";
+import { CharacterStatProps } from "@customTypes/characters";
 import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
 import { updateRaid } from "api/controllers/RaidsController";
 import { prepareHPBar } from "./adventure";
 
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
-	const stats = raid.stats.battle_stats;
+	const stats = raid.stats.battle_stats.stats;
+	const totalStats = {} as OverallStatsProps;
+	Object.keys(stats).map((stat) => {
+		if (![ "critical", "accuracy", "precision", "evasion", "strength", "originalHp" ].includes(stat)) {
+			Object.assign(totalStats, {
+				[stat]: Math.round(
+					stats[stat as keyof CharacterStatProps] * 3
+				),
+			});
+		}
+	});
 	return {
 		totalStats: {
-			...stats.stats,
+			...totalStats,
 			health: prepareHPBar(),
 			character_level: raid.stats.battle_stats.boss_level,
 			criticalDamage: 1,
