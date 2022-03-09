@@ -172,7 +172,8 @@ export const spawnRaid = async ({
 			loot: computedBoss.loot,
 		});
 		if (!raid) return;
-		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
+		setCooldown(author.id, CDKey, 60 * 10);
+		// setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
 		let bossCanvas: Canvas | undefined;
 		if (isEvent) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);
