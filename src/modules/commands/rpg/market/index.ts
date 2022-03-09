@@ -11,6 +11,7 @@ import { createEmbedList } from "helpers/embedLists";
 import { createMarketList } from "helpers/embedLists/market";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { purchaseCard } from "./shop/buy";
@@ -44,7 +45,7 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 		}
 		const params = fetchParamsFromArgs<FilterProps>(args);
 		if (Object.keys(params).length <= 0) return;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;

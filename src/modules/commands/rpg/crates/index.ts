@@ -21,6 +21,7 @@ import { createCrateList } from "helpers/embedLists/crates";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { subcommands } from "./subcommands";
@@ -114,7 +115,7 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 			});
 			return;
 		}
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const params = fetchParamsFromArgs<{
       user_tag: string;
       category?: CrateCategoryProps;

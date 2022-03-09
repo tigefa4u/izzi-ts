@@ -7,6 +7,7 @@ import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createLobbiesList } from "helpers/embedLists/lobbies";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 
@@ -19,7 +20,7 @@ export const raidLobbies = async ({
 		Object.assign(params, { isEvent });
 		let embed = createEmbed();
 		let sentMessage: Message;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;

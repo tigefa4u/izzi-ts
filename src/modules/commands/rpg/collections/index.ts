@@ -8,6 +8,7 @@ import { PAGE_FILTER, ranksMeta } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 
@@ -69,7 +70,7 @@ export const cardCollection = async ({
 		Object.assign(params, { user_id: user.id });
 		let embed = createEmbed();
 		let sentMessage: Message;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;

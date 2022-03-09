@@ -9,6 +9,7 @@ import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createAbilityList } from "helpers/embedLists/ability";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 
@@ -17,7 +18,7 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const params = fetchParamsFromArgs<FilterProps>(args);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);

@@ -8,13 +8,14 @@ import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createDexList } from "helpers/embedLists/xendex";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 
 export const dex = async ({ context, client, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const params = fetchParamsFromArgs<FilterProps>(args);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);
