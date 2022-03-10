@@ -32,6 +32,12 @@ export const voteKickMember = async ({
 
 		const lobby = currentRaid.lobby;
 		const thirtyMins = 1000 * 60 * 30;
+		if (!lobby[kickId]) {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}**, the member you are trying to votekick is not in your lobby!`
+			);
+			return;
+		}
 		if (
 			new Date().valueOf() - new Date(lobby[kickId].timestamp).valueOf() >=
       thirtyMins
@@ -67,10 +73,7 @@ export const voteKickMember = async ({
 					} Challenge!`
 				);
 			}
-			await updateRaid(
-				{ id: currentRaid.id },
-				{ lobby: lobby }
-			);
+			await updateRaid({ id: currentRaid.id }, { lobby: lobby });
 		} else {
 			context.channel?.sendMessage(
 				`Summoner **${author.username}**, You cannot kick a member who is not afk for more than 30 minutes!`
