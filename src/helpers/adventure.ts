@@ -111,14 +111,14 @@ export const addTeamEffectiveness = async ({
 	);
 
 	if (effective > 0) {
-		playerStats.effective = 1.5;
-		opponentStats.effective = 0.5;
+		playerStats.effective = 1.4;
+		opponentStats.effective = 0.8;
 	} else if (effective === 0) {
 		playerStats.effective = 1;
 		opponentStats.effective = 1;
 	} else {
-		playerStats.effective = 0.5;
-		opponentStats.effective = 1.5;
+		playerStats.effective = 0.8;
+		opponentStats.effective = 1.4;
 	}
 	return {
 		playerStats,
@@ -141,14 +141,14 @@ export const addEffectiveness = async ({
         playerType as keyof EffectivenessProps
 			].affects.findIndex((i) => i === enemyType);
 			if (index >= 0) {
-				playerStats.effective = 1.5;
+				playerStats.effective = 1.4;
 			} else {
 				Object.keys(effectiveness).forEach((type) => {
 					const tempIndex = effectiveness[
             type as keyof EffectivenessProps
 					].affects.findIndex((i) => i === playerType);
 					if (tempIndex >= 0 && type === enemyType) {
-						playerStats.effective = 0.5;
+						playerStats.effective = 0.8;
 					}
 				});
 			}

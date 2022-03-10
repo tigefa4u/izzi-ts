@@ -1,7 +1,4 @@
-import {
-	BattleProcessProps,
-	BattleStats,
-} from "@customTypes/adventure";
+import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
 import {
 	AbilityProcMapProps,
 	AbilityProcReturnType,
@@ -77,11 +74,12 @@ function processUnableToAttack<T extends BattleStats>(
 	opponentStats: T,
 	allowProcOnEvadeHit = false
 ) {
-	return (
-		playerStats.totalStats.isAsleep ||
+	return playerStats.totalStats.isAsleep ||
     playerStats.totalStats.isStunned ||
-    allowProcOnEvadeHit === true ? false : opponentStats.totalStats.isEvadeHit
-	);
+    ((allowProcOnEvadeHit === true &&
+      opponentStats.totalStats.isEvadeHit === true)
+    	? false
+    	: opponentStats.totalStats.isEvadeHit);
 }
 
 export const BattleProcess = async ({
@@ -252,7 +250,6 @@ async function processAbililtyOrItemProc({
 					}
 				}
 			}
-
 			if (
 				processUnableToAttack(playerStats, opponentStats, true) ||
         playerStats.totalStats.isRestrictResisted
@@ -273,8 +270,8 @@ async function processAbililtyOrItemProc({
 			await delay(1000);
 			if (abilityProc) {
 				if (
-					((abilityProc.damageDiff ?? 1) <= 0) ||
-					  ((abilityProc.playerDamageDiff ?? 1) <= 0)
+					(abilityProc.damageDiff ?? 1) <= 0 ||
+          (abilityProc.playerDamageDiff ?? 1) <= 0
 				) {
 					isDefeated = true;
 					break;
