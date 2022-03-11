@@ -5,7 +5,7 @@
   "main": "lib/server/shard.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .",
+    "start": "node -r dotenv/config lib/server/shard.js",
     "dev": "ts-node-dev -r dotenv/config src/server/shard.ts",
     "flush:cooldown": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/index.ts",
     "test:redis": "ts-node -r dotenv/config src/server/testRedisConnection.ts",

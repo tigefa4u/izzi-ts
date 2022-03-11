@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import { ShardingManager } from "discord.js";
+import path from "path";
 // import * as dotenv from "dotenv";
 // dotenv.config({ path: __dirname + "/../../.env" });
 import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN, SHARD_LIST, TOTAL_SHARDS } from "../environment";
@@ -28,8 +29,8 @@ if (SHARD_LIST) {
 	Object.assign(shardParams, { shardList: SHARD_LIST });
 }
 
-const manager = new ShardingManager("src/server/client.ts", {
-	execArgv: [ "-r", "ts-node/register" ],
+const manager = new ShardingManager(path.join(__dirname, "client.js"), {
+	execArgv: [ "-r", "dotenv/config" ],
 	totalShards: "auto",
 	token: DISCORD_TEST_BOT,
 	respawn: true
