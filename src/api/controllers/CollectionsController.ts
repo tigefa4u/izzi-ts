@@ -29,6 +29,7 @@ export const createCollection: (
 	data
 ) {
 	try {
+		if (!data) return;
 		loggers.info("creating collection with data: " + JSON.stringify(data));
 		return await Collections.create(data);
 	} catch (err) {
