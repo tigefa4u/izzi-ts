@@ -39,14 +39,14 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 			context.channel?.sendMessage("Ranked Dungeon battles have Ended.");
 			return;
 		}
-		const today = new Date();
-		const day = today.getDay();
-		if ([ 4, 5 ].includes(day)) {
-			context.channel?.sendMessage(
-				"Ranked Dungeon battles are disabled on Thursday and Friday"
-			);
-			return;
-		}
+		// const today = new Date();
+		// const day = today.getDay();
+		// if ([ 4, 5 ].includes(day)) {
+		// 	context.channel?.sendMessage(
+		// 		"Ranked Dungeon battles are disabled on Thursday and Friday"
+		// 	);
+		// 	return;
+		// }
 		const battles = battlesInChannel.validateBattlesInChannel(context.channel?.id || "");
 		if (battles === undefined) return;
 		let inBattle = await getCooldown(author.id, "mana-battle");
