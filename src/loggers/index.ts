@@ -5,13 +5,13 @@ const error = (errMessage: string, err: unknown) => {
 	if (err instanceof Error) {
 		errorMessage = err.stack;
 	}
-	// console.error(errMessage, errorMessage);
-	winstonLogger.error(errMessage + JSON.stringify(errorMessage));
+	console.error(errMessage, errorMessage);
+	// winstonLogger.error(errMessage + JSON.stringify(errorMessage));
 };
 
 const info = (infoMessage: string) => {
-	// console.info(infoMessage);
-	winstonLogger.info(infoMessage);
+	console.info(infoMessage);
+	// winstonLogger.info(infoMessage);
 };
 
 export default {
