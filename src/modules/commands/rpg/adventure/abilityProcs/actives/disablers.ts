@@ -41,6 +41,9 @@ export const electrocute = ({
 			opponentStats.totalStats.originalHp
 		);
 		if (damageDiff < 0) damageDiff = 0;
+		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+		opponentStats.totalStats.strength = processedHpBar.strength;
+		opponentStats.totalStats.health = processedHpBar.health;
 		
 		// electrocute is causing NAN
 		// dealing __${perDamage}__ damage

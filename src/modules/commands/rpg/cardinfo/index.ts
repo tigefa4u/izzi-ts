@@ -84,7 +84,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		const selectMenuOptions = {
 			menuOptions: charaInfo.map((c) => ({
 				value: c.name,
-				label: c.name.replaceAll(/s/g, "-")
+				label: c.name
 			}))
 		} as SelectMenuOptions;
 		const selectMenu = await selectionInteraction(

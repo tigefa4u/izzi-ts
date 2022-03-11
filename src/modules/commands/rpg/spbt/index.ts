@@ -108,7 +108,7 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 		}
 		const enemyBase = preparePlayerBase({
 			id: "spbt",
-			playerStats: enemyStats,
+			playerStats: enemyStats.playerStats,
 			card: enemyCard,
 			name: `XeneX's ${titleCase(enemyCard.name)}`,
 		});
