@@ -155,7 +155,7 @@ function prepareLoot(
 			if (isEvent) {
 				desc =
           `__${loot.drop.event?.shard}__ Shards ${emoji.shard}` +
-          `\n__${loot.drop.event?.orbs}__ Orbs ${emoji.blueorb}`;
+          `${loot.drop.event?.orbs ? `\n__${loot.drop.event.orbs}__ Orbs ${emoji.blueorb}` : ""}`;
 			} else {
 				desc =
           loot.drop.default

@@ -23,7 +23,7 @@ import { DMUser } from "helpers/directMessages";
 import { getLobbyMvp } from "helpers/raid";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { clone, groupByKey } from "utility";
+import { clone, groupByKey, isEmptyValue } from "utility";
 import { prepareRaidParty } from "./actions/party";
 
 type R = {
@@ -69,8 +69,7 @@ export const processRaidLoot = async ({
 				}
 
 				await updateRPGUser({ user_tag: user.user_tag }, updateObj);
-
-				if (!raid.loot.drop.default) {
+				if (!raid.loot.drop.default || isEmptyValue(raid.loot.drop.default)) {
 					return rewards;
 				}
 				const promises = [

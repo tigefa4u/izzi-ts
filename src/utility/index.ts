@@ -1,3 +1,4 @@
+import isEmpty from "lodash/isEmpty";
 import cloneDeep from "lodash/cloneDeep";
 
 type G<T> = { [key: string | number]: T }
@@ -24,4 +25,8 @@ export const groupByKey = <T>(arr: T[], key: string): {
 		return acc;
 	}, {});
 	return group;
+};
+
+export const isEmptyValue = (val = {}) => {
+	return isEmpty(val);
 };
