@@ -9,11 +9,7 @@ import { IZZI_WEBSITE } from "../environment";
 export const handleClientEvents = (client: Client) => {
 	client.on("messageCreate", (context: Message) => {
 		if (context.author.bot || context.channel.type === "DM" || !context.guild) return;
-		try {
-			handleMessage(client, context);
-		} catch (err) {
-			console.log(err);
-		}
+		handleMessage(client, context);
 	});
 
 	client.on("interactionCreate", (interaction) => {
