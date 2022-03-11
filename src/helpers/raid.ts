@@ -33,6 +33,9 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 
 export const getLobbyMvp = (lobby: RaidLobbyProps) => {
 	const keys = Object.keys(lobby).map(Number);
+	if (keys.length <= 1) {
+		return;
+	}
 	const maxDmg = Math.max(...keys.map((k) => lobby[k].total_damage));
 	if (maxDmg === 0) {
 		return;
