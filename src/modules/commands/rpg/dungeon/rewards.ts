@@ -97,7 +97,8 @@ async function processDGWin(userRank: UserRankProps, id: string) {
 	};
 	if (
 		userRank.exp >= userRank.r_exp &&
-    userRank.rank_id < DUNGEON_DEFAULTS.numberOfRanks
+    userRank.rank_id <= DUNGEON_DEFAULTS.numberOfRanks &&
+	userRank.division < DUNGEON_DEFAULTS.numberOfDivisions
 	) {
 		userRank.r_exp = userRank.r_exp + DUNGEON_DEFAULTS.r_exp;
 		if (userRank.division < DUNGEON_DEFAULTS.numberOfDivisions) {
