@@ -14,7 +14,11 @@ export async function request(url: string): Promise<any> {
 			.catch((err) => {
 				throw err;
 			});
-		if (result) await Cache.set(key, JSON.stringify(result));
+		if (result)
+			await Promise.all([
+				Cache.set(key, JSON.stringify(result)),
+				Cache.expire && Cache.expire(key, 60 * 15),
+			]);
 	}
 	return result;
 }

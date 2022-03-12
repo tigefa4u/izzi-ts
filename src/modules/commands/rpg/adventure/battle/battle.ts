@@ -380,7 +380,7 @@ function updateBattleDesc({
 	if (isStunned) {
 		desc = `${desc} ${playerDesc} is **Stunned** ${emoji.stun}! It cannot attack!`;
 	} else if (isAsleep) {
-		desc = `${desc} ${playerDesc} is **Drowsy** ${emoji.sleep}1 It cannot attack!`;
+		desc = `${desc} ${playerDesc} is **Drowsy** ${emoji.sleep}. It cannot attack!`;
 	} else if (isEvadeHit) {
 		desc = `${desc} ${enemyDesc} has **Evaded** ${emoji.evasion}, taking no damage!`;
 	} else {
