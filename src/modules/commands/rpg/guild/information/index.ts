@@ -62,6 +62,7 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 		if (!guildDetails) return;
 		const leader = guildDetails.filter((g) => g.role === "leader")[0];
 		if (!leader) {
+			loggers.error(`Not able to find Guild details for ID: ${validGuild.guild.id} from guild_details view`, {});
 			context.channel?.sendMessage(
 				"Oh no, your guild is without a Leader. Please contact support!"
 			);

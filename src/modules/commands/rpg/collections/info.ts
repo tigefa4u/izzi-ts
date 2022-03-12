@@ -2,6 +2,8 @@ import { OverallStatsProps } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
+import { getGuild } from "api/controllers/GuildsController";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
@@ -57,10 +59,16 @@ export const getCardInfo = async ({
 		if (!infoData || !infoData.characterInfo) return;
 		const powerLevel = await getPowerLevelByRank({ rank: infoData.rank });
 		if (!powerLevel) return;
+		let guild;
+		const guildMember = await getGuildMember({ user_id: user.id });
+		if (guildMember) {
+			guild = await getGuild({ id: guildMember.guild_id });
+		}
 		const overAllStatData = overallStats({
 			stats: infoData.stats,
 			character_level: infoData.character_level,
-			powerLevel
+			powerLevel,
+			guildStats: guild?.guild_stats
 		});
 		const canvas = await createSingleCanvas(infoData.characterInfo, false);
 		const attachment = createAttachment(
