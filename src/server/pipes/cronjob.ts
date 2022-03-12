@@ -153,34 +153,34 @@ async function raidTimers() {
 	}
 }
 
-// setInterval(() => {
-// 	resetUserActive();
-// }, 1000 * 60 * 60 * 24);
+setInterval(() => {
+	resetUserActive();
+}, 1000 * 60 * 60 * 24);
 
 setInterval(() => {
 	raidTimers();
 }, 1000 * 60 * 10);
 
-// setInterval(() => {
-// 	init({ is_premium: false });
-// }, 1000 * 60 * 60 * 3);
+setInterval(() => {
+	init({ is_premium: false });
+}, 1000 * 60 * 60 * 3);
 
-// setInterval(() => {
-// 	init({ is_premium: true });
-// }, 9e6);
+setInterval(() => {
+	init({ is_premium: true });
+}, 9e6);
 
-// setInterval(() => {
-// 	refillMana();
-// }, 1000 * 60 * 4);
+setInterval(() => {
+	refillMana();
+}, 1000 * 60 * 4);
 
 setInterval(() => {
 	refillRaidEnergy();
 }, 1000 * 60 * 3);
 
-// setInterval(() => {
-// 	premiumTimer();
-// 	resetVoteTimers();
-// }, 1000 * 60 * 60 * 24);
+setInterval(() => {
+	premiumTimer();
+	resetVoteTimers();
+}, 1000 * 60 * 60 * 24);
 
 setInterval(() => {
 	autoKick();
