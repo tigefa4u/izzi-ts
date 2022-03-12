@@ -82,7 +82,7 @@ export const getCharacterInfo: (
 };
 
 export const getDex: (
-  filter: Pick<FilterProps, "abilityname" | "series">,
+  filter: Pick<FilterProps, "abilityname" | "series" | "type">,
   pageProps: PageProps
 ) => Promise<ResponseWithPagination<CharacterDetailsProps[]> | undefined> = async function (filter, pageProps) {
 	try {

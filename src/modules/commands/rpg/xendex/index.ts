@@ -24,7 +24,7 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = 
-			await paginatorInteraction<Pick<FilterProps, "abilityname" | "series">, CharacterDetailsProps[]>(
+			await paginatorInteraction<Pick<FilterProps, "abilityname" | "series" | "type">, CharacterDetailsProps[]>(
 				context.channel,
 				author.id,
 				params,
