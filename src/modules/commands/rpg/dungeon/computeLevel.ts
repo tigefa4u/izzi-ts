@@ -29,13 +29,13 @@ function getComputedLevels(): DungeonLevelProps {
 		},
 		hero: {
 			rank: randomElementFromArray([ "legend", "divine" ]),
-			level: randomNumber(240, 280),
+			level: randomNumber(210, 250),
 			rank_id: 4,
 			name: "hero"
 		},
 		"grand master": {
 			rank: randomElementFromArray([ "divine", "divine" ]),
-			level: randomNumber(270, 320),
+			level: randomNumber(260, 300),
 			rank_id: 5,
 			name: "grand master",
 			equipItem: true
