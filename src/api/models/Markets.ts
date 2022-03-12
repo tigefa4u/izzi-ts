@@ -101,7 +101,8 @@ export const getAll = async (
 
 	query = db
 		.select(db.raw(`${alias}.*, count(*) over() as total_count`))
-		.from(query);
+		.from(query)
+		.orderBy(`${alias}.price`, "asc");
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
 
