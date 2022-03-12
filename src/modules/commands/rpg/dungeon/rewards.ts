@@ -93,14 +93,19 @@ async function processDGWin(userRank: UserRankProps, id: string) {
 	userRank.wins = userRank.wins + 1;
 	const bodyParams = {
 		wins: userRank.wins,
-		exp: userRank.exp 
+		exp: userRank.exp,
 	};
 	if (
 		userRank.exp >= userRank.r_exp &&
     userRank.rank_id <= DUNGEON_DEFAULTS.numberOfRanks &&
-	userRank.division < DUNGEON_DEFAULTS.numberOfDivisions
+    userRank.division <= DUNGEON_DEFAULTS.numberOfDivisions
 	) {
-		userRank.r_exp = userRank.r_exp + DUNGEON_DEFAULTS.r_exp;
+		if (
+			userRank.rank_id <= DUNGEON_DEFAULTS.numberOfRanks &&
+      userRank.division < DUNGEON_DEFAULTS.numberOfDivisions
+		) {
+			userRank.r_exp = userRank.r_exp + DUNGEON_DEFAULTS.r_exp;
+		}
 		if (userRank.division < DUNGEON_DEFAULTS.numberOfDivisions) {
 			userRank.division = userRank.division + 1;
 		} else if (
@@ -123,9 +128,11 @@ async function processDGWin(userRank: UserRankProps, id: string) {
 			division: userRank.division,
 			r_exp: userRank.r_exp,
 		});
-		desc = desc + `\n\n**Promotion**\n• You have been promoted to **${titleCase(
-			userRank.rank
-		)}** __division ${userRank.division}__`;
+		desc =
+      desc +
+      `\n\n**Promotion**\n• You have been promoted to **${titleCase(
+      	userRank.rank
+      )}** __division ${userRank.division}__`;
 	}
 	user.gold = user.gold + goldReward;
 	await Promise.all([
@@ -154,7 +161,9 @@ async function processDGLose(userRank: UserRankProps, id: string) {
 		userRank.rank_id === DUNGEON_DEFAULTS.rank_id &&
     userRank.division == DUNGEON_DEFAULTS.division
 	) {
-		loggers.info("Updating on default user rank and division, :: rank_id: 1, division: 1");
+		loggers.info(
+			"Updating on default user rank and division, :: rank_id: 1, division: 1"
+		);
 		updateUserRank({ user_tag: id }, bodyParams);
 		return {
 			desc,
@@ -184,7 +193,7 @@ async function processDGLose(userRank: UserRankProps, id: string) {
 		);
 		Object.assign(bodyParams, {
 			division: userRank.division,
-			r_exp: userRank.r_exp
+			r_exp: userRank.r_exp,
 		});
 
 		desc =
