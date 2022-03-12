@@ -95,17 +95,19 @@ async function processDGWin(userRank: UserRankProps, id: string) {
 		wins: userRank.wins,
 		exp: userRank.exp,
 	};
-	if (
-		userRank.exp >= userRank.r_exp &&
+	const baseCondition =
+    userRank.exp >= userRank.r_exp &&
     userRank.rank_id <= DUNGEON_DEFAULTS.numberOfRanks &&
-    userRank.division <= DUNGEON_DEFAULTS.numberOfDivisions
+    userRank.division <= DUNGEON_DEFAULTS.numberOfDivisions;
+
+	if (
+		baseCondition &&
+    !(
+    	userRank.rank_id === DUNGEON_DEFAULTS.numberOfRanks &&
+      userRank.division === DUNGEON_DEFAULTS.numberOfDivisions
+    )
 	) {
-		if (
-			userRank.rank_id <= DUNGEON_DEFAULTS.numberOfRanks &&
-      userRank.division < DUNGEON_DEFAULTS.numberOfDivisions
-		) {
-			userRank.r_exp = userRank.r_exp + DUNGEON_DEFAULTS.r_exp;
-		}
+		userRank.r_exp = userRank.r_exp + DUNGEON_DEFAULTS.r_exp;
 		if (userRank.division < DUNGEON_DEFAULTS.numberOfDivisions) {
 			userRank.division = userRank.division + 1;
 		} else if (
