@@ -159,9 +159,10 @@ export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
 export const GUILD_MARKET_IDS = [ 2, 5 ];
 export const GUILD_MAX_DONATION = 1000000;
-export const GUILD_MAX_LEVEL = 100;
-export const SOUL_ID = 5;
-export const SEAL_ID = 2;
+export const GUILD_MAX_LEVEL = 110;
+export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
+export const SOUL_ID = 2;
+export const SEAL_ID = 5;
 export const GUILD_ITEM_PROPERTIES = {
 	SOUL_ID: "souls",
 	SEAL_ID: "seals"

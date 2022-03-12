@@ -20,12 +20,14 @@ import {
 	GUILD_ITEM_PROPERTIES,
 	GUILD_MARKET_IDS,
 	GUILD_MAX_LEVEL,
+	GUILD_MIN_LEVEL_FOR_ITEM_BONUS,
 	SEAL_ID,
 	SOUL_ID,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
+import { isEmptyValue } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -78,8 +80,9 @@ async function validateAndUpgradeGuild(
 		return acc;
 	}, []);
 
-	const embed = createEmbed(params.author, params.client)
-		.setTitle(DEFAULT_ERROR_TITLE);
+	const embed = createEmbed(params.author, params.client).setTitle(
+		DEFAULT_ERROR_TITLE
+	);
 	if ((missingItems || []).length > 0) {
 		embed.setDescription(
 			`The following items are required to harvest souls!\n\n${missingItems
@@ -89,7 +92,14 @@ async function validateAndUpgradeGuild(
 		params.channel?.sendMessage(embed);
 		return;
 	}
-	if (!souls || !seals) return;
+	if (!souls || !seals) {
+		embed.setDescription(
+			"Your guild does not have enough **Souls** or **Dark Seals**. " +
+			"Use ``guild mk`` to purchase items from the Guild Market"
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
 	const reqSouls = validGuild.guild.guild_level * 3;
 	if (souls.quantity < reqSouls) {
 		embed.setDescription(
@@ -126,24 +136,42 @@ async function validateAndUpgradeGuild(
 			await updateGuildItem({ id: seals.id }, { quantity: seals.quantity });
 		}
 		validGuild.guild.guild_level = validGuild.guild.guild_level + 1;
+		const updateObj = { guild_level: validGuild.guild.guild_level };
+
+		if (validGuild.guild.guild_level > GUILD_MIN_LEVEL_FOR_ITEM_BONUS) {
+			if (isEmptyValue(validGuild.guild.item_stats || {})) {
+				Object.assign(updateObj, {
+					item_stats: {
+						vitality: 0.05,
+						defense: 0.06,
+						intelligence: 0.03,
+						strength: 0.12,
+						dexterity: 0.07,
+					},
+				});
+			} else {
+				const itemStats = validGuild.guild.item_stats;
+				if (!itemStats) return;
+				Object.keys(itemStats).forEach((stat) => {
+					const incVal = itemStats[stat as keyof GuildStatProps] + 0.05;
+					Object.assign(itemStats, { [stat]: Math.round((incVal + Number.EPSILON) * 100) / 100, });
+				});
+				Object.assign(updateObj, { item_stats: itemStats });
+			}
+		}
+
 		if (validGuild.guild.guild_level % 8 === 0) {
 			validGuild.guild.max_members = validGuild.guild.max_members + 1;
+			Object.assign(updateObj, { max_members: validGuild.guild.max_members });
 		}
 		const stats = validGuild.guild.guild_stats;
 		if (!stats) return;
 		Object.keys(stats).forEach((stat) => {
-			// inc stats by .15 rather than 30% every 8th level
 			const incVal = stats[stat as keyof GuildStatProps] + 0.15;
 			Object.assign(stats, { [stat]: Math.round((incVal + Number.EPSILON) * 100) / 100, });
 		});
-		await updateGuild(
-			{ id: validGuild.guild.id },
-			{
-				guild_stats: stats,
-				guild_level: validGuild.guild.guild_level,
-				max_members: validGuild.guild.max_members,
-			}
-		);
+		Object.assign(updateObj, { guild_stats: stats });
+		await updateGuild({ id: validGuild.guild.id }, updateObj);
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
@@ -168,7 +196,9 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 		const cooldownCommand = "upgrade-guild";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
@@ -193,7 +223,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 				if (data) {
 					embed = createConfirmationEmbed(author, client).setDescription(
 						`Are you sure you want to consume __${data.reqSouls}__ Souls ` +
-                        `and ${data.reqSeals} Dark Seals to evolve the bonus stats of your guild?`
+              `and ${data.reqSeals} Dark Seals to evolve the bonus stats of your guild?`
 					);
 				}
 				if (opts?.isDelete) {

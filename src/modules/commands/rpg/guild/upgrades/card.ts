@@ -4,8 +4,15 @@ import {
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { getCharacterInfo } from "api/controllers/CharactersController";
-import { getCollection, updateCollection } from "api/controllers/CollectionsController";
-import { delGuildItems, getAllGuildItems, updateGuildItem } from "api/controllers/GuildItemsController";
+import {
+	getCollection,
+	updateCollection,
+} from "api/controllers/CollectionsController";
+import {
+	delGuildItems,
+	getAllGuildItems,
+	updateGuildItem,
+} from "api/controllers/GuildItemsController";
 import { updateGuildMember } from "api/controllers/GuildMembersController";
 import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -53,13 +60,16 @@ async function validateAndUpgradeCard(
 	);
 	const collection = await getCollection({
 		id: params.extras.collection_id,
-		user_id: params.extras.user_id 
+		user_id: params.extras.user_id,
 	});
 	if (!collection || !collection[0]) {
-		embed.setDescription("We could not find the card you were looking for in your inventory");
+		embed.setDescription(
+			"We could not find the card you were looking for in your inventory"
+		);
 		params.channel?.sendMessage(embed);
 		return;
 	}
+	console.log("GUILD ITEMS");
 	const guilditems = await getAllGuildItems(
 		{
 			guild_id: validGuild.guild.id,
@@ -76,7 +86,7 @@ async function validateAndUpgradeCard(
 	if (souls.quantity < params.extras.numOfSouls) {
 		context.channel?.sendMessage(
 			"Your guild does not have sufficient Souls to upgrade your card! " +
-            `**[${souls.quantity}/${params.extras.numOfSouls}]** :x:`
+        `**[${souls.quantity}/${params.extras.numOfSouls}]** :x:`
 		);
 		return;
 	}
@@ -109,11 +119,12 @@ async function validateAndUpgradeCard(
 		params.channel?.sendMessage(embed);
 		return;
 	}
-	const totalCost = (souls.price * params.extras.numOfSouls) + (seals.price * reqSeals);
+	const totalCost =
+    souls.price * params.extras.numOfSouls + seals.price * reqSeals;
 	if (validGuild.member.donation < totalCost) {
 		embed.setDescription(
 			"You do not have enough contribution to your guild to use this item! " +
-            "you can donate more to your guild to be able to access more items!"
+        "you can donate more to your guild to be able to access more items!"
 		);
 		params.channel?.sendMessage(embed);
 		return;
@@ -123,7 +134,7 @@ async function validateAndUpgradeCard(
 		if (souls.quantity <= 0) {
 			await delGuildItems({
 				id: souls.id,
-				guild_id: validGuild.guild.id 
+				guild_id: validGuild.guild.id,
 			});
 		} else {
 			await updateGuildItem({ id: souls.id }, { quantity: souls.quantity });
@@ -132,7 +143,7 @@ async function validateAndUpgradeCard(
 		if (seals.quantity <= 0) {
 			await delGuildItems({
 				id: seals.id,
-				guild_id: validGuild.guild.id 
+				guild_id: validGuild.guild.id,
 			});
 		} else {
 			await updateGuildItem({ id: seals.id }, { quantity: seals.quantity });
@@ -140,18 +151,24 @@ async function validateAndUpgradeCard(
 		const card = collection[0];
 		card.souls = card.souls + params.extras.numOfSouls;
 		validGuild.member.donation = validGuild.member.donation - totalCost;
-		validGuild.guild.gold = validGuild.guild.gold + Math.floor(totalCost * .1);
-		await updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold });
-		await updateGuildMember({ id: validGuild.member.id }, { donation: validGuild.member.donation });
-		await updateCollection({ id: card.id }, { souls: card.souls });
+		validGuild.guild.gold = validGuild.guild.gold + Math.floor(totalCost * 0.1);
+		await Promise.all([
+			updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold }),
+			updateGuildMember(
+				{ id: validGuild.member.id },
+				{ donation: validGuild.member.donation }
+			),
+			updateCollection({ id: card.id }, { souls: card.souls }),
+		]);
 
 		const charaInfo = await getCharacterInfo({
 			rank: card.rank,
-			ids: [ card.character_id ] 
+			ids: [ card.character_id ],
 		});
 		if (!charaInfo || charaInfo.length <= 0) {
 			params.channel?.sendMessage(
-				"You have successfully absorbed souls! You are one of the few who failed to receive a success message");
+				"You have successfully absorbed souls! You are one of the few who failed to receive a success message"
+			);
 			return;
 		}
 		const characterInfo = charaInfo[0];
@@ -186,7 +203,9 @@ export const upgradeCard = async ({
 		const cooldownCommand = "upgrade-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const collectionId = Number(args.shift());
@@ -217,7 +236,7 @@ export const upgradeCard = async ({
 				if (data) {
 					embed = createConfirmationEmbed(author, client).setDescription(
 						`Are you sure you want to absorb __${data.numOfSouls}__ Souls ` +
-                        `using ${data.reqSeals} Dark Seals?`
+              `using ${data.reqSeals} Dark Seals?`
 					);
 				}
 				if (opts?.isDelete) {

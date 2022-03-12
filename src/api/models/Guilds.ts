@@ -26,6 +26,10 @@ export const transformation = {
 		columnName: "guild_stats",
 		type: "json",
 	},
+	itemStats: {
+		columnName: "item_stats",
+		type: "json",
+	},
 	name: { type: "string" },
 	prefix: {
 		type: "string",

@@ -14,8 +14,44 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getTeamById, updateTeam } from "api/controllers/TeamsController";
 import { overallStats } from "helpers";
 import loggers from "loggers";
-import { clone, reorderObjectKey } from "utility";
+import { clone, isEmptyValue, reorderObjectKey } from "utility";
 import { prepareHPBar } from "./adventure";
+import { CharacterStatProps } from "@customTypes/characters";
+
+const prepareItemStats = ({
+	itemStats,
+	guildItemStats,
+}: {
+  itemStats: GuildStatProps;
+  guildItemStats: GuildStatProps;
+}) => {
+	if (
+		!guildItemStats ||
+    isEmptyValue(guildItemStats) ||
+    !itemStats ||
+    isEmptyValue(itemStats)
+	)
+		return;
+	const stats = {} as GuildStatProps;
+	const clonedStats = clone(guildItemStats);
+	Object.keys(clonedStats).map((stat) => {
+		Object.assign(stats, {
+			[stat]: Math.ceil(
+				(itemStats[stat as keyof GuildStatProps] || 0) +
+          (itemStats[stat as keyof GuildStatProps] || 1) *
+            (guildItemStats[stat as keyof GuildStatProps] / 100)
+			),
+		});
+	});
+	if (stats) {
+		Object.keys(stats).map((stat) =>
+			isNaN(stats[stat as keyof GuildStatProps])
+				? 0
+				: stats[stat as keyof GuildStatProps]
+		);
+	}
+	return stats;
+};
 
 export const prepareTotalOverallStats = async (
 	params: PrepareTotalOverallStats
@@ -38,9 +74,13 @@ export const prepareTotalOverallStats = async (
 					character_level: c.character_level,
 					powerLevel,
 					isForBattle: params.isBattle,
-					guildStats: params.guildStats
+					guildStats: params.guildStats,
 				});
 				c.stats = baseStats;
+				c.itemStats = prepareItemStats({
+					itemStats: c.itemStats,
+					guildItemStats: params.itemStats,
+				}) as CharacterStatProps;
 				return total;
 			})
 			.filter(Boolean)
@@ -149,7 +189,7 @@ export const validateTeam = (team: TeamProps) => {
 };
 
 /**
- * Purpose - Prepare Player Team with Guild stats and over all stats 
+ * Purpose - Prepare Player Team with Guild stats and over all stats
  */
 export const prepareTeamForBattle = async ({
 	team,
@@ -173,10 +213,14 @@ export const prepareTeamForBattle = async ({
 	if (!collections) return;
 
 	let guildStats = undefined as GuildStatProps;
+	let itemStats = undefined as GuildStatProps;
 	if (guildMember) {
 		const guild = await getGuild({ id: guildMember.guild_id });
 		if (guild) {
 			guildStats = guild.guild_stats;
+			if (!isEmptyValue(guild.item_stats || {})) {
+				itemStats = guild.item_stats;
+			}
 		}
 	}
 	return prepareSkewedCollectionsForBattle({
@@ -184,7 +228,8 @@ export const prepareTeamForBattle = async ({
 		team,
 		id,
 		name: `Team ${team.name}`,
-		guildStats: guildStats
+		guildStats: guildStats,
+		itemStats,
 	});
 };
 
@@ -193,12 +238,17 @@ export const prepareSkewedCollectionsForBattle = async ({
 	team,
 	id,
 	name = "",
-	guildStats
-}: PrepareSkewedCollectionsForBattleProps & { guildStats?: GuildStatProps; }) => {
+	guildStats,
+	itemStats,
+}: PrepareSkewedCollectionsForBattleProps & {
+  guildStats?: GuildStatProps;
+  itemStats?: GuildStatProps;
+}) => {
 	const totalStats = await prepareTotalOverallStats({
 		collections: clone(collections),
 		isBattle: true,
-		guildStats: clone(guildStats)
+		guildStats: clone(guildStats),
+		itemStats,
 	});
 	if (!totalStats) {
 		throw new Error("Unable to calculate total stats");

@@ -8,6 +8,10 @@ export type GuildProps = {
     CharacterStatProps,
     "critical" | "accuracy" | "evasion" | "precision"
   > | null;
+  item_stats?: Omit<
+    CharacterStatProps,
+    "critical" | "accuracy" | "evasion" | "precision"
+  > | null;
   name?: string | null;
   prefix: string;
   gold: number;

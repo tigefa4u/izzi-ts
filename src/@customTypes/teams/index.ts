@@ -25,6 +25,7 @@ export type PrepareTotalOverallStats = {
     collections: CollectionCardInfoProps[];
     isBattle: boolean;
     guildStats?: GuildStatProps;
+    itemStats?: GuildStatProps;
 }
 
 export type PrepareSkewedCollectionsForBattleProps = {

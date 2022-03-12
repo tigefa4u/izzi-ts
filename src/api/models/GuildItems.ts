@@ -1,6 +1,7 @@
 import { GuildItemCreateProps, GuildItemParams, GuildItemResponseProps } from "@customTypes/guildItems";
 import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
+import { clone } from "utility";
 
 const tableName = "guild_items";
 const guildMarkets = "guild_markets";
@@ -37,7 +38,7 @@ export const del = async (params: GuildItemParams) => {
 export const get = async (params: GuildItemParams): Promise<GuildItemResponseProps[]> => {
 	const db = connection;
 	let query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description,
-	${guildMarkets}.filepath, ${guildMarkets}.price,`))
+	${guildMarkets}.filepath, ${guildMarkets}.price`))
 		.from(tableName)
 		.where(`${tableName}.guild_id`, params.guild_id)
 		.innerJoin(guildMarkets, `${tableName}.item_id`, `${guildMarkets}.id`);
@@ -56,15 +57,22 @@ export const getAll = async (params: Omit<GuildItemParams, "id">, pagination: Pa
 	limit: 10,
 	offset: 0
 }): Promise<GuildItemResponseProps[]> => {
+	const queryParams = clone(params);
+	const ids = queryParams.ids;
+	delete queryParams.ids;
 	const db = connection;
-	const query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description, 
+	let query = db.select(db.raw(`${tableName}.*, ${guildMarkets}.name, ${guildMarkets}.description, 
 		${guildMarkets}.filepath, ${guildMarkets}.price,
 		count(*) over() as total_count`))
 		.from(tableName)
 		.innerJoin(guildMarkets, `${tableName}.item_id`, `${guildMarkets}.id`)
-		.where(params)
+		.where(queryParams)
 		.limit(pagination.limit)
 		.offset(pagination.offset);
+
+	if (ids && ids.length > 0) {
+		query = query.whereIn(`${tableName}.item_id`, ids);
+	}
 
 	return query;
 };

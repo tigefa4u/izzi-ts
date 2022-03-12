@@ -3,7 +3,11 @@ import {
 	ConfirmationInteractionParams,
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { createGuildItem, getGuildItem, updateGuildItem } from "api/controllers/GuildItemsController";
+import {
+	createGuildItem,
+	getGuildItem,
+	updateGuildItem,
+} from "api/controllers/GuildItemsController";
 import { getGuildMarketItem } from "api/controllers/GuildMarketsController";
 import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -12,7 +16,11 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, GUILD_MARKET_IDS } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	GUILD_MARKET_IDS,
+} from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -26,13 +34,21 @@ async function validateAndProcessPurchase(
     context: BaseProps["context"];
     quantity: number;
     market_item_id: number;
+	name: string;
   }>,
 	options?: ConfirmationInteractionOptions
 ) {
 	const id = params.extras?.id;
 	const ctx = params.extras?.context;
 	const author = params.author;
-	if (!id || !ctx || !params.extras?.total || !params.extras?.quantity || !params.extras?.market_item_id) return;
+	if (
+		!id ||
+    !ctx ||
+    !params.extras?.total ||
+    !params.extras?.quantity ||
+    !params.extras?.market_item_id
+	)
+		return;
 	const validGuild = await verifyMemberPermissions({
 		context: ctx,
 		author: params.author,
@@ -42,10 +58,13 @@ async function validateAndProcessPurchase(
 		extras: { user_id: id },
 	});
 	if (!validGuild) return;
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
-		name: author.username,
-		iconURL: author.displayAvatarURL(),
-	}).setThumbnail(params.client.user?.displayAvatarURL() || "");
+	const embed = createEmbed()
+		.setTitle(DEFAULT_ERROR_TITLE)
+		.setAuthor({
+			name: author.username,
+			iconURL: author.displayAvatarURL(),
+		})
+		.setThumbnail(params.client.user?.displayAvatarURL() || "");
 	if (validGuild.guild.gold < params.extras.total) {
 		embed.setDescription(
 			"Your guild does not have enough gold to purchase this item!"
@@ -55,26 +74,33 @@ async function validateAndProcessPurchase(
 	}
 	if (options?.isConfirm) {
 		validGuild.guild.gold = validGuild.guild.gold - params.extras.total;
-		// await updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold });
-		const duplicateItem = await getGuildItem({
-			id: params.extras.market_item_id,
-			guild_id: validGuild.guild.id 
-		});
+		const [ _, duplicateItem ] = await Promise.all([
+			updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold }),
+			getGuildItem({
+				id: params.extras.market_item_id,
+				guild_id: validGuild.guild.id,
+			}),
+		]);
 		if (duplicateItem) {
 			duplicateItem.quantity = duplicateItem.quantity + params.extras.quantity;
-			await updateGuildItem({ id: duplicateItem.id }, { quantity: duplicateItem.quantity });
+			await updateGuildItem(
+				{ id: duplicateItem.id },
+				{ quantity: duplicateItem.quantity }
+			);
 		} else {
 			await createGuildItem({
 				item_id: params.extras.market_item_id,
-				quantity: 1,
-				guild_id: validGuild.guild.id
+				quantity: params.extras.quantity || 1,
+				guild_id: validGuild.guild.id,
 			});
 		}
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
-				`You have successfully purchased __${params.extras.quantity}x__ **${titleCase(
-					duplicateItem?.name || ""
+				`You have successfully purchased __${
+					params.extras.quantity
+				}x__ **${titleCase(
+					duplicateItem?.name || params.extras.name
 				)}** from the Global Guild Market!`
 			);
 		params.channel?.sendMessage(embed);
@@ -95,7 +121,9 @@ export const buyItem = async ({
 		const cooldownCommand = "buy-item";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -124,8 +152,9 @@ export const buyItem = async ({
 				market_item_id: marketItem.id,
 				id: user.id,
 				total: totalCost,
-				quantity
-			}
+				quantity,
+				name: marketItem.name
+			},
 		};
 		let sentMessage: Message;
 		const buttons = await confirmationInteraction(

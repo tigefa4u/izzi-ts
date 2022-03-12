@@ -44,6 +44,7 @@ async function validateAndDisbandGuild(
 					guild_level: 0,
 					name: null,
 					points: 0,
+					item_stats: null
 				}
 			) ]);
 		

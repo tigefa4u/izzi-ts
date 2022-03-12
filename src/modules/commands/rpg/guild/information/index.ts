@@ -1,6 +1,6 @@
 import { CharacterStatProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
-import { GuildProps } from "@customTypes/guilds";
+import { GuildProps, GuildStatProps } from "@customTypes/guilds";
 import {
 	getGuildDetails,
 	getTotalMemberAndItemCount,
@@ -9,12 +9,29 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import loggers from "loggers";
+import { isEmptyValue } from "utility";
 import { verifyMemberPermissions } from "..";
 
 type P = {
   username: string;
   user_tag: string;
 };
+
+function prepareItemBonusDesc(stats: GuildStatProps) {
+	if (!stats || isEmptyValue(stats)) return "";
+	const desc = `\n\n**Clan Bonus Item Stats ${emoji.up}**\n\n${
+		emoji.crossedswords
+	} **Bonus ATK:** (+__${stats.vitality}__)\n${
+		emoji.heart
+	} **Bonus HP:** (+__${stats.strength}__)\n${
+		emoji.shield
+	} **Bonus DEF:** (+__${stats.defense}__)\n${emoji.dash} **Bonus SPD:** (+__${
+		stats.dexterity
+	}__)\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
+
+	return desc;
+}
+
 function prepareGuildDesc(
 	leader: P,
 	guild: GuildProps,
@@ -33,13 +50,13 @@ function prepareGuildDesc(
 		guild.max_members
 	}__\n**Clan Items:** __${ic}__\n\n**Clan Bonus Stats** ${emoji.up}\n\n${
 		emoji.crossedswords
-	} **Bonus ATK:** (+___${stats.vitality}__)\n${
+	} **Bonus ATK:** (+__${stats.vitality}__)\n${
 		emoji.heart
 	} **Bonus HP:** (+__${stats.strength}__)\n${
 		emoji.shield
 	} **Bonus DEF:** (+__${stats.defense}__)\n${emoji.dash} **Bonus SPD:** (+__${
 		stats.dexterity
-	}__)\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
+	}__)\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)${prepareItemBonusDesc(guild.item_stats)}`;
 
 	return desc;
 }
