@@ -218,15 +218,15 @@ export const prepareStatsDesc = <T extends OverallStatsProps>(
 	rank = "silver"
 ) => {
 	const desc = `**ATK:** ${stats.vitality}${
-		stats.vitalityBonus ? ` (-${stats.vitalityBonus})` : ""
+		stats.vitalityBonus ? ` (+${stats.vitalityBonus})` : ""
 	}\n**HP:** ${stats.strength}${
-		stats.strengthBonus ? ` (-${stats.strengthBonus})` : ""
+		stats.strengthBonus ? ` (+${stats.strengthBonus})` : ""
 	}\n**DEF:** ${stats.defense}${
-		stats.defenseBonus ? ` (-${stats.defenseBonus})` : ""
+		stats.defenseBonus ? ` (+${stats.defenseBonus})` : ""
 	}\n**SPD:** ${stats.dexterity}${
-		stats.dexterityBonus ? ` (-${stats.dexterityBonus})` : ""
+		stats.dexterityBonus ? ` (+${stats.dexterityBonus})` : ""
 	}\n**INT:** ${stats.intelligence}${
-		stats.intellegenceBonus ? ` (-${stats.intellegenceBonus})` : ""
+		stats.intellegenceBonus ? ` (+${stats.intellegenceBonus})` : ""
 	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
 		stats.abilityname || ""
 	)} ${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
