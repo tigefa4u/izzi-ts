@@ -25,7 +25,7 @@ export const server = ({ context }: BaseProps) => {
 export const daily = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
+		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const timestamp = user.voted_at;
 		const remainingTime =
