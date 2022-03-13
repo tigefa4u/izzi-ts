@@ -72,8 +72,8 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 			const updatedUser = await levelUpUser(user);
 			desc =
         desc +
-        `You have leveled up! You are now level __${updatedUser.level}__. ` +
-        `We have also refilled your mana __${user.max_mana}__ -> __${updatedUser.max_mana}__`;
+        `\nYou have leveled up! You are now level __${updatedUser.level}__. ` +
+        `We have also refilled your mana __${user.max_mana}__ -> __${user.max_mana + 2}__`;
 		}
 		const updateObj = { gold: user.gold };
 		if (randomReward.key === "mana" || randomReward.key === "gold") {

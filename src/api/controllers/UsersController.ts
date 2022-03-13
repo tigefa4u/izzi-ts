@@ -7,6 +7,7 @@ import {
 import Cache from "cache";
 import { LEVEL_UP_EXP_MULTIPLIER } from "helpers/constants";
 import loggers from "loggers";
+import { clone } from "utility";
 import * as Users from "../models/Users";
 
 async function hydrateUserCache(data: UserProps) {
@@ -156,24 +157,25 @@ export const updateRPGUser: (
 };
 
 export const levelUpUser = async (user: UserProps): Promise<UserProps> => {
-	user.exp = user.exp - user.r_exp;
-	user.level = user.level + 1;
-	user.r_exp = user.level * LEVEL_UP_EXP_MULTIPLIER;
-	if (user.mana < user.max_mana) {
-		user.mana = user.max_mana;
+	const clonedUser = clone(user);
+	clonedUser.exp = clonedUser.exp - clonedUser.r_exp;
+	clonedUser.level = clonedUser.level + 1;
+	clonedUser.r_exp = clonedUser.level * LEVEL_UP_EXP_MULTIPLIER;
+	clonedUser.max_mana = clonedUser.max_mana + 2;
+	if (clonedUser.mana < clonedUser.max_mana) {
+		clonedUser.mana = clonedUser.max_mana;
 	}
-	user.max_mana = user.max_mana + 1;
 	await updateRPGUser(
-		{ user_tag: user.user_tag },
+		{ user_tag: clonedUser.user_tag },
 		{
-			exp: user.exp,
-			level: user.level,
-			r_exp: user.r_exp,
-			mana: user.mana,
-			max_mana: user.max_mana,
+			exp: clonedUser.exp,
+			level: clonedUser.level,
+			r_exp: clonedUser.r_exp,
+			mana: clonedUser.mana,
+			max_mana: clonedUser.max_mana,
 		}
 	);
-	return user;
+	return clonedUser;
 };
 
 export const getTotalPlayers = async (
