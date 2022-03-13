@@ -44,5 +44,5 @@ const client = new discord.Client({
 handleClient(client);
 handleClientEvents(client);
 
-client.login(DISCORD_BOT_TOKEN);
-// client.login(DISCORD_TEST_BOT);
+// client.login(DISCORD_BOT_TOKEN);
+client.login(DISCORD_TEST_BOT);
