@@ -31,7 +31,7 @@ const prepareItemStats = ({
     !itemStats ||
     isEmptyValue(itemStats)
 	)
-		return;
+		return itemStats;
 	const stats = {} as GuildStatProps;
 	const clonedStats = clone(guildItemStats);
 	Object.keys(clonedStats).map((stat) => {
