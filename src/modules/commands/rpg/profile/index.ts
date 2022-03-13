@@ -33,6 +33,8 @@ type P = {
   loss?: number;
   ranked_exp?: string;
   attachment?: MessageAttachment;
+  rankic?: string;
+  divisionic?: string;
 };
 export const profile = async ({
 	context,
@@ -87,14 +89,18 @@ export const profile = async ({
 		if (userRank) {
 			user.wins = userRank.wins;
 			user.loss = userRank.loss;
-			user.rank = `${titleCase(userRank.rank)} ${emojiMap(userRank.rank)}`;
-			user.division = `${userRank.rank_id === 5 ? "Grand Master" : "Division"} ${
-				userRank.division
-			} ${emojiMap(
+			const rankic = emojiMap(userRank.rank);
+			const divisionic = emojiMap(
 				`${userRank.rank_id === 5 ? "grand master" : "division"}${
 					userRank.division
 				}`
-			)}`;
+			);
+			user.rankic = rankic;
+			user.divisionic = divisionic;
+			user.rank = titleCase(userRank.rank);
+			user.division = `${userRank.rank_id === 5 ? "Grand Master" : "Division"} ${
+				userRank.division
+			}`;
 			user.ranked_exp = `[${userRank.exp} / ${userRank.r_exp}]`;
 		}
 		const embed = createEmbed(clientUser, client)
@@ -200,11 +206,11 @@ function prepareProfileFields(user: UserProps & P) {
 
 	if (user.rank) {
 		fields.push({
-			name: "Rank",
+			name: `Rank ${user.rankic || ""}`,
 			value: user.rank,
 			inline: true
 		}, {
-			name: "Division",
+			name: `Division ${user.divisionic || ""}`,
 			value: user.division || "",
 			inline: true
 		}, {
