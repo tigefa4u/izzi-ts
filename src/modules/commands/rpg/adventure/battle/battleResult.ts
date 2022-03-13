@@ -231,6 +231,7 @@ async function upgradeUser(
 		);
 		user.max_mana = user.max_mana + 2;
 		user.mana = user.max_mana;
+		Object.assign(upgradeObject, { mana: user.mana });
 	} else {
 		user.exp = currentExp;
 	}
