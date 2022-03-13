@@ -3,7 +3,7 @@ import { Client, Message } from "discord.js";
 import commandCategory from "commandCategories/index";
 import { getCommand } from "api/controllers/CommandsController";
 import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
-import { sanitizeArgs } from "helpers";
+import { getIdFromMentionedString, sanitizeArgs } from "helpers";
 import { checkUserBanned } from "../checkUserBanned";
 import { dropCollectables } from "modules/collectables";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
@@ -16,8 +16,8 @@ const handleMessage = async (client: Client, context: Message) => {
 		return;
 	}
 	let args = content.toLowerCase().split(/\s+/);
-	const botId = `<@!${DISCORD_CLIENT_ID}>`;
-	if (!(args[0] === BOT_PREFIX || args[0] === botId) || !args[1]) {
+	const botId = getIdFromMentionedString(args[0]);
+	if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
 		if (context.guild?.id) {
 			dropCollectables({
 				client,
