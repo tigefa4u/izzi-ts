@@ -31,7 +31,7 @@ export const handleClient = (client: Client) => {
 	// handleGuildEvents(client, discord);
 	client.on("ready", async () => {
 		console.log("listening");
-		// registerSlashCommands(client);
+		registerSlashCommands(client);
 		client?.user?.setPresence({
 			activities: [ {
 				name: IZZI_WEBSITE,

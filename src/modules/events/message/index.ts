@@ -10,11 +10,6 @@ import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldow
 
 const handleMessage = async (client: Client, context: Message) => {
 	const { content } = context;
-	const cd = await getCooldown(context.author.id, "command-cd");
-	if (cd) {
-		sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
-		return;
-	}
 	let args = content.toLowerCase().split(/\s+/);
 	const botId = getIdFromMentionedString(args[0]);
 	if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
@@ -26,6 +21,11 @@ const handleMessage = async (client: Client, context: Message) => {
 				channel: context.channel
 			});
 		}
+		return;
+	}
+	const cd = await getCooldown(context.author.id, "command-cd");
+	if (cd) {
+		sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
 		return;
 	}
 	const command = await getCommand(args[1]);

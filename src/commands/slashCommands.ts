@@ -3,23 +3,17 @@ import { Client, Constants, GuildApplicationCommandManager } from "discord.js";
 import loggers from "loggers";
 
 export const registerSlashCommands = async (client: Client) => {
-	const guildId = "784087004806774815";
+	// const guildId = "784087004806774815";
 
-	const guild = client.guilds.cache.get(guildId);
-	let commands: any;
-	if (guild) {
-		commands = guild.commands;
-	} else {
-		// commands = client?.application?.commands;
-	}
+	// const guild = client.guilds.cache.get(guildId);
+	// if (guild) {
+	// commands = guild.commands;
+	// } else {
+	const commands = client?.application?.commands;
+	// }
 	commands?.create({
-		name: "give",
-		description: "give le bot",
-		options: [ {
-			name: "options",
-			description: "Command options same as direct commands",
-			type: Constants.ApplicationCommandOptionTypes.STRING
-		} ]
+		name: "ping",
+		description: "pings the bot"
 	});
 	// const allCommands = await getAllCommands();
 	// if (!allCommands) return;
