@@ -1,26 +1,44 @@
 import { createLogger, transports, format } from "winston";
-// require("winston-daily-rotate-file");
+import "winston-daily-rotate-file";
 
-// let transport = new transports.DailyRotateFile({
-//   filename: "logs/error-%DATE%.log",
-//   datePattern: "YYYY-MM-DD-HH",
-//   zippedArchive: true,
-//   maxSize: "20m",
-//   maxFiles: "14d",
-// });
+const infoTransporter = new transports.DailyRotateFile({
+	filename: "logs/info-%DATE%.log",
+	datePattern: "YYYY-MM-DD-HH",
+	zippedArchive: true,
+	maxSize: "100m",
+	maxFiles: "14d",
+	format: format.combine(
+		format.errors({ stack: true }),
+		format.timestamp(),
+		format.json()
+	)
+});
+
+const errorTransporter = new transports.DailyRotateFile({
+	filename: "logs/error-%DATE%.log",
+	datePattern: "YYYY-MM-DD-HH",
+	zippedArchive: true,
+	maxSize: "100m",
+	maxFiles: "14d",
+	format: format.combine(
+		format.errors({ stack: true }),
+		format.timestamp(),
+		format.json()
+	)
+});
 
 const winstonErrorLogger = createLogger({
 	transports: [
-		// transport
-		new transports.File({
-			filename: "logs/error.log",
-			level: "error",
-			format: format.combine(
-				format.errors({ stack: true }),
-				format.timestamp(),
-				format.json()
-			),
-		}),
+		errorTransporter
+		// new transports.File({
+		// 	filename: "logs/error.log",
+		// 	level: "error",
+		// 	format: format.combine(
+		// 		format.errors({ stack: true }),
+		// 		format.timestamp(),
+		// 		format.json()
+		// 	),
+		// }),
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",
@@ -36,11 +54,12 @@ const winstonErrorLogger = createLogger({
 
 const winstonInfoLogger = createLogger({
 	transports: [
-		new transports.File({
-			filename: "logs/info.log",
-			level: "info",
-			format: format.json()
-		}),
+		infoTransporter
+		// new transports.File({
+		// 	filename: "logs/info.log",
+		// 	level: "info",
+		// 	format: format.json()
+		// }),
 	]
 });
 

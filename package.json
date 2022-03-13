@@ -46,6 +46,7 @@
     "knex": "^0.95.14",
     "lodash": "^4.17.21",
     "pg": "^8.7.1",
-    "title-case": "^3.0.3"
+    "title-case": "^3.0.3",
+    "winston-daily-rotate-file": "^4.6.1"
   }
 }
