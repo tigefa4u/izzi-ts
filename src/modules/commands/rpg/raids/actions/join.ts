@@ -3,7 +3,7 @@ import { getRaid, getUserRaidLobby, updateRaid } from "api/controllers/RaidsCont
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE, PERMIT_PER_RAID } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, MAX_RAID_LOBBY_MEMBERS, PERMIT_PER_RAID } from "helpers/constants";
 import loggers from "loggers";
 import { prepareInitialLobbyMember } from "..";
 import { prepareRaidViewEmbed } from "./view";
@@ -54,6 +54,11 @@ export const joinRaid = async ({
 			return;
 		}
 		const lobby = raid.lobby;
+		if (Object.keys(lobby).length >= MAX_RAID_LOBBY_MEMBERS) {
+			embed.setDescription("The Challenger lobby you are trying to join is full!");
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		Object.assign(lobby, {
 			...prepareInitialLobbyMember(
 				user.id,
