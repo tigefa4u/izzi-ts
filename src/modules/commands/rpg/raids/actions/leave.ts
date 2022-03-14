@@ -12,13 +12,14 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 		const currentRaid = await validateCurrentRaid(user.id, author, client, context.channel);
 		if (!currentRaid) return;
 		const lobby = currentRaid.lobby;
-		if (lobby[user.id].is_leader) {
+		const member = lobby[user.id];
+		delete lobby[user.id];
+		if (member.is_leader) {
 			const lobbyMembers: (keyof RaidLobbyProps)[] = Object.keys(lobby).map((k) => Number(k));
-			if (lobbyMembers.length > 1) {
-				lobby[lobbyMembers[1]].is_leader = true;
+			if (lobbyMembers.length > 0) {
+				lobby[lobbyMembers[0]].is_leader = true;
 			}
 		}
-		delete lobby[user.id];
 		const body = { lobby };
 		if (Object.keys(lobby).length <= 0 && currentRaid.is_start === false) {
 			currentRaid.is_private = false;

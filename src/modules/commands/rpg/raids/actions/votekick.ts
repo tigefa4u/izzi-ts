@@ -52,20 +52,22 @@ export const voteKickMember = async ({
 			kickVotes[kickId] = true;
 			lobby[user.id].kickVotes = kickVotes;
 			lobby[kickId].votes = (Number(lobby[kickId].votes) || 0) + 1;
-			const lobbyMembers = Object.keys(lobby).map((i) => Number(i));
+			let lobbyMembers = Object.keys(lobby).map((i) => Number(i));
 			const requiredVotes = Math.ceil(lobbyMembers.length * (50 / 100));
-			if ((lobby[kickId].votes || 0) >= requiredVotes) {
-				if (lobby[kickId].is_leader) {
-					if (lobbyMembers.length > 1) {
-						lobby[lobbyMembers[1]].is_leader = true;
+			const kickedMember = lobby[kickId];
+			if ((kickedMember.votes || 0) >= requiredVotes) {
+				delete lobby[kickId];
+				lobbyMembers = Object.keys(lobby).map((i) => Number(i));
+				if (kickedMember.is_leader) {
+					if (lobbyMembers.length > 0) {
+						lobby[lobbyMembers[0]].is_leader = true;
 					}
 				}
 				const desc = `been kicked from the ${
 					isEvent ? "Event" : "Raid"
 				} Challenge`;
-				context.channel?.sendMessage(`${lobby[kickId].username} has ${desc}`);
-				DMUser(client, `You have ${desc}`, lobby[kickId].user_tag);
-				delete lobby[kickId];
+				context.channel?.sendMessage(`${kickedMember.username} has ${desc}`);
+				DMUser(client, `You have ${desc}`, kickedMember.user_tag);
 			} else {
 				context.channel?.sendMessage(
 					`You have voted to kick ${lobby[kickId].username} from the ${

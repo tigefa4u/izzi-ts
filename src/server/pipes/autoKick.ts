@@ -13,16 +13,23 @@ export default async function () {
 					return;
 				}
 				const lobby = r.lobby;
-				const keys = Object.keys(lobby).map(Number);
+				let keys = Object.keys(lobby).map(Number);
 				keys.map((k) => {
 					if (
 						new Date().valueOf() - new Date(lobby[k].timestamp).valueOf() >=
                         hour
 					) {
-						const desc = `Summoner **${lobby[k].username}**, You have been auto kicked ` +
-                        "from the Challening lobby for AFK-ing for more than 1 hour";
-						DMUserViaApi(lobby[k].user_tag, { content: desc });
+						const member = lobby[k];
 						delete lobby[k];
+						if (member.is_leader) {
+							keys = Object.keys(lobby).map(Number);
+							if (keys.length > 0) {
+								lobby[keys[0]].is_leader = true;
+							}
+						}
+						const desc = `Summoner **${member.username}**, You have been auto kicked ` +
+                        "from the Challening lobby for AFK-ing for more than 1 hour";
+						DMUserViaApi(member.user_tag, { content: desc });
 					}
 				});
 				return await updateRaid({ id: r.id }, { lobby });
