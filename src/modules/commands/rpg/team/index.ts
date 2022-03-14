@@ -146,14 +146,14 @@ export async function showTeam({
 		totalOverallStats: totalTeamStats,
 		totalPowerLevel: totalTeamPowerLevel,
 	} = totalOverallStats;
-	console.log(teamPosition.sort((a, b) => {
-		return a.position > b.position ? 1 : -1;
-	}));
 	const desc = `The Positions of the assigned cards are listed below.\n\n${teamPosition.sort((a, b) => {
 		return a.position > b.position ? 1 : -1;
 	})
 		.map((item) => {
 			const card = collections.filter((c) => c.id === item.collection_id)[0];
+			if (!card) {
+				item.collection_id = null;
+			}
 			return `__Position #${item.position}__\n${
 				item.collection_id
 					? `**${titleCase(card.name)} ${emojiMap(card.type)} ${emojiMap(
