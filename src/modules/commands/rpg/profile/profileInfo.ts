@@ -14,6 +14,7 @@ async function getProfileInfo(key: string, id: string) {
 			max_mana: user?.max_mana,
 			max_permit: user?.max_raid_pass,
 			max_exp: user?.r_exp,
+			is_premium: user?.is_premium,
 		},
 	};
 }
@@ -25,8 +26,29 @@ export const mana = async function ({
 	try {
 		const author = options.author;
 		const result = await getProfileInfo("mana", author.id);
+		const dt = new Date();
+		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
+		let refilled_at = timestamp.setMinutes(
+			timestamp.getMinutes() + (result.metadata.is_premium ? 2 : 3)
+		);
+		if (result.metadata.is_premium) {
+			refilled_at = timestamp.setSeconds(timestamp.getSeconds() + 30);
+		}
+		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
+		let remainingMinutes = Math.floor(remainingTime % 60);
+		if (remainingMinutes < 0) {
+			remainingMinutes = 0;
+		}
+
+		const refillTimerDesc = remainingMinutes
+			? `[Refills in ${remainingMinutes} minutes]`
+			: `[Refills every ${
+				result.metadata.is_premium ? "2 minutes 30 seconds" : "3 minutes"
+			}]`;
+
 		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana**`
+			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana** ` +
+			refillTimerDesc
 		);
 		return;
 	} catch (err) {
@@ -85,9 +107,34 @@ export const permits = async function ({
 	try {
 		const author = options.author;
 		const result = await getProfileInfo("raid_pass", author.id);
+		const dt = new Date();
+		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
+		let refilled_at = timestamp.setHours(
+			timestamp.getHours() + (result.metadata.is_premium ? 2 : 3)
+		);
+		if (result.metadata.is_premium) {
+			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);
+		}
+		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
+		const remainingHours = Math.floor(remainingTime / 60);
+		let remainingMinutes = Math.floor(remainingTime % 60);
+		if (remainingHours < 0 && remainingMinutes < 0) {
+			remainingMinutes = 0;
+		}
+
+		const refillTimerDesc =
+      remainingHours || remainingMinutes
+      	? `[Refills in ${
+      		remainingHours < 0 ? 0 : remainingHours
+      	} hours ${remainingMinutes} minutes]`
+      	: `[Refills every ${
+      		result.metadata.is_premium ? "2 hours 30 minutes" : "3 hours"
+      	}]`;
+
 		context.channel?.sendMessage(
-			`**${author.username}** currently has` + " " +
-			`__${result.data}/${result.metadata.max_permit}__ **raid permits**`
+			`**${author.username}** currently has` +
+        " " +
+        `__${result.data}/${result.metadata.max_permit}__ **raid permits** ${refillTimerDesc}`
 		);
 		return;
 	} catch (err) {
