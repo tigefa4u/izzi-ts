@@ -17,7 +17,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, STARTER_CARD_EXP, STARTER_CARD_R_EXP } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -99,6 +99,7 @@ async function verifyAndProcessEvolution(
         newRankPL.rank_id
 		);
 		cardToEvolve.rank_id = cardToEvolve.rank_id + 1;
+		const prevRank = cardToEvolve.rank;
 		cardToEvolve.rank = newRankPL.rank;
 		user.gold = user.gold - cost;
 		await Promise.all([
@@ -108,7 +109,10 @@ async function verifyAndProcessEvolution(
 				{
 					rank: cardToEvolve.rank,
 					rank_id: cardToEvolve.rank_id,
-					souls: 1
+					souls: 1,
+					character_level: 1,
+					exp: STARTER_CARD_EXP,
+					r_exp: STARTER_CARD_R_EXP
 				}
 			),
 		]);
@@ -125,7 +129,7 @@ async function verifyAndProcessEvolution(
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`Congratulations Summoner! You have successfully evolved your __${titleCase(
-					cardToEvolve.rank
+					prevRank
 				)}__ **Level ${cardToEvolve.character_level}** ${titleCase(
 					cardToEvolve.name
 				)} to __${titleCase(newRankPL.rank)}__ rank!`
