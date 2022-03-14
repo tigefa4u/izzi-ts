@@ -156,7 +156,7 @@ export const confirmTrade = async ({
 		if (trader_2.queue.length > 0) {
 			if (participantTow.selected_card_id) {
 				const index = trader_2.queue.findIndex(
-					(q) => q.id !== participantTow.selected_card_id
+					(q) => q.id === participantTow.selected_card_id
 				);
 				if (index >= 0) {
 					trader_2.queue.splice(index, 1);

@@ -131,7 +131,7 @@ async function followUp(
 		if (Object.keys(command.sub_commands || {}).length <= 0) return;
 		const menuOptions = Object.keys(command.sub_commands).map((key) => {
 			return {
-				label: command.sub_commands[key].title,
+				label: command.sub_commands[key].title.replaceAll(/\*\*/g, ""),
 				value: key,
 			};
 		});
