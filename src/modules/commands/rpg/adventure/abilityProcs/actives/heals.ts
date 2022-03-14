@@ -131,7 +131,7 @@ export const guardian = ({
 			basePlayerStats.totalStats.tempGuardianCount = 1;
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
-			perRatio
+			perRatio * basePlayerStats.totalStats.tempGuardianCount
 		);
 		basePlayerStats.totalStats.tempGuardianCount++;
 		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;

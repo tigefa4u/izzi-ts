@@ -264,6 +264,7 @@ export const overallStats = (params: {
 			)
 		) {
 			Object.assign(totalStats, { [stat]: stats[stat as keyof CharacterStatProps], });
+			Object.assign(baseStats, { [stat]: stats[stat as keyof CharacterStatProps] });
 		} else {
 			Object.assign(totalStats, {
 				[stat]: calcStat(
@@ -310,7 +311,6 @@ export const overallStats = (params: {
 			}
 		}
 	});
-
 	return {
 		totalStats,
 		baseStats 

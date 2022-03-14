@@ -77,7 +77,7 @@ export const berserk = ({
 	const playerHpRatio = playerStats.totalStats.strength / 100;
 	const enemyHpRatio = opponentStats.totalStats.strength / 100;
 	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound ++ : null;
-	if (playerHpRatio < enemyHpRatio && !playerStats.totalStats.isBerserk) {
+	if (playerHpRatio <= enemyHpRatio && !playerStats.totalStats.isBerserk) {
 		playerStats.totalStats.isBerserk = true;
 		playerStats.totalStats.previousRound = round;
 		const temp = randomElementFromArray([ "vitality", "defense", "critical" ]);
@@ -89,6 +89,7 @@ export const berserk = ({
         (card.stats[`${temp}Inc`] || card.stats[temp]);
 		}
 		const percent = calcPercentRatio(18, card.rank);
+
 		const ratio =
       card.stats[temp] *
       ((basePlayerStats.totalStats[`${temp}Temp`] * percent) / 100);

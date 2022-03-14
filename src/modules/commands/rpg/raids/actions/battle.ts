@@ -227,7 +227,7 @@ async function processRaidResult({
 		.setTitle(`${emoji.welldone} Total Damage Dealt`)
 		.setDescription(
 			`**Summoner ${author.username}, You have dealt:**\n\n**__${
-				result.totalDamage
+				result.totalDamage || 0
 			}__** Damage to ${isEvent ? "Event" : "Raid"} Boss\n\n**${
 				updateObj.stats.remaining_strength
 			} / ${updateObj.stats.original_strength} ${emoji.hp}**\n${fakeHp.map((i) => i).join("")}`
