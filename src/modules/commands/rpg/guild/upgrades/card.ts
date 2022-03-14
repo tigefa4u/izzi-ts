@@ -49,9 +49,9 @@ async function validateAndUpgradeCard(
 	const validGuild = await verifyMemberPermissions({
 		context: context,
 		author: params.author,
-		params: [ "is_leader", "is_vice_leader" ],
+		params: [],
 		isOriginServer: true,
-		isAdmin: true,
+		isAdmin: false,
 		extras: { user_id: params.extras.user_id },
 	});
 	if (!validGuild) return;
