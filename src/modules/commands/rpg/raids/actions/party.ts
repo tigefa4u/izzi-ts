@@ -70,8 +70,9 @@ export const raidParty = async ({
 };
 
 export function prepareRaidParty(lobby: RaidLobbyProps) {
-	const lobbyMembers: (keyof RaidLobbyProps)[] = Object.keys(lobby).map((k) =>
-		Number(k)
+	const keys = Object.keys(lobby).map((k) => Number(k));
+	const lobbyMembers: (keyof RaidLobbyProps)[] = keys.sort((a) =>
+		lobby[a].is_leader === true ? -1 : 1
 	);
 	return lobbyMembers
 		.map((l, i) => {
@@ -86,15 +87,15 @@ export function prepareRaidParty(lobby: RaidLobbyProps) {
 			const mvpUserId = getLobbyMvp(lobby);
 			return `#${i + 1} **${lobby[l].username} (${lobby[l].user_tag}) ${
 				mvpUserId && mvpUserId === l ? ":crown:" : ""
-			}**\nLevel: ${lobby[l].level}\nVote Kick ID: ${
-				lobby[l].user_id
-			}\nEnergy: ${lobby[l].energy}\nTotal Damage: ${
-				lobby[l].total_damage
-			}\nTotal Attacks: ${lobby[l].total_attack}\nLast Attack: ${
-				elapsedHours ? `${elapsedHours}h` : ""
-			} ${elapsedMinutes ? `${elapsedMinutes}m` : ""}${
-				!elapsedMinutes && !elapsedHours ? "0" : ""
-			}\n${lobby[l].is_leader ? "Lobby Leader" : ""}`;
+			}**${lobby[l].is_leader ? "\n**Lobby Leader**" : ""}\nLevel: ${
+				lobby[l].level
+			}\nVote Kick ID: ${lobby[l].user_id}\nEnergy: ${
+				lobby[l].energy
+			}\nTotal Damage: ${lobby[l].total_damage}\nTotal Attacks: ${
+				lobby[l].total_attack
+			}\nLast Attack: ${elapsedHours ? `${elapsedHours}h` : ""} ${
+				elapsedMinutes ? `${elapsedMinutes}m` : ""
+			}${!elapsedMinutes && !elapsedHours ? "0" : ""}`;
 		})
 		.join("\n\n");
 }

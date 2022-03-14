@@ -27,7 +27,7 @@ export const mana = async function ({
 		const author = options.author;
 		const result = await getProfileInfo("mana", author.id);
 		const dt = new Date();
-		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
+		const timestamp = new Date(result.metadata?.mana_refilled_at || "") || dt;
 		let refilled_at = timestamp.setMinutes(
 			timestamp.getMinutes() + (result.metadata.is_premium ? 2 : 3)
 		);

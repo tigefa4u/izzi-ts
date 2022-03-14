@@ -26,3 +26,4 @@ export const SHARD_LIST = process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_
 export const PRIVACY_POLICY_URL = process.env.PRIVACY_POLICY_URL;
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 export const BOT_PREFIX = "iz";
+// export const BOT_PREFIX = "tt";

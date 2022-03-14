@@ -42,6 +42,10 @@ async function calcLevelGain({ totalXpGain, card }: {
 		totalGain = totalGain - r_exp;
 		levelCounter++;
 	}
+	if (totalGain < 0) {
+		levelCounter++;
+		totalGain = r_exp;
+	}
 	return {
 		levelCounter,
 		r_exp,
