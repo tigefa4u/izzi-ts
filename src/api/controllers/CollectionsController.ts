@@ -1,4 +1,5 @@
 import { FilterProps, ResponseWithPagination } from "@customTypes";
+import { CharactersReturnType } from "@customTypes/characters";
 import {
 	CollectionParams,
 	CollectionProps,
@@ -10,6 +11,7 @@ import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
+import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";
 import { getCharacters } from "./CharactersController";
 import { getItemById } from "./ItemsController";
@@ -42,10 +44,25 @@ export const createCollection: (
 };
 
 export const getCollection: (
-  params: CollectionParams & { limit?: number }
+  params: CollectionParams & { limit?: number; name?: string | string[]; }
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
+		let characters = [] as CharactersReturnType;
+		if (params.name) {
+			const resp = await getCharacters({ name: params.name });
+			if (resp && resp.length > 0) {
+				characters = resp;
+				Object.assign(params, { character_ids: resp.map((c) => c.id) });
+			}
+		}
 		const result = await Collections.get(params);
+		const charactersMeta = reorderObjectKey(characters, "id");
+		result.map((r) => {
+			if (charactersMeta[r.character_id]) {
+				r.name = charactersMeta[r.character_id].name;
+			}
+			return r;
+		});
 		return result;
 	} catch (err) {
 		loggers.error(

@@ -22,7 +22,7 @@ const processViewCardsInTrade = (
 	keys.forEach((key, i) => {
 		desc = `${desc}\n${i === 0 ? "" : "\n"}**${queue[key].username}'s Queue**\n${queue[key].queue
 			.slice(0, 10)
-			.map((item) => `${titleCase(item.rank)} [${item.id}]`)
+			.map((item) => `**${titleCase(item.name || "No Name")}** ${titleCase(item.rank)} [${item.id}]`)
 			.join("\n")}`;
 
 		if (queue[key].queue.length > 10) {

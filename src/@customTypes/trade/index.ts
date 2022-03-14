@@ -11,6 +11,7 @@ export type TradeQueueProps = {
             id: number;
             user_id: number;
             rank: string;
+            name?: string;
         }[];
         gold: number;
     }

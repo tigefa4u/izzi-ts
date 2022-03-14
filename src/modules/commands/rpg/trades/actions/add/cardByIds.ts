@@ -50,6 +50,7 @@ export const addCardByIds = async ({
 			id: coll.id,
 			user_id: coll.user_id,
 			rank: coll.rank,
+			name: coll.name,
 		}));
 		loggers.info("adding cards to trade: " + JSON.stringify(arr));
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];

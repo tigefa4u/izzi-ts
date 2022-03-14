@@ -2,7 +2,11 @@ import { FilterProps } from "@customTypes";
 import { TradeActionProps } from "@customTypes/trade";
 import { getCollection } from "api/controllers/CollectionsController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_CARDS_IN_TRADE } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	MAX_CARDS_IN_TRADE,
+} from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
@@ -16,11 +20,14 @@ export const addMultipleCards = async ({
 	author,
 	args,
 	tradeQueue,
-	tradeId
+	tradeId,
 }: TradeActionProps) => {
 	try {
 		const params = fetchParamsFromArgs<FilterProps>(args);
-		if (!params.rank || params.rank.length <= 0) return;
+		if (!params.rank || params.rank.length <= 0) {
+			channel?.sendMessage("Please specify a valid Rank");
+			return;
+		}
 		if (params.limit && typeof params.limit === "object") {
 			params.limit = Number(params.limit[0]);
 		} else if (!params.limit) {
@@ -30,8 +37,14 @@ export const addMultipleCards = async ({
 		}
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		const trader = tradeQueue[author.id];
-		if (trader.queue.length > MAX_CARDS_IN_TRADE) {
-			embed.setDescription(`You cannot trade more than __${MAX_CARDS_IN_TRADE}__ cards at once`);
+		if (
+			trader.queue.length > MAX_CARDS_IN_TRADE ||
+      params.limit > MAX_CARDS_IN_TRADE ||
+      trader.queue.length + params.limit > MAX_CARDS_IN_TRADE
+		) {
+			embed.setDescription(
+				`You cannot trade more than __${MAX_CARDS_IN_TRADE}__ cards at once`
+			);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -40,7 +53,8 @@ export const addMultipleCards = async ({
 			rank: params.rank,
 			is_on_market: false,
 			limit: params.limit,
-			is_item: false
+			is_item: false,
+			name: params.name,
 		};
 		const exclude_ids = trader.queue.map((i) => i.id);
 		if (exclude_ids.length > 0) {
@@ -57,6 +71,7 @@ export const addMultipleCards = async ({
 			id: coll.id,
 			user_id: coll.user_id,
 			rank: coll.rank,
+			name: coll.name,
 		}));
 		loggers.info("adding cards to trade: " + JSON.stringify(arr));
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
@@ -80,7 +95,7 @@ export const addMultipleCards = async ({
 			tradeQueue,
 			tradeId,
 			channel,
-			args
+			args,
 		});
 		return;
 	} catch (err) {
