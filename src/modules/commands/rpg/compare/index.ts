@@ -17,15 +17,18 @@ function computeCharacterStats(array: CharacterDetailsProps[]) {
 	array.map((character) => {
 		fields.push({
 			name: `${titleCase(character.name)}`,
-			value: `**Element Type:** ${emojiMap(
-				character.abilityname
-			)}\n${Object.keys(character.stats).map(
-				(stat) =>
-					`**${statRelationMap[stat as keyof CharacterStatProps]}:** ${
-						character.stats[stat as keyof CharacterStatProps]
-					}`
-			).join("\n")}`,
-			inline: true
+			value: `**Element Type:** ${emojiMap(character.type)}\n${Object.keys(
+				character.stats
+			)
+				.map((stat) =>
+					[ "evasion", "accuracy", "critical" ].includes(stat)
+						? ""
+						: `**${statRelationMap[stat as keyof CharacterStatProps]}:** ${
+							character.stats[stat as keyof CharacterStatProps]
+						}`
+				)
+				.join("\n")}`,
+			inline: true,
 		});
 	});
 
@@ -61,9 +64,8 @@ export const compareCards = async ({
 		const characters = await getCharacters({ name: charanames });
 		if (characters.length > 0) {
 			const list = computeCharacterStats(characters);
-			embed.setTitle("Base Stats")
-				.addFields(list);
-            
+			embed.setTitle("Base Stats").addFields(list);
+
 			context.channel?.sendMessage(embed);
 			return;
 		}

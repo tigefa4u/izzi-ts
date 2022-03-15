@@ -40,10 +40,12 @@ async function resetUserActive() {
 
 async function refillMana() {
 	await knex.raw(
-		"update users set mana = mana + 2 where is_banned = false and is_premium = false and mana < max_mana"
+		"update users set mana = mana + 2, mana_refilled_at = now() " +
+		"where is_banned = false and is_premium = false and mana < max_mana"
 	);
 	await knex.raw(
-		"update users set mana = mana + 3 where is_banned = false and is_premium = true and mana < max_mana"
+		"update users set mana = mana + 3, mana_refilled_at = now() " +
+		"where is_banned = false and is_premium = true and mana < max_mana"
 	);
 }
 // need to reset is_event after the event
