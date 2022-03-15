@@ -38,14 +38,14 @@ async function calcLevelGain({
 	let totalGain = totalXpGain - card.exp;
 	let levelCounter = 0;
 	let reqExp = 0;
-
-	while (totalGain > 0 && levelCounter < powerLevel.max_level) {
+	const levelDiff = powerLevel.max_level - card.character_level;
+	while (levelCounter < levelDiff) {
 		const gain = Math.floor(BASE_XP * (1 + levelCounter) ** XP_GAIN_EXPONENT);
 		reqExp = reqExp + gain;
 		const diff = totalGain - gain;
+		levelCounter++;
 		if (diff < 0) break;
 		totalGain = diff;
-		levelCounter++;
 	}
 	if (totalGain < 0) {
 		totalGain = 0;
@@ -183,10 +183,11 @@ export async function prepareRequiredExp({ card, }: {
 	if (card.character_level >= powerLevel.max_level) {
 		return;
 	}
-	return getReqExpBetweenLevels(card.character_level, powerLevel.max_level);
+	const levelDiff = powerLevel.max_level - card.character_level;
+	return getReqExpBetweenLevels(card.character_level, levelDiff);
 }
 
-export function getReqExpBetweenLevels(level: number, levelDiff: number) {	
+export function getReqExpBetweenLevels(level: number, levelDiff: number) {
 	let levelCounter = 0;
 	let reqExp = 0;
 	while (levelCounter < levelDiff) {
