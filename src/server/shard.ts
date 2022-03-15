@@ -29,7 +29,7 @@ if (SHARD_LIST) {
 	Object.assign(shardParams, { shardList: SHARD_LIST });
 }
 
-const manager = new ShardingManager(path.join(__dirname, "client.ts"), {
+const manager = new ShardingManager(path.join(__dirname, "client.js"), {
 	execArgv: [ "-r", "ts-node/register" ],
 	totalShards: "auto",
 	// token: DISCORD_TEST_BOT,

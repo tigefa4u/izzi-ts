@@ -152,6 +152,10 @@ export const verifyMemberPermissions = async (params: {
 			params.context.guild.id
 		);
 		if (!guild) return;
+		if (guild.is_banned) {
+			params.context.channel?.sendMessage(guild.ban_reason || "Your guild has been banned :x:");
+			return;
+		}
 		const flag = validateFlag(params.params, params.isAdmin, member, params.context.channel);
 		if (!flag) return;
 		return {
