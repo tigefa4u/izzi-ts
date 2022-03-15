@@ -71,6 +71,9 @@ export const memberReady = async ({
 			} Challenge use \`\`${isEvent ? "ev" : "rd"} start\`\``,
 			leader.user_tag
 		);
+		context.channel?.sendMessage(` We've DMed the Lobby Leader to start the ${
+			isEvent ? "Event" : "Raid"
+		} Challenge.`);
 		return;
 	} catch (err) {
 		loggers.error(
