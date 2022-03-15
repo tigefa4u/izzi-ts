@@ -42,7 +42,7 @@ export const getCharacters: (
 };
 
 export const getCharacterInfo: (
-  filter: FilterProps
+  filter: FilterProps & { isExactMatch?: boolean; }
 ) => Promise<CharacterCardProps[] | undefined> = async function (filter) {
 	try {
 		const result = await Characters.get(filter);

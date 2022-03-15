@@ -55,7 +55,7 @@ export const getCharacterById: (params: {
 };
 
 export const get: (
-  params: FilterProps,
+  params: FilterProps & { isExactMatch?: boolean; },
 ) => Promise<CharactersReturnType> = async function (
 	params,
 ) {
@@ -69,9 +69,17 @@ export const get: (
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`);
 
 	if (typeof params.name === "string") {
-		query = query.where(`${tableName}.name`, "ilike", `%${params.name}%`);
+		if (params.isExactMatch) {
+			query = query.where(`${tableName}.name`, "=", params.name);
+		} else {
+			query = query.where(`${tableName}.name`, "ilike", `%${params.name}%`);
+		}
 	} else if (typeof params.name === "object") {
-		query = query.where(`${tableName}.name`, "~", `^(${params.name.join("|")}).*`);
+		if (params.isExactMatch) {
+			query = query.whereIn(`${tableName}.name`, params.name);
+		} else {
+			query = query.where(`${tableName}.name`, "~", `^(${params.name.join("|")}).*`);
+		}
 	}
 	if (typeof params.type === "string") {
 		query = query.where(`${tableName}.type`, "ilike", `%${params.type}%`);

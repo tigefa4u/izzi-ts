@@ -187,7 +187,7 @@ export const enchantCard = async ({
 			.setFooter({
 				text: `Total Level: ${cardToEnchant.character_level} -> ${
 					cardToEnchant.character_level + computed.levelCounter
-				} | Total Exp Gained: ${computed.totalXpGain} | Total Cost: ${cost}`,
+				} | Total Exp Gained: ${computed.totalXpGain} | Required Exp: ${computed.reqExp} | Total Cost: ${cost}`,
 				iconURL: author.displayAvatarURL(),
 			});
 

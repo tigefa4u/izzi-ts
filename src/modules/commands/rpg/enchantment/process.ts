@@ -21,6 +21,7 @@ export async function prepareRankAndFetchCards({
 	totalXpGain,
 	isIterateOver = true,
 	isCustomRanks = false,
+	isCustomName = false,
 }: PrepareRankAndFetchCardsProps<EnchantmentAccumulatorProps>): Promise<
   | {
       accumulator: EnchantmentAccumulatorProps[];
@@ -28,17 +29,16 @@ export async function prepareRankAndFetchCards({
     }
   | undefined
 > {
+	let uniqueCards = [ ...new Set(accumulator) ];
 	if (forceExit || reqExp <= 0) {
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line: 33 -> data " +
-        JSON.stringify(accumulator)
+			"enchantment.process.prepareRankAndFetchCards(): line: 33 -> data " + JSON.stringify(uniqueCards)
 		);
 		return {
-			accumulator,
+			accumulator: uniqueCards,
 			totalXpGain,
 		};
 	}
-
 	const promises = [
 		fetchRequiredCards({
 			rank: initialRequestPayload.rank,
@@ -65,36 +65,32 @@ export async function prepareRankAndFetchCards({
 	}
 	const [ result, stash ] = await Promise.all(promises);
 	if (!result) {
+		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): return at !result -> data " +
-        JSON.stringify(accumulator)
+			"enchantment.process.prepareRankAndFetchCards(): line 76 -> data " +
+		JSON.stringify(uniqueCards)
 		);
 		return {
-			accumulator,
+			accumulator: uniqueCards,
 			totalXpGain,
 		};
 	}
 	loggers.info(
-		`enchantment.proess.prepareRankAndFetchCards(): Result: ${result.length}, Stash: ${stash?.length}`
+		`enchantment.proess.prepareRankAndFetchCards(): Result: ${result.length} ${initialRequestPayload.rank}, ` +
+		`Stash: ${stash?.length} ${stashRequestPaload?.rank}`
 	);
 	accumulator = accumulator.concat(result);
 	if (
 		result.length === initialRequestPayload.bucket[initialRequestPayload.rank]
 	) {
-		// const xpGain =
-		// (initialRequestPayload.isSameName ? 3 : 1) *
-		// result.length *
-		// XP_GAIN_PER_RANK[initialRequestPayload.rank];
-		// totalXpGain = totalXpGain + xpGain;
-		// console.log("excduted", { totalXpGain });
+		uniqueCards = [ ...new Set(accumulator) ];
 		totalXpGain = reqExp;
 		reqExp = 0;
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line: 93 -> data " +
-        JSON.stringify(accumulator)
+			"enchantment.process.prepareRankAndFetchCards(): line: 93 -> data " + JSON.stringify(uniqueCards)
 		);
 		return {
-			accumulator,
+			accumulator: uniqueCards,
 			totalXpGain,
 		};
 	} else {
@@ -137,7 +133,7 @@ export async function prepareRankAndFetchCards({
 					newCondition,
 					initialRequestPayload.bucket,
 					withDifferentName,
-					newCondition ? initialRequestPayload.include || [] : [],
+					(newCondition || isCustomName) ? initialRequestPayload.include || [] : [],
 					[
 						...new Set([
 							...accumulator.map((a) => a.id),
@@ -152,7 +148,7 @@ export async function prepareRankAndFetchCards({
 						newStashCondition,
 						stashRequestPaload.bucket,
 						withDifferentName,
-						newStashCondition ? stashRequestPaload.include || [] : [],
+						(newStashCondition || isCustomName) ? stashRequestPaload.include || [] : [],
 						[
 							...new Set([
 								...accumulator.map((a) => a.id),
@@ -189,22 +185,24 @@ export async function prepareRankAndFetchCards({
 				);
 
 				totalXpGain = totalXpGain - Math.abs(reqExp);
+				uniqueCards = [ ...new Set(accumulator) ];
 				loggers.info(
 					"enchantment.process.prepareRankAndFetchCards(): line: 193 -> data " +
-				JSON.stringify(accumulator)
+					JSON.stringify(uniqueCards)
 				);
 				return {
-					accumulator,
+					accumulator: uniqueCards,
 					totalXpGain,
 				};
 			}
 		}
+		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
 			"enchantment.process.prepareRankAndFetchCards(): line: 203 -> data " +
-        JSON.stringify(accumulator)
+        JSON.stringify(uniqueCards)
 		);
 		return {
-			accumulator: accumulator,
+			accumulator: uniqueCards,
 			totalXpGain,
 		};
 	}

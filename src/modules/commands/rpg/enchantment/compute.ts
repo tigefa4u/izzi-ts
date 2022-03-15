@@ -17,9 +17,12 @@ import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 import { prepareRankAndFetchCards } from "./process";
 
-async function calcLevelGain({ totalXpGain, card }: {
-    totalXpGain: number;
-    card: CollectionCardInfoProps;
+async function calcLevelGain({
+	totalXpGain,
+	card,
+}: {
+  totalXpGain: number;
+  card: CollectionCardInfoProps;
 }) {
 	const powerLevel = await getPowerLevelByRank({ rank: card.rank });
 	if (!powerLevel) {
@@ -29,27 +32,29 @@ async function calcLevelGain({ totalXpGain, card }: {
 		return {
 			levelCounter: 0,
 			r_exp: card.r_exp,
-			exp: card.exp
+			exp: card.exp,
 		};
 	}
 	let totalGain = totalXpGain - card.exp;
 	let levelCounter = 0;
-	let r_exp = card.r_exp;
-	while ((totalGain > r_exp) && ((card.character_level + levelCounter) < powerLevel.max_level)) {
-		r_exp = Math.floor(
-			BASE_XP * (card.character_level + levelCounter) ** XP_GAIN_EXPONENT
-		);
-		totalGain = totalGain - r_exp;
+	let reqExp = 0;
+
+	while (totalGain > 0 && levelCounter < powerLevel.max_level) {
+		const gain = Math.floor(BASE_XP * (1 + levelCounter) ** XP_GAIN_EXPONENT);
+		reqExp = reqExp + gain;
+		const diff = totalGain - gain;
+		if (diff < 0) break;
+		totalGain = diff;
 		levelCounter++;
 	}
 	if (totalGain < 0) {
-		levelCounter++;
-		totalGain = r_exp;
+		totalGain = 0;
 	}
 	return {
 		levelCounter,
-		r_exp,
-		exp: totalGain
+		r_exp: Math.floor(BASE_XP * (1 + levelCounter) ** XP_GAIN_EXPONENT),
+		exp: totalGain,
+		reqExp
 	};
 }
 
@@ -60,7 +65,7 @@ export const preComputeRequiredCards = async ({
 	user_id,
 	exclude_ids,
 	character_ids = [],
-	channel
+	channel,
 }: ProcessEnchantmentProps): Promise<ComputedReturnType | undefined> => {
 	try {
 		const currentExp = card.exp;
@@ -76,7 +81,7 @@ export const preComputeRequiredCards = async ({
 			withDifferentName,
 			totalXpGain: 0,
 			card,
-			isCustomRanks: rank ? true : false
+			isCustomRanks: rank ? true : false,
 		} as PrepareRankAndFetchCardsProps<EnchantmentAccumulatorProps>;
 
 		rank = safeParseRank(rank);
@@ -89,16 +94,21 @@ export const preComputeRequiredCards = async ({
 			include: [ ...new Set([ ...(character_ids || []), card.character_id ]) ],
 			exclude: [ ...new Set(exclude_ids) ],
 		};
-		params.stashRequestPaload = payloadRank.stashRank ? {
-			isSameName: true,
-			bucket: withSameName,
-			rank: payloadRank.stashRank,
-			include: [ ...new Set([ ...(character_ids || []), card.character_id ]) ],
-			exclude: [ ...new Set(exclude_ids) ],
-		} : null;
+		params.stashRequestPaload = payloadRank.stashRank
+			? {
+				isSameName: true,
+				bucket: withSameName,
+				rank: payloadRank.stashRank,
+				include: [ ...new Set([ ...(character_ids || []), card.character_id ]) ],
+				exclude: [ ...new Set(exclude_ids) ],
+			}
+			: null;
 
 		if (name) {
-			const charaInfo = await getCharacterInfo({ name });
+			const charaInfo = await getCharacterInfo({
+				name,
+				isExactMatch: true 
+			});
 			if (charaInfo && charaInfo.length > 0) {
 				const character = charaInfo[0];
 				const isSameCharacter = card.character_id === character.id;
@@ -108,19 +118,16 @@ export const preComputeRequiredCards = async ({
 					character_ids?.push(character.id);
 				}
 
+				params.isCustomName = true;
 				params.isIterateOver = false;
-				params.initialRequestPayload.include = [
-					...new Set(character_ids),
-				];
+				params.initialRequestPayload.include = [ ...new Set(character_ids) ];
 				params.initialRequestPayload.isSameName = isSameCharacter;
 				params.initialRequestPayload.bucket = isSameCharacter
 					? withSameName
 					: withDifferentName;
-                
+
 				if (params.stashRequestPaload) {
-					params.stashRequestPaload.include = [
-						...new Set(character_ids),
-					];
+					params.stashRequestPaload.include = [ ...new Set(character_ids) ];
 					params.stashRequestPaload.isSameName = isSameCharacter;
 					params.stashRequestPaload.bucket = isSameCharacter
 						? withSameName
@@ -134,25 +141,28 @@ export const preComputeRequiredCards = async ({
 					exclude: [ ...new Set(exclude_ids) ],
 					rank: payloadRank.rank,
 					isSameName: false,
-					bucket: withDifferentName
+					bucket: withDifferentName,
 				};
 			}
 		}
 		params.accumulator = [];
 		const result = await prepareRankAndFetchCards(params);
-		if (!result || result.totalXpGain === 0 || result.accumulator.length <= 0)  {
-			channel?.sendMessage("You do not have sufficient cards to Enchant this card.");
+		if (!result || result.totalXpGain === 0 || result.accumulator.length <= 0) {
+			channel?.sendMessage(
+				"You do not have sufficient cards to Enchant this card."
+			);
 			return;
 		}
 		const { levelCounter, r_exp, exp } = await calcLevelGain({
 			card,
-			totalXpGain: result.totalXpGain
+			totalXpGain: result.totalXpGain,
 		});
 		return {
 			...result,
 			levelCounter,
 			r_exp,
-			exp
+			exp,
+			reqExp
 		};
 	} catch (err) {
 		loggers.error(
@@ -173,16 +183,18 @@ export async function prepareRequiredExp({ card, }: {
 	if (card.character_level >= powerLevel.max_level) {
 		return;
 	}
-	const levelDiff = powerLevel.max_level - card.character_level;
+	return getReqExpBetweenLevels(card.character_level, powerLevel.max_level);
+}
+
+export function getReqExpBetweenLevels(level: number, levelDiff: number) {	
 	let levelCounter = 0;
-	let reqExp = card.r_exp;
+	let reqExp = 0;
 	while (levelCounter < levelDiff) {
-		levelCounter++;
-		reqExp =
-      reqExp +
+		reqExp = reqExp +
       Math.floor(
-      	BASE_XP * (card.character_level + levelCounter) ** XP_GAIN_EXPONENT
+      	BASE_XP * (level + levelCounter) ** XP_GAIN_EXPONENT
       );
+		levelCounter++;
 	}
 	return reqExp;
 }
@@ -210,7 +222,9 @@ function preparePayloadRank(rank?: string | string[]) {
 
 function safeParseRank(rank?: string | string[]) {
 	if (rank && rank.length > 0 && typeof rank === "object") {
-		const filtered = ENCHANTMENT_ALLOWED_RANKS.filter((e) => rank.find((r) => e.includes(r)));
+		const filtered = ENCHANTMENT_ALLOWED_RANKS.filter((e) =>
+			rank.find((r) => e.includes(r))
+		);
 		if (filtered.length > 0) {
 			return [ ...new Set(filtered) ];
 		}

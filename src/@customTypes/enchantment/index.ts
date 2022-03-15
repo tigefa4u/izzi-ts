@@ -20,6 +20,7 @@ export type PrepareRankAndFetchCardsProps<T> = ProcessEnchantmentProps & {
     forceExit?: boolean;
     isIterateOver?: boolean;
     isCustomRanks?: boolean;
+    isCustomName?: boolean;
 }
 
 export type EnchantmentBucketPayload = {
@@ -42,4 +43,5 @@ export type ComputedReturnType = {
     accumulator: EnchantmentAccumulatorProps[];
     r_exp: number;
     exp: number;
+    reqExp: number;
 }

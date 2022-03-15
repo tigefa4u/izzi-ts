@@ -1,9 +1,9 @@
 import { XPGainPerRankProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createEmbed } from "commons/embeds";
-import { BASE_XP, XP_GAIN_EXPONENT } from "helpers/constants";
 import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
+import { getReqExpBetweenLevels } from "../enchantment/compute";
 
 export const cards = ({ context, client, args, options }: BaseProps) => {
 	try {
@@ -23,15 +23,7 @@ export const cards = ({ context, client, args, options }: BaseProps) => {
 			return;
 		}
 		const levelDiff = maxLevel - baseLevel;
-		let levelCounter = 0;
-		let reqExp = Math.floor(BASE_XP * baseLevel ** XP_GAIN_EXPONENT);
-		while (levelCounter < levelDiff) {
-			levelCounter++;
-			reqExp =
-        reqExp +
-        Math.floor(BASE_XP * (baseLevel + levelCounter) ** XP_GAIN_EXPONENT);
-		}
-
+		const reqExp = getReqExpBetweenLevels(baseLevel, levelDiff);
 		const { withSameName, withDifferentName } = prepareXpGainObject(reqExp);
 
 		const embed = createEmbed(author, client);
