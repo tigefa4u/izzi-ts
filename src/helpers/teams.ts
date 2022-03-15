@@ -33,12 +33,14 @@ const prepareItemStats = ({
 	)
 		return itemStats;
 	const stats = {} as GuildStatProps;
+	if (!stats) return itemStats;
 	const clonedStats = clone(guildItemStats);
+	Object.keys(itemStats).map((stat) => Object.assign(stats, { [stat]: itemStats[stat  as keyof GuildStatProps] }));
 	Object.keys(clonedStats).map((stat) => {
 		Object.assign(stats, {
 			[stat]: Math.ceil(
-				(itemStats[stat as keyof GuildStatProps] || 0) +
-          (itemStats[stat as keyof GuildStatProps] || 1) *
+				(stats[stat as keyof GuildStatProps] || 0) +
+          (stats[stat as keyof GuildStatProps] || 1) *
             (guildItemStats[stat as keyof GuildStatProps] / 100)
 			),
 		});
@@ -248,7 +250,7 @@ export const prepareSkewedCollectionsForBattle = async ({
 		collections: clone(collections),
 		isBattle: true,
 		guildStats: clone(guildStats),
-		itemStats,
+		itemStats: clone(itemStats),
 	});
 	if (!totalStats) {
 		throw new Error("Unable to calculate total stats");

@@ -15,7 +15,8 @@ export const prepareCriticalHitChance = ({ isPlayerFirst, playerStats, enemyStat
 	}
 	const critChance = [ true, false ];
 	const chance = [ criticalHitPercent, noCriticalHitPercent ];
-	if (critChance[probability(chance)])
+	const chanceProced = critChance[probability(chance)];
+	if (chanceProced)
 		isPlayerFirst
 			? (playerStats.totalStats.isCriticalHit = true)
 			: (enemyStats.totalStats.isCriticalHit = true);

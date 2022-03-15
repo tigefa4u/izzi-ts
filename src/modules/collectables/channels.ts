@@ -25,10 +25,8 @@ export const verifyDropChannels = async ({ client, guild, channel }: T) => {
 						return;
 					}
 					dropChannel = ch;
-					return;
 				}
 			}
-			return;
 		}
 		return dropChannel;
 	} catch (err) {

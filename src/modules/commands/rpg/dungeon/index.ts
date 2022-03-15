@@ -104,7 +104,6 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 
 		playerTeamStats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
-
 		inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) return;
 		setCooldown(author.id, "mana-battle", 60 * 5);

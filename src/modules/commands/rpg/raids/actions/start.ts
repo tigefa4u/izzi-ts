@@ -47,6 +47,7 @@ export const startRaid = async ({
 			isEvent ? "ev" : "rd"
 		} bt to attack`;
 		context.channel?.sendMessage(challengingDesc);
+		lobbyMembers.map((l) => lobby[l].timestamp = new Date().getTime());
 		await Promise.all(
 			[ ...lobbyMembers.map(async (l) => {
 				const desc = `Summoner **${lobby[l].username}**, ${challengingDesc}`;
@@ -58,7 +59,8 @@ export const startRaid = async ({
 				return DMUser(client, desc, lobby[l].user_tag);
 			}), updateRaid({ id: currentRaid.id }, {
 				stats: currentRaid.stats,
-				is_start: currentRaid.is_start 
+				is_start: currentRaid.is_start,
+				lobby
 			}) ]
 		);
 		return;

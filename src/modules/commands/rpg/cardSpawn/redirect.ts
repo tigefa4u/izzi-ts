@@ -6,7 +6,7 @@ import {
 } from "api/controllers/CardSpawnsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { getMentionedChannel } from "helpers";
+import { getMemberPermissions, getMentionedChannel } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
@@ -26,7 +26,9 @@ export const redirect = async ({
 	try {
 		if (!context.guild?.id) return;
 		const author = options.author;
-		const isAdmin = false;
+		const isAdmin = await getMemberPermissions(context, author.id).then(
+			(res) => res?.ADMINISTRATOR
+		);
 		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_ERROR_TITLE);
 		if (!isAdmin) {
@@ -47,7 +49,6 @@ export const redirect = async ({
 			viewChannels(params);
 			return;
 		}
-
 		const channelId = args[subcommand ? 1 : 0].substring(2).substring(0, 18);
 		if (!channelId) return;
 		const channel = await getMentionedChannel(context, channelId);

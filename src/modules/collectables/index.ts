@@ -75,9 +75,9 @@ export const dropCollectables = async ({
 }: T) => {
 	try {
 		const dropCard = [ true, false ];
-		const dropRate = [ 2.5, 100 ];
+		const dropRate = [ 1.7, 100 ];
 		if (dropCard[probability(dropRate)]) {
-			const dropChannel = await verifyDropChannels({
+			const dropChannel: any = await verifyDropChannels({
 				client,
 				guild,
 				channel 
@@ -132,7 +132,7 @@ export const dropCollectables = async ({
 				embed.setButtons(buttons);
 			}
 
-			dropChannel?.sendMessage(embed).then((msg) => {
+			dropChannel?.sendMessage(embed).then((msg: Message) => {
 				sentMessage = msg;
 			});
 			return;
