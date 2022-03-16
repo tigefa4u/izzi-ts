@@ -44,4 +44,5 @@ export type ComputedReturnType = {
     r_exp: number;
     exp: number;
     reqExp: number;
+    max_level?: boolean;
 }

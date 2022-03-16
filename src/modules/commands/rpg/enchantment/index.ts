@@ -52,7 +52,7 @@ async function confirmAndEnchantCard(
 		const ids = computed.accumulator.map((a) => a.id);
 		const collections = await verifyCollectionsById({
 			user_id: user.id,
-			ids: [ ...new Set([ ...ids, cardToEnchant.id  ]) ],
+			ids: [ ...new Set([ ...ids, cardToEnchant.id ]) ],
 		});
 		if (
 			!collections ||
@@ -109,7 +109,9 @@ export const enchantCard = async ({
 		const author = options.author;
 		const cd = await getCooldown(author.id, "enchant");
 		if (cd) {
-			context.channel?.sendMessage("You can use this command again after a minute");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute"
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -150,6 +152,12 @@ export const enchantCard = async ({
 			channel: context.channel,
 		});
 		if (!computed) return;
+		if (computed.max_level) {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}** the card you are trying to Enchant is already max level!`
+			);
+			return;
+		}
 		const cardsWithSameName = computed.accumulator.filter(
 			(a) => a.character_id === cardToEnchant.character_id
 		);
@@ -187,7 +195,9 @@ export const enchantCard = async ({
 			.setFooter({
 				text: `Total Level: ${cardToEnchant.character_level} -> ${
 					cardToEnchant.character_level + computed.levelCounter
-				} | Total Exp Gained: ${computed.totalXpGain} | Required Exp: ${computed.reqExp} | Total Cost: ${cost}`,
+				} | Total Exp Gained: ${computed.totalXpGain} | Required Exp: ${
+					computed.reqExp
+				} | Total Cost: ${cost}`,
 				iconURL: author.displayAvatarURL(),
 			});
 

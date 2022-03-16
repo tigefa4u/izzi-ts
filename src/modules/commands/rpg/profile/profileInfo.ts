@@ -123,7 +123,7 @@ export const permits = async function ({
 		}
 
 		const refillTimerDesc =
-      remainingHours || remainingMinutes
+      remainingHours > -1 || remainingMinutes > 0
       	? `[Refills in ${
       		remainingHours < 0 ? 0 : remainingHours
       	} hours ${remainingMinutes} minutes]`

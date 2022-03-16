@@ -70,7 +70,9 @@ export const preComputeRequiredCards = async ({
 	try {
 		const currentExp = card.exp;
 		let reqExp = await prepareRequiredExp({ card: card });
-		if (!reqExp) return;
+		if (typeof reqExp === "object") {
+			return reqExp as ComputedReturnType;
+		}
 		reqExp = reqExp - currentExp; // Card already has some exp
 		const { withSameName, withDifferentName } = prepareXpGainObject(reqExp);
 
@@ -181,7 +183,7 @@ export async function prepareRequiredExp({ card, }: {
 		throw new Error("Unable to fetch powerlevel for rank: " + card.rank);
 	}
 	if (card.character_level >= powerLevel.max_level) {
-		return;
+		return { max_level: true };
 	}
 	const levelDiff = powerLevel.max_level - card.character_level;
 	return getReqExpBetweenLevels(card.character_level, levelDiff);
