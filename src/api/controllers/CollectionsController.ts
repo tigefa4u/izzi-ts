@@ -44,7 +44,7 @@ export const createCollection: (
 };
 
 export const getCollection: (
-  params: CollectionParams & { limit?: number; name?: string | string[]; isExactMatch: boolean; }
+  params: CollectionParams & { limit?: number; name?: string | string[]; isExactMatch?: boolean; }
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
 		let characters = [] as CharactersReturnType;
