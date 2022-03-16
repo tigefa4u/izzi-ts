@@ -19,6 +19,7 @@ export type FilterProps = {
     isEvent?: boolean;
     limit?: number | number[];
     page?: string[];
+    isExactMatch?: boolean;
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]

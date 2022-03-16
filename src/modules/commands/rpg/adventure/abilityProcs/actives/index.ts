@@ -242,8 +242,8 @@ export const killerInstincts = ({
       basePlayerStats.totalStats.evasion *
       ((basePlayerStats.totalStats.evasionTemp * evaPercent) / 100);
 		basePlayerStats.totalStats.evasionTemp++;
-		basePlayerStats.totalStats.evasion =
-      basePlayerStats.totalStats.evasion + evaRatio;
+		playerStats.totalStats.evasion =
+		playerStats.totalStats.evasion + evaRatio;
 
 		const desc =
       `increasing **INT** by __${incPercent}%__ as well as increasing **SPD** by __${incPercent}%__, ` +

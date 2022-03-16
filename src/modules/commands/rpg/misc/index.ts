@@ -76,6 +76,9 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
         `We have also refilled your mana __${user.max_mana}__ -> __${user.max_mana + 2}__`;
 		}
 		const updateObj = { gold: user.gold };
+		if (randomReward.key === "exp") {
+			Object.assign(updateObj, { exp: user.exp });
+		}
 		if (randomReward.key === "mana" || randomReward.key === "gold") {
 			Object.assign(updateObj, { [randomReward.key]: user[randomReward.key] });
 		}

@@ -71,7 +71,7 @@ export const revitalize = ({
         playerStats.totalStats.vitality - (card.stats.vitalityInc || card.stats.vitality);
 		const incPercent = calcPercentRatio(8, card.rank);
 		const ratio =
-    card.stats.vitality *
+    playerStats.totalStats.vitality *
     ((basePlayerStats.totalStats.vitalityTemp * incPercent) / 100);
 		basePlayerStats.totalStats.vitalityTemp = basePlayerStats.totalStats.vitalityTemp + 1;
 		const inc = card.stats.vitality + ratio;

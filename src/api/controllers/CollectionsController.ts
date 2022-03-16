@@ -44,12 +44,15 @@ export const createCollection: (
 };
 
 export const getCollection: (
-  params: CollectionParams & { limit?: number; name?: string | string[]; }
+  params: CollectionParams & { limit?: number; name?: string | string[]; isExactMatch: boolean; }
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
 		let characters = [] as CharactersReturnType;
 		if (params.name) {
-			const resp = await getCharacters({ name: params.name });
+			const resp = await getCharacters({
+				name: params.name,
+				isExactMatch: params.isExactMatch 
+			});
 			if (resp && resp.length > 0) {
 				characters = resp;
 				Object.assign(params, { character_ids: resp.map((c) => c.id) });
