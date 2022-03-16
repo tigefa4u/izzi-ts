@@ -26,7 +26,7 @@ async function validateTraderQueue(
 			user_id: user.id,
 			ids: trader.queue.map((q) => q.id),
 			is_on_market: false,
-			is_item: false
+			is_item: false,
 		};
 		const collections = await getCollection(params);
 		if (!collections || collections.length !== trader.queue.length) {
@@ -38,9 +38,13 @@ async function validateTraderQueue(
 			return;
 		}
 		if (user.selected_card_id) {
-			const hasSelectedCard = trader.queue.map((q) => q.id).includes(user.selected_card_id);
+			const hasSelectedCard = trader.queue
+				.map((q) => q.id)
+				.includes(user.selected_card_id);
 			if (hasSelectedCard) {
-				embed.setDescription("Trade has been cancelled. You cannot trade the card you've selected for battle!");
+				embed.setDescription(
+					"Trade has been cancelled. You cannot trade the card you've selected for battle!"
+				);
 				channel?.sendMessage(embed);
 				return;
 			}
@@ -119,6 +123,13 @@ export const confirmTrade = async ({
 			participantTow.gold = participantTow.gold - trader_2.gold;
 			participantOne.gold = participantOne.gold + trader_2.gold;
 		}
+		loggers.info(
+			`trades.actions.confirm.confirmTrade(): Completing Trade for user ${
+				trader_1.username
+			} queue: ${JSON.stringify(trader_1.queue)} gold: ${trader_1.gold} & user: ${
+				trader_2.user_tag
+			} queue: ${JSON.stringify(trader_2.queue)} gold: ${trader_2.gold}`
+		);
 		// Update user only if there's gold trade
 		if (trader_1.gold > 0 || trader_2.gold > 0) {
 			promises.push(

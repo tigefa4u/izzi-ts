@@ -13,7 +13,7 @@ import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";
-import { getCharacters } from "./CharactersController";
+import { getCharacterById, getCharacters } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
 type T = { user_id: number };
@@ -44,15 +44,12 @@ export const createCollection: (
 };
 
 export const getCollection: (
-  params: CollectionParams & { limit?: number; name?: string | string[]; isExactMatch?: boolean; }
+  params: CollectionParams & { limit?: number; name?: string | string[]; }
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
 		let characters = [] as CharactersReturnType;
 		if (params.name) {
-			const resp = await getCharacters({
-				name: params.name,
-				isExactMatch: params.isExactMatch 
-			});
+			const resp = await getCharacters({ name: params.name, });
 			if (resp && resp.length > 0) {
 				characters = resp;
 				Object.assign(params, { character_ids: resp.map((c) => c.id) });
@@ -60,12 +57,18 @@ export const getCollection: (
 		}
 		const result = await Collections.get(params);
 		const charactersMeta = reorderObjectKey(characters, "id");
-		result.map((r) => {
+		await Promise.all(result.map(async (r, idx) => {
 			if (charactersMeta[r.character_id]) {
 				r.name = charactersMeta[r.character_id].name;
+			} else {
+				const resp = await getCharacterById({ id: r.character_id });
+				if (!resp) {
+					result.splice(idx, 1);
+				}
+				r.name = resp?.name;
 			}
 			return r;
-		});
+		}));
 		return result;
 	} catch (err) {
 		loggers.error(

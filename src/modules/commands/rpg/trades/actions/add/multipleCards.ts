@@ -55,7 +55,6 @@ export const addMultipleCards = async ({
 			limit: params.limit,
 			is_item: false,
 			name: params.name,
-			isExactMatch: true
 		};
 		const exclude_ids = trader.queue.map((i) => i.id);
 		if (exclude_ids.length > 0) {
@@ -73,8 +72,8 @@ export const addMultipleCards = async ({
 			rank: coll.rank,
 			name: coll.name,
 		}));
-		loggers.info("adding cards to trade: " + JSON.stringify(arr));
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
+		loggers.info(`Trade Queue for user: ${trader.user_tag} Queue: ${JSON.stringify(trader.queue)}`);
 		tradeQueue[trader.user_tag] = trader;
 		setTradeQueue(tradeId, tradeQueue);
 		const rankGroup = groupByKey(arr, "rank");
