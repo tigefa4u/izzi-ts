@@ -62,10 +62,9 @@ export const getCollection: (
 				r.name = charactersMeta[r.character_id].name;
 			} else {
 				const resp = await getCharacterById({ id: r.character_id });
-				if (!resp) {
-					result.splice(idx, 1);
+				if (resp) {
+					r.name = resp.name;
 				}
-				r.name = resp?.name;
 			}
 			return r;
 		}));
