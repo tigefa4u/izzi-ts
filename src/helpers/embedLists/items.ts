@@ -16,9 +16,7 @@ export const createItemList = (
 			name: `#${i + 1 + (currentPage - 1) * perPage} ${titleCase(item.name)} ${emojiMap(
 				item.name
 			)}${options?.isMarket ? ` | ${item.price} ${emoji.gold}` : ""}`,
-			value: `Category: [${item.category
-				.map((i) => titleCase(i))
-				.join(", ")}] | ID: ${item.id}`,
+			value: `Equip this item using \`\`equip <#id> ${item.id}\`\` | ID: ${item.id}`,
 		});
 	});
 
