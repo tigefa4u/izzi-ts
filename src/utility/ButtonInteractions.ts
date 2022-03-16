@@ -140,7 +140,7 @@ export const collectableInteraction = async <P>(
 	callback: () => void
 ) => {
 	try {
-		const label = REACTIONS.confirm.label + "_" + generateUUID(4);
+		const label = REACTIONS.confirm.label + "_" + channel?.id || "" + "_" + generateUUID(4);
 		const buttons = new MessageActionRow().addComponents(
 			createButton(label, {
 				style: "PRIMARY",

@@ -40,7 +40,7 @@ async function calcLevelGain({
 	let reqExp = 0;
 	const levelDiff = powerLevel.max_level - card.character_level;
 	while (levelCounter < levelDiff) {
-		const gain = Math.floor(BASE_XP * (1 + levelCounter) ** XP_GAIN_EXPONENT);
+		const gain = Math.floor(BASE_XP * (card.character_level + levelCounter) ** XP_GAIN_EXPONENT);
 		reqExp = reqExp + gain;
 		const diff = totalGain - gain;
 		levelCounter++;
@@ -52,7 +52,7 @@ async function calcLevelGain({
 	}
 	return {
 		levelCounter,
-		r_exp: Math.floor(BASE_XP * (1 + levelCounter) ** XP_GAIN_EXPONENT),
+		r_exp: Math.floor(BASE_XP * (card.character_level + levelCounter) ** XP_GAIN_EXPONENT),
 		exp: totalGain,
 		reqExp
 	};
