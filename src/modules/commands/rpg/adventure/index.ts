@@ -2,6 +2,8 @@ import { RPGBattleCardDetailProps } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getCardForBattle } from "api/controllers/CollectionInfoController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
+import { getGuild } from "api/controllers/GuildsController";
 import { getStageForBattle } from "api/controllers/StagesController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
@@ -169,11 +171,21 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		// JSON.stringify(enemyCard)
 		// );
 
+		let guildStats;
+		const guildMember = await getGuildMember({ user_id: user.id });
+		if (guildMember) {
+			const guild = await getGuild({ id: guildMember.guild_id });
+			if (guild) {
+				guildStats = guild.guild_stats;
+			}
+		}
+
 		const promises = [
 			preparePlayerStats({
 				stats: card.stats,
 				characterLevel: card.character_level,
 				rank: card.rank,
+				guildStats,
 			}),
 			preparePlayerStats({
 				stats: zone.stats,
