@@ -66,7 +66,7 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 2.5
+						rate: 5
 					}
 				],
 			}
@@ -112,13 +112,13 @@ const baseLoot: any = {
 					{
 						rank: "legend",
 						rank_id: 5,
-						rate: 3,
+						rate: 5,
 						number: 1
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 1.5,
+						rate: 3.5,
 						number: 1,
 					},
 				]
@@ -166,18 +166,18 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
-						rate: 6
+						rate: 14
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 4.5,
+						rate: 8.5,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 0.5,
+						rate: 4,
 						number: 1,
 					},
 				],
