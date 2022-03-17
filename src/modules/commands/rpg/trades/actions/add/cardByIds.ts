@@ -34,10 +34,10 @@ export const addCardByIds = async ({
 			row_number: ids,
 			is_on_market: false,
 		};
-		const exclude_ids = trader.queue.map((i) => i.id);
-		if (exclude_ids.length > 0) {
-			Object.assign(options, { exclude_ids });
-		}
+		// const exclude_ids = trader.queue.map((i) => i.id);
+		// if (exclude_ids.length > 0) {
+		// 	Object.assign(options, { exclude_ids });
+		// }
 		const collections = await getCardInfoByRowNumber(options);
 		if (!collections || collections.length <= 0) {
 			embed.setDescription(
@@ -46,13 +46,15 @@ export const addCardByIds = async ({
 			channel?.sendMessage(embed);
 			return;
 		}
-		const arr = collections.map((coll) => ({
+		const arr = collections.filter((c) => !trader.queue.find(q => q.id === c.id)).map((coll) => ({
 			id: coll.id,
 			user_id: coll.user_id,
 			rank: coll.rank,
 			name: coll.name,
 		}));
-		loggers.info("adding cards to trade: " + JSON.stringify(arr));
+		if (arr.length > 0) {
+			loggers.info("adding cards to trade: " + JSON.stringify(arr));
+		}
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
 		tradeQueue[trader.user_tag] = trader;
 		setTradeQueue(tradeId, tradeQueue);
