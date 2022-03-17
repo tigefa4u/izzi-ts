@@ -3,8 +3,11 @@ import { getAllUsers, updateRPGUser } from "api/controllers/UsersController";
 import connection from "db";
 import { refillEnergy } from "helpers/raid";
 import loggers from "loggers";
+import { createRaidBoss } from "modules/commands/rpg/raids/actions/spawn";
 import autoKick from "./autoKick";
 import { DMUserViaApi } from "./directMessage";
+import Cache from "../../cache";
+import { computeRank } from "modules/commands/rpg/raids/computeBoss";
 
 const knex = connection;
 
@@ -154,6 +157,42 @@ async function raidTimers() {
 		return;
 	}
 }
+
+const spawnRaids = async () => {
+	try {
+		const raidsDisabled = await Cache.get("disable-raids");
+		let isEvent = false;
+		if (raidsDisabled) {
+			isEvent = true;
+		}
+		const eventsDisabled = await Cache.get("disable-events");
+		if (eventsDisabled) {
+			isEvent = false;
+		}
+		if (eventsDisabled && raidsDisabled) {
+			return;
+		}
+		const raids = await getAllRaids();
+		if (raids && raids.length > 35) return;
+		await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map(async (difficulty) => {
+			const computedBoss = computeRank(difficulty);
+			if (!computedBoss) return;
+			await createRaidBoss({
+				isPrivate: false,
+				isEvent,
+				computedBoss,
+				lobby: {}
+			});
+		}));
+	} catch (err) {
+		loggers.error("cronjob.spawnRaids(): something went wrong", err);
+		return;
+	}
+};
+
+setInterval(() => {
+	spawnRaids();
+}, 1000 * 60 * 60);
 
 setInterval(() => {
 	resetUserActive();

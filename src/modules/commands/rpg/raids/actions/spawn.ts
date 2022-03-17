@@ -1,5 +1,10 @@
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import { RaidActionProps, RaidStatsProps } from "@customTypes/raids";
+import {
+	PrepareLootProps,
+	RaidActionProps,
+	RaidLobbyProps,
+	RaidStatsProps,
+} from "@customTypes/raids";
 import { getRandomCard } from "api/controllers/CardsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -27,6 +32,102 @@ import {
 	prepareRaidTimer,
 } from "..";
 import { computeRank } from "../computeBoss";
+
+type C = {
+  computedBoss: PrepareLootProps;
+  isEvent: boolean;
+  isPrivate: boolean;
+  lobby: RaidLobbyProps;
+};
+export const createRaidBoss = async ({
+	computedBoss,
+	isEvent,
+	lobby,
+	isPrivate,
+}: C) => {
+	const raidBosses = (await Promise.all(
+		Array(computedBoss.bosses)
+			.fill(0)
+			.map(async () => {
+				const rank = randomElementFromArray(computedBoss.rank);
+				const level = randomNumber(
+					computedBoss.level[0],
+					computedBoss.level[1]
+				);
+				const card = await getRandomCard(
+					{
+						is_logo: false,
+						rank,
+						is_event: isEvent,
+						// is_random: true,
+					},
+					1
+				);
+				if (!card) return;
+				const raidBoss = card[0];
+				raidBoss.character_level = level;
+				return {
+					...raidBoss,
+					copies: 1,
+					user_id: 0,
+					is_on_market: false,
+					is_item: false,
+					item_id: 0,
+					exp: 1,
+					r_exp: 1,
+					souls: 1,
+					rank_id: 0,
+				};
+			})
+	)) as CollectionCardInfoProps[];
+
+	const stats = await prepareTotalOverallStats({
+		collections: clone(raidBosses),
+		isBattle: false,
+	});
+	if (!stats) {
+		throw new Error("Unable to prepare raid boss stats");
+	}
+
+	if (stats.totalOverallStats.originalHp === 0) {
+		stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
+	}
+	const dt = new Date();
+	const reducedLevel = raidBosses.reduce(
+		(acc, r) => {
+			acc.character_level = acc.character_level + r.character_level;
+			return acc;
+		},
+    { character_level: 0 } as { character_level: number }
+	);
+
+	const totalBossLevel: number = reducedLevel.character_level;
+	const raidStats = {
+		battle_stats: {
+			boss_level: totalBossLevel,
+			bosses: computedBoss.bosses,
+			power_level: stats.totalPowerLevel,
+			stats: stats.totalOverallStats,
+		},
+		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		difficulty: computedBoss.difficulty,
+		timestamp: dt.setHours(dt.getHours() + 1),
+	} as RaidStatsProps;
+	const raid = await createRaid({
+		stats: raidStats,
+		lobby: lobby,
+		is_start: false,
+		is_event: isEvent,
+		is_private: isPrivate,
+		raid_boss: JSON.stringify(raidBosses),
+		loot: computedBoss.loot,
+	});
+	return {
+		raid,
+		raidBosses 
+	};
+};
 
 export const spawnRaid = async ({
 	context,
@@ -81,77 +182,6 @@ export const spawnRaid = async ({
 		};
 		let isPrivate = makePrivate[args.shift() || ""];
 		if (!isPrivate) isPrivate = false;
-		const raidBosses = (await Promise.all(
-			Array(computedBoss.bosses)
-				.fill(0)
-				.map(async () => {
-					const rank = randomElementFromArray(computedBoss.rank);
-					const level = randomNumber(
-						computedBoss.level[0],
-						computedBoss.level[1]
-					);
-					const card = await getRandomCard(
-						{
-							is_logo: false,
-							rank,
-							is_event: isEvent,
-							// is_random: true,
-						},
-						1
-					);
-					if (!card) return;
-					const raidBoss = card[0];
-					raidBoss.character_level = level;
-					return {
-						...raidBoss,
-						copies: 1,
-						user_id: 0,
-						is_on_market: false,
-						is_item: false,
-						item_id: 0,
-						exp: 1,
-						r_exp: 1,
-						souls: 1,
-						rank_id: 0,
-					};
-				})
-		)) as CollectionCardInfoProps[];
-
-		const stats = await prepareTotalOverallStats({
-			collections: clone(raidBosses),
-			isBattle: false,
-		});
-		if (!stats) {
-			throw new Error("Unable to prepare raid boss stats");
-		}
-
-		if (stats.totalOverallStats.originalHp === 0) {
-			stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
-		}
-		const dt = new Date();
-		const reducedLevel = raidBosses.reduce(
-			(acc, r) => {
-				acc.character_level = acc.character_level + r.character_level;
-				return acc;
-			},
-      { character_level: 0 } as { character_level: number }
-		);
-
-		const totalBossLevel: number = reducedLevel.character_level;
-		const raidStats = {
-			battle_stats: {
-				boss_level: totalBossLevel,
-				bosses: computedBoss.bosses,
-				power_level: stats.totalPowerLevel,
-				stats: stats.totalOverallStats,
-			},
-			remaining_strength:
-        stats.totalOverallStats.strength * (totalBossLevel * 2),
-			original_strength:
-        stats.totalOverallStats.strength * (totalBossLevel * 2),
-			difficulty: computedBoss.difficulty,
-			timestamp: dt.setHours(dt.getHours() + 1),
-		} as RaidStatsProps;
 		let lobby = {};
 		if (isPrivate) {
 			lobby = prepareInitialLobbyMember(
@@ -162,16 +192,14 @@ export const spawnRaid = async ({
 				true
 			);
 		}
-		const raid = await createRaid({
-			stats: raidStats,
-			lobby: lobby,
-			is_start: false,
-			is_event: isEvent,
-			is_private: isPrivate,
-			raid_boss: JSON.stringify(raidBosses),
-			loot: computedBoss.loot,
+		const { raid, raidBosses } = await createRaidBoss({
+			lobby,
+			computedBoss,
+			isEvent,
+			isPrivate 
 		});
 		if (!raid) return;
+
 		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
 		let bossCanvas: Canvas | undefined;
 		if (isEvent) {
