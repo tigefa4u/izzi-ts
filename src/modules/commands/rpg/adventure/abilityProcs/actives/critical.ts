@@ -32,6 +32,7 @@ export const pointBlank = ({
       ((basePlayerStats.totalStats.tempAccPB * accPercent) / 100);
 		playerStats.totalStats.accuracy =
 		basePlayerStats.totalStats.accuracy + accuracy;
+		basePlayerStats.totalStats.tempAccPB = basePlayerStats.totalStats.tempAccPB + 1;
 		const desc = `Increasing **CRIT Chances** by __${pbPercent}%__ and ` +
         `its **ACC** is increased by __${accPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
