@@ -25,7 +25,7 @@ export const kickmember = async ({
 			context.channel?.sendMessage("You are not allowed to use this command");
 			return;
 		}
-		if (!currentRaid.is_start) {
+		if (currentRaid.is_start) {
 			context.channel?.sendMessage("The raid has already started! Use ``votekick <votekick ID>`` " +
 			"to kick this member from the lobby");
 			return;
