@@ -163,8 +163,8 @@ const baseLoot: any = {
 				],
 				rare: [
 					{
-						rank: "diamond",
-						rank_id: 3,
+						rank: "legend",
+						rank_id: 5,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 						rate: 6
 					},
