@@ -158,9 +158,8 @@ function boostRaidBoss({
 	enemyStats,
 	round,
 }: Pick<PrepareBattleDescriptionProps, "enemyStats"> & { round: number }) {
-	const incRatio = Math.round(
-		enemyStats.totalStats.critical * ((5 * round) / 100)
-	);
+	if (!enemyStats.totalStats.critical) enemyStats.totalStats.critical = 1;
+	const incRatio = enemyStats.totalStats.critical * ((5 * round) / 100);
 	enemyStats.totalStats.critical = enemyStats.totalStats.critical + incRatio;
 	const critDmgRatio =
     enemyStats.totalStats.criticalDamage * ((3 * round) / 100);
@@ -192,13 +191,13 @@ async function simulatePlayerTurns({
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
-		if (isRaid && round >= 10) {
+		if (isRaid && round >= 9) {
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
 			});
 			enemyStats = boost.enemyStats;
-			if (round === 10 && i === 1) {
+			if (round === 9 && i === 2) {
 				const isRaidBossEdited = await simulateBattleDescription({
 					playerStats,
 					enemyStats,

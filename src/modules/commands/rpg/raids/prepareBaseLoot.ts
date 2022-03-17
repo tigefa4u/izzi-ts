@@ -177,7 +177,7 @@ const baseLoot: any = {
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 4,
+						rate: 5,
 						number: 1,
 					},
 				],
