@@ -213,10 +213,6 @@ async function upgradeUser(
 		user.exp = Math.abs(currentExp - requiredExp);
 		user.r_exp = user.level * 47;
 		user.gold = user.gold + (user.is_married ? 2000 : 750);
-		Object.assign(upgradeObject, {
-			r_exp: user.r_exp,
-			level: user.level 
-		});
 		channel?.sendMessage(
 			`Yay **${author.username}**! you've leveled up ${
 				emoji.welldone
@@ -231,7 +227,12 @@ async function upgradeUser(
 		);
 		user.max_mana = user.max_mana + 2;
 		user.mana = user.max_mana;
-		Object.assign(upgradeObject, { mana: user.mana });
+		Object.assign(upgradeObject, {
+			mana: user.mana,
+			max_mana: user.max_mana,
+			r_exp: user.r_exp,
+			level: user.level 
+		});
 	} else {
 		user.exp = currentExp;
 	}

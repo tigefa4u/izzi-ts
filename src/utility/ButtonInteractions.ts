@@ -140,7 +140,7 @@ export const collectableInteraction = async <P>(
 	callback: () => void
 ) => {
 	try {
-		const label = REACTIONS.confirm.label + "_" + channel?.id || "" + "_" + generateUUID(4);
+		const label = REACTIONS.confirm.label + "_" + (channel?.id || "") + "_" + generateUUID(4);
 		const buttons = new MessageActionRow().addComponents(
 			createButton(label, {
 				style: "PRIMARY",
@@ -149,7 +149,10 @@ export const collectableInteraction = async <P>(
 		);
 		const collector = channel?.createMessageComponentCollector({
 			filter: (Interaction) => verifyFilter(Interaction.customId, { label }),
-			maxComponents: 1 
+			max: 1,
+			componentType: "BUTTON",
+			dispose: true,
+			time: 240_000
 		});
 		collector?.on("collect", async (buttonInteraction) => {
 			buttonInteraction.deferUpdate();
