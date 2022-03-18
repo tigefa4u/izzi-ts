@@ -52,7 +52,7 @@ const baseLoot: any = {
 					},
 					{
 						rank: "gold",
-						rank_id: 3,
+						rank_id: 2,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 					},
 					{
@@ -164,7 +164,7 @@ const baseLoot: any = {
 				rare: [
 					{
 						rank: "legend",
-						rank_id: 14,
+						rank_id: 5,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
 						rate: 14
 					},

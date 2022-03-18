@@ -19,7 +19,7 @@ export const createLBEmbedList = (
 			} else {
 				return {
 					username: item.username,
-					id: item.id,
+					id: item.user_tag,
 					index: i,
 				};
 			}

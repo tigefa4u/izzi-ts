@@ -100,9 +100,9 @@ export const processRaidLoot = async ({
 				...(resp.defaultDrops || []),
 				...(resp.rareDrops || []),
 			] as CollectionCreateProps[];
-		});
+		}).flat();
 
-		await Promise.all(collections.map(async (c) => await createCollection(c)));
+		await createCollection(collections);
 
 		loggers.info("raid.processRaidLoot(): Distributing raid loot rewards: " + JSON.stringify(allRewards));
         
@@ -233,7 +233,7 @@ async function initDrops(
 					.filter(
 						(x) =>
 							raid.lobby[x].total_damage <=
-              Math.floor(raid.stats.original_strength * 0.18)
+				  Math.floor(raid.stats.original_strength * 0.18)
 					);
 
 				if (leechers.length > 0) {
