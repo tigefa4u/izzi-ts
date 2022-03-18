@@ -101,7 +101,7 @@ export async function prepareRankAndFetchCards({
 
 		totalXpGain = totalXpGain + xpGain;
 		reqExp = reqExp - xpGain;
-		if (stashRequestPaload && stash) {
+		if (stashRequestPaload && stash && reqExp > 0) {
 			const xpGainFromStash =
         (stashRequestPaload?.isSameName ? 3 : 1) *
         stash?.length *
@@ -195,6 +195,18 @@ export async function prepareRankAndFetchCards({
 					totalXpGain,
 				};
 			}
+		}
+		if (reqExp < 0) {
+			const xpGainPerRank =
+          (initialRequestPayload.isSameName ? 3 : 1) *
+          XP_GAIN_PER_RANK[initialRequestPayload.rank];
+
+			const numberOfCardsToRemove = Math.floor(
+				Math.abs(reqExp) / xpGainPerRank
+			);
+			accumulator = accumulator.slice(0, accumulator.length - numberOfCardsToRemove);
+
+			totalXpGain = totalXpGain - Math.abs(reqExp);
 		}
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
