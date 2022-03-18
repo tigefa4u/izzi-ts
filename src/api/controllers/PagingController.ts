@@ -52,7 +52,7 @@ export const pageFunc = async <T>(
 	options: O
 ) => {
 	try {
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const totalCount = array.length;
 		const totalPages = Math.ceil(totalCount / filter.perPage);
 		let embed = createEmbed(author);

@@ -120,7 +120,7 @@ export const itemInfo = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
-		const pageFilter = PAGE_FILTER;
+		const pageFilter = clone(PAGE_FILTER);
 		const itemRes = await getItems({ name: args.join(" ") }, pageFilter);
 		if (!itemRes) return;
 		const item = itemRes.data[0];

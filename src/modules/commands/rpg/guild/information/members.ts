@@ -7,6 +7,7 @@ import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createGuildMemberList } from "helpers/embedLists/guildMembers";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -25,7 +26,7 @@ export const viewMembers = async ({ context, client, options }: BaseProps) => {
 		});
 		if (!validGuild) return;
 		const thumbnail = context.guild?.iconURL() || client.user?.displayAvatarURL();
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const params = { guild_id: validGuild.guild.id };
 		let embed = createEmbed()
 			.setThumbnail(thumbnail || "");

@@ -11,6 +11,7 @@ import { createEmbedList } from "helpers/embedLists";
 import { createSkinList } from "helpers/embedLists/skin";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { delSkinArr, getSkinArr, setSkinArr } from "./skinCache";
 
@@ -21,7 +22,7 @@ export const show = async (params: {
   args?: string[];
 }) => {
 	try {
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const pageNum = params.args?.shift();
 		if (pageNum === "-pg") {
 			filter.currentPage = Number(params.args?.shift() || 0);

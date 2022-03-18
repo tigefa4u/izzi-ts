@@ -11,6 +11,7 @@ import { createEmbedList } from "helpers/embedLists";
 import { createZoneList } from "helpers/embedLists/zone";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 
 async function handleNextZone(params: {
@@ -31,6 +32,9 @@ async function handleNextZone(params: {
 		if (zn === "n") user.ruin = user.ruin + 1;
 		else {
 			user.ruin = parseInt(zn);
+			if (isNaN(user.ruin)) {
+				user.ruin = 1;
+			}
 		}
 		const maxLocation = await getMaxLocation();
 		if (!maxLocation) {
@@ -72,7 +76,7 @@ async function handleZones(params: {
 }, options?: {
         page: number;
     }) {
-	const filter = PAGE_FILTER;
+	const filter = clone(PAGE_FILTER);
 	if (options?.page && !isNaN(options.page)) {
 		filter.currentPage = options.page;
 	}
@@ -127,9 +131,9 @@ export const zone = async ({ context, client, options, args }: BaseProps) => {
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const zn = args.shift();
-		if (!zn || zn === "page") {
+		if (!zn || zn === "-pg") {
 			const opts = {} as { page: number };
-			if (zn === "page") {
+			if (zn === "-pg") {
 				opts.page = parseInt(args.shift() || "0");
 			}
 			await handleZones({

@@ -7,6 +7,7 @@ import { PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createGuildItemList } from "helpers/embedLists/guildItems";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -24,7 +25,7 @@ export const guildItems = async ({ context, options, client }: BaseProps) => {
 			extras: { user_id: user.id }
 		});
 		if (!validGuild) return;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const params = { guild_id: validGuild.guild.id };
 		let embed = createEmbed();
 		let sentMessage: Message;

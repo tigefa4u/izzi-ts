@@ -1,5 +1,11 @@
 import { CommandMapProps } from "@customTypes/command";
+import {
+	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug 
+} from "modules/commands/basic/actions";
 import { status } from "modules/commands/basic/botStatus";
+import {
+	cry, dance, run, dodge, baka, pout, glare, laugh 
+} from "modules/commands/basic/emotions";
 import { bet } from "modules/commands/basic/gamble";
 import { help, invite, ping } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
@@ -106,6 +112,28 @@ const commandMap: CommandMapProps = {
 	event: eventActions,
 	dungeon: dungeon,
 	enchantment: enchantCard,
+	bonk: bonk,
+	cry: cry,
+	poke: poke,
+	spank: spank,
+	lick: lick,
+	pat: pat,
+	cuddle: cuddle,
+	slap: slap,
+	bite: bite,
+	kill: kill,
+	kiss: kiss,
+	"slow-kiss": slowKiss,
+	"tight-hug": tightHug,
+	punch,
+	hug,
+	dance: dance,
+	dodge: dodge,
+	run: run,
+	baka: baka,
+	pout: pout,
+	glare: glare,
+	laugh: laugh
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

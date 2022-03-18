@@ -31,7 +31,7 @@ async function claimCard(
 	const user = await getRPGUser({ user_tag: claimerId }, { cached: true });
 	if (!user) {
 		params.channel?.sendMessage(
-			"You have no started your journey in the Xenverse! " +
+			"You have not started your journey in the Xenverse! " +
         "Use ``start`` to be able to Claim cards!"
 		);
 		return;

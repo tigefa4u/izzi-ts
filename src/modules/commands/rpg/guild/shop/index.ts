@@ -6,6 +6,7 @@ import { GUILD_MARKET_IDS, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createGuildMarketItemList } from "helpers/embedLists/guildItems";
 import loggers from "loggers";
+import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { buyItem } from "./buy";
 
@@ -24,7 +25,7 @@ export const itemMarket = async ({ context, client, args, options }: BaseProps) 
 		}
 		let embed = createEmbed();
 		let sentMessage: Message;
-		const filter = PAGE_FILTER;
+		const filter = clone(PAGE_FILTER);
 		const buttons = await paginatorInteraction(
 			context.channel,
 			author.id,

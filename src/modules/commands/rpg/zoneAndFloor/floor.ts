@@ -60,6 +60,9 @@ async function handleNextFloor(params: {
 		if (fl == "n") user.floor = user.floor + 1;
 		else {
 			user.floor = parseInt(fl);
+			if (isNaN(user.floor)) {
+				user.floor = 1;
+			}
 		}
 	}
 	await updateRPGUser({ user_tag: user.user_tag }, { floor: user.floor });
