@@ -44,7 +44,7 @@ export const raidLobbies = async ({
 						pageCount: data.data.length,
 						pageName: "Lobbies",
 						description:
-                            "All lobbies that match your" +
+                            "All lobbies that match your " +
                             "requirements are shown below.",
 						title: `${isEvent ? "Event" : "Raid"} Lobbies`,
 					});
