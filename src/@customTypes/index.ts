@@ -88,7 +88,7 @@ export type OverallStatsProps = CharacterStatProps & {
     defenseBonus?: number;
     dexterityBonus?: number;
     strengthBonus?: number;
-    intellegenceBonus?: number;
+    intelligenceBonus?: number;
     effective?: number;
     originalHp?: number;
 }

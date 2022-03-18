@@ -35,7 +35,7 @@ async function calcLevelGain({
 			exp: card.exp,
 		};
 	}
-	let totalGain = totalXpGain - card.exp;
+	let totalGain = totalXpGain + card.exp;
 	let levelCounter = 0;
 	let reqExp = 0;
 	const levelDiff = powerLevel.max_level - card.character_level;

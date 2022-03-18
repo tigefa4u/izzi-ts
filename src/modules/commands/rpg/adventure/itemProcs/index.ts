@@ -7,7 +7,7 @@ import { clone } from "utility";
 import * as damageItems from "./categories/damage";
 import * as defenseItems from "./categories/defense";
 import * as lifestealItems from "./categories/lifesteal";
-import * as intellegenceItems from "./categories/intellegence";
+import * as intelligenceItems from "./categories/intelligence";
 
 const ItemProcMap: ItemProcMapProps = {
 	"duskblade of draktharr": damageItems.duskbladeOfDraktharr,
@@ -20,11 +20,11 @@ const ItemProcMap: ItemProcMapProps = {
 	"guardian angel": defenseItems.guardianAngel,
 	thornmail: defenseItems.thornmail,
 	stormrazor: damageItems.stormrazor,
-	"sapphire's staff": intellegenceItems.sapphiresStaff,
-	"seeker's armguard": intellegenceItems.seekersArmguard,
-	"lunar wand": intellegenceItems.lunarWand,
-	"staff of medana": intellegenceItems.staffOfMedana,
-	"farsight orb": intellegenceItems.farsightOrb,
+	"sapphire's staff": intelligenceItems.sapphiresStaff,
+	"seeker's armguard": intelligenceItems.seekersArmguard,
+	"lunar wand": intelligenceItems.lunarWand,
+	"staff of medana": intelligenceItems.staffOfMedana,
+	"farsight orb": intelligenceItems.farsightOrb,
 };
 
 export default ItemProcMap;
