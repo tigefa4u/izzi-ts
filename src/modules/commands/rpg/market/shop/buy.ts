@@ -172,6 +172,8 @@ async function validateAndPurchaseCard(
 			{
 				user_id: buyer.id,
 				is_on_market: false,
+				item_id: null,
+				is_favorite: false
 			}
 		);
 		await delFromMarket({ id: marketCard.id });
