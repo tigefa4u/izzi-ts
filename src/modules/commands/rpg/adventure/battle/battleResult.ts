@@ -61,7 +61,6 @@ export const processBattleResult = async ({
 				card,
 				author,
 				multiplier,
-				user: user,
 				channel,
 			});
 			if (!resp) return;
@@ -97,12 +96,17 @@ export const processBattleResult = async ({
 
 async function processFloorWin({
 	card,
-	user,
 	channel,
 	enemyCard,
 	multiplier,
 	author,
-}: Omit<P, "result"> & { user: UserProps }) {
+}: Omit<P, "result">) {
+	const user = await getRPGUser({ user_tag: author.id });
+	if (!user) {
+		throw new Error(
+			"Unable to process RPG rewards, USER NOT FOUND ID: " + author.id
+		);
+	}
 	const battleCard = await getCollectionById({
 		user_id: user.id,
 		id: card.selected_card_id,

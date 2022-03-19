@@ -51,6 +51,12 @@ async function handleNextFloor(params: {
 		(user.floor == user.max_floor && fl == "n") ||
     parseInt(fl) > user.max_floor
 	) {
+		const zone = await getZoneByLocationId({ location_id: user.ruin });
+		if (zone && (+fl > zone.max_floor)) {
+			params.channel?.sendMessage(`Summoner **${user.username}**, you have cleared this zone! ` +
+			"Use ``zone n`` to move to the next one");
+			return;
+		}
 		embed.setDescription(
 			`Summoner **${user.username}**, you have not unlocked this floor yet!`
 		);
