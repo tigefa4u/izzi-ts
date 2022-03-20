@@ -47,10 +47,10 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 				key: "gold",
 				value: randomNumber(750, 3000),
 			},
-			{
-				key: "exp",
-				value: randomNumber(10, 50),
-			},
+			// {
+			// 	key: "exp",
+			// 	value: randomNumber(10, 50),
+			// },
 			{
 				key: "mana",
 				value: randomNumber(5, 20),
