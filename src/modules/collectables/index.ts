@@ -120,7 +120,7 @@ export const dropCollectables = async ({
 				.setFooter({ text: "Click on claim to claim this card" });
 
 			const buttons = await collectableInteraction(
-				channel,
+				dropChannel,
 				card[0],
 				claimCard,
 				() => {
