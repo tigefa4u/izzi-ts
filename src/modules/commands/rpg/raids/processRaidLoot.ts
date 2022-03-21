@@ -224,7 +224,7 @@ async function initDrops(
 	let array = clone(drop);
 	if (isRare) {
 		array = array.filter((item) => {
-			let rate = item.rate || 0;
+			let rate = item.rate || 10;
 			if (mvp && user.id === mvp.user_id) {
 				rate = rate + 10;
 			} else {
