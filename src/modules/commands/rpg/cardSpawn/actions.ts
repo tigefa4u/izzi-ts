@@ -50,6 +50,33 @@ export const removeChannel = async (params: {
 	}
 };
 
+export const resetChannels = async (params: {
+	channel: ChannelProp;
+	client: Client;
+	cardSpawnData?: CardSpawnProps;
+  }) => {
+	  try {
+		  const embed = createEmbed()
+			  .setTitle(DEFAULT_ERROR_TITLE)
+			  .setThumbnail(params.client.user?.displayAvatarURL() || "");
+		  const dropChannels = params.cardSpawnData;
+		  if (!dropChannels) {
+			  embed.setDescription("You have not set Card Drop Redirect Channels.");
+			  params.channel?.sendMessage(embed);
+			  return;
+		  }
+		  await delDropChannels({ id: dropChannels.id });
+		  params.channel?.sendMessage("Successfully reset all redirect channels!");
+		  return;
+	  } catch (err) {
+		  loggers.error(
+			  "modules.commands.rpg.cardSpwan.actions.resetChannels(): something went wrong",
+			  err
+		  );
+		  return;
+	  }
+};
+  
 export const viewChannels = async (params: {
   channel: ChannelProp;
   client: Client;
