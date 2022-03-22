@@ -45,7 +45,6 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 			is_item: false,
 			item_id: itemId,
 			user_id: user.id,
-			is_on_market: false,
 		});
 		if (itemAlreadyEquipped && itemAlreadyEquipped.length > 0) {
 			const collectionIds = itemAlreadyEquipped.map((it) => it.id);

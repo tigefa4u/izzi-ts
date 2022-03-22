@@ -87,7 +87,6 @@ export const battleRaidBoss = async ({
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
 		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
 		enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
-
 		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
 			cards: playerStats.stats.cards,
 			enemyCards: enemyStats.cards,

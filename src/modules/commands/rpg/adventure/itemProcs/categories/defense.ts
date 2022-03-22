@@ -68,6 +68,7 @@ export const thornmail = ({
 			itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
+		playerStats.totalStats.isReflectThornmailDamage = true;
 		const desc = `and has gained __${itemStats.strength}__ **HP** and __${itemStats.defense}__ **DEF** ` +
         "**Ability:** When struck by an Attack, deal (10 + 1% bonus Defense) damage to the attacker";
 

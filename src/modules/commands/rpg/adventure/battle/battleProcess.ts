@@ -124,13 +124,13 @@ export const BattleProcess = async ({
 	if (playerStats.totalStats.accuracy > opponentStats.totalStats.evasion) {
 		opponentStats.totalStats.isEvadeHit = false;
 	}
+	playerStats.totalStats = processStack(playerStats.totalStats);
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
 		playerStats.totalStats.previousDamage = damageDealt;
-		playerStats.totalStats = processStack(playerStats.totalStats);
 		if (playerStats.totalStats.isSurge) {
 			playerStats.totalStats = processLifesteals(
 				playerStats.totalStats,
