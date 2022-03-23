@@ -93,6 +93,11 @@ async function verifyAndProcessSacrifice(
 		params.channel?.sendMessage(embed);
 		return;
 	}
+	if (card.character_id !== cardToConsume.character_id) {
+		embed.setDescription("You cannot use different cards in soul sacrifice");
+		params.channel?.sendMessage(embed);
+		return;
+	}
 
 	const cardCanvas = card;
 
