@@ -12,17 +12,17 @@ const baseLoot: any = {
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 1, 2 ]) || 1,
+						number: randomElementFromArray([ 1, 3 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 1, 2 ]) || 1,
+						number: randomElementFromArray([ 1, 3 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 				]
 			}
@@ -48,17 +48,17 @@ const baseLoot: any = {
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 				],
 				rare: [
@@ -66,7 +66,7 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 5
+						rate: 7.5
 					}
 				],
 			}
@@ -95,30 +95,30 @@ const baseLoot: any = {
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 				],
 				rare: [
 					{
 						rank: "legend",
 						rank_id: 5,
-						rate: 8,
+						rate: 10.2,
 						number: 1
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 4,
+						rate: 6.4,
 						number: 1,
 					},
 				]
@@ -148,17 +148,17 @@ const baseLoot: any = {
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 2, 3 ]) || 1,
+						number: randomElementFromArray([ 2, 4 ]) || 1,
 					},
 				],
 				rare: [
@@ -166,18 +166,18 @@ const baseLoot: any = {
 						rank: "legend",
 						rank_id: 5,
 						number: randomElementFromArray([ 2, 3 ]) || 1,
-						rate: 14
+						rate: 15.5
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 8.5,
+						rate: 10.5,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 5,
+						rate: 8,
 						number: 1,
 					},
 				],
