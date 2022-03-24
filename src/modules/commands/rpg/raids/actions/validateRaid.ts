@@ -16,7 +16,7 @@ export const validateCurrentRaid = async (
 			.setTitle(DEFAULT_ERROR_TITLE)
 			.setDescription(
 				`Summoner **${author.username}** you are currently not in a raid. ` +
-                "You can join an exiting raid or ask a friend to invite you!"
+                "You can join an existing raid or ask a friend to invite you!"
 			);
 
 		channel?.sendMessage(embed);
