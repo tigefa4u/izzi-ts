@@ -14,7 +14,7 @@ import {
 } from "helpers/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { removeChannel, viewChannels } from "./actions";
+import { removeChannel, resetChannels, viewChannels } from "./actions";
 import { subcommands } from "./subcommands";
 
 export const redirect = async ({
@@ -47,6 +47,9 @@ export const redirect = async ({
 		};
 		if (subcommand === "view") {
 			viewChannels(params);
+			return;
+		} else if (subcommand === "reset") {
+			resetChannels(params);
 			return;
 		}
 		const channelId = args[subcommand ? 1 : 0].substring(2).substring(0, 18);

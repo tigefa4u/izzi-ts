@@ -124,13 +124,13 @@ export const BattleProcess = async ({
 	if (playerStats.totalStats.accuracy > opponentStats.totalStats.evasion) {
 		opponentStats.totalStats.isEvadeHit = false;
 	}
+	playerStats.totalStats = processStack(playerStats.totalStats);
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
 		playerStats.totalStats.previousDamage = damageDealt;
-		playerStats.totalStats = processStack(playerStats.totalStats);
 		if (playerStats.totalStats.isSurge) {
 			playerStats.totalStats = processLifesteals(
 				playerStats.totalStats,
@@ -202,7 +202,7 @@ async function processAbililtyOrItemProc({
 	message,
 }: BattleProcessProps) {
 	try {
-		let abilityProc = {} as AbilityProcReturnType | undefined,
+		let abilityProc = {} as AbilityProcReturnType,
 			abilityDamage = 0,
 			isDefeated = false;
 
@@ -244,7 +244,7 @@ async function processAbililtyOrItemProc({
 
 						if (itemProc.damageDiff && itemProc.damageDiff <= 0) {
 							isDefeated = true;
-							if (abilityProc) abilityProc.damageDiff = 0;
+							abilityProc.damageDiff = 0;
 							break;
 						}
 					}
@@ -259,7 +259,7 @@ async function processAbililtyOrItemProc({
 			const callable =
         abilityProcMap[card.abilityname as keyof AbilityProcMapProps];
 			if (typeof callable !== "function") continue;
-			abilityProc = callable(params);
+			abilityProc = callable(params) || {} as AbilityProcReturnType;
 			if (abilityProc) {
 				playerStats = abilityProc.playerStats;
 				opponentStats = abilityProc.opponentStats;
