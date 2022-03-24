@@ -45,11 +45,11 @@ export const surge = ({
 			isItem: false,
 		});
 
-		return {
-			playerStats,
-			opponentStats
-		};
 	}
+	return {
+		playerStats,
+		opponentStats
+	};
 };
 
 export const chronobreak = ({
