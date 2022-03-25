@@ -81,7 +81,7 @@ export async function prepareRankAndFetchCards({
 	);
 	accumulator = accumulator.concat(result);
 	if (
-		result.length === initialRequestPayload.bucket[initialRequestPayload.rank]
+		accumulator.length === initialRequestPayload.bucket[initialRequestPayload.rank]
 	) {
 		uniqueCards = [ ...new Set(accumulator) ];
 		totalXpGain = reqExp;
