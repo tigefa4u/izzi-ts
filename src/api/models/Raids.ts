@@ -99,9 +99,13 @@ export const destroy = async (params: { id: number }) => {
 	return await connection(tableName).where({ id: params.id }).del();
 };
 
-export const getAll = async (): Promise<RaidProps[]> => {
+export const getAll = async (params?: Partial<RaidProps>): Promise<RaidProps[]> => {
 	const raidDisabled = await Cache.get("disable-raids");
-	return await connection(tableName).where({ is_event: raidDisabled ? true : false, });
+	let query = connection(tableName).where({ is_event: raidDisabled ? true : false, });
+	if (params && (params.is_start === true || params.is_start === false)) {
+		query = query.where(`${tableName}.is_start`, params.is_start);
+	}
+	return query;
 };
 
 export const getRaidLobby = async (params: { user_id: number }): Promise<RaidProps[]> => {

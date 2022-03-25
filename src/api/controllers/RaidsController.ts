@@ -117,9 +117,9 @@ export const getUserRaidLobby = async (params: { user_id: number }) => {
 	}
 };
 
-export const getAllRaids = async () => {
+export const getAllRaids = async (params?: Partial<RaidProps>) => {
 	try {
-		const result = await Raids.getAll();
+		const result = await Raids.getAll(params);
 		return result;
 	} catch (err) {
 		loggers.error(

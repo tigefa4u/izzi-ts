@@ -8,6 +8,7 @@ import autoKick from "./autoKick";
 import { DMUserViaApi } from "./directMessage";
 import Cache from "../../cache";
 import { computeRank } from "modules/commands/rpg/raids/computeBoss";
+import "../../module";
 
 const knex = connection;
 
@@ -172,16 +173,18 @@ const spawnRaids = async () => {
 		if (eventsDisabled && raidsDisabled) {
 			return;
 		}
-		const raids = await getAllRaids();
-		if (raids && raids.length > 35) return;
-		await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map(async (difficulty) => {
-			const computedBoss = computeRank(difficulty);
-			if (!computedBoss) return;
-			await createRaidBoss({
-				isPrivate: false,
-				isEvent,
-				computedBoss,
-				lobby: {}
+		const raids = await getAllRaids({ is_start: false });
+		if (raids && raids.length > 40) return;
+		await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map((difficultyMap) => {
+			return difficultyMap.map(async (difficulty: string) => {
+				const computedBoss = computeRank(difficulty);
+				if (!computedBoss) return;
+				await createRaidBoss({
+					isPrivate: false,
+					isEvent,
+					computedBoss,
+					lobby: {}
+				});
 			});
 		}));
 	} catch (err) {
