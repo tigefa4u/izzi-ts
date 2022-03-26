@@ -54,7 +54,7 @@ export const harbinderOfDeath = ({
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
 	    "and resetting enemy **Critical Hit** and **Evasion** chances, " +
 	    `as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
-	    `buffing all all **Ally Stats** by __${percent}%__`;
+	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
