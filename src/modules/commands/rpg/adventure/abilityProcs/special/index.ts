@@ -1,5 +1,6 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
+import emoji from "emojis/emoji";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
@@ -53,7 +54,7 @@ export const harbinderOfDeath = ({
 		});
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
 	    "and resetting enemy **Critical Hit** and **Evasion** chances, " +
-	    `as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
+	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
