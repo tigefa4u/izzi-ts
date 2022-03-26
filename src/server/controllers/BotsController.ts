@@ -45,9 +45,10 @@ export const setMaxLocation = async (req: any, res: any) => {
 
 export const removeZoneFromCache = async (req: any, res: any) => {
 	try {
-		const { location_id } = req.body;
+		const { location_id, character_ids = [] } = req.body;
 		const key = `zone::${location_id}`;
 		await Cache.del(key);
+		await Promise.all(character_ids.map(async (c: number) => await Cache.del(`floors::ch-${c}`)));
 		return success(res, {});
 	} catch (err) {
 		return notFound(res, "Route not found");
