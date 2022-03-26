@@ -78,6 +78,10 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+	reachedMaxRuinAt: {
+		type: "timestamp",
+		columnName: "reached_max_ruin_at",
+	}
 };
 
 export const get: (params: UserParams) => Promise<UserProps[] | undefined> = async (params) => {

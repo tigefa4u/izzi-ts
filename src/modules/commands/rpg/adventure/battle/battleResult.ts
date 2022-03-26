@@ -190,9 +190,11 @@ async function upgradeUser(
 				user_tag: user.user_tag,
 				max_ruin: user.max_ruin,
 			});
+			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
 				max_ruin: user.max_ruin,
-				max_ruin_floor: user.max_ruin_floor
+				max_ruin_floor: user.max_ruin_floor,
+				reached_max_ruin_at: user.reached_max_ruin_at
 			});
 		} else {
 			desc =

@@ -35,6 +35,7 @@ export type UserProps = {
 	voted_at: Date;
 	created_at: string;
 	updated_at: string;
+	reached_max_ruin_at: Date;
 }
 
 export type UserParams = {
