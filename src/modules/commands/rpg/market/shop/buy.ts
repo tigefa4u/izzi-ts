@@ -28,7 +28,12 @@ import {
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
-import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	clearCooldown,
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
@@ -200,7 +205,15 @@ export const purchaseCard = async ({
 		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
 			const purchaseCD = await getCooldown(author.id, purchaseCooldown);
 			if (purchaseCD) {
-				sendCommandCDResponse(context.channel, purchaseCD, author.id, purchaseCooldown);
+				context.channel?.sendMessage(
+					`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
+				);
+				sendCommandCDResponse(
+					context.channel,
+					purchaseCD,
+					author.id,
+					purchaseCooldown
+				);
 				return;
 			}
 		}
@@ -242,10 +255,7 @@ export const purchaseCard = async ({
 						setCooldown(author.id, purchaseCooldown, 60 * 60 * 24);
 					}
 					await Promise.all([
-						Cache.set(
-							purchaseCooldown,
-							JSON.stringify({ purchased: count })
-						),
+						Cache.set(purchaseCooldown, JSON.stringify({ purchased: count })),
 						Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24),
 						clearCooldown(author.id, cooldownCommand),
 					]);
