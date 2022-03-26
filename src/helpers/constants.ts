@@ -223,3 +223,5 @@ export const MAX_CARDS_IN_TRADE = 1000;
 export const SACRIFICE_GOLD_COST = 1350;
 
 export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
+
+export const MARKET_PURCHASE_LIMIT = 5;

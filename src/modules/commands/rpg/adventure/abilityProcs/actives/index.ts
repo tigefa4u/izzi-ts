@@ -11,6 +11,7 @@ export * from "./elementals";
 export * from "./disablers";
 export * from "./critical";
 export * from "./breakers";
+export * from "../special";
 
 export const dragonRage = ({
 	playerStats,
@@ -160,12 +161,12 @@ export const bonePlating = ({
 	card,
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Buff your allies with **Bone Plating** taking, __20%__ less damage from normal attacks for 2 turns
+	// Buff your allies with **Bone Plating** taking, __30%__ less damage from normal attacks for 2 turns
 	if (round % 3 === 0 && !playerStats.totalStats.isPlatting) {
 		playerStats.totalStats.isEndure = true;
 		playerStats.totalStats.isPlatting = true;
 		playerStats.totalStats.previousRound = round;
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(30, card.rank);
 		const relDiff = getRelationalDiff(
 			opponentStats.totalStats.vitality,
 			percent
@@ -190,7 +191,7 @@ export const bonePlating = ({
 	if (round % 3 === 2 && playerStats.totalStats.isPlatting)
 		playerStats.totalStats.isPlatting = false;
 	if ((playerStats.totalStats.previousRound || 0) + 2 == round) {
-		const inc = calcPercentRatio(20, card.rank);
+		const inc = calcPercentRatio(30, card.rank);
 		playerStats.totalStats.isEndure = false;
 		const temp = getRelationalDiff(opponentStats.totalStats.vitality, inc);
 		opponentStats.totalStats.vitality =

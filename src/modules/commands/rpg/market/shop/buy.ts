@@ -14,6 +14,7 @@ import {
 	getUser,
 	updateRPGUser,
 } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import emoji from "emojis/emoji";
@@ -23,10 +24,11 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
+	MARKET_PURCHASE_LIMIT,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
-import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
@@ -173,7 +175,7 @@ async function validateAndPurchaseCard(
 				user_id: buyer.id,
 				is_on_market: false,
 				item_id: null,
-				is_favorite: false
+				is_favorite: false,
 			}
 		);
 		await delFromMarket({ id: marketCard.id });
@@ -190,10 +192,24 @@ export const purchaseCard = async ({
 	author,
 }: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
 	try {
+		const purchaseCooldown = `${author.id}-market-purchase`;
+		let purhchaseExceeded: any =
+      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 1 }";
+		purhchaseExceeded = JSON.parse(purhchaseExceeded);
+
+		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
+			const purchaseCD = await getCooldown(author.id, purchaseCooldown);
+			if (purchaseCD) {
+				sendCommandCDResponse(context.channel, purchaseCD, author.id, purchaseCooldown);
+				return;
+			}
+		}
 		const cooldownCommand = "purchase-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -211,7 +227,7 @@ export const purchaseCard = async ({
 			author.id,
 			params,
 			validateAndPurchaseCard,
-			(data, opts) => {
+			async (data, opts) => {
 				if (data) {
 					const desc = `Are you sure you want to purchase **${titleCase(
 						data.name
@@ -221,7 +237,18 @@ export const purchaseCard = async ({
 						.setThumbnail(data.filepath);
 				}
 				if (opts?.isDelete) {
-					clearCooldown(author.id, cooldownCommand);
+					const count = purhchaseExceeded.purchased + 1;
+					if (count >= MARKET_PURCHASE_LIMIT) {
+						setCooldown(author.id, purchaseCooldown, 60 * 60 * 24);
+					}
+					await Promise.all([
+						Cache.set(
+							purchaseCooldown,
+							JSON.stringify({ purchased: count })
+						),
+						Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24),
+						clearCooldown(author.id, cooldownCommand),
+					]);
 					sentMessage.delete();
 				}
 			}

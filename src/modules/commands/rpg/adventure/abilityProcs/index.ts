@@ -37,7 +37,8 @@ const AbilityProcMap: AbilityProcMapProps = {
 	"point blank": activeAbilities.pointBlank,
 	exhaust: activeAbilities.exhaust,
 	frost: activeAbilities.frost,
-	dominator: activeAbilities.dominator
+	dominator: activeAbilities.dominator,
+	"harbinger of death": activeAbilities.harbinderOfDeath
 };
 
 export default AbilityProcMap;

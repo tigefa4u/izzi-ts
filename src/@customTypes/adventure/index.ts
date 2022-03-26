@@ -87,6 +87,7 @@ export type AbilityStackProps = StatStateProps & AbilityStatStackProps & {
     isDominator?: boolean;
     isUseCrusher?: boolean;
     isPrecision?: boolean;
+    isHarbingerOfDeath?: boolean;
 }
 
 export type BattleStats = {

@@ -64,6 +64,7 @@ export type AbilityProcMapProps = {
     "bone plating": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "dream eater": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "fighting spirit": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "harbinger of death": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 
 export type ItemProcMapProps = {
