@@ -42,3 +42,14 @@ export const setMaxLocation = async (req: any, res: any) => {
 		return notFound(res, "Route not found");
 	}
 };
+
+export const removeZoneFromCache = async (req: any, res: any) => {
+	try {
+		const { location_id } = req.body;
+		const key = `zone::${location_id}`;
+		await Cache.del(key);
+		return success(res, {});
+	} catch (err) {
+		return notFound(res, "Route not found");
+	}
+};

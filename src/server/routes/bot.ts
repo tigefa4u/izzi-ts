@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post("/toggle", controller.toggleRaids);
 router.post("/max_location", controller.setMaxLocation);
+router.post("/remove_zone_from_cache", controller.removeZoneFromCache);
 
 export default router;

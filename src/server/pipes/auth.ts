@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AUTH_TOKEN } from "environment";
 
-
 const isAuth = (req: Request, res: Response, next: () => void) => {
 	if (req.headers["authorization"]) {
 		const token = req.headers["authorization"].split("Bot ")[1];
