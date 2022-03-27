@@ -129,7 +129,7 @@ async function validateAndLeaveGuild(
 		author: params.author,
 		params: [],
 		isAdmin: false,
-		isOriginServer: true,
+		isOriginServer: false,
 		extras: { user_id: params.extras.user_id },
 	});
 	if (!validGuild) return;
