@@ -158,6 +158,32 @@ async function validateAndPurchaseCard(
 	}
 	if (options?.isConfirm) {
 		if (!OWNER_DISCORDID) return;
+		const purchaseCooldown = `${params.author.id}-market-purchase`;
+		let purhchaseExceeded: any =
+      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 1 }";
+		purhchaseExceeded = JSON.parse(purhchaseExceeded);
+
+		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
+			const purchaseCD = await getCooldown(params.author.id, purchaseCooldown);
+			if (purchaseCD) {
+				params.channel?.sendMessage(
+					`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
+				);
+				sendCommandCDResponse(
+					params.channel,
+					purchaseCD,
+					params.author.id,
+					purchaseCooldown
+				);
+				return;
+			}
+		}
+		const count = purhchaseExceeded.purchased + 1;
+		if (count >= MARKET_PURCHASE_LIMIT) {
+			setCooldown(params.author.id, purchaseCooldown, 60 * 60 * 24);
+		}
+		Cache.set(purchaseCooldown, JSON.stringify({ purchased: count }));
+		Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24);
 		const dealer = await getRPGUser({ user_tag: OWNER_DISCORDID });
 		if (!dealer) {
 			params.channel?.sendMessage("Something went wrong!");
@@ -250,15 +276,7 @@ export const purchaseCard = async ({
 						.setThumbnail(data.filepath);
 				}
 				if (opts?.isDelete) {
-					const count = purhchaseExceeded.purchased + 1;
-					if (count >= MARKET_PURCHASE_LIMIT) {
-						setCooldown(author.id, purchaseCooldown, 60 * 60 * 24);
-					}
-					await Promise.all([
-						Cache.set(purchaseCooldown, JSON.stringify({ purchased: count })),
-						Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24),
-						clearCooldown(author.id, cooldownCommand),
-					]);
+					clearCooldown(author.id, cooldownCommand);
 					sentMessage.delete();
 				}
 			}
