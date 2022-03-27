@@ -46,7 +46,7 @@ function processStack(stats: Stack) {
 		"isBstrike",
 		"isSB",
 		"isTornado",
-		"isHarbingerOfDeath"
+		"isHarbingerOfDeath",
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -76,12 +76,14 @@ function processUnableToAttack<T extends BattleStats>(
 	opponentStats: T,
 	allowProcOnEvadeHit = false
 ) {
-	return playerStats.totalStats.isAsleep ||
+	return (
+		playerStats.totalStats.isAsleep ||
     playerStats.totalStats.isStunned ||
-    ((allowProcOnEvadeHit === true &&
-      opponentStats.totalStats.isEvadeHit === true)
+    (allowProcOnEvadeHit === true &&
+    opponentStats.totalStats.isEvadeHit === true
     	? false
-    	: opponentStats.totalStats.isEvadeHit);
+    	: opponentStats.totalStats.isEvadeHit)
+	);
 }
 
 export const BattleProcess = async ({
@@ -253,15 +255,16 @@ async function processAbililtyOrItemProc({
 				}
 			}
 			if (
-				processUnableToAttack(playerStats, opponentStats, true) ||
-        playerStats.totalStats.isRestrictResisted
+				(processUnableToAttack(playerStats, opponentStats, true) ||
+          playerStats.totalStats.isRestrictResisted) &&
+        !playerStats.totalStats.isHarbingerOfDeath
 			)
 				break;
 
 			const callable =
         abilityProcMap[card.abilityname as keyof AbilityProcMapProps];
 			if (typeof callable !== "function") continue;
-			abilityProc = callable(params) || {} as AbilityProcReturnType;
+			abilityProc = callable(params) || ({} as AbilityProcReturnType);
 			if (abilityProc) {
 				playerStats = abilityProc.playerStats;
 				opponentStats = abilityProc.opponentStats;

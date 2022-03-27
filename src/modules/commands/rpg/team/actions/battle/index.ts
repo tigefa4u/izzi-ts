@@ -99,8 +99,8 @@ export const teamBattle = async ({
 			username: author.username,
 			mentionUsername: mentionedUser.username,
 			isVictory: battleStatus?.isVictory || false,
-			opponentTeamName: playerStats.name,
-			playerTeamName: opponentStats.name,
+			opponentTeamName: opponentStats.name,
+			playerTeamName: playerStats.name,
 		});
 		return;
 	} catch (err) {
