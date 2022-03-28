@@ -104,7 +104,7 @@ async function notifySeller(
 				marketCard.name
 			)}** on the Global Market and received __${totalCost}__ Gold ${
 				emoji.gold
-			}!`
+			}!\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`
 		);
 	DMUser(client, embed, seller.user_tag);
 }
