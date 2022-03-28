@@ -27,6 +27,7 @@ import {
 	SEAL_ID,
 	SOUL_ID,
 } from "helpers/constants";
+import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -69,7 +70,6 @@ async function validateAndUpgradeCard(
 		params.channel?.sendMessage(embed);
 		return;
 	}
-	console.log("GUILD ITEMS");
 	const guilditems = await getAllGuildItems(
 		{
 			guild_id: validGuild.guild.id,
@@ -82,7 +82,10 @@ async function validateAndUpgradeCard(
 	);
 	const souls = guilditems?.data.filter((it) => it.item_id === SOUL_ID)[0];
 	const seals = guilditems?.data.filter((it) => it.item_id === SEAL_ID)[0];
-	if (!souls || !seals) return;
+	if (!souls || !seals) {
+		context.channel?.sendMessage("Your guild does not have sufficient **Souls** or **Seals**");
+		return;
+	}
 	if (souls.quantity < params.extras.numOfSouls) {
 		context.channel?.sendMessage(
 			"Your guild does not have sufficient Souls to upgrade your card! " +
@@ -125,6 +128,36 @@ async function validateAndUpgradeCard(
 		embed.setDescription(
 			"You do not have enough contribution to your guild to use this item! " +
         "you can donate more to your guild to be able to access more items!"
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	const cardToEvolve = collection[0];
+	if (cardToEvolve.rank_id >= 9) {
+		embed.setDescription("This card has already reached its max Evolution!");
+		params.channel?.sendMessage(embed);
+		return;
+	} else if (cardToEvolve.rank_id < 4) {
+		embed.setDescription(
+			"Your card must be of Diamond rank to be able to be able to absorb souls!"
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	const reqSouls = getReqSouls(cardToEvolve.rank_id);
+
+	if (cardToEvolve.souls >= reqSouls) {
+		embed.setDescription(`You have already absorbed the required souls **__${cardToEvolve.souls}__**, ` +
+		"use ``evo #ID`` to use this card in Evolution!");
+		params.channel?.sendMessage(embed);
+		return;
+	}
+
+	const totalSouls = cardToEvolve.souls + params.extras.numOfSouls;
+	if (totalSouls > reqSouls) {
+		embed.setDescription(
+			`You are trying to consume more souls than required **[${totalSouls} / ${reqSouls}]**. ` +
+			"Please re-check the number of souls you want to consume."
 		);
 		params.channel?.sendMessage(embed);
 		return;
