@@ -43,6 +43,8 @@ function prepareHelpDesc() {
     "\n" +
     `For more information / tutorials you can check out ${IZZI_WEBSITE}` +
     "\n" +
+	`If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
+	"\n" +
     `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**`
 	);
 }
