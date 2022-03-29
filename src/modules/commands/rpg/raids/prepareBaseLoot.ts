@@ -6,7 +6,7 @@ const baseLoot: any = {
 			level: [ 60, 75 ],
 			rank: [ "silver" ],
 			loot: {
-				gold: randomNumber(18000, 20000),
+				gold: randomNumber(18000, 25000),
 				extraGold: randomNumber(16000, 18000),
 				drop: [
 					{
@@ -89,8 +89,8 @@ const baseLoot: any = {
 			level: [ 170, 200 ],
 			rank: [ "platinum", "platinum" ],
 			loot: {
-				gold: randomNumber(22000, 25000),
-				extraGold: randomNumber(20000, 22000),
+				gold: randomNumber(30000, 35000),
+				extraGold: randomNumber(25000, 32000),
 				drop: [
 					{
 						rank: "silver",
@@ -143,7 +143,7 @@ const baseLoot: any = {
 			rank: [ "diamond", "platinum" ],
 			loot: {
 				gold: randomNumber(35000, 40000),
-				extraGold: randomNumber(25000, 30000),
+				extraGold: randomNumber(32000, 35000),
 				drop: [
 					{
 						rank: "platinum",
