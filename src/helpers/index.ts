@@ -178,10 +178,10 @@ export const getIdFromMentionedString = (id = "") => {
 };
 
 export const probability = (chances: number[]) => {
-	let sum = 0;
-	chances.forEach(function (chance) {
-		sum += chance;
-	});
+	const sum = chances.reduce((acc, r) => {
+		acc += r;
+		return acc;
+	}, 0);
 	const rand = Math.random();
 	let chance = 0;
 	for (let i = 0; i < chances.length; i++) {

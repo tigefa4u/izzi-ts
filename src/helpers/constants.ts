@@ -116,7 +116,7 @@ export const LEVEL_UP_EXP_MULTIPLIER = 47;
 export const GOLD_LIMIT = 5000000;
 export const BET_LIMIT = 50000;
 export const DEFAULT_PACK = {
-	num: 5,
+	num: 50,
 	cost: 1800,
 	cardPerPage: 10,
 	rank: "platinum",
