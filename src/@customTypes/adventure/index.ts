@@ -7,10 +7,10 @@ export type EffectivenessProps = {
     water: { affects: [ "fire" ] };
 	fire: { affects: [ "grass", "crystal" ] };
 	grass: { affects: [ "ground", "water" ] };
-	ground: { affects: [ "electric" ] };
+	ground: { affects: [ "electric", "poison" ] };
 	electric: { affects: [ "water" ] };
 	crystal: { affects: [ "ground", "light" ] };
-	poison: { affects: [ "wind", "grass", "light" ] };
+	poison: { affects: [ "wind", "grass" ] };
 	wind: { affects: [ "crystal" ] };
 	dark: { affects: [ "poison" ] };
 	light: { affects: [ "dark" ] };

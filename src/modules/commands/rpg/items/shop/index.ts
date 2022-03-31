@@ -21,8 +21,9 @@ export const itemshop = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
-		const shop = args.shift();
+		const shop = args[0];
 		if (shop === "buy") {
+			args.shift();
 			purchaseItem({
 				author,
 				client,

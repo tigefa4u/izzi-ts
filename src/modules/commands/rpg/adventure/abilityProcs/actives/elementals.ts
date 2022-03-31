@@ -126,7 +126,10 @@ export const spellBook = ({
 			playerStats.totalStats.strength,
 			playerStats.totalStats.originalHp
 		);
-		if (opponentDamageDiff <= 0) opponentDamageDiff = 0;
+		if (opponentDamageDiff <= 0) {
+			opponentDamageDiff = 0;
+			damageDiff = 0;
+		}
 		if (playerDamageDiff <= 0) playerDamageDiff = 0;
 
 		const processedHpBar = processHpBar(playerStats.totalStats, playerDamageDiff);

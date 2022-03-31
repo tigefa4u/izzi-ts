@@ -38,7 +38,7 @@ export const prepareEvadeHitChance = ({ isPlayerFirst, playerStats, enemyStats }
 		? enemyStats.totalStats.evasion
 		: playerStats.totalStats.evasion;
 
-	let noEvadeHitPercent = 2;
+	let noEvadeHitPercent = 1;
 	if (evadeHitPercent <= 1) {
 		evadeHitPercent = 0;
 		noEvadeHitPercent = 0;

@@ -191,13 +191,13 @@ async function simulatePlayerTurns({
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
-		if (isRaid && round >= 9) {
+		if (isRaid && round >= 10) {
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
 			});
 			enemyStats = boost.enemyStats;
-			if (round === 9 && i === 2) {
+			if (round === 10 && i === 1) {
 				const isRaidBossEdited = await simulateBattleDescription({
 					playerStats,
 					enemyStats,
