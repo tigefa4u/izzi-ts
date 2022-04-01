@@ -121,11 +121,6 @@ const baseLoot: any = {
 						rank_id: 3,
 						number: 5
 					},
-					{
-						rank: "diamond",
-						rank_id: 4,
-						number: 1,
-					},
 				],
 				rare: [
 					{
@@ -178,11 +173,6 @@ const baseLoot: any = {
 						rank: "silver",
 						rank_id: 1,
 						number: 6
-					},
-					{
-						rank: "diamond",
-						rank_id: 4,
-						number: 2
 					},
 				],
 				rare: [
