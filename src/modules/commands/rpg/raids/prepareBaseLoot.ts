@@ -6,23 +6,23 @@ const baseLoot: any = {
 			level: [ 60, 75 ],
 			rank: [ "silver" ],
 			loot: {
-				gold: randomNumber(20000, 30000),
+				gold: randomNumber(20000, 25000),
 				extraGold: randomNumber(16000, 18000),
 				drop: [
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 8, 10 ]) || 1,
+						number: randomElementFromArray([ 4, 5 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 8, 10 ]) || 1,
+						number: randomElementFromArray([ 4, 5 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 8, 10 ]) || 1,
+						number: randomElementFromArray([ 4, 5 ]) || 1,
 					},
 				],
 				rare: [
@@ -39,7 +39,7 @@ const baseLoot: any = {
 			level: [ 180, 220 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(18000, 28000),
+				gold: randomNumber(18000, 25000),
 				extraGold: randomNumber(16000, 18000),
 				drop: { shard: randomNumber(10, 14), }
 			}
@@ -50,23 +50,23 @@ const baseLoot: any = {
 			level: [ 130, 140 ],
 			rank: [ "silver" ],
 			loot: {
-				gold: randomNumber(30000, 40000),
+				gold: randomNumber(25000, 30000),
 				extraGold: randomNumber(22000, 25000),
 				drop: [
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 10, 12 ]) || 1,
+						number: randomElementFromArray([ 5, 6 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 10, 12 ]) || 1,
+						number: randomElementFromArray([ 5, 6 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 10, 12 ]) || 1,
+						number: randomElementFromArray([ 5, 6 ]) || 1,
 					},
 				],
 				rare: [
@@ -89,7 +89,7 @@ const baseLoot: any = {
 			level: [ 450, 480 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(28000, 38000),
+				gold: randomNumber(25000, 32000),
 				extraGold: randomNumber(20000, 22000),
 				drop: {
 					shard: randomNumber(15, 18),
@@ -103,28 +103,28 @@ const baseLoot: any = {
 			level: [ 170, 200 ],
 			rank: [ "platinum", "platinum" ],
 			loot: {
-				gold: randomNumber(40000, 50000),
+				gold: randomNumber(35000, 40000),
 				extraGold: randomNumber(25000, 32000),
 				drop: [
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 12, 14 ]) || 1,
+						number: randomElementFromArray([ 6, 7 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 12, 14 ]) || 1,
+						number: randomElementFromArray([ 6, 7 ]) || 1,
 					},
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 12, 14 ]) || 1,
+						number: randomElementFromArray([ 6, 7 ]) || 1,
 					},
 					{
 						rank: "diamond",
 						rank_id: 4,
-						number: randomElementFromArray([ 3, 4 ]) || 1,
+						number: randomElementFromArray([ 2, 3 ]) || 1,
 					},
 				],
 				rare: [
@@ -147,7 +147,7 @@ const baseLoot: any = {
 			level: [ 500, 530 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(38000, 48000),
+				gold: randomNumber(32000, 40000),
 				extraGold: randomNumber(25000, 27000),
 				drop: {
 					shard: randomNumber(20, 32),
@@ -161,23 +161,23 @@ const baseLoot: any = {
 			level: [ 280, 310 ],
 			rank: [ "diamond", "platinum" ],
 			loot: {
-				gold: randomNumber(50000, 60000),
+				gold: randomNumber(40000, 45000),
 				extraGold: randomNumber(32000, 35000),
 				drop: [
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: randomElementFromArray([ 14, 16 ]) || 1,
+						number: randomElementFromArray([ 7, 8 ]) || 1,
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: randomElementFromArray([ 14, 16 ]) || 1,
+						number: randomElementFromArray([ 7, 8 ]) || 1,
 					},
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: randomElementFromArray([ 14, 16 ]) || 1,
+						number: randomElementFromArray([ 7, 8 ]) || 1,
 					},
 					{
 						rank: "diamond",
@@ -211,7 +211,7 @@ const baseLoot: any = {
 			level: [ 550, 620 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(48000, 58000),
+				gold: randomNumber(40000, 48000),
 				extraGold: randomNumber(29000, 30000),
 				drop: {
 					shard: randomNumber(27, 40),
