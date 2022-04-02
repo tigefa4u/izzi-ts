@@ -33,6 +33,7 @@ async function validateAndSellCard(
 			is_item: false,
 			is_on_market: false,
 			id: params.extras.id,
+			user_id: user.id
 		});
 		if (!collection || collection.length <= 0) {
 			params.channel?.sendMessage(
@@ -46,7 +47,7 @@ async function validateAndSellCard(
 			params.channel,
 			params.client,
 			user.id,
-			{ duplicateError: true }
+			{ duplicateError: true, }
 		);
 		if (marketCard) return;
 		const charaInfo = await getCharacterInfo({
