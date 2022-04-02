@@ -160,7 +160,7 @@ async function validateAndPurchaseCard(
 		if (!OWNER_DISCORDID) return;
 		const purchaseCooldown = `${params.author.id}-market-purchase`;
 		let purhchaseExceeded: any =
-      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 1 }";
+      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
 		purhchaseExceeded = JSON.parse(purhchaseExceeded);
 
 		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
