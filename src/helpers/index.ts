@@ -210,7 +210,7 @@ export const probability = (chances: number[]): number => {
 			break;
 		}
 	}
-	return Number(key.split("#")[1] || -1);
+	return Number(key.split("#")[1] ?? -1);
 };
 
 export const getMemberPermissions = async (
