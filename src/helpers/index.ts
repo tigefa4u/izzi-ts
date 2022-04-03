@@ -13,7 +13,7 @@ import { titleCase } from "title-case";
 import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import { clone } from "utility";
+import { clone, isFloat } from "utility";
 
 export const generateUUID = (n: number): string => {
 	const add = 1;
@@ -177,23 +177,33 @@ export const getIdFromMentionedString = (id = "") => {
 	return id.replace(/<@!/, "").replace(/<@/, "").replace(/>/, "");
 };
 
-export const probability = (chances: number[]) => {
-	const sum = chances.reduce((acc, r) => {
-		acc += r;
-		return acc;
-	}, 0);
-	const rand = Math.random();
-	let chance = 0;
-	for (let i = 0; i < chances.length; i++) {
-		chance += chances[i] / sum;
-		if (rand < chance) {
-			return i;
+const generateProbabilityArray = (array: number[]): number[] => {
+	if (!array.every(Number)) return [ -1 ];
+	const distribution = array.map((num) => {
+		const originalNum = clone(num);
+		if (isFloat(num)) {
+			const [ n1 ] = num.toString().split(".");
+			const conditionalNum = Number(n1) + .5;
+			if (num > conditionalNum) {
+				num = Math.ceil(num);
+			} else {
+				num = Math.floor(num);
+			}
 		}
-	}
+		return Array(num).fill(originalNum);
+	}).flat();
+	return distribution;
+};
+
+export const probability = (chances: number[]) => {
+	const distribution = generateProbabilityArray(chances);
 
 	// should never be reached unless sum of probabilities is less than 1
 	// due to all being zero or some being negative probabilities
-	return -1;
+	if (distribution.find((i) => i === -1)) return -1;
+
+	const probableElement = distribution[randomNumber(0, distribution.length)];
+	return chances.findIndex((c) => c === probableElement);
 };
 
 export const getMemberPermissions = async (

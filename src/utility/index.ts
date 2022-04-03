@@ -30,3 +30,6 @@ export const groupByKey = <T>(arr: T[], key: string): {
 export const isEmptyValue = (val = {}) => {
 	return isEmpty(val);
 };
+
+export const isInt = (n: number) => Number(n) === n && n % 1 === 0;
+export const isFloat = (n: number) => Number(n) === n && n % 1 !== 0;

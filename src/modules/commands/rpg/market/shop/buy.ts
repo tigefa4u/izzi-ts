@@ -225,7 +225,7 @@ export const purchaseCard = async ({
 	try {
 		const purchaseCooldown = `${author.id}-market-purchase`;
 		let purhchaseExceeded: any =
-      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 1 }";
+      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
 		purhchaseExceeded = JSON.parse(purhchaseExceeded);
 
 		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
