@@ -56,7 +56,7 @@ export const sendCommandCDResponse = (
 		channel?.sendMessage(
 			`This command is on cooldown, you can try again in ${
 				remainingHours ?? ""
-			}:${remainingMinutes ?? ""}:${remainingSec.toFixed(0)}`
+			} : ${remainingMinutes ?? ""} : ${remainingSec.toFixed(0)}`
 		);
 		return;
 	} catch (err) {

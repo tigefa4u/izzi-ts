@@ -177,33 +177,40 @@ export const getIdFromMentionedString = (id = "") => {
 	return id.replace(/<@!/, "").replace(/<@/, "").replace(/>/, "");
 };
 
-const generateProbabilityArray = (array: number[]): number[] => {
-	if (!array.every(Number)) return [ -1 ];
-	const distribution = array.map((num) => {
-		const originalNum = clone(num);
-		if (isFloat(num)) {
-			const [ n1 ] = num.toString().split(".");
-			const conditionalNum = Number(n1) + .5;
-			if (num > conditionalNum) {
-				num = Math.ceil(num);
-			} else {
-				num = Math.floor(num);
-			}
+type ProbabilityDistributionMap = Map<string, {
+	x: number;
+	y: number;
+}>
+export const probability = (chances: number[]): number => {
+	const distributionMap: ProbabilityDistributionMap = new Map();
+	// if (!array.every(Number)) return [ -1 ];
+	let previousNumber = chances[0];
+	chances.map((item, i) => {
+		if (i === 0) {
+			distributionMap.set(`${item}#${i}`, {
+				x: i,
+				y: item - 1 
+			});
+		} else {
+			distributionMap.set(`${item}#${i}`, {
+				x: previousNumber,
+				y: previousNumber + (item - 1)
+			});
 		}
-		return Array(num).fill(originalNum);
-	}).flat();
-	return distribution;
-};
+		previousNumber = item;
+	});
+	const total = chances.reduce((acc, r) => acc + r, 0);
+	const idx = randomNumber(0, total, true);
 
-export const probability = (chances: number[]) => {
-	const distribution = generateProbabilityArray(chances);
-
-	// should never be reached unless sum of probabilities is less than 1
-	// due to all being zero or some being negative probabilities
-	if (distribution.find((i) => i === -1)) return -1;
-
-	const probableElement = distribution[randomNumber(0, distribution.length)];
-	return chances.findIndex((c) => c === probableElement);
+	const iterator = distributionMap.entries();
+	let key = "";
+	for (const [ k, v ] of iterator) {
+		if (idx >= v.x && idx <= v.y) {
+			key = k;
+			break;
+		}
+	}
+	return Number(key.split("#")[1] || -1);
 };
 
 export const getMemberPermissions = async (
