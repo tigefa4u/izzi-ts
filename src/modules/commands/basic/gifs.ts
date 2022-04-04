@@ -56,7 +56,6 @@ export const gifs: T[] = [
 		url: [
 			"https://ci.memecdn.com/11487575.gif",
 			"https://media1.tenor.com/images/f308e2fe3f1b3a41754727f8629e5b56/tenor.gif?itemid=12390216",
-			"https://i.imgur.com/k5tADh7.gif",
 			"https://media0.giphy.com/media/LO9Y9hKLupIwko9IVd/200.gif",
 			"https://media1.tenor.com/images/91072b9c5b88b668ca2b002d473c9337/tenor.gif?itemid=15793165",
 			"https://image.myanimelist.net/ui/Ik_Vp0LpzawyH5e_tQqsNxyzjRy_0fGz8_BNh4TH35EKqnruoFTqkhiyuBJ58_FOfBWfKiAxezQQRAMWSQdWTBkdJLeEdshdWe8ApYxFhvNcE0IKrcLhcKBfyGjxLj2W"
