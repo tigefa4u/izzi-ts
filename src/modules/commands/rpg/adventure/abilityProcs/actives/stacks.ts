@@ -361,7 +361,7 @@ export const frost = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const frostBiteChances = [ 5, 100 ];
+		const frostBiteChances = [ 5, 95 ];
 		const isFrostBite = [ true, false ];
 
 		desc = `**__${opponentStats.name}__** is affected by **Frost**, taking additional __${relDiff}__ damage`;

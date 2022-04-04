@@ -20,7 +20,9 @@ export const electrocute = ({
 	let damageDiff;
 	const procStun = [ true, false ];
 	let perDamage;
-	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	playerStats.totalStats.previousRound
+		? playerStats.totalStats.previousRound++
+		: null;
 	if (round == playerStats.totalStats.previousRound) {
 		if (opponentStats.totalStats.isStunned) {
 			opponentStats.totalStats.isStunned = false;
@@ -33,8 +35,12 @@ export const electrocute = ({
 		const percent = calcPercentRatio(20, card.rank);
 		perDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
 		if (isNaN(perDamage)) perDamage = 0;
-		opponentStats.totalStats.strength = opponentStats.totalStats.strength - perDamage;
-		if (opponentStats.totalStats.strength < 0 || isNaN(opponentStats.totalStats.strength))
+		opponentStats.totalStats.strength =
+      opponentStats.totalStats.strength - perDamage;
+		if (
+			opponentStats.totalStats.strength < 0 ||
+      isNaN(opponentStats.totalStats.strength)
+		)
 			opponentStats.totalStats.strength = 0;
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
@@ -44,15 +50,16 @@ export const electrocute = ({
 		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 		opponentStats.totalStats.strength = processedHpBar.strength;
 		opponentStats.totalStats.health = processedHpBar.health;
-		
+
 		// electrocute is causing NAN
 		// dealing __${perDamage}__ damage
-		const desc = `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
-        `damage as well as Inflicting a stack of **Paralysis**, ${
-        	opponentStats.totalStats.isStunned
-        		? `${opponentStats.name} is effected by Paralysis!`
-        		: "but it resisted!"
-        }`;
+		const desc =
+      `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
+      `damage as well as Inflicting a stack of **Paralysis**, ${
+      	opponentStats.totalStats.isStunned
+      		? `${opponentStats.name} is effected by Paralysis!`
+      		: "but it resisted!"
+      }`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -65,13 +72,13 @@ export const electrocute = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});    
+		});
 	}
 	return {
 		playerStats,
 		opponentStats,
 		damageDiff,
-		abilityDamage: perDamage 
+		abilityDamage: perDamage,
 	};
 };
 
@@ -85,7 +92,8 @@ export const sleep = ({
 	basePlayerStats,
 	card,
 }: BattleProcessProps) => {
-	let desc, isResist = false;
+	let desc,
+		isResist = false;
 	if (opponentStats.totalStats.isAsleep) {
 		const temp = [ true, false ];
 		const wakeupProb = [ 55, 45 ];
@@ -104,17 +112,22 @@ export const sleep = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-			}); 
+			});
 		}
 	}
 	if (opponentStats.totalStats.sleepResistPercent) {
-		const resistProb = probability([ opponentStats.totalStats.sleepResistPercent, 100 ]);
+		const resistProb = probability([
+			opponentStats.totalStats.sleepResistPercent,
+			100,
+		]);
 		isResist = [ true, false ][resistProb];
 	}
 	if (round % 3 === 0 && !opponentStats.totalStats.isAsleep) {
 		opponentStats.totalStats.isAsleep = !isResist;
 		// put your enemies to sleep causing them to miss their turns until they are awake.
-		desc = `**__${opponentStats.name}__** felt **Drowsy** ${isResist ? "but it resisted!" : "and fell **Asleep**"}`;
+		desc = `**__${opponentStats.name}__** felt **Drowsy** ${
+			isResist ? "but it resisted!" : "and fell **Asleep**"
+		}`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -127,11 +140,11 @@ export const sleep = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		}); 
+		});
 	}
 	return {
 		playerStats,
-		opponentStats 
+		opponentStats,
 	};
 };
 
@@ -143,23 +156,32 @@ export const misdirection = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
-	// inflict a stack of confusion on your enemies and gain a chance to cause them to inflict damage 
+	// inflict a stack of confusion on your enemies and gain a chance to cause them to inflict damage
 	// upon itself based on their attack as well as increasing **INT** of all allies by __20%__.
 	if (round % 2 === 0) {
 		const isConfused = [ true, false ];
 		let desc;
 		const tempPercent = calcPercentRatio(20, card.rank);
-		const ratio = getRelationalDiff(playerStats.totalStats.intelligence, tempPercent);
-		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + ratio;
+		const ratio = getRelationalDiff(
+			playerStats.totalStats.intelligence,
+			tempPercent
+		);
+		playerStats.totalStats.intelligence =
+      playerStats.totalStats.intelligence + ratio;
 		if (isConfused[probability([ 60, 40 ])]) {
 			const percent = calcPercentRatio(25, card.rank);
-			abilityDamage = getRelationalDiff(opponentStats.totalStats.vitality, percent);
-			opponentStats.totalStats.strength = opponentStats.totalStats.strength - abilityDamage;
-			if (opponentStats.totalStats.strength <= 0) opponentStats.totalStats.strength = 0;
+			abilityDamage = getRelationalDiff(
+				opponentStats.totalStats.vitality,
+				percent
+			);
+			opponentStats.totalStats.strength =
+        opponentStats.totalStats.strength - abilityDamage;
+			if (opponentStats.totalStats.strength <= 0)
+				opponentStats.totalStats.strength = 0;
 			damageDiff = relativeDiff(
 				opponentStats.totalStats.strength,
 				opponentStats.totalStats.originalHp
@@ -167,13 +189,15 @@ export const misdirection = ({
 			if (damageDiff <= 0) damageDiff = 0;
 			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 			opponentStats.totalStats.health = processedHpBar.health;
-			opponentStats.totalStats.strength = processedHpBar.strength; 
+			opponentStats.totalStats.strength = processedHpBar.strength;
 
-			desc = `**__${opponentStats.name}__** is **Confused** ${emoji.confusion} and ` +
-            `takes __${abilityDamage}__ damage.`;
+			desc =
+        `**__${opponentStats.name}__** is **Confused** ${emoji.confusion} and ` +
+        `takes __${abilityDamage}__ damage.`;
 		} else {
-			desc = `Increasing **INT** of all allies by __${tempPercent}__ as well as ` +
-            `inflicting a stack of **Confusion** on **__${opponentStats.name}__**, but it resisted!`;
+			desc =
+        `Increasing **INT** of all allies by __${tempPercent}__ as well as ` +
+        `inflicting a stack of **Confusion** on **__${opponentStats.name}__**, but it resisted!`;
 		}
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -187,13 +211,13 @@ export const misdirection = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+		});
 	}
 	return {
 		playerStats,
 		opponentStats,
 		damageDiff,
-		abilityDamage 
+		abilityDamage,
 	};
 };
 
@@ -205,19 +229,24 @@ export const restriction = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
 }: BattleProcessProps) => {
 	if (!card) return;
-	let desc, isResist = false;
+	let desc,
+		isResist = false;
 	if (opponentStats.totalStats.restrictResistPercent) {
-		const resistProb = probability([ opponentStats.totalStats.restrictResistPercent, 100 ]);
+		const resistProb = probability([
+			opponentStats.totalStats.restrictResistPercent,
+			100 - opponentStats.totalStats.restrictResistPercent,
+		]);
 		isResist = [ true, false ][resistProb];
 	}
 	if (round % 2 === 0 && !opponentStats.totalStats.isRestrictResisted) {
 		// restrict all enemies from using their passive for the next 2 turns.
 		opponentStats.totalStats.isRestrictResisted = !isResist;
-		desc = `restricting **__${opponentStats.name}__** from using its ` +
-        `**Abilities**${isResist ? ", But it resisted!" : ""}.`;
+		desc =
+      `restricting **__${opponentStats.name}__** from using its ` +
+      `**Abilities**${isResist ? ", But it resisted!" : ""}.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -230,11 +259,13 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+		});
 	}
 	if (round % 4 === 0 && opponentStats.totalStats.isRestrictResisted) {
 		opponentStats.totalStats.isRestrictResisted = false;
-		desc = `**__${opponentStats.name}__** has been released from ${titleCase(card.name)}'s **Restriction!**`;
+		desc = `**__${opponentStats.name}__** has been released from ${titleCase(
+			card.name
+		)}'s **Restriction!**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -247,10 +278,10 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+		});
 	}
 	return {
 		playerStats,
-		opponentStats 
+		opponentStats,
 	};
 };

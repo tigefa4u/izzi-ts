@@ -248,7 +248,7 @@ async function initDrops(
 			if (user.is_premium) {
 				rate = rate + 15;
 			}
-			const dropChance = [ rate, 120 ];
+			const dropChance = [ rate, 100 - rate ];
 			const ratebool = [ true, false ];
 			return ratebool[probability(dropChance)];
 		});
