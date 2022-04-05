@@ -50,7 +50,7 @@ export const harbinderOfDeath = ({
 			opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
 			const statGain = getRelationalDiff(playerStats.totalStats[key], percent);
-			playerStats.totalStats[key] = playerStats.totalStats[key] - statGain;
+			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
 	    "and resetting enemy **Critical Hit** and **Evasion** chances, " +
