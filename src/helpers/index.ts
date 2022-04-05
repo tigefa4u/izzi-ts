@@ -182,52 +182,52 @@ type ProbabilityDistributionMap = Map<string, {
 	y: number;
 }>
 export const probability = (chances: number[]): number => {
-	let sum = 0;
-	chances.forEach(function (chance) {
-		sum += chance;
-	});
-	const rand = Math.random();
-	let chance = 0;
-	for (let i = 0; i < chances.length; i++) {
-		chance += chances[i] / sum;
-		if (rand < chance) {
-			return i;
-		}
-	}
-
-	// should never be reached unless sum of probabilities is less than 1
-	// due to all being zero or some being negative probabilities
-	return -1;
-
-	// const distributionMap: ProbabilityDistributionMap = new Map();
-	// // if (!array.every(Number)) return [ -1 ];
-	// let previousNumber = chances[0];
-	// chances.map((item, i) => {
-	// 	if (i === 0) {
-	// 		distributionMap.set(`${item}#${i}`, {
-	// 			x: i,
-	// 			y: item - 1 
-	// 		});
-	// 	} else {
-	// 		distributionMap.set(`${item}#${i}`, {
-	// 			x: previousNumber,
-	// 			y: previousNumber + (item - 1)
-	// 		});
-	// 	}
-	// 	previousNumber = item;
+	// let sum = 0;
+	// chances.forEach(function (chance) {
+	// 	sum += chance;
 	// });
-	// const total = chances.reduce((acc, r) => acc + r, 0);
-	// const idx = randomNumber(0, total, true);
-
-	// const iterator = distributionMap.entries();
-	// let key = "";
-	// for (const [ k, v ] of iterator) {
-	// 	if (idx >= v.x && idx <= v.y) {
-	// 		key = k;
-	// 		break;
+	// const rand = Math.random();
+	// let chance = 0;
+	// for (let i = 0; i < chances.length; i++) {
+	// 	chance += chances[i] / sum;
+	// 	if (rand < chance) {
+	// 		return i;
 	// 	}
 	// }
-	// return Number(key.split("#")[1] ?? -1);
+
+	// // should never be reached unless sum of probabilities is less than 1
+	// // due to all being zero or some being negative probabilities
+	// return -1;
+
+	const distributionMap: ProbabilityDistributionMap = new Map();
+	// if (!array.every(Number)) return [ -1 ];
+	let previousNumber = chances[0];
+	chances.map((item, i) => {
+		if (i === 0) {
+			distributionMap.set(`${item}#${i}`, {
+				x: i,
+				y: item - 1 
+			});
+		} else {
+			distributionMap.set(`${item}#${i}`, {
+				x: previousNumber,
+				y: previousNumber + (item - 1)
+			});
+		}
+		previousNumber = item;
+	});
+	const total = chances.reduce((acc, r) => acc + r, 0);
+	const idx = randomNumber(0, total, true);
+
+	const iterator = distributionMap.entries();
+	let key = "";
+	for (const [ k, v ] of iterator) {
+		if (idx >= v.x && idx <= v.y) {
+			key = k;
+			break;
+		}
+	}
+	return Number(key.split("#")[1] ?? -1);
 };
 
 export const getMemberPermissions = async (
