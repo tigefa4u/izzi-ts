@@ -257,7 +257,7 @@ async function processAbililtyOrItemProc({
 			if (
 				(processUnableToAttack(playerStats, opponentStats, true) ||
           playerStats.totalStats.isRestrictResisted) &&
-        	!playerStats.cards.find((c) => c?.abilityname === "harbinger of death")
+        	!(playerStats.cards.find((c) => c?.abilityname === "harbinger of death") && round % 4 === 0)
 			)
 				break;
 
