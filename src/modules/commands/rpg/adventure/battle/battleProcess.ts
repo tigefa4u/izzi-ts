@@ -246,7 +246,7 @@ async function processAbililtyOrItemProc({
 						}
 						await delay(1000);
 
-						if (itemProc.damageDiff && itemProc.damageDiff <= 0) {
+						if ((itemProc.damageDiff ?? 1) <= 0) {
 							isDefeated = true;
 							abilityProc.damageDiff = 0;
 							break;
