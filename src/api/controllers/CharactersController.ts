@@ -89,7 +89,7 @@ export const getDex: (
 		let character_ids: number[] = [];
 		if (filter.series) {
 			const cards = await getBySeries({ series: filter.series });
-			character_ids = cards.map((ca) => ca.character_id);
+			character_ids = cards.map((ca) => ca.character_id).filter((id) => id !== 426);
 		}
 		const result = await Characters.getCharactersForDex({
 			ids: character_ids,
