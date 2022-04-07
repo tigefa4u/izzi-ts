@@ -63,6 +63,10 @@ export const compareCards = async ({
 		}
 		const characters = await getCharacters({ name: charanames });
 		if (characters.length > 0) {
+			const findIndex = characters.findIndex((c) => c.name === "luna");
+			if (findIndex >= 0) {
+				characters.splice(findIndex, 1);
+			}
 			const list = computeCharacterStats(characters);
 			embed.setTitle("Base Stats").addFields(list);
 
