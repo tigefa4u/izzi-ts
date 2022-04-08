@@ -110,7 +110,7 @@ export const permits = async function ({
 		const dt = new Date();
 		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
 		let refilled_at = timestamp.setHours(
-			timestamp.getHours() + (result.metadata.is_premium ? 2 : 3)
+			timestamp.getHours() + (result.metadata.is_premium ? 1 : 2)
 		);
 		if (result.metadata.is_premium) {
 			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);
