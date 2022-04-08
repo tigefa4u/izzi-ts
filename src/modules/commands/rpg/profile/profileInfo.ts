@@ -128,7 +128,7 @@ export const permits = async function ({
       		remainingHours < 0 ? 0 : remainingHours
       	} hours ${remainingMinutes} minutes]`
       	: `[Refills every ${
-      		result.metadata.is_premium ? "2 hours 30 minutes" : "3 hours"
+      		result.metadata.is_premium ? "1 hour 30 minutes" : "2 hours"
       	}]`;
 
 		context.channel?.sendMessage(

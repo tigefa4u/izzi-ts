@@ -207,11 +207,11 @@ setInterval(() => {
 
 setInterval(() => {
 	init({ is_premium: false });
-}, 1000 * 60 * 60 * 3);
+}, 1000 * 60 * 60 * 2);
 
 setInterval(() => {
 	init({ is_premium: true });
-}, 9e6);
+}, 5.4e6);
 
 setInterval(() => {
 	refillMana();
