@@ -10,4 +10,7 @@ export const subcommands = [ {
 }, {
 	name: "resolve",
 	alias: []
+}, {
+	name: "remove",
+	alias: []
 } ];

@@ -43,8 +43,8 @@ function prepareHelpDesc() {
     "\n" +
     `For more information / tutorials you can check out ${IZZI_WEBSITE}` +
     "\n" +
-	`If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
-	"\n" +
+    `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
+    "\n" +
     `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**`
 	);
 }
@@ -90,7 +90,7 @@ export const help = async ({
 				const command = allCommands[index];
 				const newEmbed = prepareSingleCommandEmbed(client, command);
 				context.channel?.sendMessage(newEmbed);
-	
+
 				followUp(command, context.channel, options.author, client);
 			}
 			return;
@@ -137,19 +137,20 @@ async function followUp(
 				value: key,
 			};
 		});
-	
+
 		const options: SelectMenuOptions = {
 			extras: { placeholder: "Select a sub command" },
 			menuOptions,
 		};
-	
-		const embed = createEmbed().setTitle(`${command.name} Followup Commands`)
+
+		const embed = createEmbed()
+			.setTitle(`${command.name} Followup Commands`)
 			.setDescription("All the sub commands are listed below.");
 		const params = {
 			author,
 			channel,
 			client,
-			extras: { command }
+			extras: { command },
 		};
 		const selectMenu = await selectionInteraction(
 			channel,
@@ -159,35 +160,51 @@ async function followUp(
 			handleFollowUp,
 			{ max: menuOptions.length } // Allow to choose multiple items
 		);
-	
+
 		if (selectMenu) {
 			embed.setButtons(selectMenu);
 		}
 		channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error("modules.commands.basic.followUp(): something went wrong", err);
+		loggers.error(
+			"modules.commands.basic.followUp(): something went wrong",
+			err
+		);
 	}
 	return;
 }
 
-function handleFollowUp(params: SelectMenuCallbackParams<{ command: CommandProps }>, value?: string) {
+function handleFollowUp(
+	params: SelectMenuCallbackParams<{ command: CommandProps }>,
+	value?: string
+) {
 	const command = params.extras?.command;
 	if (!value || !command) return;
-	const subcommand = command.sub_commands[value as keyof CommandProps["sub_commands"]];
-	
-	const embed = createEmbed().setTitle(subcommand.title)
+	const subcommand =
+    command.sub_commands[value as keyof CommandProps["sub_commands"]];
+
+	const embed = createEmbed()
+		.setTitle(subcommand.title)
 		.setDescription(subcommand.description.replace(/\\n/g, "\n"));
 	params.channel?.sendMessage(embed);
 	return;
 }
 
-export const websiteUrls = ({ context, options, client }: BaseProps) => {
-	const embed = createEmbed(options.author, client).setTitle("IzzI Website Info")
-		.setDescription(`**All useful links are listed below**\n\n**Website:** ${IZZI_WEBSITE}\n` +
-		`**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
-		`**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premium` +
-		`\n**Commands:** ${IZZI_WEBSITE}/command\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
-		`**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`);
+export const websiteUrls = ({ context, options, client, command }: BaseProps) => {
+	if (!command) return;
+	const embed = createEmbed(options.author, client)
+		.setTitle(
+			`Command: ${command.name} (Shortcuts: ${command.alias.join(", ")})\n${
+				command.usage
+			}`
+		)
+		.setDescription(
+			`**All useful links are listed below**\n\n**Website:** ${IZZI_WEBSITE}\n` +
+        `**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
+        `**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premium` +
+        `\n**Commands:** ${IZZI_WEBSITE}/command\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
+        `**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`
+		);
 
 	context.channel?.sendMessage(embed);
 	return;
