@@ -5,7 +5,7 @@ import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
 
-export const harbinderOfDeath = ({
+export const harbingerOfDeath = ({
 	playerStats,
 	opponentStats,
 	message,
@@ -32,6 +32,8 @@ export const harbinderOfDeath = ({
 		opponentStats.totalStats.evasion = 1;
 		opponentStats.totalStats.evasionInc = 1;
 		opponentStats.totalStats.evasionTemp = 1;
+		opponentStats.totalStats.isEvadeHit = false;
+		opponentStats.totalStats.isCriticalHit = false;
 
 		// Nullify all effects
 		playerStats.totalStats.isStunned = false;

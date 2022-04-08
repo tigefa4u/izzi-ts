@@ -1,4 +1,5 @@
 import { BaseProps } from "@customTypes/command";
+import { getDonation } from "api/controllers/DonationsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
@@ -58,22 +59,44 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("module.commands.basic.info.daily(): something went wrong", err);
+		loggers.error(
+			"module.commands.basic.info.daily(): something went wrong",
+			err
+		);
 		return;
 	}
 };
 
-export const donate = ({ context, client, options }: BaseProps) => {
+export const donate = async ({
+	context,
+	client,
+	options,
+	command,
+}: BaseProps) => {
 	try {
-		help({
-			context,
-			client,
-			args: [ "donate" ],
-			options 
-		});
+		if (!command) return;
+		const embed = createEmbed(options.author, client)
+			.setTitle(`Command: ${command.name} (Shortcuts: ${command.alias.join(", ")})\n${command.usage}`)
+			.setDescription(command.description);
+
+		const donation = (await getDonation(options.author.id)) || [];
+		if (donation?.length > 0) {
+			const total = donation.reduce((acc, r) => acc + r.amount, 0);
+			const [ str1, str2 ] = command.description.split("! [");
+
+			embed.setDescription(
+				`${str1}! You have spent a total of __$${total}__ so far${
+					total >= 100 ? ", and you're eligible for the **Ascended** Role." : "."
+				} [${str2}`
+			);
+		}
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("module.commands.basic.info.donate(): something went wrong", err);
+		loggers.error(
+			"module.commands.basic.info.donate(): something went wrong",
+			err
+		);
 		return;
 	}
 };

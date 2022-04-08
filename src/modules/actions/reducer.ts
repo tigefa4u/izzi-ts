@@ -7,7 +7,7 @@ import {
 	cry, dance, run, dodge, baka, pout, glare, laugh 
 } from "modules/commands/basic/emotions";
 import { bet } from "modules/commands/basic/gamble";
-import { help, invite, ping } from "modules/commands/basic/index";
+import { help, invite, ping, websiteUrls } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
 import { ability } from "modules/commands/rpg/abilities";
 import { battle } from "modules/commands/rpg/adventure";
@@ -133,7 +133,8 @@ const commandMap: CommandMapProps = {
 	baka: baka,
 	pout: pout,
 	glare: glare,
-	laugh: laugh
+	laugh: laugh,
+	website: websiteUrls,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

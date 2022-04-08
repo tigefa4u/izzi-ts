@@ -93,6 +93,7 @@ export type CommandMapProps = {
 	poke: (params: BaseProps) => void;
 	cry: (params: BaseProps) => void;
 	bonk: (params: BaseProps) => void;
+	website: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed
