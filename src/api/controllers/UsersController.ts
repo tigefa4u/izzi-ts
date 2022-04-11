@@ -24,7 +24,7 @@ async function prepareCacheHydrationData(
 	const cache = await Cache.get(key);
 	if (!cache) return;
 	const cacheData: UserProps = JSON.parse(cache);
-	const dataToUpdate = Object.assign({}, { ...data });
+	const dataToUpdate = Object.assign(cacheData, { ...data });
 	Object.keys(cacheData).forEach((key) => {
 		Object.assign(cacheData, { [key]: dataToUpdate[key as keyof UserUpdateProps], });
 	});

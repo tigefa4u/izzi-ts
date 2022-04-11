@@ -16,11 +16,11 @@ export const harbingerOfDeath = ({
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, evasion, elemental advantage
 	// and critical damage
-	// as well as reducing all stats by {20}% as well as buffing all
+	// as well as reducing all stats by {15}% as well as buffing all
 	// ally stats for the same %
 	if (!card) return;
 	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath) {
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(15, card.rank);
 		// reset elemental advantage
 		opponentStats.totalStats.effective = 1;
 		playerStats.totalStats.effective = 1;
@@ -29,10 +29,10 @@ export const harbingerOfDeath = ({
 		opponentStats.totalStats.criticalDamage = 1;
 		opponentStats.totalStats.criticalInc = 1;
 		opponentStats.totalStats.criticalTemp = 1;
-		opponentStats.totalStats.evasion = 1;
-		opponentStats.totalStats.evasionInc = 1;
-		opponentStats.totalStats.evasionTemp = 1;
-		opponentStats.totalStats.isEvadeHit = false;
+		// opponentStats.totalStats.evasion = 1;
+		// opponentStats.totalStats.evasionInc = 1;
+		// opponentStats.totalStats.evasionTemp = 1;
+		// opponentStats.totalStats.isEvadeHit = false;
 		opponentStats.totalStats.isCriticalHit = false;
 
 		// Nullify all effects
