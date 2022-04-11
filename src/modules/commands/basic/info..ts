@@ -4,6 +4,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { BOT_VOTE_LINK, IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
+import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { help } from ".";
 
@@ -83,12 +84,13 @@ export const donate = async ({
 		if (donation?.length > 0) {
 			const total = donation.reduce((acc, r) => acc + r.amount, 0);
 			const [ str1, str2 ] = command.description.split("! [");
-
-			embed.setDescription(
-				`${str1}! You have spent a total of __$${total}__ so far${
-					total >= 100 ? ", and you're eligible for the **Ascended** Role." : "."
-				} [${str2}`
-			);
+			const newEmbed = createEmbed(options.author, client)
+				.setDescription(
+					`${str1}! You have spent a total of __$${total}__ so far${
+						total >= 100 ? ", and you're eligible for the **Ascended** Role." : "."
+					}`
+				);
+			DMUser(client, newEmbed, options.author.id);
 		}
 		context.channel?.sendMessage(embed);
 		return;
