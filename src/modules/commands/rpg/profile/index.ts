@@ -56,7 +56,10 @@ export const profile = async ({
 		if (user.is_married) {
 			const marriage = await getMarriage({ user_tag: user.user_tag });
 			if (marriage) {
-				const marriedUser = await getRPGUser({ user_tag: marriage.married_to }, { cached: true });
+				const marriedUser = await getRPGUser(
+					{ user_tag: marriage.married_to },
+					{ cached: true }
+				);
 				user.married_to = marriedUser?.username;
 			}
 		}
@@ -72,7 +75,7 @@ export const profile = async ({
 			const result = await getCollectionById({
 				id: user.selected_card_id,
 				user_id: user.id,
-				user_tag: user.user_tag
+				user_tag: user.user_tag,
 			});
 			if (result) {
 				const card = result[0];
@@ -80,7 +83,10 @@ export const profile = async ({
 				user.name = card.name;
 				const canvas = await createSingleCanvas(card, false);
 				if (canvas) {
-					user.attachment = createAttachment(canvas.createJPEGStream(), "card.jpg");
+					user.attachment = createAttachment(
+						canvas.createJPEGStream(),
+						"card.jpg"
+					);
 					user.filepath = "attachment://card.jpg";
 				}
 			}
@@ -98,17 +104,19 @@ export const profile = async ({
 			user.rankic = rankic;
 			user.divisionic = divisionic;
 			user.rank = titleCase(userRank.rank);
-			user.division = `${userRank.rank_id === 5 ? "Grand Master" : "Division"} ${
-				userRank.division
-			}`;
+			user.division = `${
+				userRank.rank_id === 5 ? "Grand Master" : "Division"
+			} ${userRank.division}`;
 			user.ranked_exp = `[${userRank.exp} / ${userRank.r_exp}]`;
 		}
 		const embed = createEmbed(clientUser, client)
 			.setFields(prepareProfileFields(user))
 			.setImage(user.filepath || clientUser.displayAvatarURL())
 			.setFooter({
-				text: `User ID: ${profileId}`,
-				iconURL: clientUser.displayAvatarURL() 
+				text: `User ID: ${profileId} • Started on: ${new Date(
+					user.created_at
+				).toLocaleDateString("en-us", DATE_OPTIONS)}`,
+				iconURL: clientUser.displayAvatarURL(),
 			});
 
 		if (user.attachment) {
@@ -161,7 +169,7 @@ function prepareProfileFields(user: UserProps & P) {
 		{
 			name: `${emoji.marriageic} Marriage`,
 			value: `${
-				(user.is_married && user.married_to) ? user.married_to : "Not Married"
+				user.is_married && user.married_to ? user.married_to : "Not Married"
 			}`,
 			inline: true,
 		},
@@ -205,34 +213,43 @@ function prepareProfileFields(user: UserProps & P) {
 	];
 
 	if (user.rank) {
-		fields.push({
-			name: `Rank ${user.rankic || ""}`,
-			value: user.rank,
-			inline: true
-		}, {
-			name: `Division ${user.divisionic || ""}`,
-			value: user.division || "",
-			inline: true
-		}, {
-			name: "Wins",
-			value: user.wins?.toString() || "",
-			inline: true
-		}, {
-			name: "Loss",
-			value: user.loss?.toString() || "",
-			inline: true
-		}, {
-			name: "Ranked Exp",
-			value: user.ranked_exp || "",
-			inline: true
-		});
+		fields.push(
+			{
+				name: `Rank ${user.rankic || ""}`,
+				value: user.rank,
+				inline: true,
+			},
+			{
+				name: `Division ${user.divisionic || ""}`,
+				value: user.division || "",
+				inline: true,
+			},
+			{
+				name: "Wins",
+				value: user.wins?.toString() || "",
+				inline: true,
+			},
+			{
+				name: "Loss",
+				value: user.loss?.toString() || "",
+				inline: true,
+			},
+			{
+				name: "Ranked Exp",
+				value: user.ranked_exp || "",
+				inline: true,
+			}
+		);
 	}
 
 	if (user.is_premium) {
 		fields.push(
 			{
 				name: `${emoji.premium} Premium Since`,
-				value: new Date(user.premium_since).toLocaleDateString("en-us", DATE_OPTIONS),
+				value: new Date(user.premium_since).toLocaleDateString(
+					"en-us",
+					DATE_OPTIONS
+				),
 				inline: true,
 			},
 			{
