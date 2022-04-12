@@ -113,9 +113,7 @@ export const profile = async ({
 			.setFields(prepareProfileFields(user))
 			.setImage(user.filepath || clientUser.displayAvatarURL())
 			.setFooter({
-				text: `User ID: ${profileId} • Started on: ${new Date(
-					user.created_at
-				).toLocaleDateString("en-us", DATE_OPTIONS)}`,
+				text: `User ID: ${profileId}`,
 				iconURL: clientUser.displayAvatarURL(),
 			});
 
@@ -210,6 +208,13 @@ function prepareProfileFields(user: UserProps & P) {
 			value: user.orbs.toString(),
 			inline: true,
 		},
+		{
+			name: ":clock1: Started Playing from",
+			value: `${new Date(
+				user.created_at
+			).toLocaleDateString("en-us", DATE_OPTIONS)}`,
+			inline: true
+		}
 	];
 
 	if (user.rank) {
