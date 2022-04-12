@@ -14,7 +14,7 @@ export const harbingerOfDeath = ({
 	isPlayerFirst,
 	card,
 }: BattleProcessProps) => {
-	// Nullify all effects resetting critical, evasion, elemental advantage
+	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
 	// as well as reducing all stats by {15}% as well as buffing all
 	// ally stats for the same %
@@ -55,7 +55,7 @@ export const harbingerOfDeath = ({
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
-	    "and resetting enemy **Critical Hit** and **Evasion** chances, " +
+	    "and resetting enemy **Critical Hit**, " +
 	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
