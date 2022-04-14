@@ -142,7 +142,7 @@ async function validateAndProcessMarriage(
 			createMarriage(marriageArr),
 		]);
 		context.channel?.sendMessage(
-			`Yay! ${emoji.celebration}, You are not married to ${mentionedUser.username}` +
+			`Yay! ${emoji.celebration}, You are now married to ${mentionedUser.username}` +
         `\nYou both have received __${MARRIAGE_BONUS}__ ${emoji.gold}`
 		);
 	}
