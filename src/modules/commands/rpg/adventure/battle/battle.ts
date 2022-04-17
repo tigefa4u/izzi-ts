@@ -234,8 +234,8 @@ async function simulatePlayerTurns({
 			...evadeHitChances.enemyStats,
 		};
 		const updatedStats = await BattleProcess({
-			baseEnemyStats,
-			basePlayerStats,
+			baseEnemyStats: isPlayerFirst ? baseEnemyStats : basePlayerStats,
+			basePlayerStats: isPlayerFirst ? basePlayerStats : baseEnemyStats,
 			isPlayerFirst,
 			opponentStats: isPlayerFirst ? enemyStats : playerStats,
 			playerStats: isPlayerFirst ? playerStats : enemyStats,

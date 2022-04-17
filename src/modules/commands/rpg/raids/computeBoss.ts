@@ -1,6 +1,5 @@
 import { MapProps } from "@customTypes";
 import { PrepareLootProps } from "@customTypes/raids";
-import { clone } from "utility";
 import prepareBaseLoot from "./prepareBaseLoot";
 
 const difficultyObj: MapProps = {
@@ -9,8 +8,6 @@ const difficultyObj: MapProps = {
 	m: "medium",
 	i: "immortal",
 };
-
-
 
 export const computeRank = (difficulty = "e", isEvent = false) => {
 	return prepareLoot(difficulty, isEvent);
@@ -29,7 +26,7 @@ function prepareLoot(
 		}
 	} as PrepareLootProps;
 	result.difficulty = difficultyObj[difficulty as keyof MapProps];
-	const baseLoot = clone(prepareBaseLoot);
+	const baseLoot = prepareBaseLoot();
 	if (isEvent === true) {
 		result.bosses = 1;
 		result.loot.drop.event = baseLoot[difficulty].event.loot.drop;
