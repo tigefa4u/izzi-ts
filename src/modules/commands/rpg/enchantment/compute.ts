@@ -43,8 +43,8 @@ async function calcLevelGain({
 		const gain = Math.floor(BASE_XP * (card.character_level + levelCounter) ** XP_GAIN_EXPONENT);
 		reqExp = reqExp + gain;
 		const diff = totalGain - gain;
-		levelCounter++;
 		if (diff < 0) break;
+		levelCounter++;
 		totalGain = diff;
 	}
 	if (totalGain < 0) {
