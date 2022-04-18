@@ -62,7 +62,7 @@ export const harbingerOfDeath = ({
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
-	    "and resetting enemy **Critical Hit**, " +
+	    "and resetting enemy **Critical Hit** and **Evasion Chance**, " +
 	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
