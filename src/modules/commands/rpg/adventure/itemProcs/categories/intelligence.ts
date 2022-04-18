@@ -60,8 +60,10 @@ export const seekersArmguard = ({
 			playerStats.totalStats,
 			card.itemStats
 		);
+		playerStats.totalStats.restringHarbingerOfDeathPercent = card.itemStats.resist;
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points";
+		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points, " +
+		`as well as Grants __${card.itemStats.resist}%__ resistance against **Harbinger of Death**`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -76,13 +78,12 @@ export const seekersArmguard = ({
 			isPlayerFirst,
 			isItem: true,
 		});
-
-		return {
-			playerStats,
-			opponentStats,
-			basePlayerStats,
-		};
 	}
+	return {
+		playerStats,
+		opponentStats,
+		basePlayerStats,
+	};
 };
 
 export const farsightOrb = ({

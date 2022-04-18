@@ -88,6 +88,7 @@ export type AbilityStackProps = StatStateProps & AbilityStatStackProps & {
     isUseCrusher?: boolean;
     isPrecision?: boolean;
     isHarbingerOfDeath?: boolean;
+    restringHarbingerOfDeathPercent?: number;
 }
 
 export type BattleStats = {

@@ -1,6 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
+import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
@@ -19,7 +20,13 @@ export const harbingerOfDeath = ({
 	// as well as reducing all stats by {15}% as well as buffing all
 	// ally stats for the same %
 	if (!card) return;
-	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath) {
+	let proc = true;
+	if (playerStats.totalStats.restringHarbingerOfDeathPercent) {
+		const chances = [ playerStats.totalStats.restringHarbingerOfDeathPercent, 100 ];
+		const resistChances = [ false, true ];
+		proc = resistChances[probability(chances)];
+	}
+	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
 		const percent = calcPercentRatio(15, card.rank);
 		// reset elemental advantage
 		opponentStats.totalStats.effective = 1;
@@ -29,10 +36,10 @@ export const harbingerOfDeath = ({
 		opponentStats.totalStats.criticalDamage = 1;
 		opponentStats.totalStats.criticalInc = 1;
 		opponentStats.totalStats.criticalTemp = 1;
-		// opponentStats.totalStats.evasion = 1;
-		// opponentStats.totalStats.evasionInc = 1;
-		// opponentStats.totalStats.evasionTemp = 1;
-		// opponentStats.totalStats.isEvadeHit = false;
+		opponentStats.totalStats.evasion = 1;
+		opponentStats.totalStats.evasionInc = 1;
+		opponentStats.totalStats.evasionTemp = 1;
+		opponentStats.totalStats.isEvadeHit = false;
 		opponentStats.totalStats.isCriticalHit = false;
 
 		// Nullify all effects
