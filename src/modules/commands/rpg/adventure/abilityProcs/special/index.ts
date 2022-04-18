@@ -21,8 +21,8 @@ export const harbingerOfDeath = ({
 	// ally stats for the same %
 	if (!card) return;
 	let proc = true;
-	if (playerStats.totalStats.restringHarbingerOfDeathPercent) {
-		const chances = [ playerStats.totalStats.restringHarbingerOfDeathPercent, 100 ];
+	if (opponentStats.totalStats.restringHarbingerOfDeathPercent) {
+		const chances = [ opponentStats.totalStats.restringHarbingerOfDeathPercent, 100 ];
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
