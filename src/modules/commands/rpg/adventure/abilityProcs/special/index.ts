@@ -27,6 +27,7 @@ export const harbingerOfDeath = ({
 		proc = resistChances[probability(chances)];
 	}
 	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
+		playerStats.totalStats.isHarbingerOfDeath = true;
 		const percent = calcPercentRatio(15, card.rank);
 		// reset elemental advantage
 		opponentStats.totalStats.effective = 1;

@@ -187,8 +187,8 @@ export const BattleProcess = async ({
 		isPlayerAsleep: playerStats.totalStats.isAsleep,
 		isOpponentEvadeHit: opponentStats.totalStats.isEvadeHit,
 		isCriticalHit: playerStats.totalStats.isCriticalHit,
-		basePlayerStats,
-		baseEnemyStats,
+		basePlayerStats: isPlayerFirst ? basePlayerStats : baseEnemyStats,
+		baseEnemyStats: isPlayerFirst ? baseEnemyStats : basePlayerStats,
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
 		abilityDamage,
@@ -235,15 +235,15 @@ async function processAbililtyOrItemProc({
 						playerStats.totalStats = itemProc.playerStats.totalStats;
 						opponentStats.totalStats = itemProc.opponentStats.totalStats;
 
-						if (isPlayerFirst) {
-							basePlayerStats.totalStats = clone(
-								itemProc.basePlayerStats.totalStats
-							);
-						} else {
-							baseEnemyStats.totalStats = clone(
-								itemProc.basePlayerStats.totalStats
-							);
-						}
+						// if (isPlayerFirst) {
+						basePlayerStats.totalStats = clone(
+							itemProc.basePlayerStats.totalStats
+						);
+						// } else {
+						// 	baseEnemyStats.totalStats = clone(
+						// 		itemProc.basePlayerStats.totalStats
+						// 	);
+						// }
 						await delay(1000);
 
 						if ((itemProc.damageDiff ?? 1) <= 0) {
