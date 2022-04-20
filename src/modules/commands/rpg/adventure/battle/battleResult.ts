@@ -126,6 +126,10 @@ async function processFloorWin({
 		goldReward = randomNumber(360, 550);
 		rankReward = "platinum";
 		rankId = 3;
+	} else if (user.max_ruin >= 100) {
+		goldReward = randomNumber(3000, 5000);
+		rankReward = "platinum";
+		rankId = 3;
 	}
 	const options = {
 		character_id: enemyCard.character_id,
