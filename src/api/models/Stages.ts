@@ -40,6 +40,7 @@ export const getFloorsBycharacterId: (params: {
 		.from(tableName)
 		.innerJoin(cards, `${tableName}.card_id`, `${cards}.id`)
 		.where(`${cards}.character_id`, params.character_id)
+		.orderBy(`${tableName}.location_id`, "asc")
 		.orderBy(`${tableName}.floor`, "asc");
 
 	return query;
