@@ -22,7 +22,6 @@ const shardParams = {
 	totalShards: TOTAL_SHARDS || "auto",
 	respawn: true,
 	token: DISCORD_TEST_BOT,
-	// token: config.DISCORD_BOT_TOKEN
 };
 
 if (SHARD_LIST) {

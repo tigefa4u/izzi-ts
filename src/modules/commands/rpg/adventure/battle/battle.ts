@@ -130,6 +130,7 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
+		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
