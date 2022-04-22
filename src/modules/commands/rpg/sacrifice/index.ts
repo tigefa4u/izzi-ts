@@ -19,7 +19,11 @@ import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, SACRIFICE_GOLD_COST } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	SACRIFICE_GOLD_COST,
+} from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -122,7 +126,7 @@ async function verifyAndProcessSacrifice(
 
 		const promises = [];
 		// delete card from market and team
-		delFromMarket({ collection_ids: cardToConsume.id }).then(async () => {
+		await delFromMarket({ collection_ids: [ cardToConsume.id ] }).then(async () => {
 			loggers.info(
 				"Sacrifice card: " +
           JSON.stringify(cardToConsume) +
@@ -138,13 +142,15 @@ async function verifyAndProcessSacrifice(
 		if (user.selected_card_id === cardToConsume.id) {
 			user.selected_card_id = null;
 		}
-		promises.push(updateRPGUser(
-			{ user_tag: user.user_tag },
-			{
-				gold: user.gold,
-				selected_card_id: user.selected_card_id,
-			}
-		));
+		promises.push(
+			updateRPGUser(
+				{ user_tag: user.user_tag },
+				{
+					gold: user.gold,
+					selected_card_id: user.selected_card_id,
+				}
+			)
+		);
 		await Promise.all(promises);
 		const canvas = await createSingleCanvas(cardCanvas, false);
 		if (!canvas) {
@@ -192,7 +198,9 @@ export const sacrificeCard = async ({
 		const cooldownCommand = "sacrifice-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -248,7 +256,9 @@ export const sacrificeCard = async ({
 					// .setThumbnail("attachment://card.jpg")
 					// .attachFiles([ attachment ]);
 				} else {
-					embed.setDescription("We cannot Sacrifice your card right now, please try again later.");
+					embed.setDescription(
+						"We cannot Sacrifice your card right now, please try again later."
+					);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
