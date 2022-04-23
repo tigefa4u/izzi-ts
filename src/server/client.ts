@@ -13,9 +13,13 @@ process.on("unhandledRejection", (error, promise) => {
 });
 
 process.on("uncaughtException", async (error) => {
-	loggers.error("BOT CRASHED, FATAL ERROR: ", error);
+	loggers.error("UNCAUGHT_EXCEPTION FATAL ERROR: ", error);
 	await flushCache();
-	process.exit(1);
+	// process.exit(1);
+});
+
+process.on("exit", () => {
+	loggers.error("BOT_CRASHED FATAL ERROR: process has exited unexpectedly", {});
 });
 
 // process.setMaxListeners(100);
