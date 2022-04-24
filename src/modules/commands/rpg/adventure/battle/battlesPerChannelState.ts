@@ -7,6 +7,10 @@ export const get = (channelId: string) => {
 };
 
 export const set = (channelId: string, value: number): Map<string, number> => {
+	if (value <= 0) {
+		battlesInChannel.delete(channelId);
+		return new Map();
+	}
 	return battlesInChannel.set(channelId, value);
 };
 
