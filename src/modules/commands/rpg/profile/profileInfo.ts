@@ -1,6 +1,6 @@
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import loggers from "loggers";
 
@@ -220,6 +220,25 @@ export const gold = async function ({
 	} catch (err) {
 		loggers.error(
 			"commands.rpg.profile.profileInfo.gold(): something went wrong",
+			err
+		);
+		return;
+	}
+};
+
+export const deleteAccount = async function ({
+	context,
+	options
+}: Pick<BaseProps, "context" | "options">) {
+	try {
+		const author = options.author;
+		await updateRPGUser({ user_tag: author.id }, { is_active: false });
+		context.channel?.sendMessage("We are sorry to see you leave. Your account is now inactive. " +
+		"However, you can use izzi commands to activate your account again!");
+		return;
+	} catch (err) {
+		loggers.error(
+			"commands.rpg.profile.profileInfo.deleteAccount(): something went wrong",
 			err
 		);
 		return;

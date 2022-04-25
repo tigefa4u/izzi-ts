@@ -193,6 +193,7 @@ async function upgradeUser(
 			await createOrUpdateZoneBackup({
 				user_tag: user.user_tag,
 				max_ruin: user.max_ruin,
+				max_floor: 1,
 			});
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
@@ -212,6 +213,11 @@ async function upgradeUser(
 			}
 			Object.assign(upgradeObject, { max_ruin_floor: user.max_ruin_floor });
 			user.gold = user.gold + 500;
+			await createOrUpdateZoneBackup({
+				max_ruin: user.ruin,
+				max_floor: user.max_ruin_floor,
+				user_tag: user.user_tag 
+			});
 		}
 		channel?.sendMessage(desc);
 	}

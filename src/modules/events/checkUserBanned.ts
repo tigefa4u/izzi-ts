@@ -33,6 +33,7 @@ export const checkUserBanned = async (
 		return;
 	}
 	if (user && !user.is_active) {
+		context.channel?.sendMessage("Welcome back! We have set your account status to active");
 		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
 	}
 	return true;
