@@ -101,6 +101,7 @@ export const confirmTrade = async ({
 			});
 			return;
 		}
+		channel?.sendMessage("Completing Trade, Please wait...");
 		const trader_1 = tradeQueue[keys[0]];
 		const trader_2 = tradeQueue[keys[1]];
 		// loggers.info(

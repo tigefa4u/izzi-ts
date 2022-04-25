@@ -28,6 +28,7 @@ export const addMultipleCards = async ({
 			channel?.sendMessage("Please specify a valid Rank");
 			return;
 		}
+		channel?.sendMessage("Adding multiple cards to trade...");
 		if (params.limit && typeof params.limit === "object") {
 			params.limit = Number(params.limit[0]);
 		} else if (!params.limit) {

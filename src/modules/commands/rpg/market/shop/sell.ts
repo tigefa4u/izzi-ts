@@ -15,7 +15,7 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_SUCCESS_TITLE, MARKET_COMMISSION } from "helpers/constants";
+import { DEFAULT_SUCCESS_TITLE, MARKET_COMMISSION, MARKET_PRICE_CAP } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -106,6 +106,9 @@ export const sellCard = async ({
 		if (!id || isNaN(id)) return;
 		const sellingPrice = Number(args.shift());
 		if (!sellingPrice || isNaN(sellingPrice)) return;
+		if (sellingPrice > MARKET_PRICE_CAP) {
+			context.channel?.sendMessage("Please provide a valid selling price");
+		}
 		const params = {
 			extras: {
 				id,

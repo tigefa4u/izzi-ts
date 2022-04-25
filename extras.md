@@ -63,3 +63,8 @@ JSON Query in where clause
 
 select *, lobby->'1' as member from raids
  where (lobby->'1'->'user_id')::int = 1
+
+SELECT schemaname, indexname, tablename 
+FROM pg_indexes 
+WHERE schemaname = 'public' 
+ORDER BY indexname; 
