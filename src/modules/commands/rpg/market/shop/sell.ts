@@ -108,6 +108,7 @@ export const sellCard = async ({
 		if (!sellingPrice || isNaN(sellingPrice)) return;
 		if (sellingPrice > MARKET_PRICE_CAP) {
 			context.channel?.sendMessage("Please provide a valid selling price");
+			return;
 		}
 		const params = {
 			extras: {
