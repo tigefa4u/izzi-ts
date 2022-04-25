@@ -115,7 +115,6 @@ const processDGRewards = async () => {
 		top10.map(async (user, index) => {
 			const winRatio = user.wins / user.loss;
 			const goldReward = Math.floor(winRatio * 500000);
-			console.log("for user: " + user.user_tag + " gold: " + goldReward);
 			await Promise.all(
 				[ ...Array(2).fill("premium"), ...Array(4).fill("legendary") ].map(
 					async (crateCat) => {

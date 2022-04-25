@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cache from "cache";
 import { DISCORD_BOT_TOKEN } from "environment";
+import loggers from "loggers";
 import requester from "./requester";
 
 async function getDMChannelID(recipient_id: string) {
@@ -15,7 +16,7 @@ async function getDMChannelID(recipient_id: string) {
 			headers: { "Authorization": `Bot ${DISCORD_BOT_TOKEN}` }
 		}).then((res) => res.id)
 			.catch((err) => {
-				console.log("pipes.directMessage.getDMChannelID(): Unable to create DM Channel: ", err);
+				loggers.error("pipes.directMessage.getDMChannelID(): Unable to create DM Channel: ", err);
 				return;
 			});
 		return result;

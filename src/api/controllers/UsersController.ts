@@ -93,7 +93,6 @@ export const getRPGUser: (
 	try {
 		const key = "user::" + params.user_tag;
 		if (options?.cached) {
-			console.log("cache hit");
 			const result = await Cache.get(key);
 			if (result) {
 				return JSON.parse(result);
