@@ -43,6 +43,16 @@ export const harbingerOfDeath = ({
 		opponentStats.totalStats.isEvadeHit = false;
 		opponentStats.totalStats.isCriticalHit = false;
 
+		// playerStats.totalStats.isEvadeHit = false;
+		// playerStats.totalStats.isEvadeHit = false;
+		// playerStats.totalStats.critical = 1;
+		// playerStats.totalStats.criticalDamage = 1;
+		// playerStats.totalStats.criticalInc = 1;
+		// playerStats.totalStats.criticalTemp = 1;
+		// playerStats.totalStats.evasion = 1;
+		// playerStats.totalStats.evasionInc = 1;
+		// playerStats.totalStats.evasionTemp = 1;
+
 		// Nullify all effects
 		playerStats.totalStats.isStunned = false;
 		playerStats.totalStats.isPoisoned = false;

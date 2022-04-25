@@ -44,7 +44,7 @@ export const normalizeFloors: (data: StageProps[]) => NormalizeFloorProps = (
 	data
 ) => {
 	const location_id = Number((data[0] || {}).location_id || 0);
-	const floors: number[] = data.map((i) => i.floor);
+	const floors: number[] = [ ...new Set(data.map((i) => i.floor)) ];
 	return {
 		zone: location_id,
 		floors,
