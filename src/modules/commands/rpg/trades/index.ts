@@ -195,7 +195,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 			embed
 				.setTitle(DEFAULT_ERROR_TITLE)
 				.setDescription(
-					`Summoner **${author.username}** You is currently in trade. ` +
+					`Summoner **${author.username}** You are currently in trade. ` +
 					"Use ``tr cancel/confirm`` to cancel/confirm the trade"
 				);
 			context.channel?.sendMessage(embed);
