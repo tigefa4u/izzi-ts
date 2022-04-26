@@ -132,12 +132,15 @@ export const battleRaidBoss = async ({
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			context.channel?.sendMessage("You have forfeit the battle");
-			updateObj.lobby = consumeEnergy(
-				refetchRaid.lobby,
+			const updatedLobby = await consumeEnergy(
+				updateObj.id,
 				user.id,
 				multiplier,
 				0
 			);
+			if (updatedLobby) {
+				updateObj.lobby = updatedLobby;
+			}
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
 				context.channel?.sendMessage("Unable to calculate total damage");
@@ -145,12 +148,15 @@ export const battleRaidBoss = async ({
 			}
 			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
-			updateObj.lobby = consumeEnergy(
-				updateObj.lobby,
+			const updatedLobby = await consumeEnergy(
+				updateObj.id,
 				user.id,
 				multiplier,
 				result.totalDamage
 			);
+			if (updatedLobby) {
+				updateObj.lobby = updatedLobby;
+			}
 
 			updateObj.stats.remaining_strength =
 		updateObj.stats.remaining_strength - result.totalDamage;
@@ -237,12 +243,17 @@ async function processRaidResult({
 	return;
 }
 
-function consumeEnergy(
-	lobby: RaidLobbyProps,
+async function consumeEnergy(
+	raidId: number,
 	user_id: number,
 	multiplier = 1,
 	totalDamage = 0
 ) {
+	const raid = await getRaid({ id: raidId });
+	if (!raid) {
+		return;
+	}
+	const lobby = raid.lobby;
 	const member = lobby[user_id];
 	if (!member) {
 		delete lobby[user_id];
