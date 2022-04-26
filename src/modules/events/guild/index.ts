@@ -6,6 +6,7 @@ import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
 import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
 import loggers from "loggers";
+import { getWebsiteUrls } from "modules/commands/basic";
 
 export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 	try {
@@ -50,10 +51,15 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
                 `\nFor more assistance join our support server ${OFFICIAL_SERVER_LINK}. ` +
                 `You can also find more information/command tutorials on ${IZZI_WEBSITE}`
 			)
-			.setFooter("GLHF! Happy Collecting")
+			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")
 			.attachFiles([ attachment ]);
 		defaultChannel.sendMessage(embed);
+
+		const helpEmbed = createEmbed(undefined, client)
+			.setTitle("Find Useful Urls Below")
+			.setDescription(getWebsiteUrls());
+		defaultChannel.sendMessage(helpEmbed);
 		return;
 	} catch (err) {
 		loggers.error(

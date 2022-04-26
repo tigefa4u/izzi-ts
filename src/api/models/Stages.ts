@@ -41,7 +41,8 @@ export const getFloorsBycharacterId: (params: {
 		.innerJoin(cards, `${tableName}.card_id`, `${cards}.id`)
 		.where(`${cards}.character_id`, params.character_id)
 		.orderBy(`${tableName}.location_id`, "asc")
-		.orderBy(`${tableName}.floor`, "asc");
+		.orderBy(`${tableName}.floor`, "asc")
+		.whereNot(`${tableName}.location_id`, 101);
 
 	return query;
 };

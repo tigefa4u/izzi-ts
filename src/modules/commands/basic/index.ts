@@ -198,14 +198,15 @@ export const websiteUrls = ({ context, options, client, command }: BaseProps) =>
 				command.usage
 			}`
 		)
-		.setDescription(
-			`**All useful links are listed below**\n\n**Website:** ${IZZI_WEBSITE}\n` +
-        `**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
-        `**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premium` +
-        `\n**Commands:** ${IZZI_WEBSITE}/command\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
-        `**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`
-		);
+		.setDescription(getWebsiteUrls());
 
 	context.channel?.sendMessage(embed);
 	return;
 };
+
+export const getWebsiteUrls = () => 
+	`**All useful links are listed below**\n\n**Website:** ${IZZI_WEBSITE}\n` +
+`**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
+`**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premium` +
+`\n**Commands:** ${IZZI_WEBSITE}/command\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
+`**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`;
