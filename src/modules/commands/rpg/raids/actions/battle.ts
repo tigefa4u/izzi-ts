@@ -146,7 +146,7 @@ export const battleRaidBoss = async ({
 			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
 			updateObj.lobby = consumeEnergy(
-				refetchRaid.lobby,
+				updateObj.lobby,
 				user.id,
 				multiplier,
 				result.totalDamage
