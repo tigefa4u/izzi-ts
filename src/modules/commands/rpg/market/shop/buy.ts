@@ -178,12 +178,6 @@ async function validateAndPurchaseCard(
 				return;
 			}
 		}
-		const count = purhchaseExceeded.purchased + 1;
-		if (count >= MARKET_PURCHASE_LIMIT) {
-			setCooldown(params.author.id, purchaseCooldown, 60 * 60 * 24);
-		}
-		Cache.set(purchaseCooldown, JSON.stringify({ purchased: count }));
-		Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24);
 		const dealer = await getRPGUser({ user_tag: OWNER_DISCORDID });
 		if (!dealer) {
 			params.channel?.sendMessage("Something went wrong!");
@@ -211,6 +205,12 @@ async function validateAndPurchaseCard(
 		);
 		await delFromMarket({ id: marketCard.id });
 		notifyBuyer(params.channel, marketCard);
+		const count = purhchaseExceeded.purchased + 1;
+		if (count >= MARKET_PURCHASE_LIMIT) {
+			setCooldown(params.author.id, purchaseCooldown, 60 * 60 * 24);
+		}
+		Cache.set(purchaseCooldown, JSON.stringify({ purchased: count }));
+		Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24);
 		return;
 	}
 	return marketCard;
