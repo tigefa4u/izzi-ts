@@ -92,6 +92,8 @@ async function notifySeller(
       	buyer: buyer.user_tag,
       	totalCost,
       	price: marketCard.price,
+      	marketId: marketCard.id,
+      	collectionId: marketCard.collection_id
       })
 	);
 	const embed = createEmbed()
