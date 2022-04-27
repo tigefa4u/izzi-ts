@@ -43,13 +43,24 @@ export const createCollection: (
 	}
 };
 
+type CT = { name?: string | string[]; type?: string | string[]; }
+const safeParseCharacterParams = (params = {} as CT) => {
+	const obj = {};
+	if (params.name) {
+		Object.assign(obj, { name: params.name });
+	}
+	if (params.type) {
+		Object.assign(obj, { type: params.type });
+	}
+	return obj;
+};
 export const getCollection: (
-  params: CollectionParams & { limit?: number; name?: string | string[]; }
+  params: CollectionParams & { limit?: number; } & CT
 ) => Promise<CollectionProps[] | undefined> = async function (params) {
 	try {
 		let characters = [] as CharactersReturnType;
-		if (params.name) {
-			const resp = await getCharacters({ name: params.name, });
+		if (params.name || params.type) {
+			const resp = await getCharacters(safeParseCharacterParams(params));
 			if (resp && resp.length > 0) {
 				characters = resp;
 				Object.assign(params, { character_ids: resp.map((c) => c.id) });

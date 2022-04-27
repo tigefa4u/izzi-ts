@@ -17,6 +17,7 @@ export const elementalStrike = ({
 }: any) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __30%__ magic damage based on your **INT** as well as buffing your **INT** by __10%__
+	// Bonus passive proc - gain elemental advantage when against harbinger of death
 	let damageDiff;
 	let damageDealt;
 	if (round % 2 === 0) {
@@ -54,6 +55,25 @@ export const elementalStrike = ({
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
 		const desc = `Deals __${damageDealt}__ damage as well as increasing its **INT** by __${incPercent}%__`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+		});
+	}
+	const hasHarbinger = opponentStats.cards.find((a: any) => a?.abilityname === "harbinger of death");
+	if (round % 3 === 0 && hasHarbinger) {
+		const desc = "**[PSV]** gaining **Elemental Advantage** over **Harbinger of Death**";
+		playerStats.totalStats.effective = 1.4;
+		opponentStats.totalStats.effective = 0.8;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
