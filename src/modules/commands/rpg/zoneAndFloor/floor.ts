@@ -55,7 +55,7 @@ async function handleNextFloor(params: {
 		const moveToFloor = fl === "n" ? user.floor + 1 : +fl;
 		if (zone && (moveToFloor > zone.max_floor && user.max_ruin > zone.location_id)) {
 			params.channel?.sendMessage(`Summoner **${user.username}**, you have cleared this zone! ` +
-			"Use ``zone n`` to move to the next one");
+			"Use ``zone n`` to move on to the next one");
 			return;
 		}
 		embed.setDescription(

@@ -1,11 +1,12 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
+import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
 
-export const harbinderOfDeath = ({
+export const harbingerOfDeath = ({
 	playerStats,
 	opponentStats,
 	message,
@@ -15,13 +16,20 @@ export const harbinderOfDeath = ({
 	card,
 	simulation
 }: BattleProcessProps) => {
-	// Nullify all effects resetting critical, evasion, elemental advantage
+	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
-	// as well as reducing all stats by {20}% as well as buffing all
+	// as well as reducing all stats by {15}% as well as buffing all
 	// ally stats for the same %
 	if (!card) return;
-	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath) {
-		const percent = calcPercentRatio(20, card.rank);
+	let proc = true;
+	if (opponentStats.totalStats.restringHarbingerOfDeathPercent) {
+		const chances = [ opponentStats.totalStats.restringHarbingerOfDeathPercent, 100 ];
+		const resistChances = [ false, true ];
+		proc = resistChances[probability(chances)];
+	}
+	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
+		playerStats.totalStats.isHarbingerOfDeath = true;
+		const percent = calcPercentRatio(15, card.rank);
 		// reset elemental advantage
 		opponentStats.totalStats.effective = 1;
 		playerStats.totalStats.effective = 1;
@@ -33,6 +41,18 @@ export const harbinderOfDeath = ({
 		opponentStats.totalStats.evasion = 1;
 		opponentStats.totalStats.evasionInc = 1;
 		opponentStats.totalStats.evasionTemp = 1;
+		opponentStats.totalStats.isEvadeHit = false;
+		opponentStats.totalStats.isCriticalHit = false;
+
+		// playerStats.totalStats.isEvadeHit = false;
+		// playerStats.totalStats.isEvadeHit = false;
+		// playerStats.totalStats.critical = 1;
+		// playerStats.totalStats.criticalDamage = 1;
+		// playerStats.totalStats.criticalInc = 1;
+		// playerStats.totalStats.criticalTemp = 1;
+		// playerStats.totalStats.evasion = 1;
+		// playerStats.totalStats.evasionInc = 1;
+		// playerStats.totalStats.evasionTemp = 1;
 
 		// Nullify all effects
 		playerStats.totalStats.isStunned = false;
@@ -51,10 +71,10 @@ export const harbinderOfDeath = ({
 			opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
 			const statGain = getRelationalDiff(playerStats.totalStats[key], percent);
-			playerStats.totalStats[key] = playerStats.totalStats[key] - statGain;
+			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, disabling **Elemental Advantage** " +
-	    "and resetting enemy **Critical Hit** and **Evasion** chances, " +
+	    "and resetting enemy **Critical Hit** and **Evasion Chance**, " +
 	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({

@@ -228,11 +228,11 @@ export const enchantCard = async ({
 
 		if (buttons) {
 			embed.setButtons(buttons);
-		}
-		setCooldown(author.id, "enchant");
-		const msg = await context.channel?.sendMessage(embed);
-		if (msg) {
-			sentMessage = msg;
+			setCooldown(author.id, "enchant");
+			const msg = await context.channel?.sendMessage(embed);
+			if (msg) {
+				sentMessage = msg;
+			}
 		}
 		return;
 	} catch (err) {

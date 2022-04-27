@@ -1,5 +1,6 @@
 import { AuthorProps, ChannelProp, ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
+import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, EmbedFieldData, Message } from "discord.js";
 import { PAGE_FILTER } from "helpers/constants";
@@ -79,7 +80,9 @@ export const pageFunc = async <T>(
 						client: options.client
 					});
 					if (options.filepath) {
-						embed.setThumbnail(options.filepath);
+						const attachment = createAttachment(options.filepath, "thumbnail.jpeg");
+						embed.setThumbnail("attachment://thumbnail.jpeg")
+							.attachFiles([ attachment ]);
 					}
 				} else {
 					embed.setDescription("No data available");

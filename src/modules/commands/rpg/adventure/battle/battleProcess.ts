@@ -185,8 +185,8 @@ export const BattleProcess = async ({
 		isPlayerAsleep: playerStats.totalStats.isAsleep,
 		isOpponentEvadeHit: opponentStats.totalStats.isEvadeHit,
 		isCriticalHit: playerStats.totalStats.isCriticalHit,
-		basePlayerStats,
-		baseEnemyStats,
+		basePlayerStats: isPlayerFirst ? basePlayerStats : baseEnemyStats,
+		baseEnemyStats: isPlayerFirst ? baseEnemyStats : basePlayerStats,
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
 		abilityDamage,
@@ -242,7 +242,7 @@ async function processAbililtyOrItemProc({
 						// }
 						// await delay(1000);
 
-						if (itemProc.damageDiff && itemProc.damageDiff <= 0) {
+						if ((itemProc.damageDiff ?? 1) <= 0) {
 							isDefeated = true;
 							abilityProc.damageDiff = 0;
 							break;
@@ -253,7 +253,7 @@ async function processAbililtyOrItemProc({
 			if (
 				(processUnableToAttack(playerStats, opponentStats, true) ||
           playerStats.totalStats.isRestrictResisted) &&
-        	!playerStats.cards.find((c) => c?.abilityname === "harbinger of death")
+        	!(playerStats.cards.find((c) => c?.abilityname === "harbinger of death") && round % 4 === 0)
 			)
 				break;
 

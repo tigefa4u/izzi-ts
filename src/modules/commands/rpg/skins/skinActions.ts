@@ -117,7 +117,7 @@ export const choose = async (params: {
 		let skinArr = getSkinArr(params.author.id);
 		// let skinArr = await redisClient.get(`selected-skin-${author.id}`);
 		let skin: any;
-		let spbtSkin: any;
+		// let spbtSkin: any;
 		const embed = createEmbed();
 		embed
 			.setAuthor({
@@ -127,7 +127,7 @@ export const choose = async (params: {
 			.setTitle("Error :no_entry:")
 			.setThumbnail(params.client.user?.displayAvatarURL() || "");
 		if (skinArr) {
-			skin = skinArr.filter((c) => c.id === Number(id))[0];
+			skin = skinArr.find((c) => c.id === Number(id));
 			if (skin) {
 				embed.setDescription(
 					`Summoner **${params.author.username}**, this skin is already in use`
@@ -149,9 +149,9 @@ export const choose = async (params: {
 				params.channel?.sendMessage(embed);
 				return;
 			}
-			if ((skin.metadata || {}).isSpecial) {
-				spbtSkin = skin;
-			}
+			// if ((skin.metadata || {}).isSpecial) {
+			// 	spbtSkin = skin;
+			// }
 		}
 		const index = skinArr.findIndex(
 			(i) => i.character_id === skin?.character_id
@@ -161,21 +161,21 @@ export const choose = async (params: {
 		} else {
 			skinArr.push(skin);
 		}
-		if (spbtSkin) {
-			let spbtSkinArr = getSkinArr("spbt-skins");
-			if (!spbtSkinArr) {
-				spbtSkinArr = [];
-			}
-			const idx = spbtSkinArr.findIndex(
-				(x) => x.character_id === spbtSkin.character_id
-			);
-			if (idx >= 0) {
-				spbtSkinArr[idx] = spbtSkin;
-			} else {
-				spbtSkinArr.push(spbtSkin);
-			}
-			setSkinArr("spbt-skins", spbtSkinArr);
-		}
+		// if (spbtSkin) {
+		// 	let spbtSkinArr = getSkinArr("spbt-skins");
+		// 	if (!spbtSkinArr) {
+		// 		spbtSkinArr = [];
+		// 	}
+		// 	const idx = spbtSkinArr.findIndex(
+		// 		(x) => x.character_id === spbtSkin.character_id
+		// 	);
+		// 	if (idx >= 0) {
+		// 		spbtSkinArr[idx] = spbtSkin;
+		// 	} else {
+		// 		spbtSkinArr.push(spbtSkin);
+		// 	}
+		// 	setSkinArr("spbt-skins", spbtSkinArr);
+		// }
 		setSkinArr(params.author.id, skinArr);
 
 		embed
@@ -190,4 +190,32 @@ export const choose = async (params: {
 		);
 		return;
 	}
+};
+
+export const removeSkin = async (params: {
+	author: AuthorProps;
+	channel: ChannelProp;
+	client: Client;
+	args?: string[];
+  }) => {
+	  try {
+		const id = params.args?.shift();
+		if (!id) return;
+		const skinArr = getSkinArr(params.author.id);
+		if (skinArr) {
+			const index = skinArr.findIndex((s) => s.id === Number(id));
+			if (index >= 0) {
+				skinArr.splice(index, 1);
+				setSkinArr(params.author.id, skinArr);
+			}
+		}
+		params.channel?.sendMessage(`Successfully removed skin ID: \`\`${id}\`\``);
+		return;
+	  } catch (err) {
+		loggers.error(
+			"modules.commands.rpg.skins.skinActions.removeSkin(): something went wrong",
+			err
+		);
+		return;
+	  }
 };

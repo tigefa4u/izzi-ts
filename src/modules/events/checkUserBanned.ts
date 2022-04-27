@@ -1,7 +1,7 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { getUserBan } from "api/controllers/BansController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
@@ -31,6 +31,10 @@ export const checkUserBanned = async (
 		embed.setDescription(`**Ban Reason:**\n${banReason}\n**Ban Length:**\n${banLength}`);
 		context.channel?.sendMessage(embed);
 		return;
+	}
+	if (user && !user.is_active) {
+		context.channel?.sendMessage("Welcome back! We have set your account status to active");
+		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
 	}
 	return true;
 };

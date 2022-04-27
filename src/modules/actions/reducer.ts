@@ -7,7 +7,7 @@ import {
 	cry, dance, run, dodge, baka, pout, glare, laugh 
 } from "modules/commands/basic/emotions";
 import { bet } from "modules/commands/basic/gamble";
-import { help, invite, ping } from "modules/commands/basic/index";
+import { help, invite, ping, websiteUrls } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
 import { ability } from "modules/commands/rpg/abilities";
 import { battle } from "modules/commands/rpg/adventure";
@@ -36,7 +36,7 @@ import { packs } from "modules/commands/rpg/packs";
 import { premium } from "modules/commands/rpg/premium";
 import { profile } from "modules/commands/rpg/profile";
 import {
-	mana, exp, level, gold, shards, points, orbs, permits 
+	mana, exp, level, gold, shards, points, orbs, permits, deleteAccount 
 } from "modules/commands/rpg/profile/profileInfo";
 import { start } from "modules/commands/rpg/profile/startJourney";
 import { updateIzziProfile } from "modules/commands/rpg/profile/update";
@@ -133,7 +133,9 @@ const commandMap: CommandMapProps = {
 	baka: baka,
 	pout: pout,
 	glare: glare,
-	laugh: laugh
+	laugh: laugh,
+	website: websiteUrls,
+	delete: deleteAccount,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

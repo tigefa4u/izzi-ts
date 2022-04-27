@@ -15,6 +15,10 @@ const attributes = {
 	maxRuin: {
 		type: "integer",
 		columnName: "max_ruin"
+	},
+	maxFloor: {
+		type: "integer",
+		columnName: "max_floor"
 	}
 };
 
@@ -22,6 +26,7 @@ type T = {
     id: number;
     user_tag: string;
     max_ruin: number;
+	max_floor: number;
 }
 export const createOrUpdate = async (data: Omit<T, "id">): Promise<T> => {
 	const db = connection;

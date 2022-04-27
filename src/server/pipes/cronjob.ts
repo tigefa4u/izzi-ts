@@ -177,7 +177,7 @@ const spawnRaids = async () => {
 		// if (raids && raids.length > 40) return;
 		await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map((difficultyMap) => {
 			return difficultyMap.map(async (difficulty: string) => {
-				const computedBoss = computeRank(difficulty);
+				const computedBoss = computeRank(difficulty, isEvent);
 				if (!computedBoss) return;
 				await createRaidBoss({
 					isPrivate: false,
@@ -207,11 +207,11 @@ setInterval(() => {
 
 setInterval(() => {
 	init({ is_premium: false });
-}, 1000 * 60 * 60 * 3);
+}, 1000 * 60 * 60 * 2);
 
 setInterval(() => {
 	init({ is_premium: true });
-}, 9e6);
+}, 5.4e6);
 
 setInterval(() => {
 	refillMana();

@@ -149,7 +149,8 @@ export const miscellaneous = async function ({
 			context,
 			args,
 			client,
-			options 
+			options,
+			command 
 		});
 	return;
 };
@@ -163,7 +164,8 @@ export const adventure = async function ({
 			context,
 			args,
 			client,
-			options 
+			options,
+			command 
 		});
 	return;
 };

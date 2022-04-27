@@ -1,6 +1,6 @@
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import loggers from "loggers";
 
@@ -110,7 +110,7 @@ export const permits = async function ({
 		const dt = new Date();
 		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
 		let refilled_at = timestamp.setHours(
-			timestamp.getHours() + (result.metadata.is_premium ? 2 : 3)
+			timestamp.getHours() + (result.metadata.is_premium ? 1 : 2)
 		);
 		if (result.metadata.is_premium) {
 			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);
@@ -128,7 +128,7 @@ export const permits = async function ({
       		remainingHours < 0 ? 0 : remainingHours
       	} hours ${remainingMinutes} minutes]`
       	: `[Refills every ${
-      		result.metadata.is_premium ? "2 hours 30 minutes" : "3 hours"
+      		result.metadata.is_premium ? "1 hour 30 minutes" : "2 hours"
       	}]`;
 
 		context.channel?.sendMessage(
@@ -220,6 +220,25 @@ export const gold = async function ({
 	} catch (err) {
 		loggers.error(
 			"commands.rpg.profile.profileInfo.gold(): something went wrong",
+			err
+		);
+		return;
+	}
+};
+
+export const deleteAccount = async function ({
+	context,
+	options
+}: Pick<BaseProps, "context" | "options">) {
+	try {
+		const author = options.author;
+		await updateRPGUser({ user_tag: author.id }, { is_active: false });
+		context.channel?.sendMessage("We are sorry to see you leave. Your account is now inactive. " +
+		"However, you can use izzi commands to activate your account again!");
+		return;
+	} catch (err) {
+		loggers.error(
+			"commands.rpg.profile.profileInfo.deleteAccount(): something went wrong",
 			err
 		);
 		return;

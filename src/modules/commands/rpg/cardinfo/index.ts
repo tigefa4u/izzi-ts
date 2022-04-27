@@ -74,6 +74,10 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		const abandonCardIndex = charaInfo.findIndex((c) => c.name === "luna");
+		if (abandonCardIndex >= 0) {
+			charaInfo.splice(abandonCardIndex, 1);
+		}
 		if (charaInfo.length === 1) {
 			await showCharacterDetails(options.author, charaInfo[0], context.channel);
 			return;
@@ -84,7 +88,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		const selectMenuOptions = {
 			menuOptions: charaInfo.map((c) => ({
 				value: c.name,
-				label: c.name
+				label: titleCase(c.name)
 			}))
 		} as SelectMenuOptions;
 		const selectMenu = await selectionInteraction(

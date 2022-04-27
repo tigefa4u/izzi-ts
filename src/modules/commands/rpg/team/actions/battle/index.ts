@@ -1,4 +1,9 @@
-import { AuthorProps, ChannelProp } from "@customTypes";
+import {
+	AuthorProps,
+	ChannelProp,
+	ConfirmationInteractionOptions,
+	ConfirmationInteractionParams,
+} from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { getTeamById } from "api/controllers/TeamsController";
 import { getRPGUser, getUser } from "api/controllers/UsersController";
@@ -14,6 +19,111 @@ import { simulateBattle } from "../../../adventure/battle/battle";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { addTeamEffectiveness } from "helpers/adventure";
+import { confirmationInteraction } from "utility/ButtonInteractions";
+import { UserProps } from "@customTypes/users";
+import { Message } from "discord.js";
+import { createConfirmationEmbed } from "helpers/confirmationEmbed";
+
+async function confirmAndBattle(
+	params: ConfirmationInteractionParams<{
+    context: BaseProps["context"];
+    user: UserProps;
+    mentionedUser: UserProps;
+    mentionId: string;
+	cb: () => void;
+  }>,
+	options?: ConfirmationInteractionOptions
+) {
+	const user = params.extras?.user;
+	const mentionedUser = params.extras?.mentionedUser;
+	const mentionId = params.extras?.mentionId;
+	const context = params.extras?.context;
+	if (
+		!user ||
+    !mentionedUser ||
+    !mentionId ||
+    !context ||
+    !user.selected_team_id ||
+    !mentionedUser.selected_team_id
+	)
+		return;
+
+	if (options?.isConfirm) {
+		params.extras?.cb();
+		const [ _inBattle, _mentionIdInBattle ] = await Promise.all([
+			getCooldown(params.author.id, "in-battle"),
+			getCooldown(mentionId, "in-battle"),
+		]);
+		if (_inBattle || _mentionIdInBattle) {
+			params.channel?.sendMessage(
+				"One of the summoners' is currently in a team battle"
+			);
+			return;
+		}
+		const [ playerStats, opponentStats ] = await Promise.all([
+			validateAndPrepareTeam(
+				user.id,
+				user.user_tag,
+				user.selected_team_id,
+				params.channel
+			),
+			validateAndPrepareTeam(
+				mentionedUser.id,
+				mentionedUser.user_tag,
+				mentionedUser.selected_team_id,
+				params.channel
+			),
+		]);
+		if (!playerStats) {
+			params.channel?.sendMessage(
+				`Summoner **${params.author.username}** is unable to prepare for battle. Please reset your team`
+			);
+			return;
+		}
+		if (!opponentStats) {
+			params.channel?.sendMessage(
+				`Summoner **${mentionedUser.username}** is unable to prepare for battle. Please reset your team`
+			);
+			return;
+		}
+		const {
+			playerStats: effectiveStats,
+			opponentStats: opponentEffectiveStats,
+		} = await addTeamEffectiveness({
+			cards: playerStats.stats.cards,
+			enemyCards: opponentStats.stats.cards,
+			playerStats: playerStats.stats.totalStats,
+			opponentStats: opponentStats.stats.totalStats,
+		});
+		playerStats.stats.totalStats = effectiveStats;
+		opponentStats.stats.totalStats = opponentEffectiveStats;
+		Promise.all([
+			setCooldown(params.author.id, "in-battle", 60 * 5),
+			setCooldown(mentionId, "in-battle", 60 * 5),
+		]);
+		const battleStatus = await simulateBattle({
+			context,
+			playerStats: playerStats.stats,
+			enemyStats: opponentStats.stats,
+			title: `__Team Battle Challenge ${params.author.username} vs ${mentionedUser.username}__`,
+		});
+		Promise.all([
+			clearCooldown(params.author.id, "in-battle"),
+			clearCooldown(mentionId, "in-battle"),
+		]);
+		if (battleStatus?.isForfeit) return;
+		sendResultMessage({
+			channel: params.channel,
+			username: params.author.username,
+			mentionUsername: mentionedUser.username,
+			isVictory: battleStatus?.isVictory || false,
+			opponentTeamName: opponentStats.name,
+			playerTeamName: playerStats.name,
+		});
+		return;
+	}
+	return true;
+}
 
 export const teamBattle = async ({
 	client,
@@ -34,7 +144,9 @@ export const teamBattle = async ({
 			getCooldown(mentionId, "in-battle"),
 		]);
 		if (_inBattle || _mentionIdInBattle) {
-			context.channel.sendMessage("One of the summoners' is currently in a team battle");
+			context.channel.sendMessage(
+				"One of the summoners' is currently in a team battle"
+			);
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id });
@@ -50,58 +162,45 @@ export const teamBattle = async ({
 			);
 			return;
 		}
-
-		const [ playerStats, opponentStats ] = await Promise.all([
-			validateAndPrepareTeam(
-				user.id,
-				user.user_tag,
-				user.selected_team_id,
-				context.channel
-			),
-			validateAndPrepareTeam(
-				mentionedUser.id,
-				mentionedUser.user_tag,
-				mentionedUser.selected_team_id,
-				context.channel
-			),
-		]);
-		if (!playerStats) {
-			context.channel?.sendMessage(
-				`Summoner **${author.username}** is unable to prepare for battle. Please reset your team`
-			);
-			return;
-		}
-		if (!opponentStats) {
-			context.channel?.sendMessage(
-				`Summoner **${mentionedUser.username}** is unable to prepare for battle. Please reset your team`
-			);
-			return;
-		}
-		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
-			cards: playerStats.stats.cards,
-			enemyCards: opponentStats.stats.cards,
-			playerStats: playerStats.stats.totalStats,
-			opponentStats: opponentStats.stats.totalStats 
-		});
-		playerStats.stats.totalStats = effectiveStats;
-		opponentStats.stats.totalStats = opponentEffectiveStats;
-		Promise.all([ setCooldown(author.id, "in-battle", 60 * 5), setCooldown(mentionId, "in-battle", 60 * 5) ]);
-		const battleStatus = await simulateBattle({
-			context,
-			playerStats: playerStats.stats,
-			enemyStats: opponentStats.stats,
-			title: `__Team Battle Challenge ${author.username} vs ${mentionedUser.username}__`,
-		});
-		Promise.all([ clearCooldown(author.id, "in-battle"), clearCooldown(mentionId, "in-battle") ]);
-		if (battleStatus?.isForfeit) return;
-		sendResultMessage({
+		
+		let sentMessage: Message;
+		const funcParams = {
+			author,
 			channel: context.channel,
-			username: author.username,
-			mentionUsername: mentionedUser.username,
-			isVictory: battleStatus?.isVictory || false,
-			opponentTeamName: opponentStats.name,
-			playerTeamName: playerStats.name,
-		});
+			client,
+			extras: {
+				user,
+				mentionedUser,
+				context,
+				mentionId,
+				cb: () => {
+					sentMessage.deletable && sentMessage.delete();
+				}
+			},
+		};
+
+		const embed = createConfirmationEmbed(author, client).setDescription(
+			`**Hey ${mentionedUser.username} ${emoji.calm}!**` +
+			`\nSummoner **${author.username}** has requested for a team fight.\nReact with to accept.`
+		);
+		const buttons = await confirmationInteraction(
+			context.channel,
+			mentionedUser.user_tag,
+			funcParams,
+			confirmAndBattle,
+			(data, opts) => {
+				if (opts?.isDelete) {
+					sentMessage?.delete();
+				}
+			}
+		);
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
+			sentMessage = msg;
+		}
 		return;
 	} catch (err) {
 		loggers.error(

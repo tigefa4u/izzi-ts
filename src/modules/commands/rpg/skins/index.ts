@@ -24,6 +24,8 @@ export const skins = ({ context, args, client, options }: BaseProps) => {
 			SkinActions.choose(params);
 		} else if (subcommand === "resolve") {
 			resolveSkin(params);
+		} else if (subcommand === "remove") {
+			SkinActions.removeSkin(params);
 		}
 		return;
 	} catch (err) {

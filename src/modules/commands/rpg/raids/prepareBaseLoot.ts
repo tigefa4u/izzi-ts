@@ -1,6 +1,6 @@
 import { randomElementFromArray, randomNumber } from "helpers";
 
-const baseLoot: any = {
+const baseLoot = (): any => ({
 	e: {
 		default: {
 			level: [ 60, 75 ],
@@ -86,7 +86,7 @@ const baseLoot: any = {
 			}
 		},
 		event: {
-			level: [ 450, 480 ],
+			level: [ 450, 520 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(25000, 32000),
@@ -139,7 +139,7 @@ const baseLoot: any = {
 			}
 		},
 		event: {
-			level: [ 500, 530 ],
+			level: [ 530, 580 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(32000, 40000),
@@ -198,7 +198,7 @@ const baseLoot: any = {
 			}
 		},
 		event: {
-			level: [ 550, 620 ],
+			level: [ 600, 650 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(40000, 48000),
@@ -210,6 +210,6 @@ const baseLoot: any = {
 			}
 		}
 	},
-};
+});
 
 export default baseLoot;

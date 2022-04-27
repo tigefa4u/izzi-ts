@@ -75,7 +75,7 @@ export const processBattleResult = async ({
 					`Rewards ${emoji.moneybag}`,
 					`• You have gained __${resp.userXpGain}__xp and received __${
 						resp.goldReward
-					}__gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(resp.rankReward)} copy of ${titleCase(
+					}__ gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(resp.rankReward)} copy of ${titleCase(
 						enemyCard.name
 					)}\n**${titleCase(card.name)}** has also gained __${
 						resp.cardXpGain
@@ -122,8 +122,12 @@ async function processFloorWin({
 		goldReward = randomNumber(280, 350);
 		rankReward = "gold";
 		rankId = 2;
-	} else if (user.max_ruin >= 40) {
+	} else if (user.max_ruin >= 40 && user.max_ruin < 100) {
 		goldReward = randomNumber(360, 550);
+		rankReward = "platinum";
+		rankId = 3;
+	} else if (user.max_ruin >= 100) {
+		goldReward = randomNumber(600, 1000);
 		rankReward = "platinum";
 		rankId = 3;
 	}
@@ -189,6 +193,7 @@ async function upgradeUser(
 			await createOrUpdateZoneBackup({
 				user_tag: user.user_tag,
 				max_ruin: user.max_ruin,
+				max_floor: 1,
 			});
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
@@ -208,6 +213,11 @@ async function upgradeUser(
 			}
 			Object.assign(upgradeObject, { max_ruin_floor: user.max_ruin_floor });
 			user.gold = user.gold + 500;
+			await createOrUpdateZoneBackup({
+				max_ruin: user.ruin,
+				max_floor: user.max_ruin_floor,
+				user_tag: user.user_tag 
+			});
 		}
 		channel?.sendMessage(desc);
 	}

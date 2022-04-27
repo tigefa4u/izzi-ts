@@ -33,7 +33,7 @@ export const createLBEmbedList = (
 						name: `#${obj.index + 1}| ${array[obj.index].name || ""} (${
 							array[obj.index].guild_id
 						})`,
-						value: `War Points __${array[obj.index].points}__ | Clan Level **${
+						value: `Clan Level **${
 							array[obj.index].guild_level || 0
 						}** ${emoji.up}`,
 					}

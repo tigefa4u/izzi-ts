@@ -125,6 +125,7 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
+		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		roundStats = await visualizeSimulation({
 			simulation,
@@ -287,8 +288,8 @@ async function simulatePlayerTurns({
 			...evadeHitChances.enemyStats,
 		};
 		const updatedStats = await BattleProcess({
-			baseEnemyStats,
-			basePlayerStats,
+			baseEnemyStats: isPlayerFirst ? baseEnemyStats : basePlayerStats,
+			basePlayerStats: isPlayerFirst ? basePlayerStats : baseEnemyStats,
 			isPlayerFirst,
 			opponentStats: isPlayerFirst ? enemyStats : playerStats,
 			playerStats: isPlayerFirst ? playerStats : enemyStats,

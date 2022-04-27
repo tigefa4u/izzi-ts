@@ -16,6 +16,7 @@ export const concludeOrStartDungeons = async (req: any, res: any) => {
 			return success(res, { message: "New DG season has started!" });
 		}
 		await Cache.set("dg-season-end", "true");
+		await processDGRewards();
 		return success(res, { message: "DG Season has ended, and the rewards have been distributed", });
 	} catch (err: any) {
 		return res.status(500).send({
@@ -31,10 +32,10 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				legend: 23,
-				divine: 50,
-				immortal: 20,
-				exclusive: 7 
+				divine: 23,
+				immortal: 50,
+				exclusive: 20,
+				ultimate: 7 
 			},
 			numberOfCards: randomNumber(1, 3),
 			orbs: randomNumber(150, 300)
@@ -46,10 +47,10 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				platinum: 15,
-				diamond: 58,
-				legend: 22,
-				divine: 5 
+				legend: 58,
+				divine: 22,
+				immortal: 15,
+				exclusive: 5
 			},
 			numberOfCards: randomNumber(1, 3),
 			orbs: randomNumber(100, 200)
@@ -61,10 +62,9 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				silver: 25,
-				gold: 40,
-				platinum: 35,
-				diamond: 20 
+				diamond: 40,
+				legend: 50,
+				divine: 10
 			},
 			numberOfCards: 10 
 		},
@@ -108,12 +108,13 @@ const processDGRewards = async () => {
 	const top10 = await getData({ limit: 10 });
 	const userRanks = await getData({ offset: 10 });
 
+	// Use Queue to avoid DM rate limiting
+	const usersToDm: { message: string; id: string; }[] = [];
 	const dataToCreate: any[] = [];
 	await Promise.all(
 		top10.map(async (user, index) => {
 			const winRatio = user.wins / user.loss;
 			const goldReward = Math.floor(winRatio * 500000);
-			console.log("for user: " + user.user_tag + " gold: " + goldReward);
 			await Promise.all(
 				[ ...Array(2).fill("premium"), ...Array(4).fill("legendary") ].map(
 					async (crateCat) => {
@@ -143,7 +144,11 @@ const processDGRewards = async () => {
         	emoji.gold
         }` + "\n- 2x __Premium__ crates\n- 4x __Legendary__ crates**";
 
-			await DMUserViaApi(user.user_tag, { content: message });
+			usersToDm.push({
+				id: user.user_tag,
+				message
+			});
+			// await DMUserViaApi(user.user_tag, { content: message });
 		})
 	);
 
@@ -161,14 +166,26 @@ const processDGRewards = async () => {
             `Dungeon Season has ended. You ranked **__#${(index + 1) + 10}__** this season and ` +
             `received\n**${reward.message}**`;
 
-			await DMUserViaApi(user.user_tag, { content: message });
+			usersToDm.push({
+				id: user.user_tag,
+				message
+			});
+			// await DMUserViaApi(user.user_tag, { content: message });
 		}
 	}));
-	await connection("crates").insert(dataToCreate);
-
-	await backupSeasonRanks([ ...top10, ...userRanks ]);
-	await resetDG();
+	await Promise.all([
+		connection("crates").insert(dataToCreate),
+		DMWinners,
+		backupSeasonRanks([ ...top10, ...userRanks ]),
+		resetDG() ]);
 };
+
+async function DMWinners(users: { message: string; id: string; }[]) {
+	for (let i = 0; i < users.length; i++) {
+		const user = users[i];
+		await DMUserViaApi(user.id, { content: user.message });
+	}
+}
 
 async function resetDG() {
 	await connection.raw("update user_ranks set rank = 'duke', rank_id = 1, exp = 0, wins = 0, " +
