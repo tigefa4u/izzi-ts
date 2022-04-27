@@ -13,6 +13,7 @@ export const toxicScreen = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict a stack of poison on all enemies decreasing their defense by __20__%
@@ -66,6 +67,7 @@ export const toxicScreen = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
@@ -98,6 +100,7 @@ export const toxicScreen = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
+				simulation
 			});
 		}
 	}
@@ -121,6 +124,7 @@ export const timeBomb = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
@@ -145,6 +149,7 @@ export const timeBomb = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isTB)
@@ -190,6 +195,7 @@ export const timeBomb = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
+				simulation
 			});
 		}
 	}
@@ -209,6 +215,7 @@ export const blizzard = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
@@ -243,6 +250,7 @@ export const blizzard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	let damageDiff;
@@ -278,6 +286,7 @@ export const blizzard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
@@ -296,7 +305,8 @@ export const frost = ({
 	round,
 	isPlayerFirst,
 	card,
-	baseEnemyStats
+	baseEnemyStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict all enemies with a stack of frost causing your next attack to deal __15%__ 
@@ -339,6 +349,7 @@ export const frost = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isFrost)
@@ -385,6 +396,7 @@ export const frost = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	return {

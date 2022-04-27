@@ -15,6 +15,7 @@ export const electrocute = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let damageDiff;
@@ -65,7 +66,8 @@ export const electrocute = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});    
+			simulation
+		});
 	}
 	return {
 		playerStats,
@@ -84,6 +86,7 @@ export const sleep = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	let desc, isResist = false;
 	if (opponentStats.totalStats.isAsleep) {
@@ -104,7 +107,8 @@ export const sleep = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-			}); 
+				simulation
+			});
 		}
 	}
 	if (opponentStats.totalStats.sleepResistPercent) {
@@ -127,7 +131,8 @@ export const sleep = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		}); 
+			simulation
+		});
 	}
 	return {
 		playerStats,
@@ -143,7 +148,8 @@ export const misdirection = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
@@ -187,7 +193,8 @@ export const misdirection = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+			simulation
+		});
 	}
 	return {
 		playerStats,
@@ -205,7 +212,8 @@ export const restriction = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	let desc, isResist = false;
@@ -230,7 +238,8 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+			simulation
+		});
 	}
 	if (round % 4 === 0 && opponentStats.totalStats.isRestrictResisted) {
 		opponentStats.totalStats.isRestrictResisted = false;
@@ -247,7 +256,8 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+			simulation
+		});
 	}
 	return {
 		playerStats,

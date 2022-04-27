@@ -13,6 +13,7 @@ export const lifesteal = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase life steal by __25%__.
@@ -35,6 +36,7 @@ export const lifesteal = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
@@ -52,6 +54,7 @@ export const revitalize = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// Restore 18% of missing health of all allies
@@ -100,6 +103,7 @@ export const revitalize = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
@@ -116,7 +120,8 @@ export const guardian = ({
 	round,
 	isPlayerFirst,
 	card,
-	basePlayerStats
+	basePlayerStats,
+	simulation
 }: any) => {
 	let damageDiff;
 	if (!card || !playerStats.totalStats.originalHp) return;
@@ -159,6 +164,7 @@ export const guardian = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	return {

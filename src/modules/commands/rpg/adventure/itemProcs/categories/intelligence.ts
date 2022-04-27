@@ -12,6 +12,7 @@ export const sapphiresStaff = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -34,6 +35,7 @@ export const sapphiresStaff = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -53,6 +55,7 @@ export const seekersArmguard = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -75,6 +78,7 @@ export const seekersArmguard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -94,6 +98,7 @@ export const farsightOrb = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -116,6 +121,7 @@ export const farsightOrb = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -135,6 +141,7 @@ export const lunarWand = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -160,6 +167,7 @@ export const lunarWand = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -179,6 +187,7 @@ export const staffOfMedana = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -210,6 +219,7 @@ export const staffOfMedana = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {

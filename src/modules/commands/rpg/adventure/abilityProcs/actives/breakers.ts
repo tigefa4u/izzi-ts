@@ -14,6 +14,7 @@ export const exhaust = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.exhNum) {
@@ -59,6 +60,7 @@ export const exhaust = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isExhaust)
@@ -78,6 +80,7 @@ export const rapidFire = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// After a short delay decrease the enemies defense by __20%__. Their defense increases by __10%__ every turn.
@@ -102,6 +105,7 @@ export const rapidFire = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isRapid)
@@ -134,6 +138,7 @@ export const dominator = ({
 	isPlayerFirst,
 	baseEnemyStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 2;
@@ -180,6 +185,7 @@ export const dominator = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isDominator) {
@@ -200,6 +206,7 @@ export const crusher = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __20%__. Their ATK increases by __10%__ each turn
@@ -223,6 +230,7 @@ export const crusher = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 4 === 0 && playerStats.totalStats.isUseCrusher)

@@ -7,8 +7,8 @@ export type AbilityProcDescriptionProps = PrepareBattleDescriptionProps & {
     description: string;
     isDescriptionOnly: boolean;
     card: BattleProcessProps["card"];
-    message: Message;
-    embed: MessageEmbed;
+    message?: Message;
+    embed?: MessageEmbed;
     isItem?: boolean;
 }
 

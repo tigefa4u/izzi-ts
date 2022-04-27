@@ -13,6 +13,7 @@ export const harbinderOfDeath = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, evasion, elemental advantage
 	// and critical damage
@@ -68,6 +69,7 @@ export const harbinderOfDeath = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {

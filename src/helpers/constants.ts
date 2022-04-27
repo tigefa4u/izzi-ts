@@ -187,7 +187,7 @@ export const CANVAS_DEFAULTS = {
 
 export const EMBED_DEFAULT_COLOR = 13148872;
 
-export const BATTLE_ROUNDS_COUNT = 15;
+export const BATTLE_ROUNDS_COUNT = 5;
 
 export const REQUIRED_TRADE_LEVEL = 8;
 
