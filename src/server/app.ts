@@ -7,9 +7,10 @@ import isAuth from "./pipes/auth";
 const app = express();
 app.use(express.json());
 
-const webhookAuth = "izziwebhookauth";
+const webhookAuth = "wKm(.DT#*XL,S#9F";
+const botID = "784851074472345633";
 function isWebhookAuth(req: Request, res: Response, next: () => void) {
-	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote") {
+	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote" && req.body.bot === botID) {
 		return next();
 	}
 	return res.status(401).send({
