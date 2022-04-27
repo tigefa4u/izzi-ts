@@ -53,7 +53,7 @@ async function handleNextFloor(params: {
 	) {
 		const zone = await getZoneByLocationId({ location_id: user.ruin });
 		const moveToFloor = fl === "n" ? user.floor + 1 : +fl;
-		if (zone && (moveToFloor > zone.max_floor)) {
+		if (zone && (moveToFloor > zone.max_floor && user.max_ruin > zone.location_id)) {
 			params.channel?.sendMessage(`Summoner **${user.username}**, you have cleared this zone! ` +
 			"Use ``zone n`` to move on to the next one");
 			return;
