@@ -14,6 +14,7 @@ export const harbingerOfDeath = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
@@ -88,6 +89,7 @@ export const harbingerOfDeath = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {

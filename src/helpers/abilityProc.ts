@@ -1,3 +1,4 @@
+import { Simulation } from "@customTypes/adventure";
 import { AbilityProcDescriptionProps } from "@customTypes/battle";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
@@ -14,8 +15,9 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	message,
 	embed,
 	isPlayerFirst,
-	isItem
-}: AbilityProcDescriptionProps) => {
+	isItem,
+	simulation
+}: AbilityProcDescriptionProps & { simulation: Simulation; }) => {
 	const emotename = (isItem ? card?.itemname : card?.abilityname) || "";
 	let updatedDescription = `**[ROUND ${round}]**\n${emoji.fast}`;
 	if (isDescriptionOnly) {
@@ -26,17 +28,19 @@ export const prepSendAbilityOrItemProcDescription = async ({
 		)}** ${isItem ? "is equipped with" : "uses"} __${titleCase(emotename)}__ ${emojiMap(emotename)} ${description}`;
 	}
 
-	const hasEdited = await simulateBattleDescription({
+	const desc = await simulateBattleDescription({
 		playerStats: isPlayerFirst ? playerStats : enemyStats,
 		enemyStats: isPlayerFirst ? enemyStats : playerStats,
 		description: updatedDescription,
-		embed,
-		message,
 		totalDamage: 0
 	});
 
+	simulation.rounds[round].descriptions.push({
+		description: desc,
+		delay: 1000
+	});
 	// FIXME: Need to catch somewhere
-	if (!hasEdited) {
-		throw new Error("Match Forfeit");
-	}
+	// if (!hasEdited) {
+	// 	throw new Error("Match Forfeit");
+	// }
 };

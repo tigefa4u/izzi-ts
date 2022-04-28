@@ -20,6 +20,7 @@ export const wrecker = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// 'At the start of the match increase your __ATK__ by __90%__. Your attack decreases by 12% each turn.'
@@ -45,6 +46,7 @@ export const wrecker = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
@@ -71,6 +73,7 @@ export const berserk = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: any) => {
 	if (!card) return;
 	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __18%__
@@ -118,6 +121,7 @@ export const berserk = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
@@ -135,6 +139,7 @@ export const fightingSpirit = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// while your hp is low increase the **ATK** of all allies by __8%__
@@ -165,6 +170,7 @@ export const fightingSpirit = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
@@ -181,6 +187,7 @@ export const dreamEater = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -238,6 +245,7 @@ export const dreamEater = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {

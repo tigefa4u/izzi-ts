@@ -14,6 +14,7 @@ export const elementalStrike = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: any) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __30%__ magic damage based on your **INT** as well as buffing your **INT** by __10%__
@@ -67,6 +68,7 @@ export const elementalStrike = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	const hasHarbinger = opponentStats.cards.find((a: any) => a?.abilityname === "harbinger of death");
@@ -104,7 +106,8 @@ export const spellBook = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	let desc = "", abilityDamage, damageDiff, playerDamageDiff;
@@ -171,6 +174,7 @@ export const spellBook = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	return {
@@ -190,7 +194,8 @@ export const tornado = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// deal bonus __20%__ **Wind** damage based on attack (damage buff 3x)
@@ -223,6 +228,7 @@ export const tornado = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	return {
@@ -241,7 +247,8 @@ export const eclipse = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: any) => {
 	if (!card) return;
 	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : 0;
@@ -290,6 +297,7 @@ export const eclipse = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	return {

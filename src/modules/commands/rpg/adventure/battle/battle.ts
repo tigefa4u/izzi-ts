@@ -4,6 +4,7 @@ import {
 	BattleUpdatedStats,
 	PrepareBattleDescriptionProps,
 	SimulateBattleProps,
+	Simulation,
 } from "@customTypes/adventure";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -11,7 +12,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { createBattleCanvas, prepareBattleDesc } from "helpers/adventure";
-import { compare, simulateBattleDescription } from "helpers/battle";
+import { compare, recreateBattleEmbed, simulateBattleDescription } from "helpers/battle";
 import { BATTLE_ROUNDS_COUNT } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
@@ -19,6 +20,7 @@ import { clone } from "utility";
 import { BattleProcess } from "./battleProcess";
 import { prepareCriticalHitChance, prepareEvadeHitChance } from "./chances";
 import * as battlesPerChannel from "./battlesPerChannelState";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -45,6 +47,8 @@ export const simulateBattle = async ({
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
 		context.channel.id
 	);
+		// Create an object that stores all data needed for simulation
+	const simulation = { title, } as Simulation;
 	try {
 		if (battlesInChannel === undefined) return;
 		else
@@ -60,30 +64,20 @@ export const simulateBattle = async ({
 			totalDamage: 0,
 		});
 		const attachmentCards = [ ...playerStats.cards, ...enemyStats.cards ];
-		// const canvas = await createBattleCanvas(attachmentCards);
-		const canvas = await timerify(attachmentCards);
-		if (!canvas) {
-			throw new Error("Failed to create battle canvas");
-		}
-		const attachment = createAttachment(
-			canvas.createJPEGStream(),
-			"battle.jpg"
-		);
-		const embed = createEmbed()
-			.setTitle(title)
-			.setDescription(description)
-			.setImage("attachment://battle.jpg")
-			.attachFiles([ attachment ]);
 
-		const damageDiff = 1;
-		const enemyDamageDiff = 1;
+		simulation.rounds = {
+			0: {
+				descriptions: [ {
+					description,
+					delay: 0 
+				} ],
+				canSimulateRound: true,
+				round: 0
+			}
+		};
+
 		let totalDamage = 0;
 		let roundStats: BattleStats | undefined;
-		const message = await context.channel?.sendMessage(embed);
-		if (!message) {
-			context.channel?.sendMessage("Something went wrong with your battle");
-			throw new Error("Message Object not found to edit battle");
-		}
 		for (let round = 1; round <= BATTLE_ROUNDS_COUNT; round++) {
 			const isPlayerFirst = compare(
 				playerStats.totalStats.dexterity,
@@ -93,32 +87,33 @@ export const simulateBattle = async ({
 				isPlayerFirst ? playerStats.name : enemyStats.name
 			}** has more __Speed__. It strikes first!`;
 			const updatedDescription = `**[ROUND ${round}]**\n${statusDescription}`;
-			const isEdited = await simulateBattleDescription({
+			
+			const desc = await simulateBattleDescription({
 				playerStats,
 				enemyStats,
 				description: updatedDescription,
-				embed,
-				message,
 				totalDamage,
 			});
-			if (!isEdited) {
-				roundStats = playerStats;
-				roundStats.isForfeit = true;
-				break;
-			}
-			await delay(1000);
+			simulation.rounds[round] = {
+				descriptions: [ {
+					description: desc,
+					delay: 1000
+				} ],
+				canSimulateRound: true,
+				round
+			};
+			roundStats = playerStats;
 			const checkIsDefeated = await simulatePlayerTurns({
 				playerStats,
 				enemyStats,
 				baseEnemyStats,
 				basePlayerStats,
-				message,
-				embed,
 				description: updatedDescription,
 				isPlayerFirst,
 				round,
 				totalDamage,
 				isRaid,
+				simulation
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -132,6 +127,12 @@ export const simulateBattle = async ({
 		}
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
+		roundStats = await visualizeSimulation({
+			simulation,
+			context,
+			attachments: attachmentCards,
+			roundStats: clone(roundStats)
+		});
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
 				roundStats.isVictory = false;
@@ -141,11 +142,13 @@ export const simulateBattle = async ({
 			roundStats.totalDamage = totalDamage;
 		}
 		if (roundStats?.isForfeit) {
+			simulation.isForfeit = true;
 			context.channel?.sendMessage("You have forfeit the battle");
 			return { isForfeit: roundStats.isForfeit };
 		}
 		return roundStats;
 	} catch (err) {
+		simulation.hasCrashed = true;
 		battlesPerChannel.autoClear();
 		loggers.error(
 			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
@@ -154,6 +157,61 @@ export const simulateBattle = async ({
 		return;
 	}
 };
+
+type V = {
+	simulation: Simulation;
+	context: SimulateBattleProps["context"];
+	attachments: (CollectionCardInfoProps | undefined)[];
+	roundStats?: BattleStats;
+}
+async function visualizeSimulation({ simulation, context, attachments, roundStats }: V) {
+
+	const canvas = await timerify(attachments);
+	if (!canvas) {
+		throw new Error("Failed to create battle canvas");
+	}
+	const attachment = createAttachment(
+		canvas.createJPEGStream(),
+		"battle.jpg"
+	);
+
+	const rounds = simulation.rounds;
+	const embed = createEmbed()
+		.setTitle(simulation.title)
+		.setDescription(rounds["0"].descriptions[0].description)
+		.attachFiles([ attachment ])
+		.setImage("attachment://battle.jpg");
+
+	const message = await context.channel?.sendMessage(embed);
+	if (!message) {
+		context.channel?.sendMessage("Something went wrong with your battle");
+		throw new Error("Message Object not found to edit battle");
+	}
+
+	const roundKeys = Object.keys(rounds);
+	roundKeys.shift();
+	for (const round of roundKeys) {
+		for (const data of rounds[round].descriptions) {
+			const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
+			if (message.editable) {
+				try {
+					await message.editMessage(newEmbed, { reattachOnEdit: true });
+					if (data.delay) {
+						await delay(data.delay);
+					}
+				} catch (err) {
+					if (roundStats) roundStats.isForfeit = true;
+					break;
+				}
+			} else {
+				if (roundStats) roundStats.isForfeit = true;
+				break;
+			}
+		}
+	}
+
+	return roundStats;
+}
 
 function boostRaidBoss({
 	enemyStats,
@@ -176,8 +234,6 @@ function boostRaidBoss({
 async function simulatePlayerTurns({
 	playerStats,
 	enemyStats,
-	message,
-	embed,
 	description,
 	isPlayerFirst,
 	round,
@@ -185,9 +241,9 @@ async function simulatePlayerTurns({
 	baseEnemyStats,
 	totalDamage,
 	isRaid,
+	simulation
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
-    message: Message;
     isRaid?: boolean;
   }) {
 	let defeated;
@@ -199,19 +255,16 @@ async function simulatePlayerTurns({
 			});
 			enemyStats = boost.enemyStats;
 			if (round === 10 && i === 1) {
-				const isRaidBossEdited = await simulateBattleDescription({
+				const desc = await simulateBattleDescription({
 					playerStats,
 					enemyStats,
 					description: boost.desc,
-					embed,
-					message,
 					totalDamage,
 				});
-				if (!isRaidBossEdited) {
-					defeated = playerStats;
-					defeated.isForfeit = true;
-					break;
-				}
+				simulation.rounds[round].descriptions.push({
+					description: desc,
+					delay: 0
+				});
 			}
 		}
 		const criticalHitChances = prepareCriticalHitChance({
@@ -240,13 +293,15 @@ async function simulatePlayerTurns({
 			isPlayerFirst,
 			opponentStats: isPlayerFirst ? enemyStats : playerStats,
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
-			embed,
 			round,
-			message,
+			simulation
 		});
 		if (updatedStats.forfeit) {
+			// Should never execute
 			defeated = playerStats;
 			defeated.isForfeit = true;
+			simulation.rounds[round].canSimulateRound = false;
+			simulation.isForfeit = true;
 			break;
 		}
 		if (isPlayerFirst) {
@@ -287,21 +342,17 @@ async function simulatePlayerTurns({
 			isAsleep: updatedStats.isPlayerAsleep,
 			isEvadeHit: updatedStats.isOpponentEvadeHit,
 		});
-		const isEdited = await simulateBattleDescription({
+		const desc = await simulateBattleDescription({
 			playerStats,
 			enemyStats,
 			description: battleDescription,
-			embed,
-			message,
 			totalDamage,
 		});
-		if (!isEdited) {
-			defeated = playerStats;
-			defeated.isForfeit = true;
-			break;
-		}
+		simulation.rounds[round].descriptions.push({
+			description: desc,
+			delay: 1000
+		});
 		isPlayerFirst = !isPlayerFirst;
-		await delay(1000);
 		if (updatedStats.damageDiff <= 0) {
 			defeated = getDefeated({
 				updatedStats,
@@ -310,9 +361,8 @@ async function simulatePlayerTurns({
 				baseEnemyStats,
 				basePlayerStats,
 				round,
-				embed,
 				isPlayerFirst,
-				message,
+				simulation
 			});
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
@@ -323,9 +373,8 @@ async function simulatePlayerTurns({
 				baseEnemyStats,
 				basePlayerStats,
 				round,
-				embed,
 				isPlayerFirst,
-				message,
+				simulation
 			});
 			break;
 		}

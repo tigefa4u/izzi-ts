@@ -12,6 +12,7 @@ export const pointBlank = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase the accuracy of all allies by __35%__ as well as increasing crit chances by __30%__
@@ -47,6 +48,7 @@ export const pointBlank = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isPB)
@@ -66,6 +68,7 @@ export const precision = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase the crit chances of all allies by 20% as well as increasing crit damage of allies by __8%__.
@@ -116,6 +119,7 @@ export const precision = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isPrecision)
@@ -135,6 +139,7 @@ export const presenceOfMind = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase the accuracy of all allies by __25%__ as well as decreasing the SPD of enemies 
@@ -177,6 +182,7 @@ export const presenceOfMind = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		}); 
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isPOM) playerStats.totalStats.isPOM = false;

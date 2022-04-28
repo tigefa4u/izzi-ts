@@ -22,37 +22,32 @@ export const simulateBattleDescription = async ({
 	playerStats,
 	enemyStats,
 	description,
-	embed,
-	message,
-}: PrepareBattleDescriptionProps & {
-  embed: MessageEmbed;
-  message: Message;
-}) => {
+}: PrepareBattleDescriptionProps) => {
 	const desc = prepareBattleDesc({
 		playerStats,
 		enemyStats,
 		description,
 		totalDamage: 0,
 	});
-	if (!embed || !embed.title || !embed.description)
-		throw new Error("Embed required to edit battle!");
-	const newEmbed = recreateBattleEmbed(embed.title, embed.description);
-	if (!message) throw new Error("Message Object required to edit battle!");
-	newEmbed.setDescription(desc);
-	if (message.editable) {
-		try {
-			await message.editMessage(newEmbed, { reattachOnEdit: true });
-		} catch (err) {
-			loggers.error("helpers.battle.simulateBattleDescription(): Battle embed update failed: ", err);
-			return;
-		}
+	// if (!embed || !embed.title || !embed.description)
+	// 	throw new Error("Embed required to edit battle!");
+	// const newEmbed = recreateBattleEmbed(embed.title, embed.description);
+	// if (!message) throw new Error("Message Object required to edit battle!");
+	// newEmbed.setDescription(desc);
+	// if (message.editable) {
+	// 	try {
+	// 		await message.editMessage(newEmbed, { reattachOnEdit: true });
+	// 	} catch (err) {
+	// 		loggers.error("helpers.battle.simulateBattleDescription(): Battle embed update failed: ", err);
+	// 		return;
+	// 	}
 
-		return { edited: true };
-	}
-	return;
+	// 	return { edited: true };
+	// }
+	return desc;
 };
 
-function recreateBattleEmbed(title: string, description: string) {
+export function recreateBattleEmbed(title: string, description: string) {
 	return createEmbed()
 		.setTitle(title)
 		.setDescription(description)

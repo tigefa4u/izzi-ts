@@ -11,6 +11,7 @@ export const balancingStrike = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -76,6 +77,7 @@ export const balancingStrike = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {

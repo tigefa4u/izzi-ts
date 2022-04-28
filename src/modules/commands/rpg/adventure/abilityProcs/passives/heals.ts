@@ -12,6 +12,7 @@ export const surge = ({
 	round,
 	isPlayerFirst,
 	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// Need to rewird
@@ -43,6 +44,7 @@ export const surge = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 
 	}
@@ -59,7 +61,8 @@ export const chronobreak = ({
 	embed,
 	round,
 	isPlayerFirst,
-	card,	
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card ||  !playerStats.totalStats.originalHp) return;
 	if (round % 3 === 0) {
@@ -89,6 +92,7 @@ export const chronobreak = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});	
 	}
 	if (round % 2 === 0) {

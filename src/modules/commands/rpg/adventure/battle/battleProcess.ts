@@ -92,9 +92,8 @@ export const BattleProcess = async ({
 	isPlayerFirst,
 	playerStats,
 	opponentStats,
-	embed,
 	round,
-	message,
+	simulation
 }: BattleProcessProps) => {
 	if (!opponentStats) {
 		throw new Error("Unable to process opponent");
@@ -113,9 +112,8 @@ export const BattleProcess = async ({
     	isPlayerFirst,
     	playerStats,
     	opponentStats,
-    	embed,
     	round,
-    	message,
+    	simulation
     });
 	if (forfeit) {
 		return { forfeit };
@@ -166,7 +164,7 @@ export const BattleProcess = async ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		await delay(1000);
+		// await delay(1000); // Need to figure out
 	} else {
 		if ((abilityProc?.damageDiff ?? 1) <= 0) {
 			isAbilityDefeat = true;
@@ -201,9 +199,8 @@ async function processAbililtyOrItemProc({
 	isPlayerFirst,
 	playerStats,
 	opponentStats,
-	embed,
 	round,
-	message,
+	simulation
 }: BattleProcessProps) {
 	try {
 		let abilityProc = {} as AbilityProcReturnType,
@@ -221,9 +218,8 @@ async function processAbililtyOrItemProc({
 				card,
 				isPlayerFirst,
 				round,
-				embed,
-				message,
 				opponentStats,
+				simulation
 			} as BattleProcessProps;
 			if (card.itemname) {
 				const itemCallable =
@@ -244,7 +240,7 @@ async function processAbililtyOrItemProc({
 						// 		itemProc.basePlayerStats.totalStats
 						// 	);
 						// }
-						await delay(1000);
+						// await delay(1000);
 
 						if ((itemProc.damageDiff ?? 1) <= 0) {
 							isDefeated = true;
@@ -272,7 +268,7 @@ async function processAbililtyOrItemProc({
 			if (abilityProc?.abilityDamage) {
 				abilityDamage = abilityDamage + abilityProc.abilityDamage;
 			}
-			await delay(1000);
+			// await delay(1000);
 			if (abilityProc) {
 				if (
 					(abilityProc.damageDiff ?? 1) <= 0 ||

@@ -10,7 +10,8 @@ export const evasion = ({
 	round,
 	isPlayerFirst,
 	basePlayerStats,
-	card, 
+	card,
+	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
 	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : 0;
@@ -40,7 +41,8 @@ export const evasion = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-		});  
+			simulation
+		});
 	}
 	return {
 		playerStats,

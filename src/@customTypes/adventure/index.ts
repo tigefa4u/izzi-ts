@@ -122,10 +122,11 @@ export type BattleProcessProps = {
     opponentStats: BattleStats;
     playerStats: BattleStats;
     isPlayerFirst: boolean;
-    embed: MessageEmbed;
-    message: Message;
+    embed?: MessageEmbed;
+    message?: Message;
     card?: CollectionCardInfoProps & AbilityStackProps;
     enemyCard?: CollectionCardInfoProps & AbilityStackProps;
+    simulation: Simulation;
 }
 
 export type BattleUpdatedStats = {
@@ -144,4 +145,18 @@ export type RPGBattleCardDetailProps = CollectionCardInfoProps & {
     max_ruin: number;
     max_floor: number;
     max_ruin_floor: number;
+}
+
+export type SimulationRound = {
+	descriptions: { description: string; delay: number; }[];
+	round: number;
+	canSimulateRound: boolean;
+}
+export type Simulation = {
+	title: string;
+	rounds: {
+		[key: string]: SimulationRound;
+	},
+    hasCrashed: boolean;
+	isForfeit: boolean;
 }

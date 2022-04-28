@@ -12,6 +12,7 @@ export const duskbladeOfDraktharr = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -35,6 +36,7 @@ export const duskbladeOfDraktharr = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -54,6 +56,7 @@ export const youmuusGhostblade = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -77,6 +80,7 @@ export const youmuusGhostblade = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -96,6 +100,7 @@ export const navoriQuickblades = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -119,6 +124,7 @@ export const navoriQuickblades = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
@@ -138,6 +144,7 @@ export const desolator = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -160,6 +167,7 @@ export const desolator = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 	}
 	opponentStats.totalStats.defense = opponentStats.totalStats.defense - 6;
@@ -180,6 +188,7 @@ export const stormrazor = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -203,6 +212,7 @@ export const stormrazor = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 	}
 	if (playerStats.totalStats.isStunned || opponentStats.totalStats.isStunned) {
@@ -225,6 +235,7 @@ export const stormrazor = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		}); 
 	}
 
@@ -244,6 +255,7 @@ export const krakenSlayer = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
+	simulation
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -266,6 +278,7 @@ export const krakenSlayer = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
+			simulation
 		});
 
 		return {
