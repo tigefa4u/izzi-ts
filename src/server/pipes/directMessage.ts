@@ -28,7 +28,7 @@ export const DMUserViaApi = async (user_tag: string, content: { content: string;
 	if (content) {
 		const dmChannelId = await getDMChannelID(user_tag);
 		if (dmChannelId) {
-			requester({
+			return requester({
 				method: "POST",
 				url: `/channels/${dmChannelId}/messages`,
 				service: "discordApi",
