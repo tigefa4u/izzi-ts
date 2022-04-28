@@ -97,7 +97,7 @@ export const simulateBattle = async ({
 			simulation.rounds[round] = {
 				descriptions: [ {
 					description: desc,
-					delay: 1000
+					delay: 500
 				} ],
 				canSimulateRound: true,
 				round
@@ -350,7 +350,7 @@ async function simulatePlayerTurns({
 		});
 		simulation.rounds[round].descriptions.push({
 			description: desc,
-			delay: 1000
+			delay: 500
 		});
 		isPlayerFirst = !isPlayerFirst;
 		if (updatedStats.damageDiff <= 0) {

@@ -37,7 +37,7 @@ export const prepSendAbilityOrItemProcDescription = async ({
 
 	simulation.rounds[round].descriptions.push({
 		description: desc,
-		delay: 1000
+		delay: 500
 	});
 	// FIXME: Need to catch somewhere
 	// if (!hasEdited) {
