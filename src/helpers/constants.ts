@@ -214,7 +214,7 @@ export const DUNGEON_DEFAULTS = {
 	numberOfRanks: 5
 };
 
-export const BATTLES_PER_CHANNEL = 5;
+export const BATTLES_PER_CHANNEL = 3;
 
 export const USER_XP_GAIN_PER_BATTLE = 4;
 

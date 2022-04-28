@@ -88,6 +88,7 @@ export const elementalStrike = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
+			simulation
 		});
 	}
 	return {
