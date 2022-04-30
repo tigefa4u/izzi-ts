@@ -141,7 +141,7 @@ export const simulateBattle = async ({
 			}
 			roundStats.totalDamage = totalDamage;
 		}
-		if (roundStats?.isForfeit) {
+		if (roundStats?.isForfeit === true) {
 			simulation.isForfeit = true;
 			context.channel?.sendMessage("You have forfeit the battle");
 			return { isForfeit: roundStats.isForfeit };
@@ -203,9 +203,6 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 					if (roundStats) roundStats.isForfeit = true;
 					break;
 				}
-			} else {
-				if (roundStats) roundStats.isForfeit = true;
-				break;
 			}
 		}
 	}
@@ -296,14 +293,14 @@ async function simulatePlayerTurns({
 			round,
 			simulation
 		});
-		if (updatedStats.forfeit) {
-			// Should never execute
-			defeated = playerStats;
-			defeated.isForfeit = true;
-			simulation.rounds[round].canSimulateRound = false;
-			simulation.isForfeit = true;
-			break;
-		}
+		// if (updatedStats.forfeit) {
+		// 	// Should never execute
+		// 	defeated = playerStats;
+		// 	defeated.isForfeit = true;
+		// 	simulation.rounds[round].canSimulateRound = false;
+		// 	simulation.isForfeit = true;
+		// 	break;
+		// }
 		if (isPlayerFirst) {
 			playerStats = updatedStats.playerStats;
 			enemyStats = updatedStats.opponentStats;

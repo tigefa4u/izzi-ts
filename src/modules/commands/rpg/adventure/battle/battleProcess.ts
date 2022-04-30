@@ -103,9 +103,7 @@ export const BattleProcess = async ({
 		isAbilityDefeat = false,
 		isAbilitySelfDefeat = false;
 	// "duskblade of draktharr"
-	const {
-		abilityProc, abilityDamage, isDefeated, forfeit, ...rest 
-	} =
+	const { abilityProc, abilityDamage, isDefeated, ...rest } =
     await processAbililtyOrItemProc({
     	baseEnemyStats,
     	basePlayerStats,
@@ -115,9 +113,6 @@ export const BattleProcess = async ({
     	round,
     	simulation
     });
-	if (forfeit) {
-		return { forfeit };
-	}
 	if (rest.playerStats) {
 		playerStats.totalStats = rest.playerStats.totalStats;
 		opponentStats.totalStats = rest.opponentStats.totalStats;
@@ -202,96 +197,88 @@ async function processAbililtyOrItemProc({
 	round,
 	simulation
 }: BattleProcessProps) {
-	try {
-		let abilityProc = {} as AbilityProcReturnType,
-			abilityDamage = 0,
-			isDefeated = false;
+	let abilityProc = {} as AbilityProcReturnType,
+		abilityDamage = 0,
+		isDefeated = false;
 
-		for (let i = 0; i < 3; i++) {
-			const card = playerStats.cards[i];
-			if (!card) continue;
+	for (let i = 0; i < 3; i++) {
+		const card = playerStats.cards[i];
+		if (!card) continue;
 
-			const params = {
-				playerStats,
-				baseEnemyStats,
-				basePlayerStats,
-				card,
-				isPlayerFirst,
-				round,
-				opponentStats,
-				simulation
-			} as BattleProcessProps;
-			if (card.itemname) {
-				const itemCallable =
+		const params = {
+			playerStats,
+			baseEnemyStats,
+			basePlayerStats,
+			card,
+			isPlayerFirst,
+			round,
+			opponentStats,
+			simulation
+		} as BattleProcessProps;
+		if (card.itemname) {
+			const itemCallable =
           itemProcMap[card.itemname as keyof ItemProcMapProps];
-				if (typeof itemCallable === "function") {
-					const itemProc = itemCallable(params);
-					if (itemProc) {
-						abilityDamage = abilityDamage + (itemProc.itemDamage || 0);
-						playerStats.totalStats = itemProc.playerStats.totalStats;
-						opponentStats.totalStats = itemProc.opponentStats.totalStats;
+			if (typeof itemCallable === "function") {
+				const itemProc = itemCallable(params);
+				if (itemProc) {
+					abilityDamage = abilityDamage + (itemProc.itemDamage || 0);
+					playerStats.totalStats = itemProc.playerStats.totalStats;
+					opponentStats.totalStats = itemProc.opponentStats.totalStats;
 
-						// if (isPlayerFirst) {
-						basePlayerStats.totalStats = clone(
-							itemProc.basePlayerStats.totalStats
-						);
-						// } else {
-						// 	baseEnemyStats.totalStats = clone(
-						// 		itemProc.basePlayerStats.totalStats
-						// 	);
-						// }
-						// await delay(1000);
+					// if (isPlayerFirst) {
+					basePlayerStats.totalStats = clone(
+						itemProc.basePlayerStats.totalStats
+					);
+					// } else {
+					// 	baseEnemyStats.totalStats = clone(
+					// 		itemProc.basePlayerStats.totalStats
+					// 	);
+					// }
+					// await delay(1000);
 
-						if ((itemProc.damageDiff ?? 1) <= 0) {
-							isDefeated = true;
-							abilityProc.damageDiff = 0;
-							break;
-						}
+					if ((itemProc.damageDiff ?? 1) <= 0) {
+						isDefeated = true;
+						abilityProc.damageDiff = 0;
+						break;
 					}
 				}
 			}
-			if (
-				(processUnableToAttack(playerStats, opponentStats, true) ||
+		}
+		if (
+			(processUnableToAttack(playerStats, opponentStats, true) ||
           playerStats.totalStats.isRestrictResisted) &&
         	!(playerStats.cards.find((c) => c?.abilityname === "harbinger of death") && round % 4 === 0)
-			)
-				break;
+		)
+			break;
 
-			const callable =
+		const callable =
         abilityProcMap[card.abilityname as keyof AbilityProcMapProps];
-			if (typeof callable !== "function") continue;
-			abilityProc = callable(params) || ({} as AbilityProcReturnType);
-			if (abilityProc) {
-				playerStats = abilityProc.playerStats;
-				opponentStats = abilityProc.opponentStats;
-			}
-			if (abilityProc?.abilityDamage) {
-				abilityDamage = abilityDamage + abilityProc.abilityDamage;
-			}
-			// await delay(1000);
-			if (abilityProc) {
-				if (
-					(abilityProc.damageDiff ?? 1) <= 0 ||
+		if (typeof callable !== "function") continue;
+		abilityProc = callable(params) || ({} as AbilityProcReturnType);
+		if (abilityProc) {
+			playerStats = abilityProc.playerStats;
+			opponentStats = abilityProc.opponentStats;
+		}
+		if (abilityProc?.abilityDamage) {
+			abilityDamage = abilityDamage + abilityProc.abilityDamage;
+		}
+		// await delay(1000);
+		if (abilityProc) {
+			if (
+				(abilityProc.damageDiff ?? 1) <= 0 ||
           (abilityProc.playerDamageDiff ?? 1) <= 0
-				) {
-					isDefeated = true;
-					break;
-				}
+			) {
+				isDefeated = true;
+				break;
 			}
 		}
-
-		return {
-			playerStats,
-			opponentStats,
-			abilityProc,
-			abilityDamage,
-			isDefeated,
-		};
-	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.adventure.battle.battleProcess(): something went wrong",
-			err
-		);
-		return { forfeit: true };
 	}
+
+	return {
+		playerStats,
+		opponentStats,
+		abilityProc,
+		abilityDamage,
+		isDefeated,
+	};
 }
