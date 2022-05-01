@@ -1,4 +1,5 @@
 import { getAllRaids, updateRaid } from "api/controllers/RaidsController";
+import { delay } from "helpers";
 import loggers from "loggers";
 import { DMUserViaApi } from "./directMessage";
 
@@ -14,7 +15,8 @@ export default async function () {
 				}
 				const lobby = r.lobby;
 				let keys = Object.keys(lobby).map(Number);
-				keys.map((k) => {
+				for (const k of keys) {
+					await delay(1000);
 					if (
 						new Date().valueOf() - new Date(lobby[k].timestamp).valueOf() >=
                         hour
@@ -31,7 +33,7 @@ export default async function () {
                         "from the Challening lobby for AFK-ing for more than 1 hour";
 						DMUserViaApi(member.user_tag, { content: desc });
 					}
-				});
+				}
 				return await updateRaid({ id: r.id }, { lobby });
 			})
 		);
