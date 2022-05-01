@@ -3,23 +3,19 @@ import { createCanvas, loadImage, Canvas } from "canvas";
 import loggers from "loggers";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const canvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
-const borderCanvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
-const starCanvas = createCanvas(32, 32);
-
 export const createSingleCanvas: (
   card: Pick<CharacterCanvasProps, "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank">,
   isNotStar: boolean
 ) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
 	try {
+		const canvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
 		const ctx = canvas.getContext("2d");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		// ctx.fillStyle = "#000000";
 		// ctx.fillRect(0, 0, canvas.width, canvas.height);
 		const image = await loadImage(card.filepath);
 		const border = await loadImage("./assets/images/border.png");
+		const borderCanvas = createCanvas(CANVAS_DEFAULTS.cardWidth, CANVAS_DEFAULTS.cardHeight);
 		const borderCtx = borderCanvas.getContext("2d");
-		borderCtx.clearRect(0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
 		borderCtx.fillStyle = elementTypeColors[card.type];
@@ -28,6 +24,7 @@ export const createSingleCanvas: (
 			card.difficultyIcon ? card.difficultyIcon : "star"
 		}.png`;
 		const star = await loadImage(starPath);
+		const starCanvas = createCanvas(32, 32);
 		const starCtx = starCanvas.getContext("2d");
 		starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
 		// starCtx = desaturate(starCtx, starCanvas);

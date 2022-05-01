@@ -17,16 +17,6 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const canvas = createCanvas(CANVAS_DEFAULTS.width, CANVAS_DEFAULTS.height);
-const starCanvas = createCanvas(
-	CANVAS_DEFAULTS.iconWidth,
-	CANVAS_DEFAULTS.iconHeight
-);
-const borderCanvas = createCanvas(
-	CANVAS_DEFAULTS.cardWidth,
-	CANVAS_DEFAULTS.cardHeight
-);
-
 export const prepareHPBar = (num = 12) => {
 	const health = [];
 	for (let i = 0; i < num; i++) {
@@ -240,21 +230,22 @@ export const createBattleCanvas = async (
   }
 ) => {
 	if (!Array.isArray(cards)) return;
-	if (extras?.isSingleRow) {
-		canvas.height = CANVAS_DEFAULTS.height / 2;
-	} else {
-		canvas.height = CANVAS_DEFAULTS.height;
-	}
+	const canvas = createCanvas(
+		CANVAS_DEFAULTS.width,
+		extras?.isSingleRow ? CANVAS_DEFAULTS.height / 2 : CANVAS_DEFAULTS.height
+	);
 	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	const bgPath = await loadImage("./assets/images/background.jpg");
 	ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
 	try {
 		const border = await loadImage("./assets/images/border.png");
+		const borderCanvas = createCanvas(
+			CANVAS_DEFAULTS.cardWidth,
+			CANVAS_DEFAULTS.cardHeight
+		);
 		const borderCtx = borderCanvas.getContext("2d");
-		borderCtx.clearRect(0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
 		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
@@ -269,6 +260,10 @@ export const createBattleCanvas = async (
 			if (!cards[i]) continue;
 			const path = "./assets/images/star.png";
 			const star = await loadImage(path);
+			const starCanvas = createCanvas(
+				CANVAS_DEFAULTS.iconWidth,
+				CANVAS_DEFAULTS.iconHeight
+			);
 			const starCtx = starCanvas.getContext("2d");
 			starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
 			borderCtx.fillStyle = elementTypeColors[cards[i]?.type || ""];
