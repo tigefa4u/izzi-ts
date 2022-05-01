@@ -3,6 +3,7 @@ import loggers from "loggers";
 import { DMUserViaApi } from "../directMessage";
 import "../../../module";
 import autoKick from "../autoKick";
+import { delay } from "helpers";
 
 async function raidTimers() {
 	try {
@@ -18,19 +19,18 @@ async function raidTimers() {
 				const remainingMinutes = Math.floor(remainingTime % 60);
 				if (remainingMinutes <= 0 && remainingHours <= 0) {
 					const keys = Object.keys(raid.lobby).map(Number);
-					return await Promise.all([
-						...keys.map(async (k) => {
-							const id = raid.lobby[k].user_tag;
-							return await DMUserViaApi(id, {
-								content: `The ${
-									raid.is_event ? "Event" : "Raid"
-								} Boss has fled! You can spawn another Challenge using \`\`${
-									raid.is_event ? "ev" : "rd"
-								} spawn\`\``,
-							});
-						}),
-						deleteRaid({ id: raid.id }),
-					]);
+					await deleteRaid({ id: raid.id });
+					for (const k of keys) {
+						await delay(1000);
+						const id = raid.lobby[k].user_tag;
+						await DMUserViaApi(id, {
+							content: `The ${
+								raid.is_event ? "Event" : "Raid"
+							} Boss has fled! You can spawn another Challenge using \`\`${
+								raid.is_event ? "ev" : "rd"
+							} spawn\`\``,
+						});
+					}
 				}
 			})
 		);

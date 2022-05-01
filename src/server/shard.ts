@@ -37,7 +37,9 @@ const manager = new ShardingManager(path.join(__dirname, "client.js"), {
 	respawn: true
 });
 
-manager.spawn();
+manager.spawn().catch((err) => {
+	loggers.error("Unable to spawn Shard: ", err);
+});
 manager.on("shardCreate", (shard) => {
 	console.log(`Shard #${shard.id} is Online`);
 	shard.on("death", (process) => {
