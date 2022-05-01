@@ -1,4 +1,5 @@
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "../../cache/index";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import loggers from "loggers";
@@ -8,9 +9,11 @@ export const processUpVote = async (req: any, res: any) => {
 	try {
 		const user_tag: string = req.body.user;
 		const summoner = await getRPGUser({ user_tag: user_tag });
+		const key = `voted::${user_tag}`;
+		const hasVoted = await Cache.get(key);
 		if (summoner?.is_banned) return;
 		let desc = "";
-		if (summoner) {
+		if (summoner && !hasVoted) {
 			let streak = summoner.vote_streak ? summoner.vote_streak + 1 : 1;
 			if (streak > 30) streak = 30;
 			let goldReward = 2000 + 150 * streak;
@@ -59,6 +62,8 @@ export const processUpVote = async (req: any, res: any) => {
         "start your journey in the Xenverse using ``start``";
 		}
 		DMUserViaApi(user_tag, { content: desc });
+		await Cache.set(key, "1");
+		Cache.expire && await Cache.expire(key, 60 * 60);
 		return res.sendStatus(200);
 	} catch (err: any) {
 		loggers.error(
