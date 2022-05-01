@@ -19,18 +19,18 @@ async function raidTimers() {
 				const remainingMinutes = Math.floor(remainingTime % 60);
 				if (remainingMinutes <= 0 && remainingHours <= 0) {
 					const keys = Object.keys(raid.lobby).map(Number);
-					await deleteRaid({ id: raid.id });
-					for (const k of keys) {
-						await delay(1000);
-						const id = raid.lobby[k].user_tag;
-						await DMUserViaApi(id, {
-							content: `The ${
-								raid.is_event ? "Event" : "Raid"
-							} Boss has fled! You can spawn another Challenge using \`\`${
-								raid.is_event ? "ev" : "rd"
-							} spawn\`\``,
-						});
-					}
+					return await deleteRaid({ id: raid.id });
+					// for (const k of keys) {
+					// 	await delay(1000);
+					// 	const id = raid.lobby[k].user_tag;
+					// 	await DMUserViaApi(id, {
+					// 		content: `The ${
+					// 			raid.is_event ? "Event" : "Raid"
+					// 		} Boss has fled! You can spawn another Challenge using \`\`${
+					// 			raid.is_event ? "ev" : "rd"
+					// 		} spawn\`\``,
+					// 	});
+					// }
 				}
 			})
 		);
@@ -42,7 +42,7 @@ async function raidTimers() {
 }
 
 async function boot() {
-	await autoKick();
+	// await autoKick();
 	await raidTimers();
 	process.exit(1);
 }
