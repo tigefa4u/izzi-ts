@@ -19,6 +19,7 @@ export const createSingleCanvas: (
 		const image = await loadImage(card.filepath);
 		const border = await loadImage("./assets/images/border.png");
 		const borderCtx = borderCanvas.getContext("2d");
+		borderCtx.clearRect(0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
 		borderCtx.fillStyle = elementTypeColors[card.type];
