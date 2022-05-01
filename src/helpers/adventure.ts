@@ -242,6 +242,8 @@ export const createBattleCanvas = async (
 	if (!Array.isArray(cards)) return;
 	if (extras?.isSingleRow) {
 		canvas.height = CANVAS_DEFAULTS.height / 2;
+	} else {
+		canvas.height = CANVAS_DEFAULTS.height;
 	}
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
