@@ -1,4 +1,5 @@
 import Cache from "cache";
+import { delay } from "helpers";
 import loggers from "loggers";
 import { createRaidBoss } from "modules/commands/rpg/raids/actions/spawn";
 import { computeRank } from "modules/commands/rpg/raids/computeBoss";
@@ -20,17 +21,17 @@ const spawnRaids = async () => {
 		}
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
-		return await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map((difficultyMap) => {
-			return difficultyMap.map(async (difficulty: string) => {
+		return await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map(async (difficultyMap) => {
+			await Promise.all(difficultyMap.map(async (difficulty: string) => {
 				const computedBoss = computeRank(difficulty, isEvent);
 				if (!computedBoss) return;
-				return await createRaidBoss({
+				await createRaidBoss({
 					isPrivate: false,
 					isEvent,
 					computedBoss,
 					lobby: {}
 				});
-			});
+			}));
 		}));
 	} catch (err) {
 		loggers.error("cronjobs.hourlyTimers.spawnRaids(): something went wrong", err);
