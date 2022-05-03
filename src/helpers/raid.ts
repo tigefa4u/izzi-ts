@@ -56,7 +56,7 @@ export const refillEnergy = async (id: number, lobby: RaidLobbyProps) => {
 			lobby[k].energy = lobby[k].energy + 5;
 		}
 	});
-	await updateRaid({ id }, { lobby });
-	// await updateRaidEnergy({ id }, lobby);
+	// await updateRaid({ id }, { lobby });
+	await updateRaidEnergy({ id }, lobby);
 	return;
 };
