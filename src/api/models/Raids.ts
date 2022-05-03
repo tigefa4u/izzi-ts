@@ -95,11 +95,26 @@ export const updateLobby = async ({
 	// 	.where({ id: raid_id });
 };
 
+export const refillEnergy = async (params: {
+  data: RaidLobbyProps;
+  id: number;
+}) => {
+	Object.keys(params.data).map(Number).forEach(async (id) => {
+		await connection.raw(
+			`update ${tableName} set lobby = jsonb_set(lobby, '${id}, energy', '${params.data[id].energy}', false) 
+			where id = ${params.id}`
+		);
+	});
+	return 1;
+};
+
 export const destroy = async (params: { id: number }) => {
 	return await connection(tableName).where({ id: params.id }).del();
 };
 
-export const getAll = async (params?: Partial<RaidProps>): Promise<RaidProps[]> => {
+export const getAll = async (
+	params?: Partial<RaidProps>
+): Promise<RaidProps[]> => {
 	const raidDisabled = await Cache.get("disable-raids");
 	let query = connection(tableName).where({ is_event: raidDisabled ? true : false, });
 	if (params && (params.is_start === true || params.is_start === false)) {
@@ -108,16 +123,18 @@ export const getAll = async (params?: Partial<RaidProps>): Promise<RaidProps[]> 
 	return query;
 };
 
-export const getRaidLobby = async (params: { user_id: number }): Promise<RaidProps[]> => {
+export const getRaidLobby = async (params: {
+  user_id: number;
+}): Promise<RaidProps[]> => {
 	const db = connection;
-	const query =  await db
+	const query = await db
 		.select(
-			db.raw(
-				`${tableName}.*, lobby->'${params.user_id}' as lobby_member`
-			)
+			db.raw(`${tableName}.*, lobby->'${params.user_id}' as lobby_member`)
 		)
 		.from(tableName)
-		.whereRaw(`(${tableName}.lobby->'${params.user_id}'->'user_id')::int = ${params.user_id}`);
+		.whereRaw(
+			`(${tableName}.lobby->'${params.user_id}'->'user_id')::int = ${params.user_id}`
+		);
 
 	return query;
 };
@@ -146,9 +163,7 @@ export const getRaids = (
 
 	let aliasString = raidAlias;
 	Object.keys(filters).forEach(async (key) => {
-		if (
-			![ "name", "rank", "type", "difficulty" ].includes(key))
-			return;
+		if (![ "name", "rank", "type", "difficulty" ].includes(key)) return;
 
 		const item = filters[key as keyof FilterProps];
 		if (typeof item !== "object") return;
@@ -161,9 +176,7 @@ export const getRaids = (
 					key === "difficulty"
 						? `${aliasString}.stats::json`
 						: `${aliasString}.json_array_elements`
-				} ->> '${key}' similar to '(${item
-					?.map((i) => i)
-					.join("|")})%'`
+				} ->> '${key}' similar to '(${item?.map((i) => i).join("|")})%'`
 			)
 			.as(newalias);
 		aliasString = newalias;

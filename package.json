@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r dotenv/config lib/server/shard.js",
-    "dev": "ts-node-dev -r dotenv/config src/server/shard.ts",
+    "dev": "cross-env NODE_PATH=src/ ts-node-dev -r dotenv/config src/server/shard.ts",
     "flush:cooldown": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/index.ts",
     "test:redis": "ts-node -r dotenv/config src/server/testRedisConnection.ts",
     "cronjob": "ts-node -r dotenv/config src/server/pipes/cronjob.ts",

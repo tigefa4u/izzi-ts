@@ -143,7 +143,6 @@ export const simulateBattle = async ({
 		}
 		if (roundStats?.isForfeit === true) {
 			simulation.isForfeit = true;
-			context.channel?.sendMessage("You have forfeit the battle");
 			return { isForfeit: roundStats.isForfeit };
 		}
 		return roundStats;
@@ -200,6 +199,10 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 						await delay(data.delay);
 					}
 				} catch (err) {
+					loggers.error(
+						"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+						err
+					);
 					if (roundStats) roundStats.isForfeit = true;
 					break;
 				}

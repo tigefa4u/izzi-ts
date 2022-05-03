@@ -22,7 +22,7 @@ import { Canvas } from "canvas";
 import { createSingleCanvas } from "helpers/canvas";
 import { createAttachment } from "commons/attachments";
 import { processRaidLoot } from "../processRaidLoot";
-import { prepareRaidBossBase } from "helpers/raid";
+import { prepareRaidBossBase, refillEnergy } from "helpers/raid";
 
 export const battleRaidBoss = async ({
 	context,

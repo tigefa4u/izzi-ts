@@ -18,7 +18,7 @@ export const createRaid = async (data: RaidCreateProps) => {
 	}
 };
 
-export const updateRaid = async (params: { id: number }, data: RaidUpdateProps) => {
+export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps) => {
 	try {
 		loggers.info("Updating raid: " + JSON.stringify(params) + " " + JSON.stringify(data));
 		return await Raids.update(params, data);
@@ -31,7 +31,23 @@ export const updateRaid = async (params: { id: number }, data: RaidUpdateProps) 
 	}
 };
 
-// FIXME: Isnt going to workg anymore with the new query
+export const updateRaidEnergy = async (params: { id: number; }, data: RaidLobbyProps) => {
+	try {
+		loggers.info("Refilling raid energy: " + JSON.stringify(params) + " Lobby: " + JSON.stringify(data));
+		return await Raids.refillEnergy({
+			id: params.id,
+			data 
+		});
+	} catch (err) {
+		loggers.error(
+			"api.controllers.RaidsController.updateRaidEnergy(): something went wrong",
+			err
+		);
+		return;
+	}
+};
+
+// FIXME: Isnt going to work anymore with the new query
 export const updateLobby = async ({ raid_id, index, data }: {
     raid_id: number;
     index: number;
