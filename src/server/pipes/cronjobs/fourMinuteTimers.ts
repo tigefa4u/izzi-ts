@@ -20,12 +20,11 @@ async function refillRaidEnergy() {
 	try {
 		const raids = await getAllRaids();
 		if (!raids) return;
-		await Promise.all(
+		return await Promise.all(
 			raids.map((raid) => {
 				return refillEnergy(raid.id, raid.lobby);
 			})
 		);
-		return;
 	} catch (err) {
 		loggers.error("cronjobs.fourMinuteTimers.refillRaidEnergy(): something went wrong", err);
 		return;

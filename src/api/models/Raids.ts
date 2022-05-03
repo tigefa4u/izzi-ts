@@ -99,12 +99,16 @@ export const refillEnergy = async (params: {
   data: RaidLobbyProps;
   id: number;
 }) => {
-	Object.keys(params.data).map(Number).forEach(async (id) => {
-		await connection.raw(
-			`update ${tableName} set lobby = jsonb_set(lobby, '${id}, energy', '${params.data[id].energy}', false) 
+	await Promise.all(
+		Object.keys(params.data).map(async (id) => {
+			await connection.raw(
+				`update ${tableName} set lobby = jsonb_set(lobby, '{${id}, energy}', '${
+					params.data[Number(id)].energy
+				}', false) 
 			where id = ${params.id}`
-		);
-	});
+			);
+		})
+	);
 	return 1;
 };
 
