@@ -189,23 +189,24 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 
 	const roundKeys = Object.keys(rounds);
 	roundKeys.shift();
+	let isForfeit = false;
 	for (const round of roundKeys) {
+		if (isForfeit) break;
 		for (const data of rounds[round].descriptions) {
 			const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
-			if (message.editable) {
-				try {
-					await message.editMessage(newEmbed, { reattachOnEdit: true });
-					if (data.delay) {
-						await delay(data.delay);
-					}
-				} catch (err) {
-					loggers.error(
-						"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
-						err
-					);
-					if (roundStats) roundStats.isForfeit = true;
-					break;
+			try {
+				await message.editMessage(newEmbed, { reattachOnEdit: true });
+				if (data.delay) {
+					await delay(data.delay);
 				}
+			} catch (err) {
+				loggers.error(
+					"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+					err
+				);
+				if (roundStats) roundStats.isForfeit = true;
+				isForfeit = true;
+				break;
 			}
 		}
 	}
