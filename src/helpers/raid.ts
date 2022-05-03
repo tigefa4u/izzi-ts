@@ -2,7 +2,7 @@ import { OverallStatsProps } from "@customTypes";
 import { BattleStats } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
-import { updateRaidEnergy } from "api/controllers/RaidsController";
+import { updateRaid, updateRaidEnergy } from "api/controllers/RaidsController";
 import { prepareHPBar } from "./adventure";
 
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
@@ -56,6 +56,7 @@ export const refillEnergy = async (id: number, lobby: RaidLobbyProps) => {
 			lobby[k].energy = lobby[k].energy + 5;
 		}
 	});
-	await updateRaidEnergy({ id }, lobby);
+	await updateRaid({ id }, { lobby });
+	// await updateRaidEnergy({ id }, lobby);
 	return;
 };
