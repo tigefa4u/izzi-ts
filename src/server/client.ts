@@ -41,8 +41,9 @@ const client = new discord.Client({
 			lifetime: 2,
 			interval: 2
 		}
-	}
-	// restRequestTimeout: 1000 * 25
+	},
+	restRequestTimeout: 1000 * 30,
+	restTimeOffset: 1000
 });
 
 handleClient(client);
