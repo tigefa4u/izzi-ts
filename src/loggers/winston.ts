@@ -5,7 +5,7 @@ const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
 	zippedArchive: true,
-	maxSize: "100m",
+	maxSize: "5g",
 	maxFiles: "14d",
 	format: format.combine(
 		format.errors({ stack: true }),
@@ -18,7 +18,7 @@ const errorTransporter = new transports.DailyRotateFile({
 	filename: "logs/error-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
 	zippedArchive: true,
-	maxSize: "1g",
+	maxSize: "5g",
 	maxFiles: "14d",
 	format: format.combine(
 		format.errors({ stack: true }),
