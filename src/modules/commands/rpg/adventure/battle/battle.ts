@@ -48,7 +48,7 @@ export const simulateBattle = async ({
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
 		context.channel.id
 	);
-		// Create an object that stores all data needed for simulation
+	// Create an object that stores all data needed for simulation
 	const simulation = { title, } as Simulation;
 	try {
 		if (battlesInChannel === undefined) return;
@@ -126,8 +126,6 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
-		battlesInChannel = battlesPerChannel.get(context.channel.id);
-		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		roundStats = await visualizeSimulation({
 			simulation,
 			context,
@@ -135,6 +133,8 @@ export const simulateBattle = async ({
 			roundStats: clone(roundStats),
 			retries: 0
 		});
+		battlesInChannel = battlesPerChannel.get(context.channel.id);
+		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
 				roundStats.isVictory = false;
