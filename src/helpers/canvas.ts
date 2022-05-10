@@ -3,15 +3,6 @@ import { createCanvas, loadImage, Canvas } from "canvas";
 import loggers from "loggers";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const borderCanvas = createCanvas(
-	CANVAS_DEFAULTS.cardWidth,
-	CANVAS_DEFAULTS.cardHeight
-);
-const starCanvas = createCanvas(
-	CANVAS_DEFAULTS.iconWidth / 2,
-	CANVAS_DEFAULTS.iconHeight / 2
-);
-
 export const createSingleCanvas: (
   card: Pick<
     CharacterCanvasProps,
@@ -39,6 +30,10 @@ export const createSingleCanvas: (
 			"took: " + endImageTime[0] + "s " + `${endImageTime[1] / ns2ms}ms`
 		);
 		const border = await loadImage("./assets/images/border.png");
+		const borderCanvas = createCanvas(
+			CANVAS_DEFAULTS.cardWidth,
+			CANVAS_DEFAULTS.cardHeight
+		);
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
@@ -46,6 +41,10 @@ export const createSingleCanvas: (
 		borderCtx.fillRect(0, 0, borderCanvas.width, borderCanvas.height);
 		const starPath = "./assets/images/star.png";
 		const star = await loadImage(starPath);
+		const starCanvas = createCanvas(
+			CANVAS_DEFAULTS.iconWidth / 2,
+			CANVAS_DEFAULTS.iconHeight / 2
+		);
 		const starCtx = starCanvas.getContext("2d");
 		starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
 		// starCtx = desaturate(starCtx, starCanvas);

@@ -17,15 +17,6 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const starCanvas = createCanvas(
-	CANVAS_DEFAULTS.iconWidth,
-	CANVAS_DEFAULTS.iconHeight
-);
-const borderCanvas = createCanvas(
-	CANVAS_DEFAULTS.cardWidth,
-	CANVAS_DEFAULTS.cardHeight
-);
-
 export const prepareHPBar = (num = 12) => {
 	const health = [];
 	for (let i = 0; i < num; i++) {
@@ -256,6 +247,10 @@ export const createBattleCanvas = async (
 	const ns2ms = 1000000;
 	try {
 		const border = await loadImage("./assets/images/border.png");
+		const borderCanvas = createCanvas(
+			CANVAS_DEFAULTS.cardWidth,
+			CANVAS_DEFAULTS.cardHeight
+		);
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
@@ -271,6 +266,10 @@ export const createBattleCanvas = async (
 			if (!cards[i]) continue;
 			const path = "./assets/images/star.png";
 			const star = await loadImage(path);
+			const starCanvas = createCanvas(
+				CANVAS_DEFAULTS.iconWidth,
+				CANVAS_DEFAULTS.iconHeight
+			);
 			const starCtx = starCanvas.getContext("2d");
 			starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
 			borderCtx.fillStyle = elementTypeColors[cards[i]?.type || ""];

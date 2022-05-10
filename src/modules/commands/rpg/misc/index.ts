@@ -75,12 +75,15 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
         `\nYou have leveled up! You are now level __${updatedUser.level}__. ` +
         `We have also refilled your mana __${user.max_mana}__ -> __${user.max_mana + 2}__`;
 		}
-		const updateObj = { gold: user.gold };
+		const updateObj = { gold: user.gold } as any;
 		if (randomReward.key === "exp") {
 			Object.assign(updateObj, { exp: user.exp });
 		}
 		if (randomReward.key === "mana" || randomReward.key === "gold") {
 			Object.assign(updateObj, { [randomReward.key]: user[randomReward.key] });
+			if (updateObj.mana > user.max_mana) {
+				delete updateObj.mana;
+			}
 		}
 		await Promise.all([
 			updateRPGUser({ user_tag: user.user_tag }, updateObj),
