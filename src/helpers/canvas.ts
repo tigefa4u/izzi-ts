@@ -3,10 +3,6 @@ import { createCanvas, loadImage, Canvas } from "canvas";
 import loggers from "loggers";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const canvas = createCanvas(
-	CANVAS_DEFAULTS.cardWidth,
-	CANVAS_DEFAULTS.cardHeight
-);
 const borderCanvas = createCanvas(
 	CANVAS_DEFAULTS.cardWidth,
 	CANVAS_DEFAULTS.cardHeight
@@ -26,6 +22,10 @@ export const createSingleCanvas: (
 	try {
 		const ns2ms = 1000000;
 		const startTime = process.hrtime();
+		const canvas = createCanvas(
+			CANVAS_DEFAULTS.cardWidth,
+			CANVAS_DEFAULTS.cardHeight
+		);
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		// ctx.fillStyle = "#000000";

@@ -17,7 +17,6 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
-const canvas = createCanvas(CANVAS_DEFAULTS.width, CANVAS_DEFAULTS.height);
 const starCanvas = createCanvas(
 	CANVAS_DEFAULTS.iconWidth,
 	CANVAS_DEFAULTS.iconHeight
@@ -243,12 +242,11 @@ export const createBattleCanvas = async (
   }
 ) => {
 	if (!Array.isArray(cards)) return;
+	const canvas = createCanvas(
+		CANVAS_DEFAULTS.width,
+		extras?.isSingleRow ? CANVAS_DEFAULTS.height / 2 : CANVAS_DEFAULTS.height
+	);
 	const startTime = process.hrtime();
-	if (extras?.isSingleRow) {
-		canvas.height = CANVAS_DEFAULTS.height / 2;
-	} else {
-		canvas.height = CANVAS_DEFAULTS.height;
-	}
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "#000000";
