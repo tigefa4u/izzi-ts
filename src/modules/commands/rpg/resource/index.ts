@@ -29,6 +29,10 @@ export const hourly = async ({ context, options }: BaseProps) => {
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
+		if (user.mana > user.max_mana) {
+			context.channel?.sendMessage("You already have max mana you can hold");
+			return;
+		}
 		const randomManaRegen = randomElementFromArray<number>(HOURLY_MANA_REGEN);
 		if (!randomManaRegen) return;
 		user.mana = user.mana + randomManaRegen;
