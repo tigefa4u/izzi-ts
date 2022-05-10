@@ -12,3 +12,7 @@ CRONJOBS -----
 0 */2 * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job rp >> /home/izzi-ts/cronjob.log 2>&1
 0 0-21/3 * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job rpp >> /home/izzi-ts/cronjob.log 2>&1
 30 1-22/3 * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job rpp >> /home/izzi-ts/cronjob.log 2>&1
+
+canvas draw using requestAnimationFrame
+- check how long it takes for it to paint 1000 ele from array
+- compress images to send in embeds. inflation / deflation

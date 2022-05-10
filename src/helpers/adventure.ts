@@ -17,6 +17,16 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
 
+const canvas = createCanvas(CANVAS_DEFAULTS.width, CANVAS_DEFAULTS.height);
+const starCanvas = createCanvas(
+	CANVAS_DEFAULTS.iconWidth,
+	CANVAS_DEFAULTS.iconHeight
+);
+const borderCanvas = createCanvas(
+	CANVAS_DEFAULTS.cardWidth,
+	CANVAS_DEFAULTS.cardHeight
+);
+
 export const prepareHPBar = (num = 12) => {
 	const health = [];
 	for (let i = 0; i < num; i++) {
@@ -38,7 +48,10 @@ export const preparePlayerStats = async ({
   characterLevel: number;
   rank: string;
   guildStats?: GuildStatProps;
-}): Promise<{ playerStats: BattleStats["totalStats"]; baseStats: OverallStatsProps; }> => {
+}): Promise<{
+  playerStats: BattleStats["totalStats"];
+  baseStats: OverallStatsProps;
+}> => {
 	const powerLevel = await getPowerLevelByRank({ rank });
 	if (!powerLevel) {
 		throw new Error("FATAL: Power Level not found for rank: " + rank);
@@ -61,7 +74,7 @@ export const preparePlayerStats = async ({
 
 	return {
 		playerStats,
-		baseStats: result.baseStats 
+		baseStats: result.baseStats,
 	};
 };
 
@@ -230,21 +243,21 @@ export const createBattleCanvas = async (
   }
 ) => {
 	if (!Array.isArray(cards)) return;
-	const canvas = createCanvas(
-		CANVAS_DEFAULTS.width,
-		extras?.isSingleRow ? CANVAS_DEFAULTS.height / 2 : CANVAS_DEFAULTS.height
-	);
+	const startTime = process.hrtime();
+	if (extras?.isSingleRow) {
+		canvas.height = CANVAS_DEFAULTS.height / 2;
+	} else {
+		canvas.height = CANVAS_DEFAULTS.height;
+	}
 	const ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	const bgPath = await loadImage("./assets/images/background.jpg");
 	ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
+	const ns2ms = 1000000;
 	try {
 		const border = await loadImage("./assets/images/border.png");
-		const borderCanvas = createCanvas(
-			CANVAS_DEFAULTS.cardWidth,
-			CANVAS_DEFAULTS.cardHeight
-		);
 		const borderCtx = borderCanvas.getContext("2d");
 		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
 		borderCtx.globalCompositeOperation = "source-in";
@@ -260,16 +273,13 @@ export const createBattleCanvas = async (
 			if (!cards[i]) continue;
 			const path = "./assets/images/star.png";
 			const star = await loadImage(path);
-			const starCanvas = createCanvas(
-				CANVAS_DEFAULTS.iconWidth,
-				CANVAS_DEFAULTS.iconHeight
-			);
 			const starCtx = starCanvas.getContext("2d");
 			starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
 			borderCtx.fillStyle = elementTypeColors[cards[i]?.type || ""];
 			borderCtx.fillRect(0, 0, borderCanvas.width, borderCanvas.height);
 			const filepath = cards[i]?.filepath;
 			if (filepath) {
+				const startImageTime = process.hrtime();
 				const image = await loadImage(filepath);
 				ctx.drawImage(
 					image,
@@ -277,6 +287,12 @@ export const createBattleCanvas = async (
 					dy,
 					canvas.width / 3,
 					dh
+				);
+				const endImageTime = process.hrtime(startImageTime);
+				loggers.timerify(
+					"Battle Canvas image load and draw took: ",
+					endImageTime[0] + "s " + `${endImageTime[1] / ns2ms}ms`,
+					"path: " + filepath
 				);
 				ctx.drawImage(
 					borderCanvas,
@@ -299,6 +315,11 @@ export const createBattleCanvas = async (
 				}
 			}
 		}
+		const endTime = process.hrtime(startTime);
+		loggers.timerify(
+			"Battle Canvas completion took: ",
+			endTime[0] + "s" + ` ${endTime[1] / ns2ms}ms`
+		);
 		return canvas;
 	} catch (err) {
 		loggers.error(

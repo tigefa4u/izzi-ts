@@ -5,6 +5,7 @@ import {
 	PrepareBattleDescriptionProps,
 	SimulateBattleProps,
 	Simulation,
+	SimulationRound,
 } from "@customTypes/adventure";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -13,7 +14,7 @@ import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { createBattleCanvas, prepareBattleDesc } from "helpers/adventure";
 import { compare, recreateBattleEmbed, simulateBattleDescription } from "helpers/battle";
-import { BATTLE_ROUNDS_COUNT } from "helpers/constants";
+import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
@@ -26,7 +27,7 @@ const timerify = performance.timerify(createBattleCanvas);
 
 const obs = new PerformanceObserver((list) => {
 	const entries = list.getEntriesByName("createBattleCanvas");
-	loggers.info(
+	loggers.timerify(
 		entries[0].name +
       " took: " +
       list.getEntries()[0].duration.toFixed(3) +
@@ -131,7 +132,8 @@ export const simulateBattle = async ({
 			simulation,
 			context,
 			attachments: attachmentCards,
-			roundStats: clone(roundStats)
+			roundStats: clone(roundStats),
+			retries: 0
 		});
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
@@ -142,6 +144,7 @@ export const simulateBattle = async ({
 			roundStats.totalDamage = totalDamage;
 		}
 		if (roundStats?.isForfeit === true) {
+			context.channel?.sendMessage("You have forfeit the battle");
 			simulation.isForfeit = true;
 			return { isForfeit: roundStats.isForfeit };
 		}
@@ -161,9 +164,12 @@ type V = {
 	simulation: Simulation;
 	context: SimulateBattleProps["context"];
 	attachments: (CollectionCardInfoProps | undefined)[];
+	retries: number;
 	roundStats?: BattleStats;
 }
-async function visualizeSimulation({ simulation, context, attachments, roundStats }: V) {
+async function visualizeSimulation({
+	simulation, context, attachments, roundStats, retries 
+}: V): Promise<BattleStats | undefined> {
 
 	const canvas = await timerify(attachments);
 	if (!canvas) {
@@ -175,9 +181,14 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 	);
 
 	const rounds = simulation.rounds;
+	const roundKeys = Object.keys(rounds);
+	const initialKey = roundKeys.shift();
+	if (!initialKey) {
+		throw new Error("No rounds found in simulation");
+	}
 	const embed = createEmbed()
 		.setTitle(simulation.title)
-		.setDescription(rounds["0"].descriptions[0].description)
+		.setDescription(rounds[initialKey].descriptions[0].description)
 		.attachFiles([ attachment ])
 		.setImage("attachment://battle.jpg");
 
@@ -187,9 +198,8 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 		throw new Error("Message Object not found to edit battle");
 	}
 
-	const roundKeys = Object.keys(rounds);
-	roundKeys.shift();
 	let isForfeit = false;
+	let roundFFOn: number | undefined;
 	for (const round of roundKeys) {
 		if (isForfeit) break;
 		for (const data of rounds[round].descriptions) {
@@ -206,9 +216,31 @@ async function visualizeSimulation({ simulation, context, attachments, roundStat
 				);
 				if (roundStats) roundStats.isForfeit = true;
 				isForfeit = true;
+				roundFFOn = +round;
 				break;
 			}
 		}
+	}
+	if (roundFFOn && retries < BATTLE_FORFEIT_RETRIES) {
+		context.channel?.sendMessage("Your battle has crashed, retrying...");
+		let start = +roundFFOn - 1;
+		if (start < 0) start = 0;
+		const clonedKeys = [ "0", ...roundKeys ];
+		const keys = clonedKeys.slice(start);
+		const newRounds = keys.reduce((acc, r) => {
+			acc[r] = rounds[r];
+			return acc;
+		}, {} as { [key: string]: SimulationRound; });
+		retries = retries + 1;
+		simulation.rounds = newRounds;
+		delete roundStats?.isForfeit;
+		return await visualizeSimulation({
+			context,
+			simulation,
+			retries,
+			attachments,
+			roundStats 
+		});
 	}
 
 	return roundStats;

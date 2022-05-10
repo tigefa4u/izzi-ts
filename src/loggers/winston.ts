@@ -27,6 +27,20 @@ const errorTransporter = new transports.DailyRotateFile({
 	)
 });
 
+const timerTransporter = new transports.DailyRotateFile({
+	filename: "logs/exectime-%DATE%.log",
+	datePattern: "YYYY-MM-DD-HH",
+	zippedArchive: true,
+	maxSize: "1g",
+	maxFiles: "14d",
+	format: format.combine(
+		format.errors({ stack: true }),
+		format.timestamp(),
+		format.json()
+	)
+});
+
+
 const winstonErrorLogger = createLogger({
 	transports: [
 		errorTransporter
@@ -63,6 +77,17 @@ const winstonInfoLogger = createLogger({
 	]
 });
 
+const winstonTimerLogger = createLogger({
+	transports: [
+		timerTransporter
+		// new transports.File({
+		// 	filename: "logs/info.log",
+		// 	level: "info",
+		// 	format: format.json()
+		// }),
+	]
+});
+
 const error = (error: any) => {
 	winstonErrorLogger.error(error);
 };
@@ -71,7 +96,12 @@ const info = (info: string) => {
 	winstonInfoLogger.info(info);
 };
 
+const logTime = (info: string) => {
+	winstonTimerLogger.info(info);
+};
+
 export default {
 	error,
-	info 
+	info,
+	logTime
 };

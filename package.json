@@ -12,7 +12,8 @@
     "cronjob": "ts-node -r dotenv/config src/server/pipes/cronjob.ts",
     "start:server": "ts-node -r dotenv/config src/server/app.ts",
     "build": "tsc -p tsconfig.json",
-    "build:pipe": "forever stop lib/server/shard.js && rm -rf lib/ && export NODE_PATH=lib/ && npm run build"
+    "build:pipe": "forever stop lib/server/shard.js && rm -rf lib/ && export NODE_PATH=lib/ && npm run build",
+    "profiler": "node -r ts-node/register --prof -r dotenv/config src/server/shard.ts"
   },
   "keywords": [
     "izzi",

@@ -131,7 +131,6 @@ export const battleRaidBoss = async ({
 		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
-			context.channel?.sendMessage("You have forfeit the battle");
 			const updatedLobby = await consumeEnergy(
 				updateObj.id,
 				user.id,

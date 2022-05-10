@@ -14,7 +14,12 @@ const info = (infoMessage: string) => {
 	winstonLogger.info(infoMessage);
 };
 
+const timerify = (...args: (string | number)[]) => {
+	winstonLogger.logTime(args.join(" -> "));
+};
+
 export default {
 	error,
-	info 
+	info,
+	timerify
 };
