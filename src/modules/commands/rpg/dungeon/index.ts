@@ -113,10 +113,10 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 			enemyStats,
 			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`
 		});
-		refetchAndUpdateUserMana(author.id);
+		await refetchAndUpdateUserMana(author.id);
 		clearCooldown(author.id, "mana-battle");
 		if (result?.isForfeit) return;
-		handleDungeonBattleOutcome({
+		await handleDungeonBattleOutcome({
 			author,
 			client,
 			userRank,

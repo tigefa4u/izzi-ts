@@ -15,11 +15,29 @@ const info = (infoMessage: string) => {
 };
 
 const timerify = (...args: (string | number)[]) => {
-	winstonLogger.logTime(args.join(" -> "));
+	const log = args.join(" -> ");
+	// console.log(log);
+	winstonLogger.logTime(log);
+};
+
+const startTimer = (message?: string) => {
+	const startTime = process.hrtime();
+	return {
+		startTime,
+		message: message || ""
+	};
+};
+
+const endTimer = (timer: { startTime: [number, number]; message?: string; }) => {
+	const endTime = process.hrtime(timer.startTime);
+	const ns2ms = 1000000;
+	timerify(`[Timer] ${timer.message}`, `took ${endTime[0]}s ${endTime[1] / ns2ms}ms`);
 };
 
 export default {
 	error,
 	info,
-	timerify
+	timerify,
+	startTimer,
+	endTimer
 };

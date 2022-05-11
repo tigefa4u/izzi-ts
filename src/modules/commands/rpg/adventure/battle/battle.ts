@@ -9,7 +9,6 @@ import {
 } from "@customTypes/adventure";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
-import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { createBattleCanvas, prepareBattleDesc } from "helpers/adventure";
@@ -151,7 +150,7 @@ export const simulateBattle = async ({
 		return roundStats;
 	} catch (err) {
 		simulation.hasCrashed = true;
-		battlesPerChannel.autoClear();
+		battlesPerChannel.set(context.channel.id, 0);
 		loggers.error(
 			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
 			err
@@ -296,7 +295,7 @@ async function simulatePlayerTurns({
 				});
 				simulation.rounds[round].descriptions.push({
 					description: desc,
-					delay: 0
+					delay: 1000
 				});
 			}
 		}

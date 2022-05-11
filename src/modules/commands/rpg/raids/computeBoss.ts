@@ -26,6 +26,9 @@ function prepareLoot(
 		}
 	} as PrepareLootProps;
 	result.difficulty = difficultyObj[difficulty as keyof MapProps];
+	if (!result.difficulty) {
+		result.difficulty = "easy";
+	}
 	const baseLoot = prepareBaseLoot();
 	if (isEvent === true) {
 		result.bosses = 1;
