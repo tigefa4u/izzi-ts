@@ -34,7 +34,7 @@ async function processConfirmationAndGetOrbs(
 	await Promise.all([ delSkinCollection({ id }), 
 		updateRPGUser({ user_tag: user.user_tag }, { orbs: user.orbs }) ]);
 
-	const skinArr = getSkinArr(author.id);
+	const skinArr = await getSkinArr(author.id);
 	if (skinArr) {
 		const index = skinArr.findIndex((c: any) => c.id === id);
 		if (index >= 0) {

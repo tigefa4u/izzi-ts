@@ -1,5 +1,6 @@
 import { IgnoreProps } from "@customTypes";
 import { CharacterCanvasProps } from "@customTypes/canvas";
+import { CardMetadataProps } from "@customTypes/cards";
 import { CharacterStatProps } from "@customTypes/characters";
 
 export type CollectionProps = {
@@ -81,6 +82,7 @@ export type CollectionCardInfoProps = CollectionReturnType & {
   characterInfo?: CharacterCanvasProps;
   is_passive?: boolean;
   itemStats?: CharacterStatProps & { resist?: number };
+  metadata?: CardMetadataProps;
 };
 
 export type AbilityStatStackProps = {

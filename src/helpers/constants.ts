@@ -178,10 +178,10 @@ export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
 export const MANA_PER_BATTLE = 5;
 
 export const CANVAS_DEFAULTS = {
-	width: 2250,
-	height: 2000,
-	cardWidth: 750,
-	cardHeight: 1000,
+	width: 708,
+	height: 630,
+	cardWidth: 473,
+	cardHeight: 630,
 	iconWidth: 64,
 	iconHeight: 64
 };
@@ -227,3 +227,8 @@ export const SACRIFICE_GOLD_COST = 1350;
 export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
 
 export const MARKET_PURCHASE_LIMIT = 5;
+
+export const MAX_CHOSEN_SKINS_ALLOWED = 10;
+
+export const MIN_RAID_USER_LEVEL = 5;
+export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];

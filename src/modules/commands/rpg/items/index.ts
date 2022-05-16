@@ -133,7 +133,7 @@ export const itemInfo = async ({
 			.setTitle(titleCase(item.name))
 			.setDescription(
 				"Items give your cards additional stats buffing their abilities\n" +
-          "You can equip an item using ``equip 1 14``\n\n" +
+          "You can equip an item using ``equip 1 <ID>``\n\n" +
           `${Object.keys(preparedStats).map(
           	(key) =>
           		`**${key}:** ${preparedStats[key as keyof StatRelationProps]}`

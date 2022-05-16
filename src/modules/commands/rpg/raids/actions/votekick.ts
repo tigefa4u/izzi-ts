@@ -53,7 +53,7 @@ export const voteKickMember = async ({
 			lobby[user.id].kickVotes = kickVotes;
 			lobby[kickId].votes = (Number(lobby[kickId].votes) || 0) + 1;
 			let lobbyMembers = Object.keys(lobby).map((i) => Number(i));
-			const requiredVotes = Math.ceil(lobbyMembers.length * (60 / 100));
+			const requiredVotes = Math.ceil(lobbyMembers.length * (50 / 100));
 			const kickedMember = lobby[kickId];
 			if ((kickedMember.votes || 0) >= requiredVotes) {
 				delete lobby[kickId];

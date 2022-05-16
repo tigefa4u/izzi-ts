@@ -101,11 +101,6 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 			rank: enemyCard.rank,
 		});
 
-		const skin = prepareSpbtSkin(enemyCard.character_id);
-		if (skin) {
-			enemyCard.name = skin.name;
-			enemyCard.filepath = skin.filepath;
-		}
 		const enemyBase = preparePlayerBase({
 			id: "spbt",
 			playerStats: enemyStats.playerStats,
@@ -155,13 +150,6 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 		return;
 	}
 };
-
-function prepareSpbtSkin(id: number) {
-	const skinArr = getSkinArr("spbt-skins");
-	if (!skinArr) return;
-	const found = skinArr.filter((s) => s.character_id === id);
-	return found[0];
-}
 
 async function processVictoryAndSendEmbed(
 	author: AuthorProps,

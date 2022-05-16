@@ -14,7 +14,9 @@ import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
+	HIGH_LEVEL_RAIDS,
 	MAX_RAID_LOBBY_MEMBERS,
+	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
 	REACTIONS,
 } from "helpers/constants";
@@ -76,6 +78,12 @@ async function validateAndAcceptRaid(
 				isEvent ? "Event" : "Raid"
 			} Challenge!`
 		);
+		return;
+	}
+	if (mentionedUser.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(currentRaid.stats.difficulty)) {
+		params.channel?.sendMessage(`Summoer **${mentionedUser.username}** must be atleast level ` +
+		`__${MIN_RAID_USER_LEVEL}__ ` +
+		"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
 		return;
 	}
 	if (options?.isConfirm) {

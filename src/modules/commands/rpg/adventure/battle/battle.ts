@@ -11,7 +11,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { delay } from "helpers";
-import { createBattleCanvas, prepareBattleDesc } from "helpers/adventure";
+import { prepareBattleDesc } from "helpers/adventure";
 import { compare, recreateBattleEmbed, simulateBattleDescription } from "helpers/battle";
 import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT } from "helpers/constants";
 import loggers from "loggers";
@@ -21,6 +21,7 @@ import { BattleProcess } from "./battleProcess";
 import { prepareCriticalHitChance, prepareEvadeHitChance } from "./chances";
 import * as battlesPerChannel from "./battlesPerChannelState";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import { createBattleCanvas } from "helpers/canvas";
 
 const timerify = performance.timerify(createBattleCanvas);
 

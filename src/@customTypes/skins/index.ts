@@ -1,4 +1,5 @@
 import { AssetImageProps } from "@customTypes";
+import { CardMetadataProps } from "@customTypes/cards";
 
 export type SkinCollectionProps = {
     id: number;
@@ -20,6 +21,7 @@ export type SkinProps = {
         jpeg: AssetImageProps;
         webp: AssetImageProps;
         isSpecial?: boolean;
+        assets?: CardMetadataProps["assets"]
     };
 }
 

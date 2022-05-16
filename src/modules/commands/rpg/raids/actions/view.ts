@@ -1,12 +1,12 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
+import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
-import { createBattleCanvas } from "helpers/adventure";
-import { createSingleCanvas } from "helpers/canvas";
+import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { prepareRaidBossEmbedDesc, prepareRaidTimer } from "..";
@@ -50,7 +50,7 @@ export const prepareRaidViewEmbed = async ({
     author: AuthorProps;
     client: Client;
 }) => {
-	let bossCanvas: Canvas | undefined;
+	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 	if (isEvent) {
 		bossCanvas = await createSingleCanvas(currentRaid.raid_boss[0], false);
 	} else {

@@ -1,28 +1,26 @@
-import { RaidActionProps, RaidLobbyProps, RaidProps } from "@customTypes/raids";
+import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
 import { ENERGY_PER_ATTACK } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";
 import * as battleInChannel from "../../adventure/battle/battlesPerChannelState";
-import {
-	prepareSkewedCollectionsForBattle,
-	validateAndPrepareTeam,
-} from "helpers/teams";
+import { validateAndPrepareTeam, } from "helpers/teams";
 import { simulateBattle } from "../../adventure/battle/battle";
 import { clone } from "utility";
 import { BattleStats } from "@customTypes/adventure";
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { processHpBar, relativeDiff } from "helpers/battle";
-import { addTeamEffectiveness, createBattleCanvas, prepareHPBar } from "helpers/adventure";
+import { processHpBar, relativeDiff, validateFiveMinuteTimer } from "helpers/battle";
+import { addTeamEffectiveness, prepareHPBar } from "helpers/adventure";
 import { getRaid, updateRaid } from "api/controllers/RaidsController";
 import { Canvas } from "canvas";
-import { createSingleCanvas } from "helpers/canvas";
+import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { createAttachment } from "commons/attachments";
 import { processRaidLoot } from "../processRaidLoot";
-import { prepareRaidBossBase, refillEnergy } from "helpers/raid";
+import { prepareRaidBossBase } from "helpers/raid";
+import { SingleCanvasReturnType } from "@customTypes/canvas";
 
 export const battleRaidBoss = async ({
 	context,
@@ -38,6 +36,10 @@ export const battleRaidBoss = async ({
 			`${isEvent ? "event" : "raid"}-battle`
 		);
 		if (inBattle) {
+			await validateFiveMinuteTimer({
+				timestamp: inBattle.timestamp,
+				key: `cooldown::${isEvent ? "event" : "raid"}-battle-${author.id}` 
+			});
 			context.channel?.sendMessage("Your battle is still in progress");
 			return;
 		}
@@ -215,11 +217,14 @@ async function processRaidResult({
 		strength: updateObj.stats.remaining_strength,
 	};
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
-	let bossCanvas: Canvas | undefined;
+	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 	if (isEvent) {
 		bossCanvas = await createSingleCanvas(updateObj.raid_boss[0], false);
 	} else {
-		bossCanvas = await createBattleCanvas(updateObj.raid_boss, { isSingleRow: true });
+		bossCanvas = await createBattleCanvas(updateObj.raid_boss, {
+			isSingleRow: true,
+			version: "small" 
+		});
 	}
 	if (!bossCanvas) {
 	    channel?.sendMessage("Your battle has been processed, but we were not able to show the result.");

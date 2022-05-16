@@ -8,13 +8,12 @@ import { CharacterStatProps } from "@customTypes/characters";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { GuildStatProps } from "@customTypes/guilds";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
-import { Canvas, createCanvas, Image, loadImage } from "canvas";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { overallStats } from "helpers";
 import loggers from "loggers";
 import { clone } from "utility";
-import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
+import { ranksMeta } from "./constants";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];
@@ -221,114 +220,3 @@ function prepareAffectedDesc(playerStats: BattleStats) {
 
 	return desc;
 }
-
-export const createBattleCanvas = async (
-	cards: (
-    | Pick<CollectionCardInfoProps, "filepath" | "type" | "rank" | "id">
-    | undefined
-  )[],
-	extras?: {
-    isSingleRow: boolean;
-  }
-): Promise<Canvas | undefined> => {
-	if (!Array.isArray(cards)) return;
-	const canvas = createCanvas(
-		CANVAS_DEFAULTS.width,
-		extras?.isSingleRow ? CANVAS_DEFAULTS.height / 2 : CANVAS_DEFAULTS.height
-	);
-	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = "#000000";
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	if (!extras?.isSingleRow) {
-		const bgPath = await loadImage("./assets/images/background.jpg");
-		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
-	}
-	try {
-		const startTimer = loggers.startTimer("Battle canvas: ");
-		const border = await loadImage("./assets/images/border.png");
-		const borderCanvas = createCanvas(
-			CANVAS_DEFAULTS.cardWidth,
-			CANVAS_DEFAULTS.cardHeight
-		);
-		const borderCtx = borderCanvas.getContext("2d");
-		borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
-		borderCtx.globalCompositeOperation = "source-in";
-		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
-		const path = "./assets/images/star.png";
-		const star = await loadImage(path);
-		const starCanvas = createCanvas(
-			CANVAS_DEFAULTS.iconWidth,
-			CANVAS_DEFAULTS.iconHeight
-		);
-		const images = await Promise.all(cards.map(async (c) => {
-			if (c) {
-				const image = await loadImage(c.filepath);
-				return {
-					id: c.id,
-					image 
-				};
-			}
-		})).then((res) => res.reduce((acc, r) => {
-			if (r) {
-				acc[r.id] = r;
-			}
-			return acc;
-		}, {} as { [key: string]: { id: number; image: Image; }}));
-		return await new Promise((resolve) => {
-			for (let i = 0; i < cards.length; i++) {
-				const starIconPosition = extras?.isSingleRow
-					? dh - 150
-					: dh * Math.floor(i / 3) + 220 * 3.7;
-
-				const dy = extras?.isSingleRow
-					? 0
-					: (canvas.height / 2) * Math.floor(i / 3);
-				if (!cards[i]) continue;
-				const starCtx = starCanvas.getContext("2d");
-				starCtx.drawImage(star, 0, 0, starCanvas.width, starCanvas.height);
-				borderCtx.fillStyle = elementTypeColors[cards[i]?.type || ""];
-				borderCtx.fillRect(0, 0, borderCanvas.width, borderCanvas.height);
-				const filepath = cards[i]?.filepath;
-				const id = cards[i]?.id || 0;
-				startTimer.message = startTimer.message + "path: -> " + filepath;
-				if (filepath) {
-					ctx.drawImage(
-						images[id].image,
-						(canvas.width / 3) * (i % 3),
-						dy,
-						canvas.width / 3,
-						dh
-					);
-					ctx.drawImage(
-						borderCanvas,
-						(canvas.width / 3) * (i % 3),
-						dy,
-						canvas.width / 3,
-						dh
-					);
-					for (let j = 0; j < (ranksMeta[cards[i]?.rank || ""] || {}).size; j++) {
-						ctx.drawImage(
-							starCanvas,
-							j * 48 +
-		      canvas.width / 3 / 2 +
-		      (canvas.width / 3) * (i % 3) -
-		      20 * ((ranksMeta[cards[i]?.rank || ""] || {}).size + 1),
-							starIconPosition,
-							48,
-							48
-						);
-					}
-				}
-			}
-			loggers.endTimer(startTimer);
-			resolve(canvas);
-		});
-	} catch (err) {
-		loggers.error(
-			"helpers.adventure.createBattleCanvas(): something went wrong",
-			err
-		);
-		return;
-	}
-};

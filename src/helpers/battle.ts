@@ -4,6 +4,7 @@ import {
 	PrepareBattleDescriptionProps,
 } from "@customTypes/adventure";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
@@ -155,4 +156,12 @@ export const refetchAndUpdateUserMana = async (id: string, manaCost = MANA_PER_B
 	user.mana = user.mana - manaCost;
 	if (user.mana < 0) user.mana = 0;
 	await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
+};
+
+export const validateFiveMinuteTimer = async (cd: { timestamp: string; key: string; }) => {
+	const dt = new Date().valueOf();
+	if (new Date(cd.timestamp).valueOf() > dt) {
+		await Cache.del(cd.key);
+	}
+	return;
 };

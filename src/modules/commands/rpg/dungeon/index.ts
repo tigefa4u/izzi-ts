@@ -28,7 +28,7 @@ import * as battlesInChannel from "../adventure/battle/battlesPerChannelState";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { UserRankProps } from "@customTypes/userRanks";
 import { handleDungeonBattleOutcome } from "./rewards";
-import { refetchAndUpdateUserMana } from "helpers/battle";
+import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
 import { addTeamEffectiveness } from "helpers/adventure";
 
 export const dungeon = async ({ context, client, options }: BaseProps) => {
@@ -51,6 +51,10 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 		if (battles === undefined) return;
 		let inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) {
+			await validateFiveMinuteTimer({
+				timestamp: inBattle.timestamp,
+				key: `cooldown::mana-battle-${author.id}` 
+			});
 			context.channel?.sendMessage("Your battle is still in progress, try again later");
 			return;
 		}

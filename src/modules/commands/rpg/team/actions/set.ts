@@ -24,8 +24,9 @@ async function handleTeamSet(
 	let team = params.extras?.team;
 	const collection = params.extras?.collection;
 	const userId = params.extras?.user_id;
-	const teams = params.extras?.teams;
-	if (!value || !userId || !collection || !team || !teams) return;
+	if (!value || !userId || !collection || !team) return;
+	const teams = await getAllTeams({ user_id: userId });
+	if (!teams) return;
 	const position = +value;
 	if (position > 3 || position < 1) {
 		params.channel?.sendMessage(
@@ -105,7 +106,7 @@ async function handleTeamView(
 		...params,
 		extras: {
 			...params.extras,
-			team: selected
+			team: selected,
 		}
 	};
 	const positionOptions = preparePositionOptions();

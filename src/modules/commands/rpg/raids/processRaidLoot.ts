@@ -233,7 +233,7 @@ async function initDrops(
 					.filter(
 						(x) =>
 							raid.lobby[x].total_damage <=
-				  Math.floor(raid.stats.original_strength * 0.18)
+				  Math.floor(raid.stats.original_strength * 0.12)
 					);
 
 				if (leechers.length > 0) {

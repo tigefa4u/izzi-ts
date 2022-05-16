@@ -7,3 +7,5 @@ type T = {
 };
 
 export type CharacterCanvasProps = CardProps & T;
+
+export type SingleCanvasReturnType = { createJPEGStream: () => string; };

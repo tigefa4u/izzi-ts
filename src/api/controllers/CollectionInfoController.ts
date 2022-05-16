@@ -17,7 +17,7 @@ export const getCardInfoByRowNumber = async (
 		}
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
-			skinArr = getSkinArr(params.user_tag);
+			skinArr = await getSkinArr(params.user_tag);
 		}
 		const result = await Collections.getByRowNumber(params);
 		if (result.length > 0) {
@@ -34,6 +34,7 @@ export const getCardInfoByRowNumber = async (
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
 						characterInfo.filepath = skinArr[idx].filepath;
+						characterInfo.metadata = skinArr[idx].metadata;
 					}
 				}
 				let itemOptions = {};
@@ -54,6 +55,7 @@ export const getCardInfoByRowNumber = async (
 					abilitydescription: characterInfo.abilitydescription,
 					filepath: characterInfo.filepath,
 					is_passive: characterInfo.is_passive,
+					metadata: characterInfo.metadata,
 					...itemOptions,
 					characterInfo
 				});
@@ -74,7 +76,7 @@ export const getCollectionById = async (
 	try {
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
-			skinArr = getSkinArr(params.user_tag);
+			skinArr = await getSkinArr(params.user_tag);
 		}
 		const result = await Collections.get(params);
 		if (result.length > 0) {
@@ -91,6 +93,7 @@ export const getCollectionById = async (
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
 						characterInfo.filepath = skinArr[idx].filepath;
+						characterInfo.metadata = skinArr[idx].metadata;
 					}
 				}
 				let itemOptions = {};
@@ -111,6 +114,7 @@ export const getCollectionById = async (
 					abilityname: characterInfo.abilityname,
 					abilitydescription: characterInfo.abilitydescription,
 					filepath: characterInfo.filepath,
+					metadata: characterInfo.metadata,
 					is_passive: characterInfo.is_passive,
 					...itemOptions,
 					characterInfo
@@ -132,7 +136,7 @@ export const getCardForBattle = async (
 	try {
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
-			skinArr = getSkinArr(params.user_tag);
+			skinArr = await getSkinArr(params.user_tag);
 		}
 		const result = await Collections.get(params);
 		if (result.length > 0) {
@@ -149,6 +153,7 @@ export const getCardForBattle = async (
 				const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 				if (idx >= 0) {
 					characterInfo.filepath = skinArr[idx].filepath;
+					characterInfo.metadata = skinArr[idx].metadata;
 				}
 			}
 			let itemOptions = {};
@@ -169,6 +174,7 @@ export const getCardForBattle = async (
 				abilityname: characterInfo.abilityname,
 				abilitydescription: characterInfo.abilitydescription,
 				filepath: characterInfo.filepath,
+				metadata: characterInfo.metadata,
 				...itemOptions,
 			});
 			return res;

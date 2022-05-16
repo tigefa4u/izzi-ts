@@ -1,3 +1,4 @@
+import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import {
 	PrepareLootProps,
@@ -13,9 +14,8 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
-import { createBattleCanvas } from "helpers/adventure";
-import { createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE, PERMIT_PER_RAID } from "helpers/constants";
+import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
+import { DEFAULT_ERROR_TITLE, HIGH_LEVEL_RAIDS, MIN_RAID_USER_LEVEL, PERMIT_PER_RAID } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
@@ -170,7 +170,12 @@ export const spawnRaid = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const difficulty = args.shift();
+		const difficulty = args.shift() || "e";
+		if (user.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(difficulty)) {
+			context.channel?.sendMessage(`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
+			"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
+			return;
+		}
 		const computedBoss = computeRank(difficulty, isEvent);
 		if (!computedBoss) {
 			context.channel?.sendMessage("Unable to spawn boss. Please try again");
@@ -201,7 +206,7 @@ export const spawnRaid = async ({
 		if (!raid) return;
 
 		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
-		let bossCanvas: Canvas | undefined;
+		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (isEvent) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);
 		} else {

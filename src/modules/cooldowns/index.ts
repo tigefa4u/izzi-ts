@@ -11,10 +11,13 @@ export const setCooldown = async (
 	cd = 60 // @params in secs
 ) => {
 	try {
+		const cdKey = `cooldown::${command}-${key}`;
 		const dt = new Date();
 		const params = { timestamp: dt.setSeconds(dt.getSeconds() + cd) };
-		await Cache.set(`cooldown::${command}-${key}`, JSON.stringify(params));
-		Cache.expire && (await Cache.expire(`cooldown::${command}-${key}`, cd));
+		await Cache.set(cdKey, JSON.stringify(params));
+		if (Cache.expire) {
+			await Cache.expire(cdKey, cd);
+		}
 		return true;
 	} catch (err) {
 		return;

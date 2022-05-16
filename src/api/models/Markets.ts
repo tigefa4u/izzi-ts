@@ -118,7 +118,7 @@ export const getMarketCollection = async (params: {
 		.select(
 			db.raw(`${tableName}.*, ${collections}.rank, ${characters}.name, ${abilities}.name as abilityname,
 			${collections}.souls, ${characters}.type, ${collections}.character_level,
-			${cards}.filepath`)
+			${cards}.filepath, ${cards}.metadata`)
 		)
 		.from(tableName)
 		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)

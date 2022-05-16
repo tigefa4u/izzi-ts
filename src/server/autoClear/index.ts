@@ -8,10 +8,14 @@ async function flushBattleCooldowns() {
 	})).then(res => allKeys.push(...res.flat()));
 	await Promise.all(allKeys.map(async (key) => await Cache.del(key)));
 	console.log("done--", allKeys);
+}
+
+async function boot() {
+	await flushBattleCooldowns();
 	process.exit(0); // comment and rerun if cache isnt cleared
 }
 
 if (process.env.INVOKE) {
-	flushBattleCooldowns();
+	boot();
 }
 export default flushBattleCooldowns;

@@ -6,7 +6,11 @@ import {
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import { IZZI_WEBSITE } from "environment";
-import { DEFAULT_SUCCESS_TITLE, PAGE_FILTER } from "helpers/constants";
+import {
+	DEFAULT_SUCCESS_TITLE,
+	MAX_CHOSEN_SKINS_ALLOWED,
+	PAGE_FILTER,
+} from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createSkinList } from "helpers/embedLists/skin";
 import loggers from "loggers";
@@ -114,7 +118,7 @@ export const choose = async (params: {
 	try {
 		const id = params.args?.shift();
 		if (!id) return;
-		let skinArr = getSkinArr(params.author.id);
+		const skinArr = (await getSkinArr(params.author.id)) || [];
 		// let skinArr = await redisClient.get(`selected-skin-${author.id}`);
 		let skin: any;
 		// let spbtSkin: any;
@@ -126,6 +130,16 @@ export const choose = async (params: {
 			})
 			.setTitle("Error :no_entry:")
 			.setThumbnail(params.client.user?.displayAvatarURL() || "");
+
+		if (skinArr.length >= MAX_CHOSEN_SKINS_ALLOWED) {
+			embed.setDescription(
+				`Summoer **${params.author.username}**, ` +
+				`You cannot choose more than __${MAX_CHOSEN_SKINS_ALLOWED}__ skins. ` +
+				"Please use ``skin remove <id>`` to be able to set another one."
+			);
+			params.channel?.sendMessage(embed);
+			return;
+		}
 		if (skinArr) {
 			skin = skinArr.find((c) => c.id === Number(id));
 			if (skin) {
@@ -135,8 +149,6 @@ export const choose = async (params: {
 				params.channel?.sendMessage(embed);
 				return;
 			}
-		} else {
-			skinArr = [];
 		}
 		if (!skin) {
 			skin = await getSkinCollectionById({
@@ -193,15 +205,15 @@ export const choose = async (params: {
 };
 
 export const removeSkin = async (params: {
-	author: AuthorProps;
-	channel: ChannelProp;
-	client: Client;
-	args?: string[];
-  }) => {
-	  try {
+  author: AuthorProps;
+  channel: ChannelProp;
+  client: Client;
+  args?: string[];
+}) => {
+	try {
 		const id = params.args?.shift();
 		if (!id) return;
-		const skinArr = getSkinArr(params.author.id);
+		const skinArr = await getSkinArr(params.author.id);
 		if (skinArr) {
 			const index = skinArr.findIndex((s) => s.id === Number(id));
 			if (index >= 0) {
@@ -211,11 +223,11 @@ export const removeSkin = async (params: {
 		}
 		params.channel?.sendMessage(`Successfully removed skin ID: \`\`${id}\`\``);
 		return;
-	  } catch (err) {
+	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.skins.skinActions.removeSkin(): something went wrong",
 			err
 		);
 		return;
-	  }
+	}
 };

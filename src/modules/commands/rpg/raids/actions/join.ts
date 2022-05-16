@@ -3,7 +3,9 @@ import { getRaid, getUserRaidLobby, updateRaid } from "api/controllers/RaidsCont
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE, MAX_RAID_LOBBY_MEMBERS, PERMIT_PER_RAID } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE, HIGH_LEVEL_RAIDS, MAX_RAID_LOBBY_MEMBERS, MIN_RAID_USER_LEVEL, PERMIT_PER_RAID 
+} from "helpers/constants";
 import loggers from "loggers";
 import { prepareInitialLobbyMember } from "..";
 import { prepareRaidViewEmbed } from "./view";
@@ -51,6 +53,11 @@ export const joinRaid = async ({
           "private or has already started!"
 			);
 			context.channel?.sendMessage(embed);
+			return;
+		}
+		if (user.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(raid.stats.difficulty)) {
+			context.channel?.sendMessage(`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
+			"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
 			return;
 		}
 		const lobby = raid.lobby;

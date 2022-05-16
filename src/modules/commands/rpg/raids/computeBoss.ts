@@ -7,6 +7,10 @@ const difficultyObj: MapProps = {
 	h: "hard",
 	m: "medium",
 	i: "immortal",
+	easy: "easy",
+	hard: "hard",
+	medium: "medium",
+	immortal: "immortal"
 };
 
 export const computeRank = (difficulty = "e", isEvent = false) => {

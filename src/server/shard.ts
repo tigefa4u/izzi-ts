@@ -5,6 +5,7 @@ import path from "path";
 // import * as dotenv from "dotenv";
 // dotenv.config({ path: __dirname + "/../../.env" });
 import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN, SHARD_LIST, TOTAL_SHARDS } from "../environment";
+import flushBattleCooldowns from "./autoClear";
 
 // eslint-disable-next-line no-unused-vars
 process.on("unhandledRejection", (error, promise) => {
@@ -42,7 +43,8 @@ manager.spawn().catch((err) => {
 });
 manager.on("shardCreate", (shard) => {
 	console.log(`Shard #${shard.id} is Online`);
-	shard.on("death", (process) => {
+	shard.on("death", async (process) => {
+		await flushBattleCooldowns();
 		loggers.error(
 			"SHARD_CRASHED " +
 		shard.id +

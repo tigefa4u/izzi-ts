@@ -6,19 +6,21 @@ import { DISCORD_TEST_BOT, DISCORD_BOT_TOKEN } from "../environment";
 import { handleClient, handleClientEvents } from "handlers/client";
 import "../module";
 import loggers from "loggers";
-import flushCache from "./autoClear/index";
+import flushBattleCooldowns from "./autoClear/index";
+
 
 process.on("unhandledRejection", (error, promise) => {
 	loggers.error("UnhandledRejection: " + error + "promise was: " + promise, error);
 });
 
 process.on("uncaughtException", async (error) => {
+	await flushBattleCooldowns();
 	loggers.error("UNCAUGHT_EXCEPTION FATAL ERROR: ", error);
-	await flushCache();
 	// process.exit(1);
 });
 
-process.on("exit", () => {
+process.on("exit", async () => {
+	await flushBattleCooldowns();
 	loggers.error("BOT_CRASHED FATAL ERROR: process has exited unexpectedly", {});
 });
 
@@ -30,16 +32,16 @@ const client = new discord.Client({
 	intents: [ discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES ],
 	sweepers: {
 		messages: {
-			lifetime: 2,
-			interval: 2
+			lifetime: 1,
+			interval: 1
 		},
 		threads: {
-			lifetime: 2,
-			interval: 2
+			lifetime: 1,
+			interval: 1
 		},
 		invites: {
-			lifetime: 2,
-			interval: 2
+			lifetime: 1,
+			interval: 1
 		}
 	},
 	restRequestTimeout: 1000 * 30,

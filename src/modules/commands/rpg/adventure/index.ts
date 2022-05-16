@@ -10,7 +10,7 @@ import { getZoneByLocationId } from "api/controllers/ZonesController";
 import { createEmbed } from "commons/embeds";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
-import { refetchAndUpdateUserMana } from "helpers/battle";
+import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
 import { DEFAULT_ERROR_TITLE, MANA_PER_BATTLE } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -28,6 +28,10 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		const author = options.author;
 		let inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) {
+			await validateFiveMinuteTimer({
+				timestamp: inBattle.timestamp,
+				key: `cooldown::mana-battle-${author.id}` 
+			});
 			context.channel?.sendMessage(
 				"Your battle is still in progress. " +
           "(If you have completed your battle and are still seeing this, please try again in 1 minute)"
@@ -118,7 +122,9 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			updated_at: "",
 			souls: 0,
 		} as CollectionCardInfoProps;
-
+		if (zone.metadata?.assets) {
+			enemyCard.filepath = zone.metadata.assets[zone.rank].small.filepath;
+		}
 		if (args && (args.shift() || "").toLowerCase() === "all") {
 			const inCd = await getCooldown(author.id, "mana-battle");
 			if (inCd) return;
