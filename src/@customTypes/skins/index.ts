@@ -1,5 +1,6 @@
 import { AssetImageProps } from "@customTypes";
-import { CardMetadataProps } from "@customTypes/cards";
+import { CardMetadataAssetProps, CardMetadataProps } from "@customTypes/cards";
+import { RanksMetaProps } from "helpers/helperTypes";
 
 export type SkinCollectionProps = {
     id: number;
@@ -21,7 +22,9 @@ export type SkinProps = {
         jpeg: AssetImageProps;
         webp: AssetImageProps;
         isSpecial?: boolean;
-        assets?: CardMetadataProps["assets"]
+        assets?: {
+            [key in keyof RanksMetaProps]: CardMetadataAssetProps;
+        };
     };
 }
 

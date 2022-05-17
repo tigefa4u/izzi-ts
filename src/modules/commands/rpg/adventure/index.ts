@@ -123,7 +123,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			souls: 0,
 		} as CollectionCardInfoProps;
 		if (zone.metadata?.assets) {
-			enemyCard.filepath = zone.metadata.assets[zone.rank].small.filepath;
+			enemyCard.filepath = zone.metadata.assets.small.filepath;
 		}
 		if (args && (args.shift() || "").toLowerCase() === "all") {
 			const inCd = await getCooldown(author.id, "mana-battle");

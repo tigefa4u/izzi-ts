@@ -71,6 +71,7 @@ async function validateAndSellCard(
 				characterInfo.name || ""
 			)}** for sale on the Global Market.`;
 			const embed = createEmbed()
+				.setThumbnail(characterInfo.metadata?.assets?.small.filepath || characterInfo.filepath)
 				.setTitle(DEFAULT_SUCCESS_TITLE)
 				.setDescription(desc);
 			params.channel?.sendMessage(embed);
@@ -139,7 +140,7 @@ export const sellCard = async ({
 					}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
-						.setThumbnail(data.filepath || client.user?.displayAvatarURL() || "");
+						.setThumbnail(data.metadata?.assets?.small.filepath || client.user?.displayAvatarURL() || "");
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

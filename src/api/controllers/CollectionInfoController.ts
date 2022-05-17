@@ -34,7 +34,13 @@ export const getCardInfoByRowNumber = async (
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
 						characterInfo.filepath = skinArr[idx].filepath;
-						characterInfo.metadata = skinArr[idx].metadata;
+						if (skinArr[idx].metadata?.assets) {
+							const skinMeta = {
+								...skinArr[idx].metadata,
+								assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
+							};
+							characterInfo.metadata = skinMeta;
+						}
 					}
 				}
 				let itemOptions = {};
@@ -93,7 +99,13 @@ export const getCollectionById = async (
 					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 					if (idx >= 0) {
 						characterInfo.filepath = skinArr[idx].filepath;
-						characterInfo.metadata = skinArr[idx].metadata;
+						if (skinArr[idx].metadata?.assets) {
+							const skinMeta = {
+								...skinArr[idx].metadata,
+								assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
+							};
+							characterInfo.metadata = skinMeta;
+						}
 					}
 				}
 				let itemOptions = {};
@@ -153,7 +165,13 @@ export const getCardForBattle = async (
 				const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
 				if (idx >= 0) {
 					characterInfo.filepath = skinArr[idx].filepath;
-					characterInfo.metadata = skinArr[idx].metadata;
+					if (skinArr[idx].metadata?.assets) {
+						const skinMeta = {
+							...skinArr[idx].metadata,
+							assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
+						};
+						characterInfo.metadata = skinMeta;
+					}
 				}
 			}
 			let itemOptions = {};

@@ -47,7 +47,9 @@ export const removeCardFromMarket = async ({
 		)}__ **Level ${marketCard.character_level} ${titleCase(
 			marketCard.name
 		)}** from the Global Market`;
-		embed.setTitle(DEFAULT_SUCCESS_TITLE).setDescription(desc);
+		embed.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
+			.setDescription(desc);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

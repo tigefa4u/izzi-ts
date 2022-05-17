@@ -98,7 +98,7 @@ async function notifySeller(
 	);
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
-		.setThumbnail(marketCard.filepath)
+		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
 		.setDescription(
 			`Congratulations summoner! You have sold your __${
 				marketCard.rank
@@ -114,7 +114,7 @@ async function notifySeller(
 function notifyBuyer(channel: ChannelProp, marketCard: IMarketProps) {
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
-		.setThumbnail(marketCard.filepath)
+		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
 		.setDescription(
 			`Congratulations summoner! You have spent __${marketCard.price}__ Gold ${
 				emoji.gold
@@ -275,7 +275,7 @@ export const purchaseCard = async ({
 					)}** for __${data.price}__ gold ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
-						.setThumbnail(data.filepath);
+						.setThumbnail(data.metadata?.assets?.small.filepath || data.filepath);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

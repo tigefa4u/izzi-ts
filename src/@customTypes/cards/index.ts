@@ -1,21 +1,19 @@
 import { AssetImageProps, IgnoreProps } from "@customTypes";
 import { CharacterDetailsProps } from "@customTypes/characters";
-import { RanksMetaProps } from "helpers/helperTypes";
 
 type Versions = "default" | "medium" | "small"
+export type CardMetadataAssetProps = {
+	[key in Versions]: {
+		filename: string;
+		filepath: string;
+		version: string;
+		resolution: string;
+	}
+}
 export type CardMetadataProps = {
 	jpeg: AssetImageProps;
 	webp: AssetImageProps;
-	assets?: {
-		[key in keyof RanksMetaProps]: {
-			[key in Versions]: {
-				filename: string;
-				filepath: string;
-				version: string;
-				resolution: string;
-			}
-		};
-	}
+	assets?: CardMetadataAssetProps;
 }
 export type CardProps = {
     id: number;

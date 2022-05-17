@@ -12,6 +12,6 @@ export type MarketProps = {
 export type IMarketProps = MarketProps &
   Pick<CharacterDetailsProps, "name" | "abilityname" | "type"> &
   Pick<CollectionProps, "rank" | "souls" | "character_level"> &
-  Pick<CardProps, "filepath">;
+  Pick<CardProps, "filepath" | "metadata">;
 
 export type MarketCreateProps = Omit<MarketProps, "id"> | Omit<MarketProps, "id">[];

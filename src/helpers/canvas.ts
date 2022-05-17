@@ -22,8 +22,9 @@ export const createSingleCanvas: (
 		// load precomputed images directly
 		let filepath = card.filepath;
 		if (card.metadata?.assets) {
-			filepath = card.metadata.assets[card.rank].medium.filepath;
+			filepath = card.metadata.assets.medium.filepath;
 		}
+		loggers.info(`[Path] loading filepath -> ${filepath}`);
 		return {
 			createJPEGStream() {
 				return filepath;
@@ -137,13 +138,16 @@ export const createBattleCanvas = async (
 		const images = await Promise.all(
 			cards.map(async (card) => {
 				if (card) {
+					const startImageTimer = loggers.startTimer("[Image] Path: ");
 					// load precomputed images with border and stars
 					let filepath = card?.filepath;
-					if (card.metadata?.assets) {
-						const version = extras?.version || (extras?.isSingleRow ? "medium" : "small");
-						filepath = card.metadata.assets[card.rank][version].filepath;
+					const version = extras?.version || (extras?.isSingleRow ? "medium" : "small");
+					if (card.metadata?.assets && card.metadata.assets[version]) {
+						filepath = card.metadata.assets[version].filepath;
 					}
+					startImageTimer.message = startImageTimer.message + " -> " + filepath;
 					const image = await loadImage(filepath);
+					loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
 						image,
