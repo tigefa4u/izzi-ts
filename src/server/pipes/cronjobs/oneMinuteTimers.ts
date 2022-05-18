@@ -42,7 +42,7 @@ async function raidTimers() {
 }
 
 async function boot() {
-	// await autoKick();
+	await autoKick();
 	await raidTimers();
 	process.exit(1);
 }
