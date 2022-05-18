@@ -30,7 +30,7 @@ const handleMessage = async (client: Client, context: Message) => {
 	}
 	const command = await getCommand(args[1]);
 	if (!command) return;
-	setCooldown(context.author.id, "command-cd", 1);
+	setCooldown(context.author.id, "command-cd", 2);
 	args.shift();
 	if (
 		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
