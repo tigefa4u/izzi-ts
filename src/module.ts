@@ -55,8 +55,8 @@ TextChannel.prototype.sendMessage = function (content: CustomProps) {
 DMChannel.prototype.sendMessage = function (content: CustomProps) {
 	return implementSendMessage(this, content);
 };
-ThreadChannel.prototype.sendMessage = function () {
-	throw new Error("Unimplemented");
+ThreadChannel.prototype.sendMessage = function (content: CustomProps) {
+	return implementSendMessage(this, content);
 };
 NewsChannel.prototype.sendMessage = function () {
 	throw new Error("Unimplemented");
