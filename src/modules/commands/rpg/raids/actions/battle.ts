@@ -164,20 +164,20 @@ export const battleRaidBoss = async ({
 			if (updateObj.stats.remaining_strength < 0)
 				updateObj.stats.remaining_strength = 0;
 		}
-		await Promise.all([ updateRaid({ id: updateObj.id }, {
+		await updateRaid({ id: updateObj.id }, {
 			lobby: updateObj.lobby,
 			stats: updateObj.stats
-		}),
-		processRaidLoot({
+		});
+		
+		await processRaidLoot({
 			client,
 			author,
 			raid: updateObj,
 			isEvent
-		}) ]);
+		});
 
-		const battleStatus = result as BattleStats;
-		processRaidResult({
-			result: battleStatus,
+		await processRaidResult({
+			result: result as BattleStats,
 			updateObj,
 			author,
 			isEvent,
