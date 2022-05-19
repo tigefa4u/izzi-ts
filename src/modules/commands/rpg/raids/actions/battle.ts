@@ -14,7 +14,7 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { processHpBar, relativeDiff, validateFiveMinuteTimer } from "helpers/battle";
 import { addTeamEffectiveness, prepareHPBar } from "helpers/adventure";
-import { getRaid, updateRaid } from "api/controllers/RaidsController";
+import { getRaid, updateLobby, updateRaid } from "api/controllers/RaidsController";
 import { Canvas } from "canvas";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { createAttachment } from "commons/attachments";
@@ -73,6 +73,7 @@ export const battleRaidBoss = async ({
 		}
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
+				`Summoner **${attacker.username}**, ` +
 				`You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
@@ -133,15 +134,12 @@ export const battleRaidBoss = async ({
 		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
-			const updatedLobby = await consumeEnergy(
+			await consumeEnergy(
 				updateObj.id,
 				user.id,
 				multiplier,
 				0
 			);
-			if (updatedLobby) {
-				updateObj.lobby = updatedLobby;
-			}
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
 				context.channel?.sendMessage("Unable to calculate total damage");
@@ -149,25 +147,19 @@ export const battleRaidBoss = async ({
 			}
 			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
-			const updatedLobby = await consumeEnergy(
+			await consumeEnergy(
 				updateObj.id,
 				user.id,
 				multiplier,
 				result.totalDamage
 			);
-			if (updatedLobby) {
-				updateObj.lobby = updatedLobby;
-			}
 
 			updateObj.stats.remaining_strength =
 		updateObj.stats.remaining_strength - result.totalDamage;
 			if (updateObj.stats.remaining_strength < 0)
 				updateObj.stats.remaining_strength = 0;
 		}
-		await updateRaid({ id: updateObj.id }, {
-			lobby: updateObj.lobby,
-			stats: updateObj.stats
-		});
+		await updateRaid({ id: updateObj.id }, { stats: updateObj.stats });
 		
 		await processRaidLoot({
 			client,
@@ -268,7 +260,11 @@ async function consumeEnergy(
 	member.total_attack = member.total_attack + multiplier;
 	member.total_damage = member.total_damage + totalDamage;
 	member.timestamp = Date.now();
-	lobby[user_id] = member;
+	await updateLobby({
+		raid_id: raid.id,
+		user_id,
+		data: member 
+	});
 
-	return lobby;
+	return;
 }

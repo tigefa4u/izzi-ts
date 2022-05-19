@@ -77,22 +77,17 @@ export const update = async (params: { id: number }, data: RaidUpdateProps) => {
 
 export const updateLobby = async ({
 	raid_id,
-	index,
+	user_id,
 	data,
 }: {
   raid_id: number;
-  index: number;
-  data: RaidLobbyProps;
+  user_id: number;
+  data: RaidLobbyProps[0];
 }) => {
-	return 0;
-	// deprecated
-	// return connection(tableName)
-	// 	.update({
-	// 		lobby: connection.raw(
-	// 			`jsonb_set(lobby, '{${index}}', '${JSON.stringify(data)}')`
-	// 		),
-	// 	})
-	// 	.where({ id: raid_id });
+	return await connection.raw(
+		`update ${tableName} set lobby = jsonb_set(lobby, '{${user_id}}', '${JSON.stringify(data)}', false) 
+	where id = ${raid_id}`
+	);
 };
 
 export const refillEnergy = async (params: {

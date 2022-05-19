@@ -47,17 +47,16 @@ export const updateRaidEnergy = async (params: { id: number; }, data: RaidLobbyP
 	}
 };
 
-// FIXME: Isnt going to work anymore with the new query
-export const updateLobby = async ({ raid_id, index, data }: {
+export const updateLobby = async ({ raid_id, user_id, data }: {
     raid_id: number;
-    index: number;
-    data: RaidLobbyProps;
+    user_id: number;
+    data: RaidLobbyProps[0];
 }) => {
 	try {
-		loggers.info("Updating raid lobby: " + `Raid ID: ${raid_id} > index: ${index} > ${JSON.stringify(data)}`);
+		loggers.info("Updating raid lobby: " + `Raid ID: ${raid_id} > user_id: ${user_id} > ${JSON.stringify(data)}`);
 		return await Raids.updateLobby({
 			raid_id,
-			index,
+			user_id,
 			data
 		});
 	} catch (err) {
