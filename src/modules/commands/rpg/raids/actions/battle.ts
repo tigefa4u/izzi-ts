@@ -147,12 +147,15 @@ export const battleRaidBoss = async ({
 			}
 			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
-			await consumeEnergy(
+			const updatedLobby = await consumeEnergy(
 				updateObj.id,
 				user.id,
 				multiplier,
 				result.totalDamage
 			);
+			if (updatedLobby) {
+				updateObj.lobby = updatedLobby;
+			}
 
 			updateObj.stats.remaining_strength =
 		updateObj.stats.remaining_strength - result.totalDamage;
@@ -258,13 +261,14 @@ async function consumeEnergy(
 	member.energy = member.energy - Math.floor(multiplier * ENERGY_PER_ATTACK);
 	if (member.energy < 0) member.energy = 0;
 	member.total_attack = member.total_attack + multiplier;
-	member.total_damage = member.total_damage + totalDamage;
+	member.total_damage = (member.total_damage || 0) + totalDamage;
 	member.timestamp = Date.now();
+	lobby[member.user_id] = member;
 	await updateLobby({
 		raid_id: raid.id,
 		user_id,
 		data: member 
 	});
 
-	return;
+	return lobby;
 }
