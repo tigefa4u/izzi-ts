@@ -84,7 +84,6 @@ export const updateLobby = async ({
   user_id: number;
   data: RaidLobbyProps[0];
 }) => {
-	data.username = "hoa'x";
 	data.username = data.username.replace(/'/g, "''");
 	return await connection(tableName).where({ id: raid_id }).update({
 		lobby: connection.raw(`
