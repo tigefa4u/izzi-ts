@@ -84,27 +84,36 @@ export const updateLobby = async ({
   user_id: number;
   data: RaidLobbyProps[0];
 }) => {
-	return await connection.raw(
-		`update ${tableName} set lobby = jsonb_set(lobby, '{${user_id}}', '${JSON.stringify(data)}', false) 
-	where id = ${raid_id}`
-	);
+	data.username = "hoa'x";
+	data.username = data.username.replace(/'/g, "''");
+	return await connection(tableName).where({ id: raid_id }).update({
+		lobby: connection.raw(`
+		jsonb_set(lobby, '{${user_id}}', '${JSON.stringify(data)}')`)
+	});
+	// return await connection.raw(
+	// 	`update ${tableName} set lobby = jsonb_set(lobby, '{${user_id}}', '${JSON.stringify(data)}') 
+	// where id = ${raid_id}`
+	// );
 };
 
 export const refillEnergy = async (params: {
   data: RaidLobbyProps;
   id: number;
 }) => {
-	await Promise.all(
+	return await Promise.all(
 		Object.keys(params.data).map(async (id) => {
-			await connection.raw(
-				`update ${tableName} set lobby = jsonb_set(lobby, '{${id}, energy}', '${
-					params.data[Number(id)].energy
-				}', false) 
-			where id = ${params.id}`
-			);
+			await connection(tableName).where({ id: params.id }).update({
+				lobby: connection.raw(`
+				jsonb_set(lobby, '{${Number(id)}, energy}', '${params.data[Number(id)].energy}')`)
+			});
+			// await connection.raw(
+			// 	`update ${tableName} set lobby = jsonb_set(lobby, '{${id}, energy}', '${
+			// 		params.data[Number(id)].energy
+			// 	}') 
+			// where id = ${params.id}`
+			// );
 		})
 	);
-	return 1;
 };
 
 export const destroy = async (params: { id: number }) => {
