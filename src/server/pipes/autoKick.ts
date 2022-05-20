@@ -7,7 +7,7 @@ export default async function () {
 	try {
 		const raids = await getAllRaids();
 		if (!raids) return;
-		const hour = 1000 * 60 * 60;
+		const hour = 1000 * 60 * 90;
 		await Promise.all(
 			raids.map(async (r) => {
 				if (!r.is_start) {
@@ -15,8 +15,9 @@ export default async function () {
 				}
 				const lobby = r.lobby;
 				let keys = Object.keys(lobby).map(Number);
+				if (keys.length <= 1) return;
 				for (const k of keys) {
-					await delay(1000);
+					await delay(1500);
 					if (
 						new Date().valueOf() - new Date(lobby[k].timestamp).valueOf() >=
                         hour

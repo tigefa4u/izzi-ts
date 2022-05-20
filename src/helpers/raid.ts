@@ -51,12 +51,14 @@ export const getLobbyMvp = (lobby: RaidLobbyProps) => {
 
 export const refillEnergy = async (id: number, lobby: RaidLobbyProps) => {
 	const keys = Object.keys(lobby).map(Number);
-	keys.map((k) => {
-		if (lobby[k].energy < lobby[k].total_energy) {
-			lobby[k].energy = lobby[k].energy + 5;
-		}
-	});
-	// await updateRaid({ id }, { lobby });
-	await updateRaidEnergy({ id }, lobby);
+	if (keys.length > 0) {
+		keys.map((k) => {
+			if (lobby[k].energy < lobby[k].total_energy) {
+				lobby[k].energy = lobby[k].energy + 5;
+			}
+		});
+		// await updateRaid({ id }, { lobby });
+		await updateRaidEnergy({ id }, lobby);
+	}
 	return;
 };
