@@ -126,13 +126,13 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
-		// roundStats = await visualizeSimulation({
-		// 	simulation,
-		// 	context,
-		// 	attachments: attachmentCards,
-		// 	roundStats: clone(roundStats),
-		// 	retries: 0
-		// });
+		roundStats = await visualizeSimulation({
+			simulation,
+			context,
+			attachments: attachmentCards,
+			roundStats: clone(roundStats),
+			retries: 0
+		});
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
