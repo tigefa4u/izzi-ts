@@ -172,7 +172,7 @@ export const getRaids = (
 					key === "difficulty"
 						? `${aliasString}.stats::json`
 						: `${aliasString}.json_array_elements`
-				} ->> '${key}' similar to '(${item?.map((i) => i).join("|")})%'`
+				} ->> '${key}' ~* '${item?.map((i) => i).join("|")}'`
 			)
 			.as(newalias);
 		aliasString = newalias;
