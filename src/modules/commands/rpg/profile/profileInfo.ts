@@ -40,15 +40,15 @@ export const mana = async function ({
 			remainingMinutes = 0;
 		}
 
-		const refillTimerDesc = remainingMinutes
-			? `[Refills in ${remainingMinutes} minutes]`
-			: `[Refills every ${
-				result.metadata.is_premium ? "2 minutes 30 seconds" : "3 minutes"
-			}]`;
+		const refillTimerDesc = `[Refills __${
+			result.metadata.is_premium ? 3 : 2
+		}mana__ ${
+			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 3 minutes"
+		}]`;
 
 		context.channel?.sendMessage(
 			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana** ` +
-			refillTimerDesc
+        refillTimerDesc
 		);
 		return;
 	} catch (err) {
@@ -228,13 +228,15 @@ export const gold = async function ({
 
 export const deleteAccount = async function ({
 	context,
-	options
+	options,
 }: Pick<BaseProps, "context" | "options">) {
 	try {
 		const author = options.author;
 		await updateRPGUser({ user_tag: author.id }, { is_active: false });
-		context.channel?.sendMessage("We are sorry to see you leave. Your account is now inactive. " +
-		"However, you can use izzi commands to activate your account again!");
+		context.channel?.sendMessage(
+			"We are sorry to see you leave. Your account is now inactive. " +
+        "However, you can use izzi commands to activate your account again!"
+		);
 		return;
 	} catch (err) {
 		loggers.error(
