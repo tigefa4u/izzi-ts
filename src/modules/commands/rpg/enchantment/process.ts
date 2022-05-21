@@ -48,6 +48,7 @@ export async function prepareRankAndFetchCards({
 			card,
 			exclude_ids: initialRequestPayload.exclude,
 			character_ids: initialRequestPayload.include,
+			exclude_character_ids: initialRequestPayload.exclude_character_ids
 		}),
 	];
 	if (stashRequestPaload) {
@@ -60,6 +61,7 @@ export async function prepareRankAndFetchCards({
 				card,
 				exclude_ids: stashRequestPaload.exclude,
 				character_ids: stashRequestPaload.include,
+				exclude_character_ids: stashRequestPaload.exclude_character_ids
 			})
 		);
 	}
@@ -139,6 +141,9 @@ export async function prepareRankAndFetchCards({
 							...accumulator.map((a) => a.id),
 							...(initialRequestPayload.exclude || []),
 						]),
+					],
+					[
+						...new Set(initialRequestPayload.exclude_character_ids || []),
 					]
 				);
 				let stashPayload = null;
@@ -154,6 +159,9 @@ export async function prepareRankAndFetchCards({
 								...accumulator.map((a) => a.id),
 								...(stashRequestPaload.exclude || []),
 							]),
+						],
+						[
+							...new Set(stashRequestPaload.exclude_character_ids || []),
 						]
 					);
 				}
@@ -226,6 +234,7 @@ async function fetchRequiredCards({
 	limit,
 	exclude_ids = [],
 	character_ids = [],
+	exclude_character_ids = []
 }: ProcessEnchantmentProps) {
 	const params = {
 		user_id,
@@ -236,6 +245,7 @@ async function fetchRequiredCards({
 		exclude_ids,
 		character_ids,
 		limit,
+		exclude_character_ids
 	} as CollectionParams & { limit: number };
 
 	const collections = await getCollection(params);
@@ -354,7 +364,8 @@ function preparePayload(
 	bucket: XPGainPerRankProps,
 	withDifferentName: XPGainPerRankProps,
 	include: number[],
-	exclude: number[]
+	exclude: number[],
+	exclude_character_ids: number[]
 ) {
 	return {
 		rank,
@@ -362,5 +373,6 @@ function preparePayload(
 		bucket: condition ? bucket : withDifferentName,
 		include,
 		exclude,
+		exclude_character_ids
 	};
 }

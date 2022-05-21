@@ -20,6 +20,7 @@ export type FilterProps = {
     limit?: number | number[];
     page?: string[];
     isExactMatch?: boolean;
+    exclude?: string[];
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]
