@@ -215,13 +215,16 @@ export const stormrazor = ({
 			simulation
 		});
 	}
-	if (playerStats.totalStats.isStunned || opponentStats.totalStats.isStunned) {
-		playerStats.totalStats.isStunned = false;
-		opponentStats.totalStats.isStunned = false;
+	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	if (round == playerStats.totalStats.previousRound) {
+		if (opponentStats.totalStats.isStunned) {
+			opponentStats.totalStats.isStunned = false;
+		}
 	}
 	const stunChance = [ 5, 95 ];
 	const stuns = [ true, false ];
 	if (stuns[probability(stunChance)]) {
+		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = true;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

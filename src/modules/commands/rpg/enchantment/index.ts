@@ -1,10 +1,12 @@
 import {
 	ConfirmationInteractionOptions,
 	ConfirmationInteractionParams,
+	FilterProps,
 } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { ComputedReturnType } from "@customTypes/enchantment";
+import { getCharacterInfo } from "api/controllers/CharactersController";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import {
 	deleteCollection,
@@ -116,19 +118,17 @@ export const enchantCard = async ({
 		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
-		const params: any = fetchParamsFromArgs(args);
+		const params = fetchParamsFromArgs<FilterProps>(args);
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const [ card, cardsToExclude ] = await Promise.all([
-			getCardInfoByRowNumber({
-				user_id: user.id,
-				row_number: id,
-			}),
-			getCardInfoByRowNumber({
-				user_id: user.id,
-				row_number: params.exclude || [],
-			}),
-		]);
+		const card = await getCardInfoByRowNumber({
+			user_id: user.id,
+			row_number: id,
+		});
+		let cardsToExclude;
+		if (params.exclude) {
+			cardsToExclude = await getCharacterInfo({ name: params.exclude });
+		}
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (!card || card.length <= 0) {
 			embed.setDescription(
@@ -139,8 +139,9 @@ export const enchantCard = async ({
 		}
 		const cardToEnchant = card[0];
 		const exclude = [ cardToEnchant.id ];
+		const excludeCharacters = [];
 		if (cardsToExclude && cardsToExclude.length > 0) {
-			exclude.push(...cardsToExclude.map((cc) => cc.id));
+			excludeCharacters.push(...cardsToExclude.map((cc) => cc.id));
 		}
 		const computed = await preComputeRequiredCards({
 			card: cardToEnchant,
@@ -149,6 +150,7 @@ export const enchantCard = async ({
 			user_id: user.id,
 			reqExp: 0,
 			exclude_ids: [ ...new Set(exclude) ],
+			exclude_character_ids: [ ...new Set(excludeCharacters) ],
 			channel: context.channel,
 		});
 		if (!computed) return;

@@ -7,6 +7,7 @@ export type ProcessEnchantmentProps = {
     user_id: number;
     row_number?: number | number[];
     exclude_ids?: number[];
+    exclude_character_ids?: number[];
     character_ids?: number[];
     channel?: ChannelProp;
 } & Pick<FilterProps, "rank" | "limit" | "name">
@@ -28,6 +29,7 @@ export type EnchantmentBucketPayload = {
     rank: keyof XPGainPerRankProps;
     include?: number[];
     exclude?: number[];
+    exclude_character_ids?: number[];
     isSameName?: boolean;
 }
 

@@ -37,6 +37,7 @@ export type CollectionParams = {
   item_id?: number;
   is_favorite?: boolean;
   exclude_ids?: number[];
+  exclude_character_ids?: number[];
 };
 
 export type ItemCollectionCreateProps = Pick<

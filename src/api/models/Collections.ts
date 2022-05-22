@@ -86,6 +86,8 @@ export const get = async (
 	delete queryParams.ids;
 	const exclude_ids = queryParams.exclude_ids;
 	delete queryParams.exclude_ids;
+	const exclude_character_ids = queryParams.exclude_character_ids;
+	delete queryParams.exclude_character_ids;
 	const rank = queryParams.rank;
 	delete queryParams.rank;
 	const limit = queryParams.limit;
@@ -107,6 +109,9 @@ export const get = async (
 	}
 	if (exclude_ids && exclude_ids.length > 0) {
 		query = query.whereNotIn("id", exclude_ids);
+	}
+	if (exclude_character_ids && exclude_character_ids.length > 0) {
+		query = query.whereNotIn("character_id", exclude_character_ids);
 	}
 	if (typeof rank === "string") {
 		query = query.where(`${tableName}.rank`, rank);

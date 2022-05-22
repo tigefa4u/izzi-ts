@@ -66,6 +66,7 @@ export const preComputeRequiredCards = async ({
 	exclude_ids,
 	character_ids = [],
 	channel,
+	exclude_character_ids,
 }: ProcessEnchantmentProps): Promise<ComputedReturnType | undefined> => {
 	try {
 		const currentExp = card.exp;
@@ -84,6 +85,7 @@ export const preComputeRequiredCards = async ({
 			totalXpGain: 0,
 			card,
 			isCustomRanks: rank ? true : false,
+			exclude_character_ids
 		} as PrepareRankAndFetchCardsProps<EnchantmentAccumulatorProps>;
 
 		rank = safeParseRank(rank);
@@ -95,6 +97,7 @@ export const preComputeRequiredCards = async ({
 			rank: payloadRank.rank,
 			include: [ ...new Set([ ...(character_ids || []), card.character_id ]) ],
 			exclude: [ ...new Set(exclude_ids) ],
+			exclude_character_ids: [ ...new Set(exclude_character_ids) ]
 		};
 		params.stashRequestPaload = payloadRank.stashRank
 			? {
@@ -103,6 +106,7 @@ export const preComputeRequiredCards = async ({
 				rank: payloadRank.stashRank,
 				include: [ ...new Set([ ...(character_ids || []), card.character_id ]) ],
 				exclude: [ ...new Set(exclude_ids) ],
+				exclude_character_ids: [ ...new Set(exclude_character_ids) ]
 			}
 			: null;
 
@@ -144,6 +148,7 @@ export const preComputeRequiredCards = async ({
 					rank: payloadRank.rank,
 					isSameName: false,
 					bucket: withDifferentName,
+					exclude_character_ids: [ ...new Set(exclude_character_ids) ]
 				};
 			}
 		}
