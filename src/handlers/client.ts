@@ -23,7 +23,7 @@ export const handleClientEvents = (client: Client) => {
 	});
 
 	client.on("apiResponse", (req, res) => {
-		loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
+		// loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
 		loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
 	});
 
