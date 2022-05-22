@@ -133,7 +133,7 @@ export const choose = async (params: {
 
 		if (skinArr.length >= MAX_CHOSEN_SKINS_ALLOWED) {
 			embed.setDescription(
-				`Summoer **${params.author.username}**, ` +
+				`Summoner **${params.author.username}**, ` +
 				`You cannot choose more than __${MAX_CHOSEN_SKINS_ALLOWED}__ skins. ` +
 				"Please use ``skin remove <id>`` to be able to set another one."
 			);

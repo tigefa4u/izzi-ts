@@ -11,6 +11,22 @@ import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
 export const handleClientEvents = (client: Client) => {
+	client.on("warn", (warning) => {
+		console.log({ warning });
+	});
+	client.on("debug", (debug) => {
+		console.log({ debug });
+	});
+
+	client.on("apiRequest", (req) => {
+		loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route, JSON.stringify(req.options || {}));
+	});
+
+	client.on("apiResponse", (req, res) => {
+		loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route, JSON.stringify(req.options || {}));
+		loggers.logApi(req.method, "[APIResponse]: ", JSON.stringify(res.json()));
+	});
+
 	client.on("messageCreate", (context: Message) => {
 		const hasPermissions = validateChannelPermissions(context);
 		const cannotProcessContext =

@@ -34,10 +34,16 @@ const endTimer = (timer: { startTime: [number, number]; message?: string; }) => 
 	timerify(`[Timer] ${timer.message}`, `took ${endTime[0]}s ${endTime[1] / ns2ms}ms`);
 };
 
+type METHODS = "delete" | "get" | "post" | "patch" | "put" 
+const logApi = (method: METHODS, ...args: string[]) => {
+	winstonLogger.logApi(`[${method}] ${args.join(" -> ")}`);
+};
+
 export default {
 	error,
 	info,
 	timerify,
 	startTimer,
-	endTimer
+	endTimer,
+	logApi
 };

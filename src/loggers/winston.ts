@@ -40,10 +40,47 @@ const timerTransporter = new transports.DailyRotateFile({
 	)
 });
 
+const apiRequestResponseTransporter = new transports.DailyRotateFile({
+	filename: "logs/api-requestresponse-%DATE%.log",
+	datePattern: "YYYY-MM-DD-HH",
+	zippedArchive: true,
+	maxSize: "1g",
+	maxFiles: "14d",
+	format: format.combine(
+		format.errors({ stack: true }),
+		format.timestamp(),
+		format.json()
+	)
+});
 
 const winstonErrorLogger = createLogger({
 	transports: [
 		errorTransporter
+		// new transports.File({
+		// 	filename: "logs/error.log",
+		// 	level: "error",
+		// 	format: format.combine(
+		// 		format.errors({ stack: true }),
+		// 		format.timestamp(),
+		// 		format.json()
+		// 	),
+		// }),
+		// new transports.File({
+		// 	filename: "logs/info.log",
+		// 	level: "info",
+		// 	format: format.json()
+		// }),
+		// new transports.File({
+		// 	filename: "logs/warn.log",
+		// 	level: "warn",
+		// 	format: format.json(),
+		// })
+	],
+});
+
+const winstonAPILogger = createLogger({
+	transports: [
+		apiRequestResponseTransporter
 		// new transports.File({
 		// 	filename: "logs/error.log",
 		// 	level: "error",
@@ -100,8 +137,13 @@ const logTime = (info: string) => {
 	winstonTimerLogger.info(info);
 };
 
+const logApi = (info: string) => {
+	winstonAPILogger.info(info);
+};
+
 export default {
 	error,
 	info,
-	logTime
+	logTime,
+	logApi
 };

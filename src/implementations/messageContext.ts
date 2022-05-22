@@ -25,7 +25,7 @@ function getResponseObj(content: string | CustomEmbedProps, options?: EmbedEditO
 	}
 	if (content instanceof MessageEmbed) {
 		if (!content.description) {
-			throw new Error("Unable to send content: " + JSON.stringify(content));
+			content.description = "\n";
 		}
 		Object.assign(responseObj, { embeds: [ content ] });
 		if (content.attachments) {
@@ -46,7 +46,7 @@ const sendMessage: (
   content: string | CustomEmbedProps
 ) => Promise<Message<boolean> | undefined> = async function (channel, content) {
 	try {
-		await delay(500);
+		await delay(100);
 		const responseObj = getResponseObj(content);
 		return channel.send(responseObj);
 	} catch (err) {

@@ -81,7 +81,7 @@ async function validateAndAcceptRaid(
 		return;
 	}
 	if (mentionedUser.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(currentRaid.stats.difficulty)) {
-		params.channel?.sendMessage(`Summoer **${mentionedUser.username}** must be atleast level ` +
+		params.channel?.sendMessage(`Summoner **${mentionedUser.username}** must be atleast level ` +
 		`__${MIN_RAID_USER_LEVEL}__ ` +
 		"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
 		return;
