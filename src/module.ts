@@ -19,16 +19,16 @@ import { EmbedEditOptions } from "@customTypes/index";
 type CustomProps = string | CustomEmbedProps;
 declare module "discord.js" {
   interface TextChannel {
-    sendMessage: (content: CustomProps) => Promise<Message>;
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface DMChannel {
-    sendMessage: (content: CustomProps) => Promise<Message>;
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface ThreadChannel {
-    sendMessage: (content: CustomProps) => Promise<Message>;
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface NewsChannel {
-    sendMessage: (content: CustomProps) => Promise<Message>;
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface MessageEmbed {
     attachments: MessageAttachment[];
@@ -44,9 +44,9 @@ declare module "discord.js" {
     editMessage: (
       content: CustomProps,
       options?: EmbedEditOptions
-    ) => Promise<Message>;
+    ) => Promise<Message> | undefined;
     isInteraction: boolean;
-    deleteMessage: () => Promise<Message<boolean>>;
+    deleteMessage: () => Promise<Message<boolean>> | undefined;
   }
   interface Interaction {
     isInteraction: boolean;

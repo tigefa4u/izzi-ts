@@ -190,6 +190,7 @@ export const create: (
   data: ICollectionCreateProps
 ) => Promise<CollectionProps> = async (data) => {
 	const db = connection;
+	if (!data || Array.isArray(data) && data.length <= 0) return;
 	return await db(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);

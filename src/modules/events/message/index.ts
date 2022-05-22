@@ -7,48 +7,53 @@ import { getIdFromMentionedString, sanitizeArgs } from "helpers";
 import { checkUserBanned } from "../checkUserBanned";
 import { dropCollectables } from "modules/collectables";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import loggers from "loggers";
 
 const handleMessage = async (client: Client, context: Message) => {
-	const { content } = context;
-	let args = content.toLowerCase().split(/\s+/);
-	const botId = getIdFromMentionedString(args[0]);
-	if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
-		if (context.guild?.id) {
-			dropCollectables({
-				client,
-				author: context.author,
-				guild: context.guild,
-				channel: context.channel
-			});
+	try {
+		const { content } = context;
+		let args = content.toLowerCase().split(/\s+/);
+		const botId = getIdFromMentionedString(args[0]);
+		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
+			if (context.guild?.id) {
+				dropCollectables({
+					client,
+					author: context.author,
+					guild: context.guild,
+					channel: context.channel
+				});
+			}
+			return;
 		}
-		return;
-	}
-	const cd = await getCooldown(context.author.id, "command-cd");
-	if (cd) {
-		sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
-		return;
-	}
-	const command = await getCommand(args[1]);
-	if (!command) return;
-	setCooldown(context.author.id, "command-cd", 2);
-	args.shift();
-	if (
-		typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
-	)
-		return;
-	if (command.name === "guild" || command.name === "team") {
-		args = content.split(/\s+/);
+		const cd = await getCooldown(context.author.id, "command-cd");
+		if (cd) {
+			sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
+			return;
+		}
+		const command = await getCommand(args[1]);
+		if (!command) return;
+		setCooldown(context.author.id, "command-cd", 2);
 		args.shift();
+		if (
+			typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
+		)
+			return;
+		if (command.name === "guild" || command.name === "team") {
+			args = content.split(/\s+/);
+			args.shift();
+		}
+		const isValid = await checkUserBanned(context, client, context.author, command.name);
+		if (!isValid) return;
+		commandCategory[command?.type as keyof CommandCategoryProps]({
+			client,
+			context,
+			command,
+			args: sanitizeArgs(args),
+			options: { author: context.author }
+		});
+	} catch (err) {
+		loggers.error("events.message.handleMessage(): something went wrong", err);
 	}
-	const isValid = await checkUserBanned(context, client, context.author, command.name);
-	if (!isValid) return;
-	commandCategory[command?.type as keyof CommandCategoryProps]({
-		client,
-		context,
-		command,
-		args: sanitizeArgs(args),
-		options: { author: context.author }
-	});
 	return;
 };
 

@@ -13,6 +13,17 @@ const difficultyObj: MapProps = {
 	immortal: "immortal"
 };
 
+const reverseMap: MapProps = {
+	easy: "e",
+	hard: "h",
+	medium: "m",
+	immortal: "i",
+	e: "e",
+	m: "m",
+	h: "h",
+	i: "i"
+};
+
 export const computeRank = (difficulty = "e", isEvent = false) => {
 	return prepareLoot(difficulty, isEvent);
 };
@@ -29,6 +40,10 @@ function prepareLoot(
 			}
 		}
 	} as PrepareLootProps;
+	difficulty = reverseMap[difficulty];
+	if (!difficulty) {
+		difficulty = "e";
+	}
 	result.difficulty = difficultyObj[difficulty as keyof MapProps];
 	if (!result.difficulty) {
 		result.difficulty = "easy";

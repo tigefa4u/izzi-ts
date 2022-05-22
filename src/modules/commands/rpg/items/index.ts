@@ -129,7 +129,10 @@ export const itemInfo = async ({
 		const attachment = createAttachment(item.filepath, "item.jpg");
 		const embed = createEmbed();
 		embed
-			.setAuthor(author.username, author.displayAvatarURL())
+			.setAuthor({
+				name: author.username,
+				iconURL: author.displayAvatarURL()
+			})
 			.setTitle(titleCase(item.name))
 			.setDescription(
 				"Items give your cards additional stats buffing their abilities\n" +

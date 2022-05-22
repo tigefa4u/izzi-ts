@@ -34,7 +34,10 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		const embed = createEmbed()
 			.setTitle(DEFAULT_ERROR_TITLE)
 			.setThumbnail(client.user?.displayAvatarURL() || "")
-			.setAuthor(author.username, author.displayAvatarURL());
+			.setAuthor({
+				name: author.username,
+				iconURL: author.displayAvatarURL()
+			});
 
 		if (user.gold < LOTTERY_PRICE) {
 			embed.setDescription("You do not have enough gold to play the Lottery!");

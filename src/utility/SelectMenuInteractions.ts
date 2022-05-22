@@ -16,6 +16,9 @@ export const selectionInteraction = async <P>(
 	}
 ) => {
 	try {
+		if (options.menuOptions.length <= 0) {
+			throw new Error("Invalid select menu options received: -> " + JSON.stringify(options));
+		}
 		const customId = "select_" + generateUUID(4);
 		const selectMenu = new MessageActionRow().addComponents(
 			createSelectMenu(customId, options)
