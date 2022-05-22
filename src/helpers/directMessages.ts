@@ -9,11 +9,10 @@ export const DMUser = async (
 ) => {
 	try {
 		// temporarily disabled
-		return true;
-		// await delay(1200);
-		// const author = await client.users.fetch(authorId);
-		// const DM = await author.createDM();
-		// DM.sendMessage(content);
+		await delay(1200);
+		const author = await client.users.fetch(authorId);
+		const DM = await author.createDM();
+		DM.sendMessage(content);
 	} catch (err) {
 		loggers.error(
 			"helpers.directMessages.DMUser(): Unable to DM User: " +
