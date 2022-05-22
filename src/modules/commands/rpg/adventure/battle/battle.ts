@@ -22,6 +22,7 @@ import { prepareCriticalHitChance, prepareEvadeHitChance } from "./chances";
 import * as battlesPerChannel from "./battlesPerChannelState";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { createBattleCanvas } from "helpers/canvas";
+import { Message } from "discord.js";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -126,13 +127,13 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
-		roundStats = await visualizeSimulation({
-			simulation,
-			context,
-			attachments: attachmentCards,
-			roundStats: clone(roundStats),
-			retries: 0
-		});
+		// roundStats = await visualizeSimulation({
+		// 	simulation,
+		// 	context,
+		// 	attachments: attachmentCards,
+		// 	roundStats: clone(roundStats),
+		// 	retries: 0
+		// });
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
@@ -159,6 +160,35 @@ export const simulateBattle = async ({
 		return;
 	}
 };
+
+async function sendBattleDescription({
+	rounds, round, message, title,
+	 sliceX, sliceY
+}: {
+	rounds: V["simulation"]["rounds"];
+	round: string;
+	message: Message;
+	title: string;
+	sliceX: number;
+	sliceY: number;
+}) {
+	const roundDescriptions = rounds[round].descriptions.slice(sliceX, sliceY).map((d) => d.description).join("\n");
+
+	// For rate limits
+	const newEmbed = recreateBattleEmbed(title || "", roundDescriptions);
+	try {
+		await delay(1200);
+		await message.editMessage(newEmbed, { reattachOnEdit: true });
+		return rounds[round].descriptions.slice(sliceX, sliceY);
+	} catch (err) {
+		console.log(err);
+		loggers.error(
+			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+			err
+		);
+		return;
+	}
+}
 
 type V = {
 	simulation: Simulation;
@@ -202,46 +232,72 @@ async function visualizeSimulation({
 	let roundFFOn: number | undefined;
 	for (const round of roundKeys) {
 		if (isForfeit) break;
-		for (const data of rounds[round].descriptions) {
-			const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
-			try {
-				await message.editMessage(newEmbed, { reattachOnEdit: true });
-				if (data.delay) {
-					await delay(data.delay);
-				}
-			} catch (err) {
-				loggers.error(
-					"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
-					err
-				);
-				if (roundStats) roundStats.isForfeit = true;
-				isForfeit = true;
-				roundFFOn = +round;
-				break;
-			}
-		}
-	}
-	if (roundFFOn && retries < BATTLE_FORFEIT_RETRIES) {
-		context.channel?.sendMessage("Your battle has crashed, retrying...");
-		let start = +roundFFOn - 1;
-		if (start < 0) start = 0;
-		const clonedKeys = [ "0", ...roundKeys ];
-		const keys = clonedKeys.slice(start);
-		const newRounds = keys.reduce((acc, r) => {
-			acc[r] = rounds[r];
-			return acc;
-		}, {} as { [key: string]: SimulationRound; });
-		retries = retries + 1;
-		simulation.rounds = newRounds;
-		delete roundStats?.isForfeit;
-		return await visualizeSimulation({
-			context,
-			simulation,
-			retries,
-			attachments,
-			roundStats 
+		const totalDescriptions = rounds[round].descriptions.length;
+		const dx = Math.ceil(totalDescriptions / 2);
+		let battleRound = await sendBattleDescription({
+			rounds,
+			round,
+			message,
+			title: embed.title || "",
+			sliceX: 0,
+			sliceY: dx
 		});
+		if (battleRound && battleRound.length > 0) {
+			battleRound = await sendBattleDescription({
+				rounds,
+				round,
+				message,
+				title: embed.title || "",
+				sliceX: dx,
+				sliceY: totalDescriptions
+			});
+		}
+		if (!battleRound) {
+			if (roundStats) roundStats.isForfeit = true;
+			isForfeit = true;
+			roundFFOn = +round;
+		}
+			
+		// for (const data of rounds[round].descriptions) {
+		// 	const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
+		// 	try {
+		// 		if (data.delay) {
+		// 			await delay(data.delay);
+		// 		}
+		// await message.editMessage(newEmbed, { reattachOnEdit: true });
+		// 	} catch (err) {
+		// 		loggers.error(
+		// 			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+		// 			err
+		// 		);
+		// 		if (roundStats) roundStats.isForfeit = true;
+		// 		isForfeit = true;
+		// 		roundFFOn = +round;
+		// 		break;
+		// 	}
+		// }
 	}
+	// if (roundFFOn && retries < BATTLE_FORFEIT_RETRIES) {
+	// 	context.channel?.sendMessage("Your battle has crashed, retrying...");
+	// 	let start = +roundFFOn - 1;
+	// 	if (start < 0) start = 0;
+	// 	const clonedKeys = [ "0", ...roundKeys ];
+	// 	const keys = clonedKeys.slice(start);
+	// 	const newRounds = keys.reduce((acc, r) => {
+	// 		acc[r] = rounds[r];
+	// 		return acc;
+	// 	}, {} as { [key: string]: SimulationRound; });
+	// 	retries = retries + 1;
+	// 	simulation.rounds = newRounds;
+	// 	delete roundStats?.isForfeit;
+	// 	return await visualizeSimulation({
+	// 		context,
+	// 		simulation,
+	// 		retries,
+	// 		attachments,
+	// 		roundStats 
+	// 	});
+	// }
 
 	return roundStats;
 }
@@ -476,7 +532,7 @@ function updateBattleDesc({
 						: ""
 		}\n${
 			damageDiff !== 0 && turn === 0
-				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`
+				? `${enemyDesc} strikes back fiercely! ${emoji.angry}\n-----------------------`
 				: ""
 		}`;
 	}
