@@ -19,12 +19,12 @@ export const handleClientEvents = (client: Client) => {
 	});
 
 	client.on("apiRequest", (req) => {
-		loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route, JSON.stringify(req.options || {}));
+		loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route);
 	});
 
 	client.on("apiResponse", (req, res) => {
-		loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route, JSON.stringify(req.options || {}));
-		loggers.logApi(req.method, "[APIResponse]: ", JSON.stringify(res.json()));
+		loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
+		loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
 	});
 
 	client.on("messageCreate", (context: Message) => {
