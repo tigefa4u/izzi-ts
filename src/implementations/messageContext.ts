@@ -68,7 +68,7 @@ export const editMessage: (
 		return context.edit(responseObj);
 	} catch (err) {
 		loggers.error("implementations.messageContext.editMessage(): something went wrong", err);
-		return;
+		throw err;
 	}
 };
 
@@ -80,7 +80,7 @@ export const deleteMessage: (context: Message) => Promise<Message<boolean>> | un
 		return context.delete();
 	} catch (err) {
 		loggers.error("implementations.messageContext.deleteMessage(): something went wrong", err);
-		return;
+		throw err;
 	}
 };
 
