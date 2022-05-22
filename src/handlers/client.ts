@@ -15,7 +15,7 @@ export const handleClientEvents = (client: Client) => {
 		console.log({ warning });
 	});
 	client.on("debug", (debug) => {
-		console.log({ debug });
+		loggers.logApi("get", "[DEBUG]", debug);
 	});
 
 	client.on("apiRequest", (req) => {
