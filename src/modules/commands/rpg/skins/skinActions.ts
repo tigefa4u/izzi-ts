@@ -64,7 +64,7 @@ export const show = async (params: {
 					);
 				}
 				if (options?.isDelete && sentMessage) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 				if (options?.isEdit) {
 					sentMessage.editMessage(embed);

@@ -228,7 +228,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

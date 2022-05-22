@@ -52,7 +52,7 @@ export const raidLobbies = async ({
 					embed.setDescription("No lobbies available");
 				}
 				if (options?.isDelete && sentMessage) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 				if (options?.isEdit) {
 					sentMessage.editMessage(embed);

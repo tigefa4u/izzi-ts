@@ -54,7 +54,7 @@ export const guildItems = async ({ context, options, client }: BaseProps) => {
 					embed.setDescription("Your guild currently has no items. Purchase items from the Guild Market!");
 				}
 				if (opts?.isDelete && sentMessage) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);

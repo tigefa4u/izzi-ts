@@ -126,7 +126,7 @@ export const resolveSkin = async (params: {
 						.setThumbnail(data.filepath);
 				}
 				if (opts?.isDelete) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

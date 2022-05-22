@@ -88,7 +88,7 @@ export const pageFunc = async <T>(
 					embed.setDescription("No data available");
 				}
 				if (opts?.isDelete && sentMessage) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);

@@ -221,7 +221,7 @@ export const enchantCard = async ({
 			(_data, opts) => {
 				if (opts?.isDelete) {
 					clearCooldown(author.id, "enchant");
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

@@ -87,7 +87,7 @@ export const itemCollection = async ({
     			embed.setDescription("You currently have no items. You can purchase items using ``itemshop``");
     		}
     		if (options?.isDelete && sentMessage) {
-    			sentMessage.delete();
+    			sentMessage.deleteMessage();
     		}
     		if (options?.isEdit) {
     			sentMessage.editMessage(embed);

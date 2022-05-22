@@ -174,7 +174,7 @@ export const teamBattle = async ({
 				context,
 				mentionId,
 				cb: () => {
-					sentMessage.deletable && sentMessage.delete();
+					sentMessage.deletable && sentMessage.deleteMessage();
 				}
 			},
 		};
@@ -190,7 +190,7 @@ export const teamBattle = async ({
 			confirmAndBattle,
 			(data, opts) => {
 				if (opts?.isDelete) {
-					sentMessage?.delete();
+					sentMessage?.deleteMessage();
 				}
 			}
 		);

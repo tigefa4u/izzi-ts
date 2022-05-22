@@ -9,7 +9,10 @@ import {
 	TextChannel,
 	ThreadChannel,
 } from "discord.js";
-import implementSendMessage, { editMessage as implementEditMessage, } from "implementations/messageContext";
+import implementSendMessage, {
+	editMessage as implementEditMessage,
+	deleteMessage as implementDeleteMessage,
+} from "implementations/messageContext";
 import { CustomEmbedProps } from "@customTypes/embed";
 import { EmbedEditOptions } from "@customTypes/index";
 
@@ -43,6 +46,7 @@ declare module "discord.js" {
       options?: EmbedEditOptions
     ) => Promise<Message>;
     isInteraction: boolean;
+    deleteMessage: () => Promise<Message<boolean>>;
   }
   interface Interaction {
     isInteraction: boolean;
@@ -81,6 +85,9 @@ MessageEmbed.prototype.setPagination = function (bool: boolean) {
 };
 Message.prototype.editMessage = function (content: CustomProps, options) {
 	return implementEditMessage(this, content, options);
+};
+Message.prototype.deleteMessage = function () {
+	return implementDeleteMessage(this);
 };
 Message.prototype.isInteraction = false;
 Interaction.prototype.isInteraction = true;

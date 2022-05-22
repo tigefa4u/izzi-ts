@@ -81,7 +81,7 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 					sentMessage.editMessage(embed);
 				}
 				if (opts?.isDelete) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

@@ -154,7 +154,7 @@ export const purchaseItem = async ({
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

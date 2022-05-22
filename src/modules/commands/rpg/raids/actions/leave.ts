@@ -70,7 +70,7 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 						"This raid has already started and you will lose __2__ **Permits**");
 
 					if (opts?.isDelete) {
-						sentMessage.delete();
+						sentMessage.deleteMessage();
 					}
 					return;
 				}

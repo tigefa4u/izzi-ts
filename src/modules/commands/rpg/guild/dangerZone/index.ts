@@ -94,7 +94,7 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);
@@ -185,7 +185,7 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

@@ -51,7 +51,7 @@ export const itemMarket = async ({ context, client, args, options }: BaseProps) 
 					embed.setDescription("No items available");
 				}
 				if (opts?.isDelete && sentMessage) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);

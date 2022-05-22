@@ -1,19 +1,30 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
+import { validateChannelPermissions } from "helpers";
 import loggers from "loggers";
-import { handleDiscordServerJoin, handleDiscordServerLeave } from "modules/events/guild";
+import {
+	handleDiscordServerJoin,
+	handleDiscordServerLeave,
+} from "modules/events/guild";
 import handleCommandInteraction from "modules/events/interaction";
 import handleMessage from "modules/events/message";
 import { IZZI_WEBSITE } from "../environment";
 
 export const handleClientEvents = (client: Client) => {
 	client.on("messageCreate", (context: Message) => {
-		if (context.author.bot || context.channel.type === "DM" || !context.guild) return;
+		const hasPermissions = validateChannelPermissions(context);
+		const cannotProcessContext =
+      context.author.bot ||
+      context.channel.type === "DM" ||
+      !context.guild ||
+      !hasPermissions;
+
+		if (cannotProcessContext) return;
 		handleMessage(client, context);
 	});
 
 	client.on("interactionCreate", (interaction) => {
-		if (interaction.isCommand()) {
+		if (interaction.isCommand() && validateChannelPermissions(interaction)) {
 			handleCommandInteraction(client, interaction);
 		}
 	});
@@ -33,10 +44,12 @@ export const handleClient = (client: Client) => {
 		console.log("listening");
 		registerSlashCommands(client);
 		client?.user?.setPresence({
-			activities: [ {
-				name: IZZI_WEBSITE,
-				type: 3
-			} ],
+			activities: [
+				{
+					name: IZZI_WEBSITE,
+					type: 3,
+				},
+			],
 		});
 		try {
 			// handleMusicEvents(client, discord);

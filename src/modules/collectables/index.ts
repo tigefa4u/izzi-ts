@@ -124,7 +124,7 @@ export const dropCollectables = async ({
 				card[0],
 				claimCard,
 				() => {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			);
 

@@ -49,7 +49,7 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 						embed.setDescription("No data available");
 					}
 					if (options?.isDelete && sentMessage) {
-						sentMessage.delete();
+						sentMessage.deleteMessage();
 					}
 					if (options?.isEdit) {
 						sentMessage.editMessage(embed);

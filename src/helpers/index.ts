@@ -3,7 +3,7 @@ import { NormalizeFloorProps, StageProps } from "@customTypes/stages";
 import { calcPercentRatio } from "./ability";
 import { getRPGUser } from "api/controllers/UsersController";
 import { AuthorProps, MapProps, OverallStatsProps } from "@customTypes";
-import { BASE_RANK } from "./constants";
+import { BASE_RANK, BOT_GLOBAL_PERMISSIONS } from "./constants";
 import { BaseProps } from "@customTypes/command";
 import { PLProps } from "@customTypes/powerLevel";
 import { MessageComponentInteraction } from "discord.js";
@@ -13,7 +13,6 @@ import { titleCase } from "title-case";
 import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import { clone, isFloat } from "utility";
 
 export const generateUUID = (n: number): string => {
 	const add = 1;
@@ -373,4 +372,17 @@ export const preparePlayerBase = ({
 	baseStats.cards[2] = undefined;
 
 	return baseStats;
+};
+
+export const validateChannelPermissions = (context: BaseProps["context"]) => {
+	let hasPermission = true;
+	if (!context.channel?.id) return false;
+	const permissionsMap = context.guild?.me?.permissionsIn(context.channel.id).serialize();
+	for (const permission of BOT_GLOBAL_PERMISSIONS) {
+		if (!permissionsMap || !permissionsMap[permission]) {
+			hasPermission = false;
+			break;
+		}
+	}
+	return hasPermission;
 };

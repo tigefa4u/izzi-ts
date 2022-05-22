@@ -52,7 +52,7 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 						embed.setDescription("No data available");
 					}
 					if (options?.isDelete && sentMessage) {
-						sentMessage.delete();
+						sentMessage.deleteMessage();
 					}
 					if (options?.isEdit) {
 						sentMessage.editMessage(embed);

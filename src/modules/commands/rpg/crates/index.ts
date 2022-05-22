@@ -161,7 +161,7 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 					sentMessage.editMessage(embed);
 				}
 				if (opts?.isDelete) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

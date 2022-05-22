@@ -49,9 +49,19 @@ export const editMessage: (
 	options?: EmbedEditOptions
 ) => Promise<Message> = function (context, content, options) {
 	const responseObj = getResponseObj(content, options);
+	if (!context.editable) {
+		throw new Error("Message not editable. Message ID: " + context.id);
+	}
 	return context.edit(responseObj).catch((err) => {
 		throw err;
 	});
+};
+
+export const deleteMessage: (context: Message) => Promise<Message<boolean>> = function (context) {
+	if (!context.deletable) {
+		throw new Error("Message not deletable. Message ID: " + context.id);
+	}
+	return context.delete();
 };
 
 export default sendMessage;

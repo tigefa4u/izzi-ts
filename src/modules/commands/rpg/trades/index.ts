@@ -260,7 +260,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);

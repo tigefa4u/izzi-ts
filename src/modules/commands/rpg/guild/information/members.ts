@@ -57,7 +57,7 @@ export const viewMembers = async ({ context, client, options }: BaseProps) => {
 					sentMessage.editMessage(embed);
 				}
 				if (opts?.isDelete) {
-					sentMessage.delete();
+					sentMessage.deleteMessage();
 				}
 			}
 		);
