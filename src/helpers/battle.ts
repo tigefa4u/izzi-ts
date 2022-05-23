@@ -158,7 +158,7 @@ export const refetchAndUpdateUserMana = async (id: string, manaCost = MANA_PER_B
 	await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
 };
 
-export const validateFiveMinuteTimer = async (cd: { timestamp: string; key: string; }) => {
+export const validateFiveMinuteTimer = async (cd: { timestamp: number; key: string; }) => {
 	const dt = new Date().valueOf();
 	if (new Date(cd.timestamp).valueOf() > dt) {
 		await Cache.del(cd.key);

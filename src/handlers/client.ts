@@ -32,8 +32,9 @@ export const handleClientEvents = (client: Client) => {
 		const cannotProcessContext =
       context.author.bot ||
       context.channel.type === "DM" ||
-      !context.guild ||
-      !hasPermissions;
+      !context.guild; 
+		//   ||
+		//   !hasPermissions;
 
 		if (cannotProcessContext) return;
 		handleMessage(client, context);

@@ -6,8 +6,19 @@ import { BOT_PREFIX, DISCORD_CLIENT_ID } from "environment";
 import { getIdFromMentionedString, sanitizeArgs } from "helpers";
 import { checkUserBanned } from "../checkUserBanned";
 import { dropCollectables } from "modules/collectables";
-import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	clearCooldown,
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import loggers from "loggers";
+import { MAX_REQUESTS_PER_CHANNEL } from "helpers/constants";
+import {
+	getChannelCooldown,
+	getTTL,
+	incrCooldown,
+} from "modules/cooldowns/channels";
 
 const handleMessage = async (client: Client, context: Message) => {
 	try {
@@ -20,36 +31,64 @@ const handleMessage = async (client: Client, context: Message) => {
 					client,
 					author: context.author,
 					guild: context.guild,
-					channel: context.channel
+					channel: context.channel,
 				});
 			}
 			return;
 		}
+		const channelCD = await getChannelCooldown(
+			context.channel.id,
+			"channel-cd"
+		);
+		if (channelCD && channelCD >= MAX_REQUESTS_PER_CHANNEL) {
+			let ttl = await getTTL(context.channel.id, "channel-cd");
+			if (ttl < 0) {
+				clearCooldown(context.channel.id, "channel-cd");
+				ttl = 1;
+			}
+			context.channel.sendMessage(
+				`Summoner **${context.author.username}**, ` +
+				`you are being rate limited for \`\`${ttl} seconds\`\` due to high bot activity`
+			);
+			return;
+		}
 		const cd = await getCooldown(context.author.id, "command-cd");
 		if (cd) {
-			sendCommandCDResponse(context.channel, cd, context.author.id, "command-cd");
+			sendCommandCDResponse(
+				context.channel,
+				cd,
+				context.author.id,
+				"command-cd"
+			);
 			return;
 		}
 		const command = await getCommand(args[1]);
 		if (!command) return;
-		setCooldown(context.author.id, "command-cd", 2);
+		setCooldown(context.author.id, "command-cd", 1);
 		args.shift();
 		if (
-			typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
+			typeof commandCategory[command?.type as keyof CommandCategoryProps] !==
+      "function"
 		)
 			return;
 		if (command.name === "guild" || command.name === "team") {
 			args = content.split(/\s+/);
 			args.shift();
 		}
-		const isValid = await checkUserBanned(context, client, context.author, command.name);
+		const isValid = await checkUserBanned(
+			context,
+			client,
+			context.author,
+			command.name
+		);
 		if (!isValid) return;
+		incrCooldown(context.channel.id, "channel-cd", 6);
 		commandCategory[command?.type as keyof CommandCategoryProps]({
 			client,
 			context,
 			command,
 			args: sanitizeArgs(args),
-			options: { author: context.author }
+			options: { author: context.author },
 		});
 	} catch (err) {
 		loggers.error("events.message.handleMessage(): something went wrong", err);

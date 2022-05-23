@@ -33,6 +33,15 @@ async function validateAndDisbandGuild(
 	});
 	if (!validGuild) return;
 	if (options?.isConfirm) {
+		const guildbackUp = {
+			guild_stats: validGuild.guild.guild_stats,
+			guild_name: validGuild.guild.guild_name,
+			item_stats: validGuild.guild.item_stats,
+			guild_level: validGuild.guild.guild_level,
+			gold: validGuild.guild.gold,
+			ban_reason: validGuild.guild.ban_reason,
+			is_banned: validGuild.guild.is_banned
+		};
 		await Promise.all([ delAllGuildMembers({ guild_id: validGuild.guild.id }),
 			delGuildItems({ guild_id: validGuild.guild.id }),
 			updateGuild(
@@ -40,7 +49,7 @@ async function validateAndDisbandGuild(
 				{
 					gold: 0,
 					guild_stats: null,
-					metadata: JSON.stringify(validGuild.guild.guild_stats),
+					metadata: JSON.stringify(guildbackUp),
 					guild_level: 0,
 					name: null,
 					points: 0,

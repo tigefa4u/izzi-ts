@@ -60,7 +60,7 @@ export const divorce = async ({ context, options }: BaseProps) => {
 	}
 };
 
-function validateCD(timestamp: string, id: string, channel: ChannelProp) {
+function validateCD(timestamp: number, id: string, channel: ChannelProp) {
 	const remainingTime =
     (new Date(timestamp).valueOf() - new Date().valueOf()) / 1000 / 60;
 	if (remainingTime < 0 || isNaN(remainingTime)) {

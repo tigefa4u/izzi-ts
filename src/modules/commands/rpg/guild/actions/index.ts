@@ -73,7 +73,9 @@ export const addGuild = async ({
 		if (guildMember) {
 			embed.setDescription(
 				"Summoner, You have already created your guild! " +
-          "use ``guild invite <@user>`` to invite others to join your guild!"
+          "use ``guild invite <@user>`` to invite others to join your guild! " +
+          "\n**Disclaimer: If izzi bot is kicked from the server or if the server " +
+		  "is deleted your guild will be auto deleted losing all of your guild bonus stats and gold**"
 			);
 			context.channel?.sendMessage(embed);
 			return;

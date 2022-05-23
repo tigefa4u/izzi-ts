@@ -250,3 +250,5 @@ export const BOT_GLOBAL_PERMISSIONS: PermissionString[] = [
 export const THREAD_CHANNEL_PERMISSIONS = [
 	"SEND_MESSAGES_IN_THREADS"
 ];
+
+export const MAX_REQUESTS_PER_CHANNEL = 5;

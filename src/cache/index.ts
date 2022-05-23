@@ -29,7 +29,10 @@ const Cache: CacheProps = {
 		}
 		loggers.info("Cache hit for: " + key);
 		return data ? JSON.parse(data) : null;
-	}
+	},
+	incr: (key) => client.incr(key),
+	decr: (key) => client.decr(key),
+	ttl: (key) => client.ttl(key)
 };
 
 export default Cache;
