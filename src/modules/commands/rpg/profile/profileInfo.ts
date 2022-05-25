@@ -43,7 +43,7 @@ export const mana = async function ({
 		const refillTimerDesc = `[Refills __${
 			result.metadata.is_premium ? 3 : 2
 		}mana__ ${
-			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 3 minutes"
+			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 4 minutes"
 		}]`;
 
 		context.channel?.sendMessage(
