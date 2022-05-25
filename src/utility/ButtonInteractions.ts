@@ -1,4 +1,5 @@
 import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
+import { ButtonOptions } from "@customTypes/button";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
 import { MessageActionRow } from "discord.js";
@@ -173,6 +174,52 @@ export const collectableInteraction = async <P>(
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.collectableInteraction(): something went wrong", err);
+		return;
+	}
+};
+
+export const customButtonInteraction = async <P>(
+	channel: ChannelProp,
+	options: (ButtonOptions & { params: P })[],
+	authorId: string,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
+	callback: () => void
+) => {
+	try {
+		const label = REACTIONS.confirm.label + "_" + (channel?.id || "") + "_" + generateUUID(4);
+		const verifyObject = {};
+		const buttons = new MessageActionRow().addComponents(
+			options.map((option, i) => {
+				const labelStr = label + "_" + i;
+				Object.assign(verifyObject, { [labelStr]: labelStr });
+				return createButton(labelStr, option);
+			})
+		);
+		const collector = channel?.createMessageComponentCollector({
+			filter: interactionFilter(authorId, verifyFilter, verifyObject),
+			max: 1,
+			componentType: "BUTTON",
+			dispose: true,
+			time: 240_000
+		});
+		collector?.on("collect", async (buttonInteraction) => {
+			buttonInteraction.deferUpdate();
+			const id = buttonInteraction.customId;
+			options.map((option, i) => {
+				if (id === (label + "_" + i)) {
+					fetch({
+						...option.params,
+						user_tag: buttonInteraction.user.id,
+						channel
+					});
+					callback();
+				}
+			});
+			return;
+		});
+		return buttons;
+	} catch (err) {
+		loggers.error("utility.ButtonInteractions.customInteraction(): something went wrong", err);
 		return;
 	}
 };

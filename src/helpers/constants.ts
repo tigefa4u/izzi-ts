@@ -217,7 +217,7 @@ export const DUNGEON_DEFAULTS = {
 	numberOfRanks: 5,
 };
 
-export const BATTLES_PER_CHANNEL = 2;
+export const BATTLES_PER_CHANNEL = 1;
 export const BATTLE_FORFEIT_RETRIES = 1;
 
 export const USER_XP_GAIN_PER_BATTLE = 4;
@@ -252,3 +252,5 @@ export const THREAD_CHANNEL_PERMISSIONS = [
 ];
 
 export const MAX_REQUESTS_PER_CHANNEL = 5;
+
+export const MAX_GUILD_ITEMS_PURCHASABLE = 50;

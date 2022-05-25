@@ -20,6 +20,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MARKET_IDS,
+	MAX_GUILD_ITEMS_PURCHASABLE,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -141,7 +142,7 @@ export const buyItem = async ({
 			return;
 		}
 		let quantity = Number(args.shift());
-		if (isNaN(quantity) || quantity <= 0 || quantity > 20) quantity = 1;
+		if (isNaN(quantity) || quantity <= 0 || quantity > MAX_GUILD_ITEMS_PURCHASABLE) quantity = 1;
 		const totalCost = marketItem.price * quantity;
 		const params = {
 			channel: context.channel,

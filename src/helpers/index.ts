@@ -386,3 +386,7 @@ export const validateChannelPermissions = (context: BaseProps["context"]) => {
 	}
 	return hasPermission;
 };
+
+export const escapeSpecialCharacters = (text = "") => {
+	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};

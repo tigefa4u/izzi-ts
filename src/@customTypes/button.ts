@@ -1,6 +1,6 @@
 import { MessageButton, MessageButtonStyleResolvable } from "discord.js";
 
-type ButtonOptions = {
+export type ButtonOptions = {
     label?: string;
     emoji?: string;
     style?: MessageButtonStyleResolvable;

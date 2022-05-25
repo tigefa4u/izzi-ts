@@ -19,7 +19,7 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	simulation
 }: AbilityProcDescriptionProps & { simulation: Simulation; }) => {
 	const emotename = (isItem ? card?.itemname : card?.abilityname) || "";
-	let updatedDescription = `**[ROUND ${round}]**\n${emoji.fast}`;
+	let updatedDescription = `${emoji.up} **[Round ${round}]**\n${emoji.fast}`;
 	if (isDescriptionOnly) {
 		updatedDescription = `${updatedDescription} ${description}`;
 	} else {
@@ -37,7 +37,9 @@ export const prepSendAbilityOrItemProcDescription = async ({
 
 	simulation.rounds[round].descriptions.push({
 		description: desc,
-		delay: 1000
+		delay: 1000,
+		rawDescription: updatedDescription,
+		showUpdatedDescription: true
 	});
 	// FIXME: Need to catch somewhere
 	// if (!hasEdited) {

@@ -12,7 +12,11 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { delay } from "helpers";
 import { prepareBattleDesc } from "helpers/adventure";
-import { compare, recreateBattleEmbed, simulateBattleDescription } from "helpers/battle";
+import {
+	compare,
+	recreateBattleEmbed,
+	simulateBattleDescription,
+} from "helpers/battle";
 import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
@@ -23,6 +27,7 @@ import * as battlesPerChannel from "./battlesPerChannelState";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { createBattleCanvas } from "helpers/canvas";
 import { Message } from "discord.js";
+import { customButtonInteraction } from "utility/ButtonInteractions";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -50,7 +55,7 @@ export const simulateBattle = async ({
 		context.channel.id
 	);
 	// Create an object that stores all data needed for simulation
-	const simulation = { title, } as Simulation;
+	const simulation = { title } as Simulation;
 	try {
 		if (battlesInChannel === undefined) return;
 		else
@@ -69,13 +74,15 @@ export const simulateBattle = async ({
 
 		simulation.rounds = {
 			0: {
-				descriptions: [ {
-					description,
-					delay: 0 
-				} ],
+				descriptions: [
+					{
+						description,
+						delay: 0,
+					},
+				],
 				canSimulateRound: true,
-				round: 0
-			}
+				round: 0,
+			},
 		};
 
 		let totalDamage = 0;
@@ -88,8 +95,8 @@ export const simulateBattle = async ({
 			const statusDescription = `${emoji.hasmorespeed} **${
 				isPlayerFirst ? playerStats.name : enemyStats.name
 			}** has more __Speed__. It strikes first!`;
-			const updatedDescription = `**[ROUND ${round}]**\n${statusDescription}`;
-			
+			const updatedDescription = `${emoji.up} **[ROUND ${round}]**\n${statusDescription}`;
+
 			const desc = await simulateBattleDescription({
 				playerStats,
 				enemyStats,
@@ -97,12 +104,15 @@ export const simulateBattle = async ({
 				totalDamage,
 			});
 			simulation.rounds[round] = {
-				descriptions: [ {
-					description: desc,
-					delay: 1000
-				} ],
+				descriptions: [
+					{
+						description: desc,
+						delay: 1000,
+						rawDescription: updatedDescription
+					},
+				],
 				canSimulateRound: true,
-				round
+				round,
 			};
 			roundStats = playerStats;
 			const checkIsDefeated = await simulatePlayerTurns({
@@ -115,7 +125,7 @@ export const simulateBattle = async ({
 				round,
 				totalDamage,
 				isRaid,
-				simulation
+				simulation,
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -127,13 +137,14 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
-		// roundStats = await visualizeSimulation({
-		// 	simulation,
-		// 	context,
-		// 	attachments: attachmentCards,
-		// 	roundStats: clone(roundStats),
-		// 	retries: 0
-		// });
+		roundStats = await visualizeSimulation({
+			simulation,
+			context,
+			attachments: attachmentCards,
+			roundStats: clone(roundStats),
+			retries: 0,
+			authorId: playerStats.id
+		});
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
@@ -162,26 +173,42 @@ export const simulateBattle = async ({
 };
 
 async function sendBattleDescription({
-	rounds, round, message, title,
-	 sliceX, sliceY
+	rounds,
+	round,
+	message,
+	title,
+	sliceX,
+	sliceY,
 }: {
-	rounds: V["simulation"]["rounds"];
-	round: string;
-	message: Message;
-	title: string;
-	sliceX: number;
-	sliceY: number;
+  rounds: V["simulation"]["rounds"];
+  round: string;
+  message: Message;
+  title: string;
+  sliceX: number;
+  sliceY: number;
 }) {
-	const roundDescriptions = rounds[round].descriptions.slice(sliceX, sliceY).map((d) => d.description).join("\n");
+	let roundDescriptions = rounds[round].descriptions
+		.slice(sliceX, sliceY + 1)
+		.map((d) => {
+			// if (d.showUpdatedDescription) {
+			// 	return d.description;
+			// }
+			return d.rawDescription;
+		})
+		.join("\n");
+
+	roundDescriptions = roundDescriptions.replace(
+		emoji.up,
+		`**${emoji.up} [Round ${round}]**\n`
+	);
 
 	// For rate limits
 	const newEmbed = recreateBattleEmbed(title || "", roundDescriptions);
 	try {
 		await delay(1200);
 		await message.editMessage(newEmbed, { reattachOnEdit: true });
-		return rounds[round].descriptions.slice(sliceX, sliceY);
+		return rounds[round].descriptions.slice(sliceX, rounds[round].descriptions.length);
 	} catch (err) {
-		console.log(err);
 		loggers.error(
 			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
 			err
@@ -190,25 +217,79 @@ async function sendBattleDescription({
 	}
 }
 
-type V = {
-	simulation: Simulation;
-	context: SimulateBattleProps["context"];
-	attachments: (CollectionCardInfoProps | undefined)[];
-	retries: number;
-	roundStats?: BattleStats;
-}
-async function visualizeSimulation({
-	simulation, context, attachments, roundStats, retries 
-}: V): Promise<BattleStats | undefined> {
+const prepareDX = (prevIndex = 0, roundDescriptions: Simulation["rounds"][""]["descriptions"]) => {
+	const index = roundDescriptions.slice(prevIndex, roundDescriptions.length)
+		.findIndex((d) => d.showUpdatedDescription === true);
 
+	if (index > 0) {
+		return index;
+	} else {
+		return Math.ceil(roundDescriptions.length / 2);
+	}
+};
+
+type R = {
+	rounds: Simulation["rounds"];
+	round: string;
+	message: Message;
+	title: string;
+	dx: number;
+	dy: number;
+}
+const processRoundDesc = async ({
+	round,
+	rounds,
+	message,
+	title,
+	dx,
+	dy
+}: R): Promise<boolean> => {
+	const descriptionsClone = rounds[round].descriptions;
+	const battleRound = await sendBattleDescription({
+		rounds,
+		round,
+		message,
+		title: title,
+		sliceX: dx,
+		sliceY: dy,
+	});
+	if (battleRound && battleRound.length > 0) {
+		return await processRoundDesc({
+			round,
+			rounds,
+			title,
+			dx: dy,
+			dy: prepareDX(dy, descriptionsClone),
+			message
+		});
+	}
+	if (!battleRound) {
+		return false;
+	}
+	return true;
+};
+
+type V = {
+  simulation: Simulation;
+  context: SimulateBattleProps["context"];
+  attachments: (CollectionCardInfoProps | undefined)[];
+  retries: number;
+  authorId: string;
+  roundStats?: BattleStats;
+};
+async function visualizeSimulation({
+	simulation,
+	context,
+	attachments,
+	roundStats,
+	retries,
+	authorId
+}: V): Promise<BattleStats | undefined> {
 	const canvas = await timerify(attachments);
 	if (!canvas) {
 		throw new Error("Failed to create battle canvas");
 	}
-	const attachment = createAttachment(
-		canvas.createJPEGStream(),
-		"battle.jpg"
-	);
+	const attachment = createAttachment(canvas.createJPEGStream(), "battle.jpg");
 
 	const rounds = simulation.rounds;
 	const roundKeys = Object.keys(rounds);
@@ -216,11 +297,44 @@ async function visualizeSimulation({
 	if (!initialKey) {
 		throw new Error("No rounds found in simulation");
 	}
+
+	rounds[initialKey].descriptions[0].description = rounds[
+		initialKey
+	].descriptions[0].description.replace(emoji.up, "");
+
 	const embed = createEmbed()
 		.setTitle(simulation.title)
 		.setDescription(rounds[initialKey].descriptions[0].description)
 		.attachFiles([ attachment ])
 		.setImage("attachment://battle.jpg");
+
+	let canEndBattle = false;
+	const buttons = await customButtonInteraction(
+		context.channel,
+		[ {
+			style: "PRIMARY",
+			label: "Fast Forward Battle",
+			params: {}
+		}, {
+			style: "DANGER",
+			label: "Forfeit",
+			params: { isForfeit: true }
+		} ],
+		authorId,
+		({ isForfeit }) => {
+			canEndBattle = true;
+			if (isForfeit) {
+				if (roundStats) roundStats.isForfeit = true;
+			}
+		},
+		() => {
+			return;
+		}
+	);
+
+	if (buttons) {
+		embed.setButtons(buttons);
+	}
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {
@@ -228,76 +342,65 @@ async function visualizeSimulation({
 		throw new Error("Message Object not found to edit battle");
 	}
 
-	let isForfeit = false;
 	let roundFFOn: number | undefined;
 	for (const round of roundKeys) {
-		if (isForfeit) break;
-		const totalDescriptions = rounds[round].descriptions.length;
-		const dx = Math.ceil(totalDescriptions / 2);
-		let battleRound = await sendBattleDescription({
-			rounds,
-			round,
-			message,
-			title: embed.title || "",
-			sliceX: 0,
-			sliceY: dx
-		});
-		if (battleRound && battleRound.length > 0) {
-			battleRound = await sendBattleDescription({
-				rounds,
-				round,
-				message,
-				title: embed.title || "",
-				sliceX: dx,
-				sliceY: totalDescriptions
-			});
-		}
-		if (!battleRound) {
-			if (roundStats) roundStats.isForfeit = true;
-			isForfeit = true;
-			roundFFOn = +round;
-		}
-			
-		// for (const data of rounds[round].descriptions) {
-		// 	const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
-		// 	try {
-		// 		if (data.delay) {
-		// 			await delay(data.delay);
-		// 		}
-		// await message.editMessage(newEmbed, { reattachOnEdit: true });
-		// 	} catch (err) {
-		// 		loggers.error(
-		// 			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
-		// 			err
-		// 		);
-		// 		if (roundStats) roundStats.isForfeit = true;
-		// 		isForfeit = true;
-		// 		roundFFOn = +round;
-		// 		break;
-		// 	}
+		if (canEndBattle) break;
+
+		// Need to fix this for optimization
+		// const battleRound = await processRoundDesc({
+		// 	round,
+		// 	rounds,
+		// 	message,
+		// 	title: embed.title || "",
+		// 	dx: 0,
+		// 	dy: prepareDX(0, rounds[round].descriptions)
+		// });
+		// if (!battleRound) {
+		// 	if (roundStats) roundStats.isForfeit = true;
+		// 	canEndBattle = true;
+		// 	roundFFOn = +round;
 		// }
+
+		for (const data of rounds[round].descriptions) {
+			if (roundStats?.isForfeit) break;
+			const newEmbed = recreateBattleEmbed(embed.title || "", data.description);
+			try {
+				await delay(1200);
+				await message.editMessage(newEmbed, { reattachOnEdit: true });
+			} catch (err) {
+				loggers.error(
+					"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+					err
+				);
+				if (roundStats) roundStats.isForfeit = true;
+				canEndBattle = true;
+				roundFFOn = +round;
+				break;
+			}
+		}
 	}
-	// if (roundFFOn && retries < BATTLE_FORFEIT_RETRIES) {
-	// 	context.channel?.sendMessage("Your battle has crashed, retrying...");
-	// 	let start = +roundFFOn - 1;
-	// 	if (start < 0) start = 0;
-	// 	const clonedKeys = [ "0", ...roundKeys ];
-	// 	const keys = clonedKeys.slice(start);
-	// 	const newRounds = keys.reduce((acc, r) => {
-	// 		acc[r] = rounds[r];
-	// 		return acc;
-	// 	}, {} as { [key: string]: SimulationRound; });
-	// 	retries = retries + 1;
-	// 	simulation.rounds = newRounds;
-	// 	delete roundStats?.isForfeit;
-	// 	return await visualizeSimulation({
-	// 		context,
-	// 		simulation,
-	// 		retries,
-	// 		attachments,
-	// 		roundStats 
-	// 	});
-	// }
+	if (roundFFOn && retries < BATTLE_FORFEIT_RETRIES) {
+		context.channel?.sendMessage("Your battle has crashed, retrying...");
+		let start = +roundFFOn - 1;
+		if (start < 0) start = 0;
+		const clonedKeys = [ "0", ...roundKeys ];
+		const keys = clonedKeys.slice(start);
+		const newRounds = keys.reduce((acc, r) => {
+			acc[r] = rounds[r];
+			return acc;
+		}, {} as { [key: string]: SimulationRound; });
+		retries = retries + 1;
+		simulation.rounds = newRounds;
+		delete roundStats?.isForfeit;
+		return await visualizeSimulation({
+			context,
+			simulation,
+			retries,
+			attachments,
+			roundStats,
+			authorId
+		});
+	}
 
 	return roundStats;
 }
@@ -315,8 +418,9 @@ function boostRaidBoss({
     enemyStats.totalStats.criticalDamage + critDmgRatio;
 	return {
 		enemyStats,
-		desc: `**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
-		"its **Critical Hit** chance and **Critical Hit Damage** will increase over time!" 
+		desc:
+      `**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
+      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time!",
 	};
 }
 
@@ -330,7 +434,7 @@ async function simulatePlayerTurns({
 	baseEnemyStats,
 	totalDamage,
 	isRaid,
-	simulation
+	simulation,
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     isRaid?: boolean;
@@ -352,7 +456,8 @@ async function simulatePlayerTurns({
 				});
 				simulation.rounds[round].descriptions.push({
 					description: desc,
-					delay: 1000
+					delay: 1000,
+					rawDescription: boost.desc,
 				});
 			}
 		}
@@ -383,7 +488,7 @@ async function simulatePlayerTurns({
 			opponentStats: isPlayerFirst ? enemyStats : playerStats,
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			round,
-			simulation
+			simulation,
 		});
 		// if (updatedStats.forfeit) {
 		// 	// Should never execute
@@ -439,7 +544,9 @@ async function simulatePlayerTurns({
 		});
 		simulation.rounds[round].descriptions.push({
 			description: desc,
-			delay: 1000
+			delay: 1000,
+			rawDescription: battleDescription,
+			showUpdatedDescription: true
 		});
 		isPlayerFirst = !isPlayerFirst;
 		if (updatedStats.damageDiff <= 0) {
@@ -451,7 +558,7 @@ async function simulatePlayerTurns({
 				basePlayerStats,
 				round,
 				isPlayerFirst,
-				simulation
+				simulation,
 			});
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
@@ -463,7 +570,7 @@ async function simulatePlayerTurns({
 				basePlayerStats,
 				round,
 				isPlayerFirst,
-				simulation
+				simulation,
 			});
 			break;
 		}
@@ -505,9 +612,10 @@ function updateBattleDesc({
   isStunned?: boolean;
   isAsleep?: boolean;
 }) {
-	let desc = `${turn === 0 ? `${description}\n` : `**[ROUND ${round}**]\n`}${
+	let desc = `${turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`}${
 		emoji.fast
 	}`;
+	// let desc = description;
 
 	const playerDesc = `**${
 		isPlayerFirst ? playerStats.name : enemyStats.name
@@ -532,7 +640,7 @@ function updateBattleDesc({
 						: ""
 		}\n${
 			damageDiff !== 0 && turn === 0
-				? `${enemyDesc} strikes back fiercely! ${emoji.angry}\n-----------------------`
+				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`
 				: ""
 		}`;
 	}
