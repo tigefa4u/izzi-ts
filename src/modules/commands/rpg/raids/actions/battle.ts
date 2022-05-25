@@ -1,6 +1,6 @@
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
-import { ENERGY_PER_ATTACK } from "helpers/constants";
+import { ENERGY_PER_ATTACK, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";
@@ -108,8 +108,13 @@ export const battleRaidBoss = async ({
 			return;
 		}
 		let multiplier = 1;
-		if (args.shift() === "all")
+		const paramArgs = (args[0] || "").toLowerCase();
+		if (paramArgs === "all") {
+			args.shift();
 			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
+		}
+
+		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength * ((multiplier * 12.5) / 100)
 		);
@@ -119,7 +124,8 @@ export const battleRaidBoss = async ({
 			playerStats: playerStats.stats,
 			enemyStats,
 			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
-			isRaid: true
+			isRaid: true,
+			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {

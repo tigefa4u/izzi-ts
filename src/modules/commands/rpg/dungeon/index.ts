@@ -14,6 +14,7 @@ import { randomElementFromArray } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
 	DUNGEON_DEFAULTS,
+	HIDE_VISUAL_BATTLE_ARG,
 	MANA_PER_BATTLE,
 } from "helpers/constants";
 import {
@@ -31,7 +32,7 @@ import { handleDungeonBattleOutcome } from "./rewards";
 import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
 import { addTeamEffectiveness } from "helpers/adventure";
 
-export const dungeon = async ({ context, client, options }: BaseProps) => {
+export const dungeon = async ({ context, client, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
 		const seasonEnd = await Cache.get("dg-season-end");
@@ -111,11 +112,13 @@ export const dungeon = async ({ context, client, options }: BaseProps) => {
 		inBattle = await getCooldown(author.id, "mana-battle");
 		if (inBattle) return;
 		setCooldown(author.id, "mana-battle", 60 * 5);
+		const hideBt = (args.shift() || "").toLowerCase();
 		const result = await simulateBattle({
 			context,
 			playerStats: playerTeamStats,
 			enemyStats,
-			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`
+			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`,
+			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
 		await refetchAndUpdateUserMana(author.id);
 		clearCooldown(author.id, "mana-battle");

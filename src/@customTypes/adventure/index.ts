@@ -24,6 +24,9 @@ export type SimulateBattleProps = {
   playerStats: BattleStats;
   enemyStats: BattleStats;
   title: string;
+  options?: {
+    hideVisualBattle: boolean;
+  };
 };
 
 type StatStateProps = {

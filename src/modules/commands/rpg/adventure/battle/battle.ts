@@ -49,6 +49,7 @@ export const simulateBattle = async ({
 	enemyStats,
 	title = "__TEAM BATTLE__",
 	isRaid,
+	options
 }: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
@@ -137,14 +138,16 @@ export const simulateBattle = async ({
 				break;
 			}
 		}
-		roundStats = await visualizeSimulation({
-			simulation,
-			context,
-			attachments: attachmentCards,
-			roundStats: clone(roundStats),
-			retries: 0,
-			authorId: playerStats.id
-		});
+		if (!options?.hideVisualBattle) {
+			roundStats = await visualizeSimulation({
+				simulation,
+				context,
+				attachments: attachmentCards,
+				roundStats: clone(roundStats),
+				retries: 0,
+				authorId: playerStats.id
+			});
+		}
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
 		battlesPerChannel.set(context.channel.id, (battlesInChannel || 1) - 1);
 		if (roundStats) {
@@ -313,7 +316,7 @@ async function visualizeSimulation({
 		context.channel,
 		[ {
 			style: "PRIMARY",
-			label: "Fast Forward Battle",
+			label: "Finish Battle",
 			params: {}
 		}, {
 			style: "DANGER",

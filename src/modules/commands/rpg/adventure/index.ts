@@ -11,7 +11,7 @@ import { createEmbed } from "commons/embeds";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
 import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
-import { DEFAULT_ERROR_TITLE, MANA_PER_BATTLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, HIDE_VISUAL_BATTLE_ARG, MANA_PER_BATTLE } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -125,7 +125,8 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		if (zone.metadata?.assets) {
 			enemyCard.filepath = zone.metadata.assets.small.filepath;
 		}
-		if (args && (args.shift() || "").toLowerCase() === "all") {
+		const paramArgs = (args.shift() || "").toLowerCase();
+		if (args && (paramArgs === "all")) {
 			const inCd = await getCooldown(author.id, "mana-battle");
 			if (inCd) return;
 			if (
@@ -239,6 +240,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			playerStats: playerBase,
 			enemyStats: enemyBase,
 			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
+			options: { hideVisualBattle: paramArgs === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
 		clearCooldown(author.id, "mana-battle");
 		refetchAndUpdateUserMana(author.id);
