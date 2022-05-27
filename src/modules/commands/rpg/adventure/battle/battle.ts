@@ -49,7 +49,7 @@ export const simulateBattle = async ({
 	enemyStats,
 	title = "__TEAM BATTLE__",
 	isRaid,
-	options
+	options,
 }: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
@@ -109,7 +109,7 @@ export const simulateBattle = async ({
 					{
 						description: desc,
 						delay: 1000,
-						rawDescription: updatedDescription
+						rawDescription: updatedDescription,
 					},
 				],
 				canSimulateRound: true,
@@ -145,7 +145,7 @@ export const simulateBattle = async ({
 				attachments: attachmentCards,
 				roundStats: clone(roundStats),
 				retries: 0,
-				authorId: playerStats.id
+				authorId: playerStats.id,
 			});
 		}
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
@@ -210,7 +210,10 @@ async function sendBattleDescription({
 	try {
 		await delay(1200);
 		await message.editMessage(newEmbed, { reattachOnEdit: true });
-		return rounds[round].descriptions.slice(sliceX, rounds[round].descriptions.length);
+		return rounds[round].descriptions.slice(
+			sliceX,
+			rounds[round].descriptions.length
+		);
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
@@ -220,8 +223,12 @@ async function sendBattleDescription({
 	}
 }
 
-const prepareDX = (prevIndex = 0, roundDescriptions: Simulation["rounds"][""]["descriptions"]) => {
-	const index = roundDescriptions.slice(prevIndex, roundDescriptions.length)
+const prepareDX = (
+	prevIndex = 0,
+	roundDescriptions: Simulation["rounds"][""]["descriptions"]
+) => {
+	const index = roundDescriptions
+		.slice(prevIndex, roundDescriptions.length)
 		.findIndex((d) => d.showUpdatedDescription === true);
 
 	if (index > 0) {
@@ -232,20 +239,20 @@ const prepareDX = (prevIndex = 0, roundDescriptions: Simulation["rounds"][""]["d
 };
 
 type R = {
-	rounds: Simulation["rounds"];
-	round: string;
-	message: Message;
-	title: string;
-	dx: number;
-	dy: number;
-}
+  rounds: Simulation["rounds"];
+  round: string;
+  message: Message;
+  title: string;
+  dx: number;
+  dy: number;
+};
 const processRoundDesc = async ({
 	round,
 	rounds,
 	message,
 	title,
 	dx,
-	dy
+	dy,
 }: R): Promise<boolean> => {
 	const descriptionsClone = rounds[round].descriptions;
 	const battleRound = await sendBattleDescription({
@@ -263,7 +270,7 @@ const processRoundDesc = async ({
 			title,
 			dx: dy,
 			dy: prepareDX(dy, descriptionsClone),
-			message
+			message,
 		});
 	}
 	if (!battleRound) {
@@ -286,7 +293,7 @@ async function visualizeSimulation({
 	attachments,
 	roundStats,
 	retries,
-	authorId
+	authorId,
 }: V): Promise<BattleStats | undefined> {
 	const canvas = await timerify(attachments);
 	if (!canvas) {
@@ -314,15 +321,18 @@ async function visualizeSimulation({
 	let canEndBattle = false;
 	const buttons = await customButtonInteraction(
 		context.channel,
-		[ {
-			style: "PRIMARY",
-			label: "Finish Battle",
-			params: {}
-		}, {
-			style: "DANGER",
-			label: "Forfeit",
-			params: { isForfeit: true }
-		} ],
+		[
+			{
+				style: "PRIMARY",
+				label: "Finish Battle",
+				params: {},
+			},
+			{
+				style: "DANGER",
+				label: "Forfeit",
+				params: { isForfeit: true },
+			},
+		],
 		authorId,
 		({ isForfeit }) => {
 			canEndBattle = true;
@@ -347,6 +357,16 @@ async function visualizeSimulation({
 
 	let roundFFOn: number | undefined;
 	for (const round of roundKeys) {
+		if (canEndBattle && !roundStats?.isForfeit) {
+			await delay(1200);
+			const lastIndex = roundKeys.length;
+			const lastDesc =
+        rounds[lastIndex].descriptions[
+        	rounds[lastIndex].descriptions.length - 1
+        ].description;
+			const newEmbed = recreateBattleEmbed(embed.title || "", lastDesc);
+			await message.editMessage(newEmbed, { reattachOnEdit: true });
+		}
 		if (canEndBattle) break;
 
 		// Need to fix this for optimization
@@ -391,7 +411,7 @@ async function visualizeSimulation({
 		const newRounds = keys.reduce((acc, r) => {
 			acc[r] = rounds[r];
 			return acc;
-		}, {} as { [key: string]: SimulationRound; });
+		}, {} as { [key: string]: SimulationRound });
 		retries = retries + 1;
 		simulation.rounds = newRounds;
 		delete roundStats?.isForfeit;
@@ -401,7 +421,7 @@ async function visualizeSimulation({
 			retries,
 			attachments,
 			roundStats,
-			authorId
+			authorId,
 		});
 	}
 
@@ -549,7 +569,7 @@ async function simulatePlayerTurns({
 			description: desc,
 			delay: 1000,
 			rawDescription: battleDescription,
-			showUpdatedDescription: true
+			showUpdatedDescription: true,
 		});
 		isPlayerFirst = !isPlayerFirst;
 		if (updatedStats.damageDiff <= 0) {
@@ -615,9 +635,9 @@ function updateBattleDesc({
   isStunned?: boolean;
   isAsleep?: boolean;
 }) {
-	let desc = `${turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`}${
-		emoji.fast
-	}`;
+	let desc = `${
+		turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`
+	}${emoji.fast}`;
 	// let desc = description;
 
 	const playerDesc = `**${

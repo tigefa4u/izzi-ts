@@ -1,5 +1,5 @@
 import { BattleProcessProps } from "@customTypes/adventure";
-import { randomElementFromArray } from "helpers";
+import { probability, randomElementFromArray } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { processItemStats } from "..";
 
@@ -63,10 +63,11 @@ export const seekersArmguard = ({
 			playerStats.totalStats,
 			card.itemStats
 		);
-		playerStats.totalStats.restringHarbingerOfDeathPercent = card.itemStats.resist;
+		playerStats.totalStats.resistingHarbingerOfDeathPercent = card.itemStats.resist;
 		basePlayerStats.totalStats = playerStats.totalStats;
 		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points, " +
-		`as well as Grants __${card.itemStats.resist}%__ resistance against **Harbinger of Death**`;
+		`as well as Grants __${card.itemStats.resist}%__ resistance as well as __32%__ **EVASION** ` + 
+		"chances against **Harbinger of Death**. Also a grants __30%__ chance to put the enemy to **SLEEP**";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -82,6 +83,33 @@ export const seekersArmguard = ({
 			isItem: true,
 			simulation
 		});
+	} else {
+		playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+		if (round == playerStats.totalStats.previousRound) {
+			if (opponentStats.totalStats.isAsleep) {
+				opponentStats.totalStats.isAsleep = false;
+			}
+		}
+		const sleepChance = [ 30, 100 ];
+		const sleeps = [ true, false ];
+		if (sleeps[probability(sleepChance)]) {
+			playerStats.totalStats.previousRound = round;
+			opponentStats.totalStats.isAsleep = true;
+			prepSendAbilityOrItemProcDescription({
+				playerStats,
+				enemyStats: opponentStats,
+				card,
+				message,
+				embed,
+				round,
+				isDescriptionOnly: false,
+				description: `**${opponentStats.name}** is __Asleep__, affected by **Stormrazor**`,
+				totalDamage: 0,
+				isPlayerFirst,
+				isItem: true,
+				simulation
+			}); 
+		}
 	}
 	return {
 		playerStats,

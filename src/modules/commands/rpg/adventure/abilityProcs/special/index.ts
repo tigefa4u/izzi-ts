@@ -22,8 +22,8 @@ export const harbingerOfDeath = ({
 	// ally stats for the same %
 	if (!card) return;
 	let proc = true;
-	if (opponentStats.totalStats.restringHarbingerOfDeathPercent) {
-		const chances = [ opponentStats.totalStats.restringHarbingerOfDeathPercent, 100 ];
+	if (opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
+		const chances = [ opponentStats.totalStats.resistingHarbingerOfDeathPercent, 100 ];
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
@@ -85,6 +85,26 @@ export const harbingerOfDeath = ({
 			embed,
 			round,
 			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation
+		});
+	}
+	if (playerStats.totalStats.isHarbingerOfDeath && opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
+		opponentStats.totalStats.evasion = 1.32;
+		const desc = `${playerStats.name}'s **${card.name}** is affected by ${emoji.seekersarmguard} ` +
+		"**Seekers Armguard** increasing " +
+		`**EVASION** chances of ${opponentStats.name} by __32%__`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: true,
 			description: desc,
 			totalDamage: 0,
 			isPlayerFirst,

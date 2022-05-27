@@ -216,7 +216,7 @@ export const tornado = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
         
-		const desc = `deals __${abilityDamage}__ **True Wind** Damage.`;
+		const desc = `deals __${abilityDamage}__ True Damage.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

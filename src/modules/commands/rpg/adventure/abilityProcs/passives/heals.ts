@@ -64,7 +64,9 @@ export const chronobreak = ({
 	card,
 	simulation
 }: BattleProcessProps) => {
-	if (!card ||  !playerStats.totalStats.originalHp) return;
+	// tempora rewind restoring hp and enemy is caught in time dialation taking 20% damage
+	if (!card ||  !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
+	let abilityDamage, opponentDamageDiff;
 	if (round % 3 === 0) {
 		let restoredHp = (playerStats.totalStats.previousHp || 0) - playerStats.totalStats.strength;
 		if (restoredHp < 0 || isNaN(restoredHp)) restoredHp = 0;
@@ -79,7 +81,27 @@ export const chronobreak = ({
 		const processedHpBar = processHpBar(playerStats.totalStats, damageDiff);
 		playerStats.totalStats.health = processedHpBar.health;
 		playerStats.totalStats.strength = processedHpBar.strength;
-		const desc = `causing a temporal rewind restoring __${restoredHp}__ **HP**`;
+
+		const percent = calcPercentRatio(15, card.rank);
+		abilityDamage = getRelationalDiff(
+			opponentStats.totalStats.vitality,
+			percent
+		);
+		opponentStats.totalStats.strength =
+        opponentStats.totalStats.strength - abilityDamage;
+		if (opponentStats.totalStats.strength <= 0)
+			opponentStats.totalStats.strength = 0;
+		opponentDamageDiff = relativeDiff(
+			opponentStats.totalStats.strength,
+			opponentStats.totalStats.originalHp
+		);
+		if (opponentDamageDiff <= 0) opponentDamageDiff = 0;
+		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, opponentDamageDiff);
+		opponentStats.totalStats.health = processedOpponentHpBar.health;
+		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
+
+		const desc = `causing a temporal rewind restoring __${restoredHp}__ **HP**. ` +
+		`${opponentStats.name} is struck by **Time Dilation** taking __${abilityDamage}__ Damage.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
