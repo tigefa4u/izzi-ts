@@ -1,4 +1,5 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import emoji from "emojis/emoji";
 import { probability, randomElementFromArray } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { processItemStats } from "..";
@@ -84,16 +85,9 @@ export const seekersArmguard = ({
 			simulation
 		});
 	} else {
-		playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
-		if (round == playerStats.totalStats.previousRound) {
-			if (opponentStats.totalStats.isAsleep) {
-				opponentStats.totalStats.isAsleep = false;
-			}
-		}
 		const sleepChance = [ 30, 100 ];
 		const sleeps = [ true, false ];
 		if (sleeps[probability(sleepChance)]) {
-			playerStats.totalStats.previousRound = round;
 			opponentStats.totalStats.isAsleep = true;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
@@ -109,6 +103,28 @@ export const seekersArmguard = ({
 				isItem: true,
 				simulation
 			}); 
+		}
+	}
+	if (opponentStats.totalStats.isAsleep) {
+		const temp = [ true, false ];
+		const wakeupProb = [ 55, 45 ];
+		if (temp[probability(wakeupProb)]) {
+			opponentStats.totalStats.isAsleep = false;
+			const desc = `**__${opponentStats.name}__** has snapped out of ${emoji.sleep} **Sleep!**`;
+			prepSendAbilityOrItemProcDescription({
+				playerStats,
+				enemyStats: opponentStats,
+				card,
+				message,
+				embed,
+				round,
+				isDescriptionOnly: true,
+				description: desc,
+				totalDamage: 0,
+				isPlayerFirst,
+				isItem: false,
+				simulation
+			});
 		}
 	}
 	return {
