@@ -8,7 +8,7 @@ export const createMarketList = (array: IMarketProps[]) => {
 	const fields: EmbedFieldData[] = [];
 	array.map((item) => {
 		fields.push({
-			name: `${item.price} ${emoji.gold} | ${item.name} Level ${
+			name: `${item.price} ${emoji.gold} | ${titleCase(item.name)} Level ${
 				item.character_level
 			} ${emojiMap(item.type)} ${emojiMap(item.abilityname)}`,
 			value: `${titleCase(item.rank)} | Souls ${item.souls} | ID: ${

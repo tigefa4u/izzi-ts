@@ -160,7 +160,7 @@ export const refetchAndUpdateUserMana = async (id: string, manaCost = MANA_PER_B
 
 export const validateFiveMinuteTimer = async (cd: { timestamp: number; key: string; }) => {
 	const dt = new Date().valueOf();
-	if (new Date(cd.timestamp).valueOf() > dt) {
+	if (new Date(cd.timestamp).valueOf() < dt) {
 		await Cache.del(cd.key);
 	}
 	return;
