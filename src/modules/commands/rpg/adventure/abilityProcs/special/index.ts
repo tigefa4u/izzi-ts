@@ -92,7 +92,7 @@ export const harbingerOfDeath = ({
 			simulation
 		});
 	}
-	if (playerStats.totalStats.isHarbingerOfDeath && opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
+	if (playerStats.totalStats.isHarbingerOfDeath && opponentStats.totalStats.canEvadeHarbingerOfDeath) {
 		opponentStats.totalStats.evasion = 1.32;
 		const desc = `${playerStats.name}'s **${card.name}** is affected by ${emoji.seekersarmguard} ` +
 		"**Seekers Armguard** increasing " +

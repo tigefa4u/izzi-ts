@@ -28,12 +28,9 @@ export const mana = async function ({
 		const result = await getProfileInfo("mana", author.id);
 		const dt = new Date();
 		const timestamp = new Date(result.metadata?.mana_refilled_at || "") || dt;
-		let refilled_at = timestamp.setMinutes(
-			timestamp.getMinutes() + (result.metadata.is_premium ? 2 : 3)
+		const refilled_at = timestamp.setMinutes(
+			timestamp.getMinutes() + 4
 		);
-		if (result.metadata.is_premium) {
-			refilled_at = timestamp.setSeconds(timestamp.getSeconds() + 30);
-		}
 		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
 		let remainingMinutes = Math.floor(remainingTime % 60);
 		if (remainingMinutes < 0) {

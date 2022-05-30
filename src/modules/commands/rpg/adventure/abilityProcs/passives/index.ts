@@ -23,13 +23,13 @@ export const wrecker = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// 'At the start of the match increase your __ATK__ by __90%__. Your attack decreases by 12% each turn.'
+	// 'At the start of the match increase your __ATK__ by __102%__. Your attack decreases by 17% each turn.'
 	if (round === 1 && !playerStats.totalStats.isWrecker) {
 		playerStats.totalStats.isWrecker = true;
 		card.isUseWreckerPassive = true;
 		playerStats.totalStats.vitality =
       playerStats.totalStats.vitality - card.stats.vitality;
-		const percent = calcPercentRatio(90, card.rank);
+		const percent = calcPercentRatio(102, card.rank);
 		const ratio = getRelationalDiff(card.stats.vitality, percent);
 		const atkInc = card.stats.vitality + ratio;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + atkInc;
@@ -50,7 +50,7 @@ export const wrecker = ({
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
-			const inc = calcPercentRatio(12, card.rank);
+			const inc = calcPercentRatio(17, card.rank);
 			const decRatio = getRelationalDiff(card.stats.vitality, inc);
 			playerStats.totalStats.vitality =
         playerStats.totalStats.vitality - decRatio;
@@ -76,7 +76,7 @@ export const berserk = ({
 	simulation
 }: any) => {
 	if (!card) return;
-	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __18%__
+	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __20%__
 	const playerHpRatio = playerStats.totalStats.strength / 100;
 	const enemyHpRatio = opponentStats.totalStats.strength / 100;
 	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound ++ : null;
@@ -91,7 +91,7 @@ export const berserk = ({
         playerStats.totalStats[temp] -
         (card.stats[`${temp}Inc`] || card.stats[temp]);
 		}
-		const percent = calcPercentRatio(18, card.rank);
+		const percent = calcPercentRatio(20, card.rank);
 
 		const ratio =
       card.stats[temp] *
@@ -142,14 +142,14 @@ export const fightingSpirit = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// while your hp is low increase the **ATK** of all allies by __8%__
+	// while your hp is low increase the **ATK** of all allies by __10%__
 	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (30 / 100));
 	if (
 		playerStats.totalStats.strength <= hpRatio &&
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(8, card.rank);
+		const percent = calcPercentRatio(10, card.rank);
 		if (!basePlayerStats.totalStats.fs) basePlayerStats.totalStats.fs = 1;
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,

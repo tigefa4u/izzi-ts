@@ -1,7 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 
 export const balancingStrike = ({
 	playerStats,
@@ -20,15 +20,16 @@ export const balancingStrike = ({
 	)
 		return;
 	// Deal elemental damage equal to __25%__ of your ATK as true damage, and take 1/3 of 
-	// the damage dealt to yourself. If your enemy is stunned you deal __15%__ more damage.
+	// the damage dealt to yourself. If your spd is more than you deal __25%__ more damage.
 	let damageDiff;
 	let abilityDamage;
 	let playerDamageDiff;
 	if (round % 2 === 0 && !playerStats.totalStats.isBstrike) {
 		playerStats.totalStats.isBstrike = true;
 		let num = 25;
-		if (opponentStats.totalStats.isStunned) {
-			num = 40;
+		const hasMoreSpeed = compare(playerStats.totalStats.dexterity, opponentStats.totalStats.dexterity);
+		if (hasMoreSpeed) {
+			num = 50;
 		}
 		const percent = calcPercentRatio(num, card.rank);
 		const relDiff = getRelationalDiff(playerStats.totalStats.vitality, percent);

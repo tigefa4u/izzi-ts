@@ -18,7 +18,7 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 		const author = options.author;
 		const cid = Number(args.shift());
 		const itemId = Number(args.shift());
-		if (!cid || !itemId) return;
+		if (!cid || !itemId || isNaN(cid) || isNaN(itemId)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const collectionDataByRow = await getCardInfoByRowNumber({
@@ -83,7 +83,7 @@ export const unEquip = async ({ context, client, options, args }: BaseProps) => 
 	try {
 		const author = options.author;
 		const id = Number(args.shift());
-		if (!id) return;
+		if (!id || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const collectionDataByRow = await getCardInfoByRowNumber({

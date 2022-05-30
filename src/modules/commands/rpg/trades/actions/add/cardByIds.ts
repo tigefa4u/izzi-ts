@@ -28,7 +28,7 @@ export const addCardByIds = async ({
 			.shift()
 			?.split(",")
 			.map((i) => Number(i));
-		if (!ids) return;
+		if (!ids || !ids.every(Number)) return;
 		const options = {
 			user_id: trader.user_id,
 			row_number: ids,

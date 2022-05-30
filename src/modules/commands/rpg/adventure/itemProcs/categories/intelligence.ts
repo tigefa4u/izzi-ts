@@ -22,7 +22,8 @@ export const sapphiresStaff = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "**Ability:** Grants additional (+60) **INT** points.";
+		const desc = "**Ability:** Grants additional (+60) **INT** points " +
+		"as well as __25%__ chance to put the enemy to **SLEEP**";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -39,51 +40,6 @@ export const sapphiresStaff = ({
 			simulation
 		});
 
-		return {
-			playerStats,
-			opponentStats,
-			basePlayerStats,
-		};
-	}
-};
-
-export const seekersArmguard = ({
-	playerStats,
-	opponentStats,
-	message,
-	embed,
-	round,
-	isPlayerFirst,
-	card,
-	basePlayerStats,
-	simulation
-}: BattleProcessProps) => {
-	if (!card || !card.itemStats) return;
-	else if (round === 1) {
-		playerStats.totalStats = processItemStats(
-			playerStats.totalStats,
-			card.itemStats
-		);
-		playerStats.totalStats.resistingHarbingerOfDeathPercent = card.itemStats.resist;
-		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points, " +
-		`as well as Grants __${card.itemStats.resist}%__ resistance as well as __32%__ **EVASION** ` + 
-		"chances against **Harbinger of Death**. Also a grants __30%__ chance to put the enemy to **SLEEP**";
-
-		prepSendAbilityOrItemProcDescription({
-			playerStats,
-			enemyStats: opponentStats,
-			card,
-			message,
-			embed,
-			round,
-			isDescriptionOnly: false,
-			description: desc,
-			totalDamage: 0,
-			isPlayerFirst,
-			isItem: true,
-			simulation
-		});
 	} else {
 		if (opponentStats.totalStats.isAsleep) {
 			const temp = [ true, false ];
@@ -107,7 +63,7 @@ export const seekersArmguard = ({
 				});
 			}
 		}
-		const sleepChance = [ 30, 100 ];
+		const sleepChance = [ 25, 100 ];
 		const sleeps = [ true, false ];
 		if (sleeps[probability(sleepChance)] && !opponentStats.totalStats.isAsleep) {
 			playerStats.totalStats.previousRound = round;
@@ -135,6 +91,52 @@ export const seekersArmguard = ({
 	};
 };
 
+export const seekersArmguard = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	basePlayerStats,
+	simulation
+}: BattleProcessProps) => {
+	if (!card || !card.itemStats) return;
+	else if (round === 1) {
+		playerStats.totalStats = processItemStats(
+			playerStats.totalStats,
+			card.itemStats
+		);
+		playerStats.totalStats.canEvadeHarbingerOfDeath = true;
+		playerStats.totalStats.resistingHarbingerOfDeathPercent = card.itemStats.resist;
+		basePlayerStats.totalStats = playerStats.totalStats;
+		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points, " +
+		`as well as Grants __${card.itemStats.resist}%__ resistance as well as __32%__ **EVASION** ` + 
+		"chances against **Harbinger of Death**.";
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: true,
+			simulation
+		});
+	}
+	return {
+		playerStats,
+		opponentStats,
+		basePlayerStats,
+	};
+};
+
 export const farsightOrb = ({
 	playerStats,
 	opponentStats,
@@ -153,7 +155,7 @@ export const farsightOrb = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Its **INT** is increased by __35__ points. **Ability:** Grants __9%__ **CRIT Chance**.";
+		const desc = "Its **INT** is increased by __35__ points. **Ability:** Grants __15%__ **CRIT Chance**.";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

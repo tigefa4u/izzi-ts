@@ -5,16 +5,24 @@ import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";
 import * as battleInChannel from "../../adventure/battle/battlesPerChannelState";
-import { validateAndPrepareTeam, } from "helpers/teams";
+import { validateAndPrepareTeam } from "helpers/teams";
 import { simulateBattle } from "../../adventure/battle/battle";
 import { clone } from "utility";
 import { BattleStats } from "@customTypes/adventure";
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { processHpBar, relativeDiff, validateFiveMinuteTimer } from "helpers/battle";
+import {
+	processHpBar,
+	relativeDiff,
+	validateFiveMinuteTimer,
+} from "helpers/battle";
 import { addTeamEffectiveness, prepareHPBar } from "helpers/adventure";
-import { getRaid, updateLobby, updateRaid } from "api/controllers/RaidsController";
+import {
+	getRaid,
+	updateLobby,
+	updateRaid,
+} from "api/controllers/RaidsController";
 import { Canvas } from "canvas";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { createAttachment } from "commons/attachments";
@@ -38,7 +46,7 @@ export const battleRaidBoss = async ({
 		if (inBattle) {
 			await validateFiveMinuteTimer({
 				timestamp: inBattle.timestamp,
-				key: `cooldown::${isEvent ? "event" : "raid"}-battle-${author.id}` 
+				key: `cooldown::${isEvent ? "event" : "raid"}-battle-${author.id}`,
 			});
 			context.channel?.sendMessage("Your battle is still in progress");
 			return;
@@ -74,7 +82,7 @@ export const battleRaidBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-				`You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
 		}
@@ -90,11 +98,14 @@ export const battleRaidBoss = async ({
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
 		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
 		enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
-		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+		const {
+			playerStats: effectiveStats,
+			opponentStats: opponentEffectiveStats,
+		} = await addTeamEffectiveness({
 			cards: playerStats.stats.cards,
 			enemyCards: enemyStats.cards,
 			playerStats: playerStats.stats.totalStats,
-			opponentStats: enemyStats.totalStats 
+			opponentStats: enemyStats.totalStats,
 		});
 		playerStats.stats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
@@ -118,14 +129,14 @@ export const battleRaidBoss = async ({
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength * ((multiplier * 12.5) / 100)
 		);
-		setCooldown(author.id, `${isEvent ? "event" : "raid" }-battle`, 60 * 5);
+		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
 			context,
 			playerStats: playerStats.stats,
 			enemyStats,
 			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
 			isRaid: true,
-			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
+			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {
@@ -136,22 +147,30 @@ export const battleRaidBoss = async ({
 		}
 		const refetchRaid = await getRaid({ id: currentRaid.id });
 		if (!refetchRaid) {
-			throw new Error("Unable to validate raid: " + currentRaid.id);
+			context.channel?.sendMessage(
+				"Your Raid has either fled or did not exist. " +
+          "If you think your raid did not flee, please report in the Bugs channel. Lobby Code: " +
+          currentRaid.id
+			);
+			loggers.error(
+				`Unable to validate raid with id: ${
+					currentRaid.id
+				}, Raid -> ${JSON.stringify(currentRaid)}`,
+				{}
+			);
+			return;
 		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
-			await consumeEnergy(
-				updateObj.id,
-				user.id,
-				multiplier,
-				0
-			);
+			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
 				context.channel?.sendMessage("Unable to calculate total damage");
 				return;
 			}
-			result.totalDamage = Math.floor(Math.ceil(result.totalDamage * 1.35) * multiplier);
+			result.totalDamage = Math.floor(
+				Math.ceil(result.totalDamage * 1.35) * multiplier
+			);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
 			const updatedLobby = await consumeEnergy(
 				updateObj.id,
@@ -164,17 +183,17 @@ export const battleRaidBoss = async ({
 			}
 
 			updateObj.stats.remaining_strength =
-		updateObj.stats.remaining_strength - result.totalDamage;
+        updateObj.stats.remaining_strength - result.totalDamage;
 			if (updateObj.stats.remaining_strength < 0)
 				updateObj.stats.remaining_strength = 0;
 		}
 		await updateRaid({ id: updateObj.id }, { stats: updateObj.stats });
-		
+
 		await processRaidLoot({
 			client,
 			author,
 			raid: updateObj,
-			isEvent
+			isEvent,
 		});
 
 		await processRaidResult({
@@ -182,7 +201,7 @@ export const battleRaidBoss = async ({
 			updateObj,
 			author,
 			isEvent,
-			channel: context.channel
+			channel: context.channel,
 		});
 		return;
 	} catch (err) {
@@ -206,7 +225,7 @@ async function processRaidResult({
 	updateObj,
 	author,
 	isEvent,
-	channel
+	channel,
 }: R) {
 	const damageDiff = relativeDiff(
 		updateObj.stats.remaining_strength,
@@ -224,15 +243,20 @@ async function processRaidResult({
 	} else {
 		bossCanvas = await createBattleCanvas(updateObj.raid_boss, {
 			isSingleRow: true,
-			version: "small" 
+			version: "small",
 		});
 	}
 	if (!bossCanvas) {
-	    channel?.sendMessage("Your battle has been processed, but we were not able to show the result.");
+		channel?.sendMessage(
+			"Your battle has been processed, but we were not able to show the result."
+		);
 		return;
 	}
 
-	const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
+	const attachment = createAttachment(
+		bossCanvas.createJPEGStream(),
+		"boss.jpg"
+	);
 	const embed = createEmbed(author)
 		.setTitle(`${emoji.welldone} Total Damage Dealt`)
 		.setDescription(
@@ -240,8 +264,11 @@ async function processRaidResult({
 				result.totalDamage || 0
 			}__** Damage to ${isEvent ? "Event" : "Raid"} Boss\n\n**${
 				updateObj.stats.remaining_strength
-			} / ${updateObj.stats.original_strength} ${emoji.hp}**\n${fakeHp.map((i) => i).join("")}`
-		).setThumbnail("attachment://boss.jpg")
+			} / ${updateObj.stats.original_strength} ${emoji.hp}**\n${fakeHp
+				.map((i) => i)
+				.join("")}`
+		)
+		.setThumbnail("attachment://boss.jpg")
 		.attachFiles([ attachment ]);
 
 	channel?.sendMessage(embed);
@@ -273,7 +300,7 @@ async function consumeEnergy(
 	await updateLobby({
 		raid_id: raid.id,
 		user_id,
-		data: member 
+		data: member,
 	});
 
 	return lobby;

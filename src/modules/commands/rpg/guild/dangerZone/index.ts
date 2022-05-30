@@ -3,9 +3,8 @@ import {
 	ConfirmationInteractionParams,
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { delGuildItems } from "api/controllers/GuildItemsController";
-import { delAllGuildMembers, delGuildMember } from "api/controllers/GuildMembersController";
-import { updateGuild } from "api/controllers/GuildsController";
+import { delGuildMember } from "api/controllers/GuildMembersController";
+import { disbandAndBackupGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -33,30 +32,7 @@ async function validateAndDisbandGuild(
 	});
 	if (!validGuild) return;
 	if (options?.isConfirm) {
-		const guildbackUp = {
-			guild_stats: validGuild.guild.guild_stats,
-			guild_name: validGuild.guild.guild_name,
-			item_stats: validGuild.guild.item_stats,
-			guild_level: validGuild.guild.guild_level,
-			gold: validGuild.guild.gold,
-			ban_reason: validGuild.guild.ban_reason,
-			is_banned: validGuild.guild.is_banned
-		};
-		await Promise.all([ delAllGuildMembers({ guild_id: validGuild.guild.id }),
-			delGuildItems({ guild_id: validGuild.guild.id }),
-			updateGuild(
-				{ id: validGuild.guild.id },
-				{
-					gold: 0,
-					guild_stats: null,
-					metadata: JSON.stringify(guildbackUp),
-					guild_level: 0,
-					name: null,
-					points: 0,
-					item_stats: null
-				}
-			) ]);
-		
+		await disbandAndBackupGuild({ guild: validGuild.guild });
 		params.extras.context.channel?.sendMessage(
 			"You have disbanded your guild."
 		);

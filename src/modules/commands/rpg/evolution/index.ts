@@ -29,7 +29,7 @@ async function verifyAndProcessEvolution(
 	options?: ConfirmationInteractionOptions
 ) {
 	const id = params.extras?.id;
-	if (!id) return;
+	if (!id || isNaN(id)) return;
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
 	const collection = await getCardInfoByRowNumber({

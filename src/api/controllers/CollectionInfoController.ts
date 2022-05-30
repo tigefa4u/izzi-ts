@@ -1,4 +1,7 @@
-import { CollectionCardInfoByRowNumberParams, CollectionCardInfoProps } from "@customTypes/collections";
+import {
+	CollectionCardInfoByRowNumberParams,
+	CollectionCardInfoProps,
+} from "@customTypes/collections";
 import { SkinProps } from "@customTypes/skins";
 import loggers from "loggers";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
@@ -12,7 +15,11 @@ export const getCardInfoByRowNumber = async (
 	try {
 		if (!params.row_number) {
 			return;
-		} else if (typeof params.row_number === "object" && params.row_number.length <= 0) {
+		} else if (
+			typeof params.row_number === "object" &&
+      params.row_number.length <= 0 &&
+      !params.row_number.every(Number)
+		) {
 			return;
 		}
 		let skinArr: undefined | SkinProps[];
@@ -21,64 +28,76 @@ export const getCardInfoByRowNumber = async (
 		}
 		const result = await Collections.getByRowNumber(params);
 		if (result.length > 0) {
-			const resp: CollectionCardInfoProps[] = await Promise.all(result.map(async (data) => {
-				const charainfo = await getCharacterInfo({
-					ids: [ data.character_id ],
-					rank: data.rank 
-				});
-				if (!charainfo || charainfo.length <= 0) {
-					throw new Error("Character not found for id: " + data.character_id);
-				}
-				const characterInfo = charainfo[0];
-				if (skinArr) {
-					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
-					if (idx >= 0) {
-						characterInfo.filepath = skinArr[idx].filepath;
-						if (skinArr[idx].metadata?.assets) {
-							const skinMeta = {
-								...skinArr[idx].metadata,
-								assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
-							};
-							characterInfo.metadata = skinMeta;
+			const resp: CollectionCardInfoProps[] = await Promise.all(
+				result.map(async (data) => {
+					const charainfo = await getCharacterInfo({
+						ids: [ data.character_id ],
+						rank: data.rank,
+					});
+					if (!charainfo || charainfo.length <= 0) {
+						throw new Error("Character not found for id: " + data.character_id);
+					}
+					const characterInfo = charainfo[0];
+					if (skinArr) {
+						const idx = skinArr.findIndex(
+							(s) => s.character_id === characterInfo.character_id
+						);
+						if (idx >= 0) {
+							characterInfo.filepath = skinArr[idx].filepath;
+							if (skinArr[idx].metadata?.assets) {
+								const skinMeta = {
+									...skinArr[idx].metadata,
+									assets: (skinArr[idx].metadata.assets || {})[
+										characterInfo.rank
+									],
+								};
+								characterInfo.metadata = skinMeta;
+							}
 						}
 					}
-				}
-				let itemOptions = {};
-				if (data.item_id) {
-					const item = await getItemById({ id: data.item_id });
-					if (item) {
-						itemOptions = {
-							itemname: item.name,
-							itemdescription: item.description
-						};
+					let itemOptions = {};
+					if (data.item_id) {
+						const item = await getItemById({ id: data.item_id });
+						if (item) {
+							itemOptions = {
+								itemname: item.name,
+								itemdescription: item.description,
+							};
+						}
 					}
-				}
-				const res: CollectionCardInfoProps = Object.assign(data, {
-					name: characterInfo.name,
-					stats: characterInfo.stats,
-					type: characterInfo.type,
-					abilityname: characterInfo.abilityname,
-					abilitydescription: characterInfo.abilitydescription,
-					filepath: characterInfo.filepath,
-					is_passive: characterInfo.is_passive,
-					metadata: characterInfo.metadata,
-					...itemOptions,
-					characterInfo
-				});
-				return res;
-			}));
+					const res: CollectionCardInfoProps = Object.assign(data, {
+						name: characterInfo.name,
+						stats: characterInfo.stats,
+						type: characterInfo.type,
+						abilityname: characterInfo.abilityname,
+						abilitydescription: characterInfo.abilitydescription,
+						filepath: characterInfo.filepath,
+						is_passive: characterInfo.is_passive,
+						metadata: characterInfo.metadata,
+						...itemOptions,
+						characterInfo,
+					});
+					return res;
+				})
+			);
 
 			return resp;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.CollectionInfoController.getCardInfoByRowNumber(): something went wrong", err);
+		loggers.error(
+			"api.controllers.CollectionInfoController.getCardInfoByRowNumber(): something went wrong",
+			err
+		);
 		return;
 	}
 };
 
-export const getCollectionById = async (
-	params: { id?: number; user_id: number; ids?: number[]; user_tag?: string; }
-) => {
+export const getCollectionById = async (params: {
+  id?: number;
+  user_id: number;
+  ids?: number[];
+  user_tag?: string;
+}) => {
 	try {
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
@@ -86,65 +105,76 @@ export const getCollectionById = async (
 		}
 		const result = await Collections.get(params);
 		if (result.length > 0) {
-			const resp: CollectionCardInfoProps[] = await Promise.all(result.map(async (data) => {
-				const charaInfo = await getCharacterInfo({
-					ids: [ data.character_id ],
-					rank: data.rank 
-				});
-				if (!charaInfo || charaInfo.length <= 0) {
-					throw new Error("Character not found for id: " + data.character_id);
-				}
-				const characterInfo = charaInfo[0];
-				if (skinArr) {
-					const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
-					if (idx >= 0) {
-						characterInfo.filepath = skinArr[idx].filepath;
-						if (skinArr[idx].metadata?.assets) {
-							const skinMeta = {
-								...skinArr[idx].metadata,
-								assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
-							};
-							characterInfo.metadata = skinMeta;
+			const resp: CollectionCardInfoProps[] = await Promise.all(
+				result.map(async (data) => {
+					const charaInfo = await getCharacterInfo({
+						ids: [ data.character_id ],
+						rank: data.rank,
+					});
+					if (!charaInfo || charaInfo.length <= 0) {
+						throw new Error("Character not found for id: " + data.character_id);
+					}
+					const characterInfo = charaInfo[0];
+					if (skinArr) {
+						const idx = skinArr.findIndex(
+							(s) => s.character_id === characterInfo.character_id
+						);
+						if (idx >= 0) {
+							characterInfo.filepath = skinArr[idx].filepath;
+							if (skinArr[idx].metadata?.assets) {
+								const skinMeta = {
+									...skinArr[idx].metadata,
+									assets: (skinArr[idx].metadata.assets || {})[
+										characterInfo.rank
+									],
+								};
+								characterInfo.metadata = skinMeta;
+							}
 						}
 					}
-				}
-				let itemOptions = {};
-				if (data.item_id) {
-					const item = await getItemById({ id: data.item_id });
-					if (item) {
-						itemOptions = {
-							itemname: item.name,
-							itemdescription: item.description,
-							itemStats: item.stats,
-						};
+					let itemOptions = {};
+					if (data.item_id) {
+						const item = await getItemById({ id: data.item_id });
+						if (item) {
+							itemOptions = {
+								itemname: item.name,
+								itemdescription: item.description,
+								itemStats: item.stats,
+							};
+						}
 					}
-				}
-				const res: CollectionCardInfoProps = Object.assign(data, {
-					name: characterInfo.name,
-					stats: characterInfo.stats,
-					type: characterInfo.type,
-					abilityname: characterInfo.abilityname,
-					abilitydescription: characterInfo.abilitydescription,
-					filepath: characterInfo.filepath,
-					metadata: characterInfo.metadata,
-					is_passive: characterInfo.is_passive,
-					...itemOptions,
-					characterInfo
-				});
-				return res;
-			}));
+					const res: CollectionCardInfoProps = Object.assign(data, {
+						name: characterInfo.name,
+						stats: characterInfo.stats,
+						type: characterInfo.type,
+						abilityname: characterInfo.abilityname,
+						abilitydescription: characterInfo.abilitydescription,
+						filepath: characterInfo.filepath,
+						metadata: characterInfo.metadata,
+						is_passive: characterInfo.is_passive,
+						...itemOptions,
+						characterInfo,
+					});
+					return res;
+				})
+			);
 
 			return resp;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.CollectionInfoController.getCollectionById(): something went wrong", err);
+		loggers.error(
+			"api.controllers.CollectionInfoController.getCollectionById(): something went wrong",
+			err
+		);
 		return;
 	}
 };
 
-export const getCardForBattle = async (
-	params: { id: number; user_id: number; user_tag: string; }
-) => {
+export const getCardForBattle = async (params: {
+  id: number;
+  user_id: number;
+  user_tag: string;
+}) => {
 	try {
 		let skinArr: undefined | SkinProps[];
 		if (params.user_tag) {
@@ -155,20 +185,22 @@ export const getCardForBattle = async (
 			const data = result[0];
 			const charaInfo = await getCharacterInfo({
 				ids: [ data.character_id ],
-				rank: data.rank 
+				rank: data.rank,
 			});
 			if (!charaInfo || charaInfo.length <= 0) {
 				throw new Error("Character not found for id: " + data.character_id);
 			}
 			const characterInfo = charaInfo[0];
 			if (skinArr) {
-				const idx = skinArr.findIndex((s) => s.character_id === characterInfo.character_id);
+				const idx = skinArr.findIndex(
+					(s) => s.character_id === characterInfo.character_id
+				);
 				if (idx >= 0) {
 					characterInfo.filepath = skinArr[idx].filepath;
 					if (skinArr[idx].metadata?.assets) {
 						const skinMeta = {
 							...skinArr[idx].metadata,
-							assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank]
+							assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank],
 						};
 						characterInfo.metadata = skinMeta;
 					}
@@ -181,7 +213,7 @@ export const getCardForBattle = async (
 					itemOptions = {
 						itemname: item.name,
 						itemdescription: item.description,
-						itemStats: item.stats
+						itemStats: item.stats,
 					};
 				}
 			}
@@ -198,7 +230,10 @@ export const getCardForBattle = async (
 			return res;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.CollectionInfoController.getCardForBattle(): something went wrong", err);
+		loggers.error(
+			"api.controllers.CollectionInfoController.getCardForBattle(): something went wrong",
+			err
+		);
 		return;
 	}
 };

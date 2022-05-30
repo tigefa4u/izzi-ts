@@ -39,7 +39,7 @@ async function verifyAndProcessSacrifice(
 ) {
 	const id = params.extras?.id;
 	const sacrificeId = params.extras?.sacrificeId;
-	if (!id || !sacrificeId) return;
+	if (!id || !sacrificeId || isNaN(id) || isNaN(sacrificeId)) return;
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
 	const collections = await getCardInfoByRowNumber({

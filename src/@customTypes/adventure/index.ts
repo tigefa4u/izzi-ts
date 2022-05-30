@@ -96,6 +96,7 @@ export type AbilityStackProps = StatStateProps &
     isPrecision?: boolean;
     isHarbingerOfDeath?: boolean;
     resistingHarbingerOfDeathPercent?: number;
+    canEvadeHarbingerOfDeath?: boolean;
   };
 
 export type BattleStats = {

@@ -15,7 +15,7 @@ export const favorite = async ({
 	try {
 		const author = options.author;
 		const id = Number(args.shift());
-		if (!id) return;
+		if (!id || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const collectionDataByRow = await getCardInfoByRowNumber({

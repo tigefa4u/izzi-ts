@@ -43,12 +43,36 @@ export const setMaxLocation = async (req: any, res: any) => {
 	}
 };
 
-export const removeZoneFromCache = async (req: any, res: any) => {
+export const removeZoneAndCardFromCache = async (req: any, res: any) => {
 	try {
 		const { location_id, character_ids = [] } = req.body;
 		const key = `zone::${location_id}`;
 		await Cache.del(key);
-		await Promise.all(character_ids.map(async (c: number) => await Cache.del(`floors::ch-${c}`)));
+		await Promise.all(character_ids.map((c: number) => Cache.del(`floors::ch-${c}`)));
+		return success(res, {});
+	} catch (err) {
+		return notFound(res, "Route not found");
+	}
+};
+
+export const removeItemFromCache = async (req: any, res: any) => {
+	try {
+		const { item_id } = req.body;
+		const key = `item::${item_id}`;
+		await Cache.del(key);
+		return success(res, {});
+	} catch (err) {
+		return notFound(res, "Route not found");
+	}
+};
+
+export const removeAllStagesAndCardsFromCache = async (req: any, res: any) => {
+	try {
+		const { character_ids = [] } = req.body;
+		const key = "stage::*";
+		await Cache.del(key);
+		console.log("removed: ", character_ids);
+		await Promise.all(character_ids.map((c: number) => Cache.del(`card::ch-${c}*`)));
 		return success(res, {});
 	} catch (err) {
 		return notFound(res, "Route not found");

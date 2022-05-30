@@ -12,7 +12,7 @@ export const selectCard = async ({
 	try {
 		const author = options.author;
 		const id = Number(args.shift());
-		if (!id || id <= 0) return;
+		if (!id || id <= 0 || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const infoDataByRow = await getCardInfoByRowNumber({

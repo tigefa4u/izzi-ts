@@ -1,6 +1,6 @@
 import { delGuildItems } from "api/controllers/GuildItemsController";
 import { delAllGuildMembers } from "api/controllers/GuildMembersController";
-import { createGuild, getGuild, updateGuild } from "api/controllers/GuildsController";
+import { createGuild, disbandAndBackupGuild, getGuild, updateGuild } from "api/controllers/GuildsController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
@@ -75,21 +75,7 @@ export const handleDiscordServerLeave = async (guild: Guild) => {
 		const guildExists = await getGuild({ guild_id: guild.id });
 		if (guildExists) {
 			loggers.info("Deleting Guild: " + guildExists.guild_id);
-			await Promise.all([ delAllGuildMembers({ guild_id: guildExists.id }),
-				delGuildItems({ guild_id: guildExists.id }),
-				updateGuild(
-					{ id: guildExists.id },
-					{
-						gold: 0,
-						guild_stats: null,
-						metadata: JSON.stringify(guildExists.guild_stats),
-						guild_level: 0,
-						name: null,
-						points: 0,
-						is_deleted: true,
-						is_active: false
-					}
-				) ]);
+			await disbandAndBackupGuild({ guild: guildExists });
 		}
 		return;
 	} catch (err) {

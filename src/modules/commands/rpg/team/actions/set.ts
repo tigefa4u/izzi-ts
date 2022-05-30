@@ -134,7 +134,7 @@ export const setTeam = async ({
 }: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
 	try {
 		const id = Number(args.shift());
-		if (!id) return;
+		if (!id || isNaN(id)) return;
 		const collection = await getCardInfoByRowNumber({
 			row_number: id,
 			user_id,
