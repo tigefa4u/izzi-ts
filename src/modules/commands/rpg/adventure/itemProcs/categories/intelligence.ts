@@ -76,7 +76,7 @@ export const sapphiresStaff = ({
 				embed,
 				round,
 				isDescriptionOnly: false,
-				description: `**${opponentStats.name}** is __Asleep__, affected by **Seeker's Armguard**`,
+				description: `**${opponentStats.name}** is __Asleep__, affected by **Sapphire's Staff**`,
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: true,
