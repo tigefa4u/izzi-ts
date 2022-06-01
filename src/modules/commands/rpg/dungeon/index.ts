@@ -15,6 +15,7 @@ import {
 	BATTLE_TYPES,
 	DEFAULT_ERROR_TITLE,
 	DUNGEON_DEFAULTS,
+	DUNGEON_MIN_LEVEL,
 	HIDE_VISUAL_BATTLE_ARG,
 	MANA_PER_BATTLE,
 } from "helpers/constants";
@@ -43,12 +44,12 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		}
 		const today = new Date();
 		const day = today.getDay();
-		// if ([ 4, 5 ].includes(day)) {
-		// 	context.channel?.sendMessage(
-		// 		"Ranked Dungeon battles are disabled on Thursday and Friday"
-		// 	);
-		// 	return;
-		// }
+		if ([ 4, 5 ].includes(day)) {
+			context.channel?.sendMessage(
+				"Ranked Dungeon battles are disabled on Thursday and Friday"
+			);
+			return;
+		}
 		const battles = battlesInChannel.validateBattlesInChannel(context.channel?.id || "");
 		if (battles === undefined) return;
 		let inBattle = await getCooldown(author.id, "dungeon-battle");
@@ -63,6 +64,12 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		if (user.level < DUNGEON_MIN_LEVEL) {
+			embed.setDescription(`You must be atleast **level __${DUNGEON_MIN_LEVEL}__** ` +
+			"to be able to participate in Dungeon Battles.");
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		if (user.dungeon_mana < MANA_PER_BATTLE) {
 			embed.setDescription(
 				`You do not have enough dungeon mana to battle **[${user.dungeon_mana} / ${MANA_PER_BATTLE}]**`

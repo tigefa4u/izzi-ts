@@ -18,6 +18,7 @@ import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import {
 	BASE_XP,
+	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
@@ -154,7 +155,7 @@ async function processFloorWin({
 			card,
 			user,
 			goldReward,
-			USER_XP_GAIN_PER_BATTLE * multiplier,
+			(user.level < DUNGEON_MIN_LEVEL ? USER_XP_GAIN_PER_BATTLE : USER_XP_GAIN_PER_BATTLE - 2) * multiplier,
 			author,
 			channel
 		),

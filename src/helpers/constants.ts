@@ -217,10 +217,10 @@ export const DUNGEON_DEFAULTS = {
 	numberOfRanks: 5,
 };
 
-export const BATTLES_PER_CHANNEL = 2;
+export const BATTLES_PER_CHANNEL = 1;
 export const BATTLE_FORFEIT_RETRIES = 1;
 
-export const USER_XP_GAIN_PER_BATTLE = 4;
+export const USER_XP_GAIN_PER_BATTLE = 8;
 
 export const MAX_GOLD_IN_TRADE = 10000000;
 export const MAX_CARDS_IN_TRADE = 1000;
@@ -256,7 +256,7 @@ export const MAX_GUILD_ITEMS_PURCHASABLE = 50;
 export const HIDE_VISUAL_BATTLE_ARG = "hidebt";
 
 export const DUNGEON_MAX_MANA = 100;
-export const DUNGEON_MIN_LEVEL = 12;
+export const DUNGEON_MIN_LEVEL = 10;
 
 export const BATTLE_TYPES = {
 	DUNGEON: "DUNGEON",
