@@ -148,12 +148,12 @@ export const battleRaidBoss = async ({
 		const refetchRaid = await getRaid({ id: currentRaid.id });
 		if (!refetchRaid) {
 			context.channel?.sendMessage(
-				"Your Raid has either fled or did not exist. " +
+				"Your Raid has either fled or has ended. " +
           "If you think your raid did not flee, please report in the Bugs channel. Lobby Code: " +
           currentRaid.id
 			);
 			loggers.error(
-				`Unable to validate raid with id: ${
+				`Unable to validate raid user: ${author.id} with id: ${
 					currentRaid.id
 				}, Raid -> ${JSON.stringify(currentRaid)}`,
 				{}
