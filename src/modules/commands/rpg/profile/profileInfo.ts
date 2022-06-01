@@ -50,8 +50,8 @@ export const mana = async function ({
 		const embed = createEmbed(author)
 			.setTitle(`${author.username}'s Mana Pool`)
 			.setDescription(
-				`**Mana:** __${result.data}/${result.metadata.max_mana}__` +
-          refillTimerDesc + `\nDungeon Mana: __${result.metadata.dungeon_mana}/${DUNGEON_MAX_MANA}__` +
+				`**Mana:** __${result.data}/${result.metadata.max_mana}__ ` +
+          refillTimerDesc + `\nDungeon Mana: __${result.metadata.dungeon_mana}/${DUNGEON_MAX_MANA}__ ` +
 		  refillDGManaTimerDesc
 			);
 		context.channel?.sendMessage(embed);
