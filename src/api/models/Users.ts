@@ -81,7 +81,12 @@ export const transformation = {
 	reachedMaxRuinAt: {
 		type: "timestamp",
 		columnName: "reached_max_ruin_at",
-	}
+	},
+	dungeonMana: {
+		type: "number",
+		columnName: "dungeon_mana"
+	},
+	crystal: { type: "number" }
 };
 
 export const get: (params: UserParams) => Promise<UserProps[] | undefined> = async (params) => {

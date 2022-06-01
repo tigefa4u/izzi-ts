@@ -36,6 +36,8 @@ export type UserProps = {
 	created_at: string;
 	updated_at: string;
 	reached_max_ruin_at: Date;
+	dungeon_mana: number;
+	crystal: number;
 }
 
 export type UserParams = {

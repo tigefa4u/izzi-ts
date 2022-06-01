@@ -254,3 +254,11 @@ export const MAX_REQUESTS_PER_CHANNEL = 5;
 export const MAX_GUILD_ITEMS_PURCHASABLE = 50;
 
 export const HIDE_VISUAL_BATTLE_ARG = "hidebt";
+
+export const DUNGEON_MAX_MANA = 100;
+export const DUNGEON_MIN_LEVEL = 12;
+
+export const BATTLE_TYPES = {
+	DUNGEON: "DUNGEON",
+	FLOOR: "FLOOR"
+};

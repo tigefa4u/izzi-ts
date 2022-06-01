@@ -13,7 +13,7 @@ import gt from "lodash/gt";
 import loggers from "loggers";
 import { clone } from "utility";
 import { prepareBattleDesc } from "./adventure";
-import { MANA_PER_BATTLE } from "./constants";
+import { BATTLE_TYPES, MANA_PER_BATTLE } from "./constants";
 
 export const compare = (x1: number, x2: number) => {
 	return gt(x1, x2);
@@ -63,7 +63,12 @@ export const getPlayerDamageDealt = (
 	// (((((2*2)/5) + 2) * vitality * (vitality/enemyDefense))/50 + 2) * modifiers; // wont work damage too low
 	// (1+(a.atk*0.01)) * a.atk/Math.max(1,b.def) * modifiers
 	// (atk**2/(atk + def)) * modifiers (currently in use)
-	const { vitality, isCriticalHit, effective, criticalDamage: critDamage } = playerTotalStats;
+	const {
+		vitality,
+		isCriticalHit,
+		effective,
+		criticalDamage: critDamage,
+	} = playerTotalStats;
 	const { defense } = enemyTotalStats;
 	const modifiers =
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
@@ -148,17 +153,32 @@ export const getRelationalDiff = (x1: number, x2: number) => {
 	return Math.floor(x1 * (x2 / 100));
 };
 
-export const refetchAndUpdateUserMana = async (id: string, manaCost = MANA_PER_BATTLE) => {
+export const refetchAndUpdateUserMana = async (
+	id: string,
+	manaCost = MANA_PER_BATTLE,
+	battleType = BATTLE_TYPES.FLOOR
+) => {
 	const user = await getRPGUser({ user_tag: id });
 	if (!user) {
 		throw new Error("User not found, unable to update mana: " + id);
 	}
-	user.mana = user.mana - manaCost;
-	if (user.mana < 0) user.mana = 0;
-	await updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana });
+	const params = {};
+	if (battleType === BATTLE_TYPES.DUNGEON) {
+		user.dungeon_mana = user.dungeon_mana - manaCost;
+		if (user.dungeon_mana < 0) user.dungeon_mana = 0;
+		Object.assign(params, { dungeon_mana: user.dungeon_mana });
+	} else {
+		user.mana = user.mana - manaCost;
+		if (user.mana < 0) user.mana = 0;
+		Object.assign(params, { mana: user.mana });
+	}
+	await updateRPGUser({ user_tag: user.user_tag }, params);
 };
 
-export const validateFiveMinuteTimer = async (cd: { timestamp: number; key: string; }) => {
+export const validateFiveMinuteTimer = async (cd: {
+  timestamp: number;
+  key: string;
+}) => {
 	const dt = new Date().valueOf();
 	if (new Date(cd.timestamp).valueOf() < dt) {
 		await Cache.del(cd.key);

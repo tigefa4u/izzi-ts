@@ -12,6 +12,7 @@ import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { randomElementFromArray } from "helpers";
 import {
+	BATTLE_TYPES,
 	DEFAULT_ERROR_TITLE,
 	DUNGEON_DEFAULTS,
 	HIDE_VISUAL_BATTLE_ARG,
@@ -42,19 +43,19 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		}
 		const today = new Date();
 		const day = today.getDay();
-		if ([ 4, 5 ].includes(day)) {
-			context.channel?.sendMessage(
-				"Ranked Dungeon battles are disabled on Thursday and Friday"
-			);
-			return;
-		}
+		// if ([ 4, 5 ].includes(day)) {
+		// 	context.channel?.sendMessage(
+		// 		"Ranked Dungeon battles are disabled on Thursday and Friday"
+		// 	);
+		// 	return;
+		// }
 		const battles = battlesInChannel.validateBattlesInChannel(context.channel?.id || "");
 		if (battles === undefined) return;
-		let inBattle = await getCooldown(author.id, "mana-battle");
+		let inBattle = await getCooldown(author.id, "dungeon-battle");
 		if (inBattle) {
 			await validateFiveMinuteTimer({
 				timestamp: inBattle.timestamp,
-				key: `cooldown::mana-battle-${author.id}` 
+				key: `cooldown::dungeon-battle-${author.id}` 
 			});
 			context.channel?.sendMessage("Your battle is still in progress, try again later");
 			return;
@@ -62,9 +63,9 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
-		if (user.mana < MANA_PER_BATTLE) {
+		if (user.dungeon_mana < MANA_PER_BATTLE) {
 			embed.setDescription(
-				`You do not have enough mana to battle **[${user.mana} / ${MANA_PER_BATTLE}]**`
+				`You do not have enough dungeon mana to battle **[${user.dungeon_mana} / ${MANA_PER_BATTLE}]**`
 			);
 			context.channel?.sendMessage(embed);
 			return;
@@ -109,9 +110,9 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 
 		playerTeamStats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
-		inBattle = await getCooldown(author.id, "mana-battle");
+		inBattle = await getCooldown(author.id, "dungeon-battle");
 		if (inBattle) return;
-		setCooldown(author.id, "mana-battle", 60 * 5);
+		setCooldown(author.id, "dungeon-battle", 60 * 5);
 		const hideBt = (args.shift() || "").toLowerCase();
 		const result = await simulateBattle({
 			context,
@@ -120,9 +121,11 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
-		await refetchAndUpdateUserMana(author.id);
-		clearCooldown(author.id, "mana-battle");
-		if (result?.isForfeit) return;
+		await refetchAndUpdateUserMana(author.id, MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
+		clearCooldown(author.id, "dungeon-battle");
+		if (result?.isForfeit) {
+			result.isVictory = false;
+		}
 		await handleDungeonBattleOutcome({
 			author,
 			client,

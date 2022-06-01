@@ -1,7 +1,9 @@
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { DUNGEON_MAX_MANA } from "helpers/constants";
 import loggers from "loggers";
 
 async function getProfileInfo(key: string, id: string) {
@@ -15,6 +17,7 @@ async function getProfileInfo(key: string, id: string) {
 			max_permit: user?.max_raid_pass,
 			max_exp: user?.r_exp,
 			is_premium: user?.is_premium,
+			dungeon_mana: user?.dungeon_mana,
 		},
 	};
 }
@@ -28,9 +31,7 @@ export const mana = async function ({
 		const result = await getProfileInfo("mana", author.id);
 		const dt = new Date();
 		const timestamp = new Date(result.metadata?.mana_refilled_at || "") || dt;
-		const refilled_at = timestamp.setMinutes(
-			timestamp.getMinutes() + 4
-		);
+		const refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 4);
 		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
 		let remainingMinutes = Math.floor(remainingTime % 60);
 		if (remainingMinutes < 0) {
@@ -39,14 +40,21 @@ export const mana = async function ({
 
 		const refillTimerDesc = `[Refills __${
 			result.metadata.is_premium ? 3 : 2
-		}mana__ ${
+		} mana__ ${
+			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 4 minutes"
+		}]`;
+		const refillDGManaTimerDesc = `[Refills __5 mana__ ${
 			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 4 minutes"
 		}]`;
 
-		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}/${result.metadata.max_mana}__ **mana** ` +
-        refillTimerDesc
-		);
+		const embed = createEmbed(author)
+			.setTitle(`${author.username}'s Mana Pool`)
+			.setDescription(
+				`**Mana:** __${result.data}/${result.metadata.max_mana}__` +
+          refillTimerDesc + `\nDungeon Mana: __${result.metadata.dungeon_mana}/${DUNGEON_MAX_MANA}__` +
+		  refillDGManaTimerDesc
+			);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(

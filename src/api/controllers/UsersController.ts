@@ -181,7 +181,10 @@ export const getTotalPlayers = async (
 	params?: Pick<UserProps, "is_active">
 ): Promise<number | undefined> => {
 	try {
-		const result = await Users.getPlayerCount(params);
+		const key = "player-count";
+		const result = await Cache.fetch(key, async () => {
+			return await Users.getPlayerCount(params);
+		});
 		return Number(result[0].count);
 	} catch (err) {
 		loggers.error(

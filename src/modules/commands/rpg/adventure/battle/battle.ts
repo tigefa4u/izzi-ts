@@ -161,7 +161,7 @@ export const simulateBattle = async ({
 		if (roundStats?.isForfeit === true) {
 			context.channel?.sendMessage("You have forfeit the battle");
 			simulation.isForfeit = true;
-			return { isForfeit: roundStats.isForfeit };
+			return roundStats;
 		}
 		return roundStats;
 	} catch (err) {
