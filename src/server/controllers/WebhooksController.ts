@@ -46,7 +46,7 @@ export const processUpVote = async (req: any, res: any) => {
 			};
 
 			if (summoner.is_premium) {
-				const IPreward = randomNumber(10, 12);
+				const IPreward = randomNumber(5, 7);
 				summoner.izzi_points = summoner.izzi_points
 					? summoner.izzi_points + IPreward
 					: IPreward;

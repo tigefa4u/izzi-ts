@@ -55,7 +55,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           " " +
           "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married!" +
           " " +
-          "You get (10 to 12) IP if premium and Your mana also gets refilled as you vote."
+          "You get (5 to 7) IP if premium and Your mana also gets refilled as you vote."
 			);
 		context.channel?.sendMessage(embed);
 		return;
