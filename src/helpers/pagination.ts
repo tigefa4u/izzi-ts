@@ -2,6 +2,7 @@ import { PagingMetadata } from "@customTypes/pagination";
 import { PAGE_FILTER } from "./constants";
 
 export const paginationParams = async ({ perPage = 10, currentPage = 1 }) => {
+	if (currentPage <= 0) currentPage = 1;
 	return {
 		limit: perPage,
 		offset: (currentPage - 1) * perPage,
