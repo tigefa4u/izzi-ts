@@ -68,11 +68,11 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 		}
 		if (idx >= 0) {
 			const tempArr = args.slice(0, idx);
-			value = tempArr.join(" ");
+			value = tempArr.join(" ").trim();
 			value = value.split(",");
 			args = args.slice(tempArr.length);
 		} else {
-			value = args.join(" ");
+			value = args.join(" ").trim();
 			value = value.split(",");
 			args = args.slice(args.length);
 		}
