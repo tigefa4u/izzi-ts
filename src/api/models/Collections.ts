@@ -66,6 +66,10 @@ export const transformation = {
 		type: "number",
 		columnName: "rank_id",
 	},
+	isFavorite: {
+		type: "boolean",
+		columnName: "is_favorite"
+	},
 	createdAt: {
 		type: "timestamp",
 		columnName: "created_at",

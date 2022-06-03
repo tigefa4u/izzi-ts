@@ -122,6 +122,8 @@ export const chronobreak = ({
 	}
 	return {
 		playerStats,
-		opponentStats 
+		opponentStats,
+		abilityDamage,
+		damageDiff: opponentDamageDiff
 	};
 };

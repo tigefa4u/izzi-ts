@@ -181,6 +181,8 @@ export const getTotalPlayers = async (
 	params?: Pick<UserProps, "is_active">
 ): Promise<number | undefined> => {
 	try {
+		// Need to figure out how to get both active and total count
+		// in same query
 		const key = "player-count";
 		const result = await Cache.fetch(key, async () => {
 			return await Users.getPlayerCount(params);

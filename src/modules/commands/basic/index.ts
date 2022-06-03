@@ -116,7 +116,18 @@ export const help = async ({
 				"**```iz help {command} for more info about the command.```**"
 			)
 			.setFooter({ text: "Filters include -n (name) -r (rank) -t (element type) -a (ability)", });
+
+		const rulesEmbed = createEmbed(options.author, client)
+			.setTitle("IzzI Rules")
+			.setDescription("**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
+				"• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
+				"• Cross trading of any form.\n" +
+				"• Malicious/Suspivuous activity.\n" +
+				"• Supporting someone who is doing these.\n" + 
+				"**Note: Exchanging izzi assets for any other assets, real money or server roles " +
+				"is considered Cross Trading**");
 		context.channel?.sendMessage(embed);
+		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {
 		loggers.error("modules.commands.basic.help(): something went wrong", err);
 	}
