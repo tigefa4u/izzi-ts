@@ -45,6 +45,7 @@ export const processUpVote = async (req: any, res: any) => {
 				mana: summoner.mana,
 				gold: summoner.gold,
 				raid_pass: summoner.raid_pass,
+				dungeon_mana: summoner.dungeon_mana
 			};
 
 			if (summoner.is_premium) {
