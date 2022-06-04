@@ -4,6 +4,7 @@ import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import loggers from "loggers";
 import { DMUserViaApi } from "server/pipes/directMessage";
+import { DUNGEON_MAX_MANA } from "helpers/constants";
 
 export const processUpVote = async (req: any, res: any) => {
 	try {
@@ -27,6 +28,7 @@ export const processUpVote = async (req: any, res: any) => {
 			const shardReward = summoner.is_premium ? 10 : 5;
 			summoner.gold = summoner.gold + goldReward;
 			if (summoner.mana < summoner.max_mana) summoner.mana = summoner.max_mana;
+			if (summoner.dungeon_mana < DUNGEON_MAX_MANA) summoner.dungeon_mana = DUNGEON_MAX_MANA;
 			summoner.vote_streak = streak;
 			summoner.shards = summoner.shards + shardReward;
 			summoner.voted_at = new Date();
@@ -35,7 +37,7 @@ export const processUpVote = async (req: any, res: any) => {
         "Thank you for voting! You have received " +
         `__${goldReward}__ Gold ${emoji.gold}, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
         `__${shardReward}__ ` +
-        `Shards ${emoji.shard} and refilled your mana for dailying.`;
+        `Shards ${emoji.shard} and refilled your mana and dungeon mana for dailying.`;
 			const updateObj = {
 				shards: summoner.shards,
 				voted_at: summoner.voted_at,
