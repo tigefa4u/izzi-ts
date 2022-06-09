@@ -94,7 +94,7 @@ export const cardCollection = async ({
 						pageCount: data.data.length,
 						pageName: "Collection",
 						description:
-              "All Cards in your inventory that match your" +
+              "All Cards in your inventory that match your " +
               "requirements are shown below.",
 						title: "Collections",
 					});

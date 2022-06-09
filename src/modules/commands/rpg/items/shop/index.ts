@@ -61,7 +61,7 @@ export const itemshop = async ({
     			pageCount: data.data.length,
     			pageName: "Items",
     			description:
-            "All Items on the market that match your" +
+            "All Items on the market that match your " +
             "requirements are shown below.",
     			title: "Items",
     		});

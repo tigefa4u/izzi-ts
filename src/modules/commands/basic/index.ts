@@ -122,7 +122,8 @@ export const help = async ({
 			.setDescription("**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
 				"• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
 				"• Cross trading of any form.\n" +
-				"• Malicious/Suspivuous activity.\n" +
+				"• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
+				"• Malicious/Suspicious activity.\n" +
 				"• Supporting someone who is doing these.\n" + 
 				"**Note: Exchanging izzi assets for any other assets, real money or server roles " +
 				"is considered Cross Trading**");

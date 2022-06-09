@@ -79,7 +79,7 @@ export const itemCollection = async ({
     				pageCount: data.data.length,
     				pageName: "Items",
     				description:
-              "All Items in your inventory that match your" +
+              "All Items in your inventory that match your " +
               "requirements are shown below.",
     				title: "Item Collection",
     			});
