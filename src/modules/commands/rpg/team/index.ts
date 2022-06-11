@@ -16,6 +16,7 @@ import { titleCase } from "title-case";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import { teamBattle } from "./actions/battle";
 import { createTeam } from "./actions/create";
+import { equipTeamItem } from "./actions/equip";
 import { removeTeam } from "./actions/remove";
 import { resetTeam } from "./actions/reset";
 import { selectTeam } from "./actions/select";
@@ -51,6 +52,8 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 			teamBattle(params);
 		} else if (subcommand === "reset") {
 			resetTeam(params);
+		} else if (subcommand === "equip") {
+			equipTeamItem(params);
 		}
 		return;
 	} catch (err) {
@@ -157,11 +160,11 @@ export async function showTeam({
 			return `__Position #${item.position}__\n${
 				item.collection_id
 					? `**${titleCase(card.name)} ${emojiMap(card.type)} ${emojiMap(
-						card.itemname || ""
+						card.itemname || (item.item_id && item.itemName ? item.itemName : "") || ""
 					)}**\n__${titleCase(card.rank)}__ | Level ${
 						card.character_level
 					}`
-					: "Not Assigned"
+					: `Not Assigned | ${item.itemName && item.item_id ? emojiMap(item.itemName) : "Not Equipped"}`
 			}`;
 		})
 		.join("\n\n")}\n\n**__Total Stats__**\n\n**Team HP:** ${

@@ -31,7 +31,7 @@ const argMap = [
 	},
 	{
 		name: "is_on_market",
-		alias: [ "-mk" ]
+		alias: [ "-mk", "-market" ]
 	},
 	{
 		name: "difficulty",
@@ -39,15 +39,15 @@ const argMap = [
 	},
 	{
 		name: "limit",
-		alias: [ "-l" ]
+		alias: [ "-l", "-limit" ]
 	},
 	{
 		name: "exclude",
-		alias: [ "-ex" ]
+		alias: [ "-ex", "-exclude" ]
 	},
 	{
 		name: "page",
-		alias: [ "-pg" ]
+		alias: [ "-pg", "-page" ]
 	}
 ];
 

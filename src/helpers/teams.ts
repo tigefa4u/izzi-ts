@@ -17,6 +17,7 @@ import loggers from "loggers";
 import { clone, isEmptyValue, reorderObjectKey } from "utility";
 import { prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
+import { getItemById } from "api/controllers/ItemsController";
 
 const prepareItemStats = ({
 	itemStats,
@@ -246,6 +247,27 @@ export const prepareSkewedCollectionsForBattle = async ({
   guildStats?: GuildStatProps;
   itemStats?: GuildStatProps;
 }) => {
+	if (team) {
+		const tempCollectionsMeta = reorderObjectKey(collections, "id");
+		await Promise.all(team.metadata.map(async (m) => {
+			const card = tempCollectionsMeta[m.collection_id || 0];
+			if (card && !card.item_id && m.item_id) {
+				const idx = collections.findIndex((c) => c.id === m.collection_id);
+				if (idx >= 0) {
+					const item = await getItemById({ id: m.item_id });
+					if (item) {
+						const res = collections[idx];
+						res.itemStats = item.stats;
+						res.item_id = item.id;
+						res.itemname = item.name;
+						res.itemdescription = item.description;
+						collections[idx] = res;
+					}
+				}
+			}
+			return collections;
+		}));
+	}
 	const totalStats = await prepareTotalOverallStats({
 		collections: clone(collections),
 		isBattle: true,
@@ -270,7 +292,8 @@ export const prepareSkewedCollectionsForBattle = async ({
 		const collectionsMeta = reorderObjectKey(totalStats.collections, "id");
 		// team metadata positions are (1, 2, 3)
 		team.metadata.forEach((m) => {
-			battleCards[m.position - 1] = collectionsMeta[m.collection_id || 0];
+			const cardToAssign = collectionsMeta[m.collection_id || 0];
+			battleCards[m.position - 1] = cardToAssign;
 		});
 	} else {
 		battleCards.push(...totalStats.collections);

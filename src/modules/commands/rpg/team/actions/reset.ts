@@ -27,7 +27,10 @@ async function handleTeamReset(
 	}
 	selected.metadata = [ 1, 2, 3 ].map((i) => ({
 		collection_id: null,
-		position: i
+		position: i,
+		itemPosition: i,
+		item_id: null,
+		itemName: null
 	}));
 	await updateTeam({
 		id: selected.id,
@@ -37,7 +40,9 @@ async function handleTeamReset(
 	return;
 }
 
-export const resetTeam = async ({ context, client, author, user }: Omit<BaseProps, "options"> & {
+export const resetTeam = async ({
+	context, client, author, user, args 
+}: Omit<BaseProps, "options"> & {
   author: AuthorProps;
   user: UserProps;
 }) => {
@@ -50,7 +55,6 @@ export const resetTeam = async ({ context, client, author, user }: Omit<BaseProp
 			);
 			return;
 		}
-		const menuOptions = prepareTeamsForMenu(teams);
 		const params = {
 			channel: context.channel,
 			author,
@@ -60,6 +64,15 @@ export const resetTeam = async ({ context, client, author, user }: Omit<BaseProp
 				user,
 			},
 		};
+		const name = args.join(" ");
+		if (name || name !== "") {
+			const team = teams.find((t) => t.name.includes(name));
+			if (team) {
+				handleTeamReset(params, team.name);
+				return;
+			}
+		}
+		const menuOptions = prepareTeamsForMenu(teams);
 		prepareAndSendTeamMenuEmbed(
 			context.channel,
 			author,

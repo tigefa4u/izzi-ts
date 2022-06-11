@@ -46,6 +46,7 @@ export const viewTeam = async ({
 	context,
 	author,
 	user_id,
+	args
 }: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
 	try {
 		const teams = await getAllTeams({ user_id });
@@ -56,7 +57,6 @@ export const viewTeam = async ({
 			);
 			return;
 		}
-		const menuOptions = prepareTeamsForMenu(teams);
 		const params = {
 			channel: context.channel,
 			author,
@@ -66,6 +66,15 @@ export const viewTeam = async ({
 				user_id,
 			},
 		};
+		const name = args.join(" ");
+		if (name !== "") {
+			const team = teams.find((t) => t.name.includes(name));
+			if (team) {
+				handleTeamView(params, team.name);
+				return;
+			}
+		}
+		const menuOptions = prepareTeamsForMenu(teams);
 		prepareAndSendTeamMenuEmbed(
 			context.channel,
 			author,

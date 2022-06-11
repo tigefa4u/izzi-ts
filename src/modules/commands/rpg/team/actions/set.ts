@@ -50,6 +50,7 @@ async function handleTeamSet(
 	team = teamsMap[team.id];
 	if (!team) return;
 	team.metadata[position - 1] = {
+		...team.metadata[position - 1],
 		collection_id: collection.id,
 		position,
 	};
@@ -135,6 +136,7 @@ export const setTeam = async ({
 	try {
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
+		const teamName = args.join(" ");
 		const collection = await getCardInfoByRowNumber({
 			row_number: id,
 			user_id,
@@ -148,7 +150,6 @@ export const setTeam = async ({
 			);
 			return;
 		}
-		const menuOptions = prepareTeamsForMenu(teams);
 		const params = {
 			channel: context.channel,
 			author,
@@ -159,6 +160,12 @@ export const setTeam = async ({
 				collection: collection[0],
 			},
 		};
+		const teamFound = teams.find((t) => t.name.includes(teamName));
+		if (teamFound) {
+			handleTeamView(params, teamFound.name);
+			return;
+		}
+		const menuOptions = prepareTeamsForMenu(teams);
 		prepareAndSendTeamMenuEmbed(
 			context.channel,
 			author,
@@ -177,7 +184,7 @@ export const setTeam = async ({
 	}
 };
 
-function preparePositionOptions() {
+export function preparePositionOptions() {
 	const menuOptions = [ 1, 2, 3 ].map((i) => ({
 		label: `Position ${i}`,
 		value: `${i}`
