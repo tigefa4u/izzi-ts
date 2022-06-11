@@ -1,6 +1,8 @@
 import { AuthorProps } from "@customTypes";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { SelectMenuCallbackParams } from "@customTypes/selectMenu";
+import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getCollection } from "api/controllers/CollectionsController";
 import { getItemById } from "api/controllers/ItemsController";
 import { getAllTeams, getTeamById, updateTeam } from "api/controllers/TeamsController";
@@ -8,7 +10,7 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import { titleCase } from "title-case";
-import { prepareAndSendTeamMenuEmbed } from "..";
+import { prepareAndSendTeamMenuEmbed, showTeam } from "..";
 import { preparePositionOptions } from "./set";
 
 async function handlePositionSet(
@@ -42,7 +44,29 @@ async function handlePositionSet(
 		);
 		return;
 	}
-	const index = team.metadata.findIndex((t) => t.item_id === itemId);
+
+	const cids: number[] = [];
+	team.metadata.map((m) => {
+		if (m.collection_id) {
+			cids.push(m.collection_id);
+		}
+	});
+	const collections = await getCollectionById({
+		ids: cids,
+		user_id: userId
+	});
+	if (!collections) return;
+	const collectionsMeta = collections.reduce((acc, r) => {
+		acc[r.item_id] = r;
+		return acc;
+	}, {} as { [key: number]: CollectionCardInfoProps });
+	if (collectionsMeta[itemId]) {
+		params.channel?.sendMessage(
+			`**${titleCase(item.name)}** ${emojiMap(item.name)} is already equipped by one of the cards in this team.`
+		);
+		return;
+	}
+	const index = team.metadata.findIndex(async (t) => t.item_id === itemId);
 	if (index >= 0) {
 		team.metadata[index].item_id = null;
 		team.metadata[index].itemName = null;
@@ -108,6 +132,16 @@ export const equipTeamItem = async ({
 		);
 		context.channel?.sendMessage(embed);
 		return;
+	}
+	const teamDetails = await showTeam({
+		user_id,
+		name: team.name 
+	});
+	if (teamDetails) {
+		embed.setTitle(teamDetails.title)
+			.setDescription(teamDetails.desc);
+
+		context.channel?.sendMessage(embed);
 	}
 	const positionOptions = preparePositionOptions();
 	const params = {

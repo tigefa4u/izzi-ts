@@ -5,6 +5,7 @@ import {
 	updateCollection,
 } from "api/controllers/CollectionsController";
 import { getItemById } from "api/controllers/ItemsController";
+import { getAllTeams, updateTeam } from "api/controllers/TeamsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -12,6 +13,37 @@ import { emojiMap } from "emojis";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+
+async function findItemInTeamAndRemove({
+	userId,
+	itemId,
+	collectionId,
+}: {
+  userId: number;
+  itemId: number;
+  collectionId: number;
+}) {
+	try {
+		const teams = await getAllTeams({ user_id: userId });
+		if (teams && teams.length > 0) {
+			const team = teams.find((tm) => tm.metadata.find((m) => m.collection_id === collectionId));
+			if (team) {
+				const idx = team.metadata.findIndex((m) => m.item_id === itemId);
+				if (idx >= 0) {
+					team.metadata[idx].item_id = null;
+					team.metadata[idx].itemName = null;
+					return await updateTeam({
+						id: team.id,
+						user_id: userId 
+					}, { metadata: JSON.stringify(team.metadata) });
+				}
+			}
+		}
+	} catch (err) {
+		loggers.error("useItems.findItemInTeamAndRemove(): ERROR ", err);
+		return;
+	}
+}
 
 export const equip = async ({ context, client, options, args }: BaseProps) => {
 	try {
@@ -54,7 +86,14 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 		if (!item) {
 			throw new Error("Unable to Find Item with ID: " + itemId);
 		}
-		await updateCollection({ id: collectionData.id }, { item_id: itemId });
+		await Promise.all([
+			updateCollection({ id: collectionData.id }, { item_id: itemId }),
+			findItemInTeamAndRemove({
+				userId: user.id,
+				itemId: item.id,
+				collectionId: collectionData.id 
+			})
+		]);
 
 		const attachment = createAttachment(item.filepath, "item.jpg");
 		embed
@@ -67,7 +106,9 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 				)}** has successfully equipped **${titleCase(item.name)}** ${emojiMap(
 					item.name
 				)}`
-			).setThumbnail("attachment://item.jpg").attachFiles([ attachment ]);
+			)
+			.setThumbnail("attachment://item.jpg")
+			.attachFiles([ attachment ]);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -79,7 +120,12 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 	}
 };
 
-export const unEquip = async ({ context, client, options, args }: BaseProps) => {
+export const unEquip = async ({
+	context,
+	client,
+	options,
+	args,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		const id = Number(args.shift());
@@ -88,7 +134,7 @@ export const unEquip = async ({ context, client, options, args }: BaseProps) => 
 		if (!user) return;
 		const collectionDataByRow = await getCardInfoByRowNumber({
 			row_number: id,
-			user_id: user.id 
+			user_id: user.id,
 		});
 		if (!collectionDataByRow) return;
 		const collectionData = collectionDataByRow[0];
@@ -103,7 +149,9 @@ export const unEquip = async ({ context, client, options, args }: BaseProps) => 
 				`**${titleCase(item.name)}** ${emojiMap(
 					item.name
 				)} has been removed from **${titleCase(collectionData.name)}**`
-			).setThumbnail("attachment://item.jpg").attachFiles([ attachment ]);
+			)
+			.setThumbnail("attachment://item.jpg")
+			.attachFiles([ attachment ]);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
