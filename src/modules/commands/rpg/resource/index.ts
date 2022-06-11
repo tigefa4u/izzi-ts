@@ -11,6 +11,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	GOLD_LIMIT,
 	HOURLY_MANA_REGEN,
+	REQUIRED_TRADE_LEVEL,
 } from "helpers/constants";
 import loggers from "loggers";
 import {
@@ -77,6 +78,12 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
+		if (user.level < REQUIRED_TRADE_LEVEL) {
+			embed.setDescription(`Summoner **${author.username}**, ` +
+			`You must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`);
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		if (user.gold < transferAmount) {
 			embed.setDescription("You have insufficient gold");
 			context.channel?.sendMessage(embed);
@@ -87,6 +94,12 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 			is_banned: false,
 		});
 		if (!mentionedUser) return;
+		if (mentionedUser.level < REQUIRED_TRADE_LEVEL) {
+			embed.setDescription(`Summoner **${mentionedUser.username}**, ` +
+			`must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`);
+			context.channel?.sendMessage(embed);
+			return;	
+		}
 		if (user.id === mentionedUser.id) return;
 		user.gold = user.gold - transferAmount;
 		mentionedUser.gold = mentionedUser.gold + transferAmount;

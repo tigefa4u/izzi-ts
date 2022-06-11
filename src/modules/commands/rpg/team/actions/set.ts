@@ -49,6 +49,13 @@ async function handleTeamSet(
 	}
 	team = teamsMap[team.id];
 	if (!team) return;
+	if (collection.item_id) {
+		const idx = team.metadata.findIndex((t) => t.item_id === collection.item_id);
+		if (idx >= 0) {
+			team.metadata[idx].item_id = null;
+			team.metadata[idx].itemName = null;
+		}
+	}
 	team.metadata[position - 1] = {
 		...team.metadata[position - 1],
 		collection_id: collection.id,
@@ -160,10 +167,12 @@ export const setTeam = async ({
 				collection: collection[0],
 			},
 		};
-		const teamFound = teams.find((t) => t.name.includes(teamName));
-		if (teamFound) {
-			handleTeamView(params, teamFound.name);
-			return;
+		if (teamName && teamName !== "") {
+			const teamFound = teams.find((t) => t.name.includes(teamName));
+			if (teamFound) {
+				handleTeamView(params, teamFound.name);
+				return;
+			}
 		}
 		const menuOptions = prepareTeamsForMenu(teams);
 		prepareAndSendTeamMenuEmbed(
