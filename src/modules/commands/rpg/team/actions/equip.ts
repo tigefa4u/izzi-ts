@@ -10,6 +10,7 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import { titleCase } from "title-case";
+import { clone } from "utility";
 import { prepareAndSendTeamMenuEmbed, showTeam } from "..";
 import { preparePositionOptions } from "./set";
 
@@ -66,7 +67,7 @@ async function handlePositionSet(
 		);
 		return;
 	}
-	const index = team.metadata.findIndex(async (t) => t.item_id === itemId);
+	const index = team.metadata.findIndex((t) => t.item_id === itemId);
 	if (index >= 0) {
 		team.metadata[index].item_id = null;
 		team.metadata[index].itemName = null;

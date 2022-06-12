@@ -4,6 +4,7 @@ type T = {
     id: number;
     url: string[];
     command_id: number;
+	name: string;
 }
 export const gifs: T[] = [
 	{
@@ -15,6 +16,7 @@ export const gifs: T[] = [
 			"https://pa1.narvii.com/5770/ff3b717f50fce335c98dc82e19d3d0e768573ea7_hq.gif"
 		],
 		command_id: 111,
+		name: "kiss"
 	},
 	{
 		id: 50,
@@ -27,6 +29,7 @@ export const gifs: T[] = [
 			"https://media1.tenor.com/images/506aa95bbb0a71351bcaa753eaa2a45c/tenor.gif?itemid=7552075"
 		],
 		command_id: 108,
+		name: "hug"
 	},
 	{
 		id: 51,
@@ -38,6 +41,7 @@ export const gifs: T[] = [
 			"https://giffiles.alphacoders.com/210/210501.gif"
 		],
 		command_id: 110,
+		name: "tight-hig"
 	},
 	{
 		id: 52,
@@ -50,6 +54,7 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/94/9b/12/949b124d5b8cd0955d637dfb45352c7c.gif"
 		],
 		command_id: 116,
+		name: "cuddle"
 	},
 	{
 		id: 53,
@@ -61,6 +66,7 @@ export const gifs: T[] = [
 			"https://image.myanimelist.net/ui/Ik_Vp0LpzawyH5e_tQqsNxyzjRy_0fGz8_BNh4TH35EKqnruoFTqkhiyuBJ58_FOfBWfKiAxezQQRAMWSQdWTBkdJLeEdshdWe8ApYxFhvNcE0IKrcLhcKBfyGjxLj2W"
 		],
 		command_id: 114,
+		name: "bite"
 	},
 	{
 		id: 54,
@@ -77,6 +83,7 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/31/36/2a/31362a548dc7574f80d01a42a637bc93.gif"
 		],
 		command_id: 112,
+		name: "kiss"
 	},
 	{
 		id: 56,
@@ -88,6 +95,7 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/46/b0/a2/46b0a213e3ea1a9c6fcc060af6843a0e.gif"
 		],
 		command_id: 115,
+		name: "slap"
 	},
 	{
 		id: 57,
@@ -100,6 +108,7 @@ export const gifs: T[] = [
 			"https://i.gifer.com/7MPC.gif"
 		],
 		command_id: 117,
+		name: "pat"
 	},
 	{
 		id: 60,
@@ -110,10 +119,9 @@ export const gifs: T[] = [
 			"https://i.imgur.com/DylehYr.gif",
 			"https://media.tenor.com/images/571178c566564d94ff392d33643e59c3/tenor.gif",
 			"https://media.tenor.com/images/cf9a069e14a72656be421aea3714b1e4/tenor.gif",
-			"https://media.tenor.com/images/cd3051ea09d8d8a9fd006cfd9fda61e1/tenor.gif",
-			"https://pa1.narvii.com/5701/72e96c3b24ce390b9be0ca785d04fc3025954bbf_00.gif"
 		],
 		command_id: 118,
+		name: "lick"
 	},
 	{
 		id: 61,
@@ -125,6 +133,7 @@ export const gifs: T[] = [
 			"https://i.imgur.com/Y4VKTdu.gif"
 		],
 		command_id: 119,
+		name: "bonk"
 	},
 	{
 		id: 72,
@@ -139,6 +148,7 @@ export const gifs: T[] = [
 			"https://data.whicdn.com/images/85762348/original.gif"
 		],
 		command_id: 140,
+		name: "dodge"
 	},
 	{
 		id: 58,
@@ -146,22 +156,25 @@ export const gifs: T[] = [
 			"https://memestatic.fjcdn.com/gifs/Anime_1b9d85_6569568.gif",
 			"https://media0.giphy.com/media/AlsIdbTgxX0LC/giphy.gif",
 			"http://cdn.lowgif.com/full/3fcef156cde0be2a-.gif",
-			"https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0901bf1e-5246-4cf3-aaa6-3dad01c4ad01/d9hdrpk-82168b5a-2a37-40e0-847f-dfac6bc1b7e2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvMDkwMWJmMWUtNTI0Ni00Y2YzLWFhYTYtM2RhZDAxYzRhZDAxXC9kOWhkcnBrLTgyMTY4YjVhLTJhMzctNDBlMC04NDdmLWRmYWM2YmMxYjdlMi5naWYifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6ZmlsZS5kb3dubG9hZCJdfQ.NAheS_ihQx_WHxL8QiYXAE4-MAhXsa2YCE6gH1BAusE",
-			"https://i.pinimg.com/originals/30/cc/82/30cc82d0fc45fdaf99808747b572d0a5.gif",
 			"https://media1.tenor.com/images/31686440e805309d34e94219e4bedac1/tenor.gif?itemid=4790446",
 			"https://media4.giphy.com/media/fTbJkvUNa9Hzy/200_d.gif",
 			"https://media.tenor.com/images/eb379f98c7ced6d43a16e78dc25ae864/tenor.gif"
 		],
 		command_id: 109,
+		name: "punch"
 	},
 	{
 		id: 64,
 		url: [
 			"https://media.tenor.com/images/d75aead0dbf59fff4b996ebfecde0560/tenor.gif",
 			"https://media1.tenor.com/images/d0f32f61c2964999b344c6846b30e1d6/tenor.gif?itemid=13665166",
-			"https://media1.tenor.com/images/5f05ce0dbd223f72dce8d46b4db78c30/tenor.gif?itemid=15636770"
+			"https://media1.tenor.com/images/5f05ce0dbd223f72dce8d46b4db78c30/tenor.gif?itemid=15636770",
+			"https://tenor.com/view/spank-fly-off-punish-gif-24897142",
+			"https://tenor.com/view/spank-playful-naughty-punish-peach-gif-24889588",
+			""
 		],
 		command_id: 120,
+		name: "spank"
 	},
 	{
 		id: 65,
@@ -173,10 +186,10 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/b4/b1/64/b4b1640525ecadfa1030e6096f3ec842.gif",
 			"https://64.media.tumblr.com/c65a4af4ff032d1ca06350b66a1e819c/tumblr_mtxk6zVzaa1sogk1do1_r1_500.gif",
 			"https://i.pinimg.com/originals/06/e8/b4/06e8b470f18b0640783fabd36bab0ab6.gif",
-			"https://thumbs.gfycat.com/UnsteadyAgreeableFlatfish-max-1mb.gif",
 			"https://i.pinimg.com/originals/83/05/c3/8305c3a012e448cb409d12e5db3ac179.gif"
 		],
 		command_id: 121,
+		name: "cry"
 	},
 	{
 		id: 66,
@@ -190,6 +203,7 @@ export const gifs: T[] = [
 			"https://media.tenor.com/images/b7dccbe27053b82434fa2419da378eba/tenor.gif"
 		],
 		command_id: 123,
+		name: "laugh"
 	},
 	{
 		id: 67,
@@ -201,6 +215,7 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/a5/df/f0/a5dff0445b2be40c5b6e2c4f5052fe99.gif"
 		],
 		command_id: 125,
+		name: "pout"
 	},
 	{
 		id: 68,
@@ -209,10 +224,10 @@ export const gifs: T[] = [
 			"https://media.tenor.com/images/20212e960952a6397b7cb78e6d2cfe92/tenor.gif",
 			"https://media.tenor.com/images/070d3d33980071887fb91cc898cc3004/tenor.gif",
 			"https://media1.tenor.com/images/70f372cda95080da90ca9ee2bdae48c7/tenor.gif?itemid=17563869",
-			"https://media1.tenor.com/images/132562d42391e26c73c3a63459a8c2a2/tenor.gif?itemid=16556405",
 			"https://i.pinimg.com/originals/ec/fe/ed/ecfeed508c7a0a6c353668c5b7338649.gif"
 		],
 		command_id: 124,
+		name: "glare"
 	},
 	{
 		id: 69,
@@ -229,6 +244,7 @@ export const gifs: T[] = [
 			"https://data.whicdn.com/images/284978606/original.gif"
 		],
 		command_id: 126,
+		name: "baka"
 	},
 	{
 		id: 70,
@@ -239,11 +255,10 @@ export const gifs: T[] = [
 			"https://i.pinimg.com/originals/eb/79/ff/eb79ff00fbef216aecfccc8916fc10fb.gif",
 			"https://i.kym-cdn.com/photos/images/original/000/987/562/b2d.gif",
 			"https://cdn.myanimelist.net/s/common/uploaded_files/1460140429-d60a2b5a534becb71153db8eaaaf4e14.gif",
-			"https://thumbs.gfycat.com/BeneficialSeriousKinglet-size_restricted.gif",
 			"https://media1.tenor.com/images/8b3df11849f5751e6e31fc121c511065/tenor.gif?itemid=13369759",
-			"https://thumbs.gfycat.com/AncientSafeKusimanse-max-14mb.gif"
 		],
 		command_id: 139,
+		name: "run"
 	},
 	{
 		id: 71,
@@ -263,6 +278,7 @@ export const gifs: T[] = [
 			"https://64.media.tumblr.com/1e708d1f0277e4d68d32760e7f0860c9/tumblr_pm3yceQgsx1u7gyjmo2_500.gifv"
 		],
 		command_id: 142,
+		name: "dance"
 	},
 	{
 		id: 55,
@@ -279,6 +295,7 @@ export const gifs: T[] = [
 			"https://media1.giphy.com/media/XZ0q8FlsuAVn96KZFi/giphy.gif"
 		],
 		command_id: 113,
+		name: "kill"
 	},
 	{
 		id: 63,
@@ -289,6 +306,7 @@ export const gifs: T[] = [
 			"https://data.whicdn.com/images/262785026/original.gif"
 		],
 		command_id: 122,
+		name: "poke"
 	}
 ];
 
