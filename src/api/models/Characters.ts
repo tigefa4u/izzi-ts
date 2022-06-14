@@ -99,7 +99,7 @@ export const get: (
 };
 
 export const getCharactersForDex: (
-	filter: Pick<FilterProps, "ids" | "abilityname" | "type">,
+	filter: Pick<FilterProps, "ids" | "abilityname" | "type" | "year">,
 	pagination: PaginationProps
 ) => Promise<CharacterDetailsProps[]> = async function(filter, pagination = {
 	limit: 10,
@@ -114,6 +114,7 @@ export const getCharactersForDex: (
 		)
 		.from(tableName)
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`)
+		.whereNot(`${tableName}.id`, 426) // Luna
 		.as(alias);
 	if (filter.ids && filter.ids.length > 0) {
 		query = query.whereIn(`${tableName}.id`, filter.ids);
@@ -125,6 +126,9 @@ export const getCharactersForDex: (
 		query = query.where(`${tableName}.type`, "ilike", `%${filter.type}%`);
 	} else if (typeof filter.type === "object") {
 		query = query.where(`${tableName}.type`, "~", `^(${filter.type.join("|")}).*`);
+	}
+	if (filter.year) {
+		query = query.whereRaw(`EXTRACT(YEAR from ${tableName}.created_at) = ?`, [ filter.year ]);
 	}
 	query = db.select(db.raw(`${alias}.*, count(*) over() as total_count`))
 		.from(query);

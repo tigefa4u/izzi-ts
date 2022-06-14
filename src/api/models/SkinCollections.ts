@@ -28,7 +28,7 @@ export const transformation = {
 	}
 };
 
-export const getAll = async (params: { user_tag: string }, pagination: PaginationProps = {
+export const getAll = async (params: { user_tag: string; name: string | string[]; }, pagination: PaginationProps = {
 	limit: 10,
 	offset: 0
 }): Promise<Omit<ISkinCollection, "metadata">[]> => {
@@ -38,6 +38,12 @@ export const getAll = async (params: { user_tag: string }, pagination: Paginatio
 		.from(tableName)
 		.innerJoin(cardSkins, `${tableName}.skin_id`, `${cardSkins}.id`)
 		.where(`${tableName}.user_tag`, params.user_tag);
+
+	if (typeof params.name === "string") {
+		query = query.where(`${cardSkins}.name`, "ilike", `%${params.name}%`);
+	} else if (typeof params.name === "object") {
+		query = query.where(`${cardSkins}.name`, "~", `^(${params.name.join("|")}).*`);
+	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
 

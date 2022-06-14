@@ -91,12 +91,11 @@ export const getDex: (
 			const cards = await getBySeries({ series: filter.series });
 			character_ids = cards.map((ca) => ca.character_id);
 		}
-		let result = await Characters.getCharactersForDex({
+		const result = await Characters.getCharactersForDex({
 			ids: character_ids,
 			...filter 
 		}, 
 		await paginationParams(pageProps));
-		result = result.filter((c) => c.id !== 426);
 		const pagination = await paginationForResult<CharacterDetailsProps>({
 			data: result,
 			query: pageProps

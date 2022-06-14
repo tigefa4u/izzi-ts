@@ -48,6 +48,10 @@ const argMap = [
 	{
 		name: "page",
 		alias: [ "-pg", "-page" ]
+	},
+	{
+		name: "year",
+		alias: [ "-year" ]
 	}
 ];
 

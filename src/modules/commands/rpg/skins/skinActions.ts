@@ -17,6 +17,7 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
+import { fetchParamsFromArgs } from "utility/forParams";
 import { delSkinArr, getSkinArr, setSkinArr } from "./skinCache";
 
 export const show = async (params: {
@@ -27,16 +28,22 @@ export const show = async (params: {
 }) => {
 	try {
 		const filter = clone(PAGE_FILTER);
-		const pageNum = params.args?.shift();
-		if (pageNum === "-pg") {
-			filter.currentPage = Number(params.args?.shift() || 0);
+		const filterParams = fetchParamsFromArgs<{ name: string; page: string; }>(params.args || [ "" ]);
+		if (filterParams.page) {
+			filter.currentPage = Number(filterParams.page || 1);
+		}
+		if (typeof filterParams.name === "object") {
+			filterParams.name = filterParams.name[0];
 		}
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = await paginatorInteraction(
 			params.channel,
 			params.author.id,
-			{ user_tag: params.author.id },
+			{
+				user_tag: params.author.id,
+				...filterParams 
+			},
 			filter,
 			getSkinCollection,
 			(data, options) => {

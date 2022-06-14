@@ -7,7 +7,7 @@ import loggers from "loggers";
 import * as SkinCollections from "../models/SkinCollections";
 
 export const getSkinCollection = async (
-	params: Pick<UserProps, "user_tag">,
+	params: Pick<UserProps, "user_tag"> & { name: string[] | string; },
 	filter: PageProps
 ): Promise<
   ResponseWithPagination<Omit<ISkinCollection, "metadata">[]> | undefined

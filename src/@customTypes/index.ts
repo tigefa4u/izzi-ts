@@ -21,6 +21,7 @@ export type FilterProps = {
     page?: string[];
     isExactMatch?: boolean;
     exclude?: string[];
+    year?: number;
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]

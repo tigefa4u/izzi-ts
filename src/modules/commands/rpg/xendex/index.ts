@@ -21,6 +21,9 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;
 		}
+		if (params.year) {
+			params.year = +params.year;
+		}
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const buttons = 
