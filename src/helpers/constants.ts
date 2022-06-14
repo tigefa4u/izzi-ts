@@ -120,7 +120,7 @@ export const GOLD_LIMIT = 5000000;
 export const BET_LIMIT = 50000;
 export const DEFAULT_PACK = {
 	num: 50,
-	cost: 1800,
+	cost: 1350,
 	cardPerPage: 10,
 	rank: "platinum",
 	rank_id: 3,
