@@ -4,6 +4,7 @@ import { getUserBan } from "api/controllers/BansController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
+import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 
 export const checkUserBanned = async (
@@ -35,6 +36,9 @@ export const checkUserBanned = async (
 	if (user && !user.is_active) {
 		context.channel?.sendMessage("Welcome back! We have set your account status to active");
 		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
+	}
+	if (user?.is_premium) {
+		author.username = `${emoji.premium} ${author.username}`;
 	}
 	return true;
 };
