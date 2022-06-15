@@ -13,9 +13,10 @@ export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) =
 	if (author) {
 		let username = author.username;
 		try {
-			const splitUser = author.username.split(emoji.premium)[1];
+			const regex = new RegExp(emoji.premium, "g");
+			const splitUser = author.username.replace(regex, "");
 			if (splitUser) {
-				username = splitUser;
+				username = splitUser.trim();
 			}
 		} catch (err) {
 			username = author.username;
