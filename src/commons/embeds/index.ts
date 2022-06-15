@@ -13,8 +13,12 @@ export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) =
 	if (author) {
 		let username = author.username;
 		try {
-			username = author.username.split(emoji.premium)[1];
+			const splitUser = author.username.split(emoji.premium)[1];
+			if (splitUser) {
+				username = splitUser;
+			}
 		} catch (err) {
+			username = author.username;
 			// pass
 		}
 		embed.setAuthor({
