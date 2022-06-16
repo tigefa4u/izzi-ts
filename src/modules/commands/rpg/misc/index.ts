@@ -31,13 +31,8 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
-		const embed = createEmbed()
-			.setTitle(DEFAULT_ERROR_TITLE)
-			.setThumbnail(client.user?.displayAvatarURL() || "")
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL()
-			});
+		const embed = createEmbed(author, client)
+			.setTitle(DEFAULT_ERROR_TITLE);
 
 		if (user.gold < LOTTERY_PRICE) {
 			embed.setDescription("You do not have enough gold to play the Lottery!");

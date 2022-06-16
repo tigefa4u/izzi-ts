@@ -76,13 +76,9 @@ async function validateAndPurchaseItem(
 		user.id
 	);
 	if (!item) return;
-	const embed = createEmbed()
+	const embed = createEmbed(params.author)
 		.setTitle(DEFAULT_ERROR_TITLE)
-		.setThumbnail(params.client.user?.displayAvatarURL() || "")
-		.setAuthor({
-			name: params.author.username,
-			iconURL: params.author.displayAvatarURL(),
-		});
+		.setThumbnail(params.client.user?.displayAvatarURL() || "");
 	if (user.gold < item.price) {
 		embed.setDescription(
 			"You do not have sufficient gold to purchase this item"

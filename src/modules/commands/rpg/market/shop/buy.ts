@@ -144,13 +144,8 @@ async function validateAndPurchaseCard(
 		}
 	);
 	if (!marketCard) return;
-	const embed = createEmbed()
-		.setTitle(DEFAULT_ERROR_TITLE)
-		.setThumbnail(params.client.user?.displayAvatarURL() || "")
-		.setAuthor({
-			name: params.author.username,
-			iconURL: params.author.displayAvatarURL(),
-		});
+	const embed = createEmbed(params.author, params.client)
+		.setTitle(DEFAULT_ERROR_TITLE);
 	if (buyer.gold < marketCard.price) {
 		embed.setDescription(
 			"You do not have sufficient gold to purchase this card"

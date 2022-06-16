@@ -12,7 +12,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import { emojiMap } from "emojis";
-import { baseStatRatio, calcPower, prepareAbilityDescription } from "helpers";
+import { baseStatRatio, calcPower, parsePremiumUsername, prepareAbilityDescription } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -175,7 +175,7 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 		});
 		if (!embed) return;
 		embed.setAuthor({
-			name: author.username,
+			name: parsePremiumUsername(author.username),
 			iconURL: author.displayAvatarURL(),
 		});
 		context.channel?.sendMessage(embed);

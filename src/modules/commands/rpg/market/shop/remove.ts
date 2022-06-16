@@ -27,10 +27,7 @@ export const removeCardFromMarket = async ({
 			user.id,
 			{ notFoundError: true }
 		);
-		const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		});
+		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
 		if (marketCard?.user_id !== user.id) {
 			embed.setDescription("This card does not belong to you!");
 			context.channel?.sendMessage(embed);

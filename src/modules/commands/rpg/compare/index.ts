@@ -43,14 +43,10 @@ export const compareCards = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
-		const embed = createEmbed();
+		const embed = createEmbed(author, client);
 		embed
-			.setTitle(DEFAULT_ERROR_TITLE)
-			.setThumbnail(client.user?.displayAvatarURL() || "")
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			});
+			.setTitle(DEFAULT_ERROR_TITLE);
+
 		const charaArgs = args.join(" ");
 		if (!args) {
 			return;

@@ -27,13 +27,8 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 		});
 		if (!validGuild) return;
 		const member = await getGuildMember({ user_id: mentionedUser.id });
-		const embed = createEmbed()
-			.setTitle(DEFAULT_ERROR_TITLE)
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL()
-			})
-			.setThumbnail(client.user?.displayAvatarURL() || "");
+		const embed = createEmbed(author, client)
+			.setTitle(DEFAULT_ERROR_TITLE);
 		if (!member || member.guild_id !== validGuild.guild.id) {
 			embed.setDescription("This user does not belong to your guild!");
 			context.channel?.sendMessage(embed);

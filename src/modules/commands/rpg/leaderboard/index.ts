@@ -88,13 +88,8 @@ async function getLB(
 			orderName,
 			lb
 		);
-		const embed = createEmbed();
+		const embed = createEmbed(author, client);
 		embed
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL()
-			})
-			.setThumbnail(client.user?.displayAvatarURL() || "")
 			.setDescription(
 				`Top 10 User ${titleCase(
 					orderName

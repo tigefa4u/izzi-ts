@@ -205,12 +205,8 @@ export const setBanner = async ({
 		await updateGuild({ id: validGuild.guild.id }, { banner: url });
 		const thumbnail =
       context.guild?.iconURL() || client.user?.displayAvatarURL();
-		const embed = createEmbed()
+		const embed = createEmbed(author)
 			.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			})
 			.setThumbnail(thumbnail || "")
 			.setDescription("Successfully set Clan Banner!");
 

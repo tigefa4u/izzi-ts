@@ -127,12 +127,8 @@ export const itemInfo = async ({
 		if (!item) return;
 		const preparedStats = prepareItemStats(item.stats);
 		const attachment = createAttachment(item.filepath, "item.jpg");
-		const embed = createEmbed();
+		const embed = createEmbed(author);
 		embed
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL()
-			})
 			.setTitle(titleCase(item.name))
 			.setDescription(
 				"Items give your cards additional stats buffing their abilities\n" +

@@ -1,12 +1,19 @@
 import { BaseProps } from "@customTypes/command";
 import { updateRPGUser } from "api/controllers/UsersController";
+import { parsePremiumUsername } from "helpers";
 import loggers from "loggers";
 
 export const updateIzziProfile = async ({ context, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		await updateRPGUser({ user_tag: author.id }, { username: author.username }, { hydrateCache: true });
-		context.channel?.sendMessage(`Successfully updated your izzi profile username to **__${author.username}__**`);
+		await updateRPGUser(
+			{ user_tag: author.id },
+			{ username: parsePremiumUsername(author.username) },
+			{ hydrateCache: true }
+		);
+		context.channel?.sendMessage(
+			`Successfully updated your izzi profile username to **__${author.username}__**`
+		);
 		return;
 	} catch (err) {
 		loggers.error(

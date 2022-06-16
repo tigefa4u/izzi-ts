@@ -37,10 +37,7 @@ export const vpromote = async ({
 		if (!validGuild) return;
 		const guildDetails = await getGuildDetails({ id: validGuild.guild.id });
 		const vice = guildDetails?.filter((g) => g.role === "vice_leader")[0];
-		const embed = createEmbed().setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		});
+		const embed = createEmbed(author);
 		if (vice) {
 			embed.setDescription(
 				"Your guild already has a vice leader! use ``guild members`` to view your guild members"
@@ -98,10 +95,7 @@ export const vdemote = async ({
 		if (!validGuild) return;
 		const guildDetails = await getGuildDetails({ id: validGuild.guild.id });
 		const vice = guildDetails?.filter((g) => g.role === "vice_leader")[0];
-		const embed = createEmbed().setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		});
+		const embed = createEmbed(author);
 		if (!vice) {
 			embed.setDescription(
 				"Your guild does not have a vice leader! use ``guild vpromote <@user>`` to appoint a Guild Vice Leader."

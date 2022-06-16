@@ -26,13 +26,8 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 			num = DEFAULT_PACK.num;
 		}
 		const cost = DEFAULT_PACK.cost * num;
-		const embed = createEmbed()
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			})
-			.setTitle(DEFAULT_ERROR_TITLE)
-			.setThumbnail(client.user?.displayAvatarURL() || "");
+		const embed = createEmbed(author, client)
+			.setTitle(DEFAULT_ERROR_TITLE);
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (user.gold < cost) {

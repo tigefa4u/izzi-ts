@@ -6,24 +6,14 @@ import { EmbedProps } from "@customTypes/embed";
 import { AuthorProps } from "@customTypes";
 import { EMBED_DEFAULT_COLOR } from "helpers/constants";
 import emoji from "emojis/emoji";
+import { parsePremiumUsername } from "helpers";
 
 export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) => {
 	const embed = new MessageEmbed();
 	embed.setColor(EMBED_DEFAULT_COLOR);
 	if (author) {
-		let username = author.username;
-		try {
-			const regex = new RegExp(emoji.premium, "g");
-			const splitUser = author.username.replace(regex, "");
-			if (splitUser) {
-				username = splitUser.trim();
-			}
-		} catch (err) {
-			username = author.username;
-			// pass
-		}
 		embed.setAuthor({
-			name: username,
+			name: parsePremiumUsername(author.username),
 			iconURL: author.displayAvatarURL()
 		});
 	}

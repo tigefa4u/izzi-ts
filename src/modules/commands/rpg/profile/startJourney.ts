@@ -70,13 +70,8 @@ export const start: (params: BaseProps) => void = async ({
 }) => {
 	try {
 		const author = options.author;
-		const embed = createEmbed()
-			.setTitle(DEFAULT_ERROR_TITLE)
-			.setThumbnail(client.user?.displayAvatarURL() || "")
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			});
+		const embed = createEmbed(author, client)
+			.setTitle(DEFAULT_ERROR_TITLE);
 
 		const userExists = await checkExistingAccount(author.id);
 		if (userExists) {

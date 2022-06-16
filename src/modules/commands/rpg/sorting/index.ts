@@ -58,13 +58,8 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
 			}
 		}
 		await setSortCache(key, params);
-		const embed = createEmbed()
-			.setAuthor({
-				name: author.username,
-				iconURL: author.displayAvatarURL(),
-			})
+		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setThumbnail(client.user?.displayAvatarURL() || "")
 			.setDescription(
 				"Successfully updated collections to be sorted by" +
           " " +

@@ -13,6 +13,7 @@ import { titleCase } from "title-case";
 import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import emoji from "emojis/emoji";
 
 export const generateUUID = (n: number): string => {
 	const add = 1;
@@ -389,4 +390,18 @@ export const validateChannelPermissions = (context: BaseProps["context"]) => {
 
 export const escapeSpecialCharacters = (text = "") => {
 	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+export const parsePremiumUsername = (username: string) => {
+	let parsedUsername = username;
+	try {
+		const regex = new RegExp(emoji.premium, "g");
+		const premiumUsername = username?.replace(regex, "");
+		if (premiumUsername) {
+			parsedUsername = premiumUsername.trim();
+		}
+	} catch (err) {
+		parsedUsername = username;
+	}
+	return parsedUsername;
 };

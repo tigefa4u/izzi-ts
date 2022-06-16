@@ -59,13 +59,8 @@ async function validateAndProcessPurchase(
 		extras: { user_id: id },
 	});
 	if (!validGuild) return;
-	const embed = createEmbed()
-		.setTitle(DEFAULT_ERROR_TITLE)
-		.setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		})
-		.setThumbnail(params.client.user?.displayAvatarURL() || "");
+	const embed = createEmbed(author, params.client)
+		.setTitle(DEFAULT_ERROR_TITLE);
 	if (validGuild.guild.gold < params.extras.total) {
 		embed.setDescription(
 			"Your guild does not have enough gold to purchase this item!"
@@ -132,10 +127,7 @@ export const buyItem = async ({
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const marketItem = await getGuildMarketItem({ id });
-		let embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
-			name: author.username,
-			iconURL: author.displayAvatarURL(),
-		});
+		let embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
 		if (!marketItem) {
 			embed.setDescription("We could not find the item you were looking for");
 			context.channel?.sendMessage(embed);

@@ -129,14 +129,9 @@ export const choose = async (params: {
 		// let skinArr = await redisClient.get(`selected-skin-${author.id}`);
 		let skin: any;
 		// let spbtSkin: any;
-		const embed = createEmbed();
+		const embed = createEmbed(params.author, params.client);
 		embed
-			.setAuthor({
-				name: params.author.username,
-				iconURL: params.author.displayAvatarURL(),
-			})
-			.setTitle("Error :no_entry:")
-			.setThumbnail(params.client.user?.displayAvatarURL() || "");
+			.setTitle("Error :no_entry:");
 
 		if (skinArr.length >= MAX_CHOSEN_SKINS_ALLOWED) {
 			embed.setDescription(

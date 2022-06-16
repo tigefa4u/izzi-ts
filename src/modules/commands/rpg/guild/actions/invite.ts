@@ -42,10 +42,7 @@ async function validateAndInviteMember(
 	const mentionedUser = await getRPGUser({ user_tag: id }, { cached: true });
 	if (!mentionedUser) return;
 	const mentionedMember = await getGuildMember({ user_id: mentionedUser.id });
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
-		name: author.username,
-		iconURL: author.displayAvatarURL(),
-	});
+	const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
 	if (mentionedMember) {
 		embed.setDescription("This user is already in a guild!");
 		context.channel?.sendMessage(embed);

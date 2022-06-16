@@ -6,6 +6,7 @@ import { getAllZones, getMaxLocation, getZoneByLocationId } from "api/controller
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
+import { parsePremiumUsername } from "helpers";
 import { DEFAULT_ERROR_TITLE, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createZoneList } from "helpers/embedLists/zone";
@@ -151,7 +152,7 @@ export const zone = async ({ context, client, options, args }: BaseProps) => {
 		});
 		if (!embed) return;
 		embed.setAuthor({
-			name: author.username,
+			name: parsePremiumUsername(author.username),
 			iconURL: author.displayAvatarURL()
 		});
 		context.channel?.sendMessage(embed);

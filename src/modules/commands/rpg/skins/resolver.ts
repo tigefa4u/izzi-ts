@@ -51,10 +51,7 @@ async function validateAndProcessResolveSkin(params: P, options?: O) {
 		id: params.id,
 		user_tag: params.author.id,
 	});
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE).setAuthor({
-		name: params.author.username,
-		iconURL: params.author.displayAvatarURL(),
-	});
+	const embed = createEmbed(params.author).setTitle(DEFAULT_ERROR_TITLE);
 	if (!skinCollection) {
 		embed.setDescription(
 			"We could not find the skin you were looking for in your collections."
