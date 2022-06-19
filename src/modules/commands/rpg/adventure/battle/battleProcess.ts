@@ -10,6 +10,7 @@ import {
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
+import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
 import loggers from "loggers";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
@@ -93,7 +94,7 @@ export const BattleProcess = async ({
 	playerStats,
 	opponentStats,
 	round,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!opponentStats) {
 		throw new Error("Unable to process opponent");
@@ -111,7 +112,7 @@ export const BattleProcess = async ({
     	playerStats,
     	opponentStats,
     	round,
-    	simulation
+    	simulation,
     });
 	if (rest.playerStats) {
 		playerStats.totalStats = rest.playerStats.totalStats;
@@ -195,7 +196,7 @@ async function processAbililtyOrItemProc({
 	playerStats,
 	opponentStats,
 	round,
-	simulation
+	simulation,
 }: BattleProcessProps) {
 	let abilityProc = {} as AbilityProcReturnType,
 		abilityDamage = 0,
@@ -213,11 +214,10 @@ async function processAbililtyOrItemProc({
 			isPlayerFirst,
 			round,
 			opponentStats,
-			simulation
+			simulation,
 		} as BattleProcessProps;
 		if (card.itemname) {
-			const itemCallable =
-          itemProcMap[card.itemname as keyof ItemProcMapProps];
+			const itemCallable = itemProcMap[card.itemname as keyof ItemProcMapProps];
 			if (typeof itemCallable === "function") {
 				const itemProc = itemCallable(params);
 				if (itemProc) {
@@ -246,13 +246,17 @@ async function processAbililtyOrItemProc({
 		}
 		if (
 			(processUnableToAttack(playerStats, opponentStats, true) ||
-          playerStats.totalStats.isRestrictResisted) &&
-        	!(playerStats.cards.find((c) => c?.abilityname === "harbinger of death") && round % 4 === 0)
+        playerStats.totalStats.isRestrictResisted) &&
+      !(
+      	playerStats.cards.find(
+      		(c) => c?.abilityname === "harbinger of death"
+      	) && round % HARBINGER_OF_DEATH_PROC_ROUND === 0
+      )
 		)
 			break;
 
 		const callable =
-        abilityProcMap[card.abilityname as keyof AbilityProcMapProps];
+      abilityProcMap[card.abilityname as keyof AbilityProcMapProps];
 		if (typeof callable !== "function") continue;
 		abilityProc = callable(params) || ({} as AbilityProcReturnType);
 		if (abilityProc) {
@@ -266,7 +270,7 @@ async function processAbililtyOrItemProc({
 		if (abilityProc) {
 			if (
 				(abilityProc.damageDiff ?? 1) <= 0 ||
-          (abilityProc.playerDamageDiff ?? 1) <= 0
+        (abilityProc.playerDamageDiff ?? 1) <= 0
 			) {
 				isDefeated = true;
 				break;

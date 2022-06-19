@@ -5,6 +5,7 @@ import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
+import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
 
 export const harbingerOfDeath = ({
 	playerStats,
@@ -27,7 +28,7 @@ export const harbingerOfDeath = ({
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
-	if (round % 3 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
+	if (round % HARBINGER_OF_DEATH_PROC_ROUND === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
 		const percent = calcPercentRatio(15, card.rank);
 		const percentLoss = calcPercentRatio(10, card.rank);

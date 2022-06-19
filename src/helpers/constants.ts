@@ -262,3 +262,5 @@ export const BATTLE_TYPES = {
 	DUNGEON: "DUNGEON",
 	FLOOR: "FLOOR"
 };
+
+export const HARBINGER_OF_DEATH_PROC_ROUND = 3;
