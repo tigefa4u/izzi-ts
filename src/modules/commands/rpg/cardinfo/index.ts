@@ -64,7 +64,8 @@ async function prepareCinfoDetails(
 						? "Event"
 						: "None"
 			}\n**RANK:** ${titleCase(characterInfo.rank)}\n${prepareStatsDesc(
-				statsPrep
+				statsPrep,
+				characterInfo.rank
 			)}`
 		)
 		.setImage("attachment://cinfo.jpg")
