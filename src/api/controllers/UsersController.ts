@@ -117,6 +117,7 @@ export const getRPGUser: (
 					vote_streak: user.vote_streak,
 				})
 			);
+			Cache.expire && Cache.expire(key, 60 * 60 * 23);
 		}
 		// await hydrateUserCache(user);
 		return user;

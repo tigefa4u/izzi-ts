@@ -18,8 +18,8 @@ export const harbingerOfDeath = ({
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
-	// as well as reducing all stats by {15}% as well as buffing all
-	// ally stats for the same %
+	// as well as reducing all stats by {10}% as well as buffing all
+	// ally stats for 15%
 	if (!card) return;
 	let proc = true;
 	if (opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
@@ -27,9 +27,10 @@ export const harbingerOfDeath = ({
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
-	if (round % 4 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
+	if (round % 3 === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
 		const percent = calcPercentRatio(15, card.rank);
+		const percentLoss = calcPercentRatio(10, card.rank);
 		// reset elemental advantage
 		// opponentStats.totalStats.effective = 1;
 		// playerStats.totalStats.effective = 1;
@@ -66,7 +67,7 @@ export const harbingerOfDeath = ({
 			const key = stat as keyof CharacterStatProps;
 			const statLoss = getRelationalDiff(
 				opponentStats.totalStats[key],
-				percent
+				percentLoss
 			);
 			opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
@@ -74,7 +75,7 @@ export const harbingerOfDeath = ({
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
-	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percent}%__ and ` +
+	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percentLoss}%__ and ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
