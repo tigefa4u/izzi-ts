@@ -50,9 +50,6 @@ export const surge = ({
 			simulation
 		});
 	}
-	if (round % 5 === 0 && opponentStats.totalStats.isBleeding) {
-		opponentStats.totalStats.isBleeding = false;
-	}
 	if (opponentStats.totalStats.isBleeding) {
 		let defenseDiff = baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
 		if (defenseDiff < 0) defenseDiff = 0;

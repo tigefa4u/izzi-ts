@@ -140,8 +140,10 @@ export const guardian = ({
 		);
 		basePlayerStats.totalStats.tempGuardianCount++;
 		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
-		if (playerStats.totalStats.strength >= playerStats.totalStats.originalHp)
+		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
+			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
+		}
 		playerStats.totalStats.defense = basePlayerStats.totalStats.defense + ratio;
 		const desc = `restores __${ratio}__ ${emoji.heal} **HP**, and also increases ` +
         `the **DEF** of all allies by __${perRatio}%__`;

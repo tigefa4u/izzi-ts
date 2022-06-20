@@ -221,8 +221,10 @@ export const dreamEater = ({
 		const healPercent = calcPercentRatio(7, card.rank);
 		const heal = getRelationalDiff(baseDamage, healPercent);
 		playerStats.totalStats.strength = playerStats.totalStats.strength + heal;
-		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp)
+		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
+			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
+		}
 		const healDiff = relativeDiff(
 			playerStats.totalStats.strength,
 			playerStats.totalStats.originalHp

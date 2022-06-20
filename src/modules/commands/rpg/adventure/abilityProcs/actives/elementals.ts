@@ -127,8 +127,10 @@ export const spellBook = ({
 			const hpDiff = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
 			ratio = getRelationalDiff(hpDiff, percent);
 			playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
-			if (playerStats.totalStats.strength >= playerStats.totalStats.originalHp)
+			if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 				playerStats.totalStats.strength = playerStats.totalStats.originalHp;
+				if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
+			}
 			desc = `and restores __${ratio}__ missing **HP** ${emoji.heal}`;
 		} else if (temp === "defense") {
 			playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
