@@ -12,25 +12,28 @@ export const surge = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
-	if (!card || !playerStats.totalStats.originalHp) return;
+	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	// Need to rewird
 	// When your hp is below __45%__. Increase life steal of all alies by __75__% 
-	// as well as applying a bleed on the enemy dealing more damage over time.
-	let desc;
+	// deal 100% damage based on hp and bonus damage based on enemy defense
+	// as well as inc def by 8% and apply a bleed on the enemy dealing more damage over time.
+	let desc, abilityDamage = 0, damageDiff;
 	const perStr = getRelationalDiff(playerStats.totalStats.originalHp, 45);
 	if (playerStats.totalStats.strength <= perStr && !playerStats.totalStats.isSurge) {
 		playerStats.totalStats.isSurge = true;
 		const percent = calcPercentRatio(75, card.rank);
 		playerStats.totalStats.surgePercent = percent;
 
+		opponentStats.totalStats.isBleeding = true;
+
 		const defBuffPercent = calcPercentRatio(8, card.rank);
 		const defIncreaseRatio = getRelationalDiff(playerStats.totalStats.defense, defBuffPercent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defIncreaseRatio;
-		desc = `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__`;
-		// as well as ` +
-		// 	`buffing its **DEF** by __${defBuffPercent}%__`;
+		desc = `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__ as well as ` +
+			`buffing its **DEF** by __${defBuffPercent}%__ applying a **Stack** of **BLEED** ${emoji.bleed}`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -46,11 +49,46 @@ export const surge = ({
 			isItem: false,
 			simulation
 		});
-
 	}
+	if (round % 5 === 0 && opponentStats.totalStats.isBleeding) {
+		opponentStats.totalStats.isBleeding = false;
+	}
+	if (opponentStats.totalStats.isBleeding) {
+		let defenseDiff = baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
+		if (defenseDiff < 0) defenseDiff = 0;
+		const percent = calcPercentRatio(100, card.rank);
+		const bleedDamage = getRelationalDiff(playerStats.totalStats.strength, percent);
+		abilityDamage = bleedDamage + defenseDiff;
+		opponentStats.totalStats.strength = opponentStats.totalStats.strength - abilityDamage;
+		if (opponentStats.totalStats.strength < 0) opponentStats.totalStats.strength = 0;
+		damageDiff = relativeDiff(opponentStats.totalStats.strength, opponentStats.totalStats.originalHp);
+		if (damageDiff < 0) damageDiff = 0;
+		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+		opponentStats.totalStats.health = processedHpBar.health;
+		opponentStats.totalStats.strength = processedHpBar.strength;
+		const desc = `**${opponentStats.name}** is affected by **Bleed** ${emoji.bleed} ` +
+		`taking __${abilityDamage}__ damage`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: true,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation
+		});	
+	}
+
 	return {
 		playerStats,
-		opponentStats
+		opponentStats,
+		abilityDamage,
+		damageDiff
 	};
 };
 

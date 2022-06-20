@@ -155,7 +155,8 @@ export const farsightOrb = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Its **INT** is increased by __35__ points. **Ability:** Grants __15%__ **CRIT Chance**.";
+		const desc = "Its **INT** is increased by __135__ points. " +
+		"**Ability:** Reduce enemy **Crit Chance** by __15__%.";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -171,13 +172,16 @@ export const farsightOrb = ({
 			isItem: true,
 			simulation
 		});
-
-		return {
-			playerStats,
-			opponentStats,
-			basePlayerStats,
-		};
 	}
+	if (round % 2 === 0 && opponentStats.totalStats.critical > 1) {
+		opponentStats.totalStats.critical = opponentStats.totalStats.critical - .15;
+		if (opponentStats.totalStats.critical < 1) opponentStats.totalStats.critical = 1;
+	}
+	return {
+		playerStats,
+		opponentStats,
+		basePlayerStats,
+	};
 };
 
 export const lunarWand = ({
@@ -200,7 +204,7 @@ export const lunarWand = ({
 		);
 		playerStats.totalStats.sleepResistPercent = itemStats.resist;
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = `It's **INT** is increased by __30__ points. **Ability:** Grants __${itemStats.resist}%__ ` +
+		const desc = `It's **INT** is increased by __110__ points. **Ability:** Grants __${itemStats.resist}%__ ` +
         "resistance buff against **SLEEP** ability.";
         
 		prepSendAbilityOrItemProcDescription({
@@ -252,7 +256,7 @@ export const staffOfMedana = ({
 		}
 		basePlayerStats.totalStats = playerStats.totalStats;
     
-		const desc = "It's **INT** is increased by __25__ points as well as buffing its resistance against " +
+		const desc = "It's **INT** is increased by __125__ points as well as buffing its resistance against " +
         `**${resistAgainst.toUpperCase()}** by __${itemStats.resist}%__`;
 
 		prepSendAbilityOrItemProcDescription({

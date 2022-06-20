@@ -17,7 +17,8 @@ export const toxicScreen = ({
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict a stack of poison on all enemies decreasing their defense by __20__%
-	// as well as reducing all lifesteal affects by __8%__
+	// as well as reducing all lifesteal affects by __8%__,
+	// On Poisoned Stack deal 15% based on your int.
 	let desc;
 	let damageDiff;
 	let abilityDamage;
@@ -72,7 +73,8 @@ export const toxicScreen = ({
 	}
 	if (playerStats.totalStats.isToxic) {
 		if (round % 3 != 0) {
-			abilityDamage = randomNumber(200, 410);
+			const damagePercent = calcPercentRatio(15, card.rank);
+			abilityDamage = getRelationalDiff(playerStats.totalStats.intelligence, damagePercent);
 			opponentStats.totalStats.strength =
         opponentStats.totalStats.strength - abilityDamage;
 			if (opponentStats.totalStats.strength < 0)

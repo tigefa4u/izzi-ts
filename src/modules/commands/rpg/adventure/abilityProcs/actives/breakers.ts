@@ -20,33 +20,42 @@ export const exhaust = ({
 	if (!playerStats.totalStats.exhNum) {
 		playerStats.totalStats.exhNum = 2;
 	}
-	// Permanently decrease the __SPD/INT__ of all enemies by __20%__
+	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
+	// as well as buffing all allies for the same stat
 	if (
 		round % playerStats.totalStats.exhNum === 0 &&
     !playerStats.totalStats.isExhaust
 	) {
 		playerStats.totalStats.isExhaust = true;
-		const tempInt = compare(
-			playerStats.totalStats.intelligence,
-			opponentStats.totalStats.intelligence
-		);
-		const num = tempInt ? 2 : 3;
+		// const tempInt = compare(
+		// 	playerStats.totalStats.intelligence,
+		// 	opponentStats.totalStats.intelligence
+		// );
+		const num = 2;
 		playerStats.totalStats.exhNum = playerStats.totalStats.exhNum + num;
 		const temp = randomElementFromArray([ "dexterity", "intelligence" ]);
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(25, card.rank);
 		const relDiff = getRelationalDiff(
 			opponentStats.totalStats[temp as keyof CharacterStatProps],
 			percent
 		);
+		const buffDiff = getRelationalDiff(
+			playerStats.totalStats[temp as keyof CharacterStatProps],
+			percent
+		);
+		playerStats.totalStats[temp as keyof CharacterStatProps] =
+		playerStats.totalStats[temp as keyof CharacterStatProps] - buffDiff;
+
 		opponentStats.totalStats[temp as keyof CharacterStatProps] =
       opponentStats.totalStats[temp as keyof CharacterStatProps] - relDiff;
-		const desc = `Decreasing ${opponentStats.name}'s **${
-			temp === "dexterity"
-				? "SPD"
-				: temp === "intelligence"
-					? "INT"
-					: temp.toUpperCase()
-		}** by __${percent}%__`;
+
+	  const statDesc =
+		temp === "dexterity"
+			? "SPD"
+			: "INT";
+	
+		const desc = `Decreasing ${opponentStats.name}'s **${statDesc}** by __${percent}%__ ` +
+		`as well as increasing **${statDesc}** of all allies by __${percent}%__`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -83,12 +92,12 @@ export const rapidFire = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// After a short delay decrease the enemies defense by __20%__. Their defense increases by __10%__ every turn.
-	if (round % 3 === 0 && !playerStats.totalStats.isRapid) {
+	// After a short delay decrease the enemies defense by __25%__. Their defense increases by __10%__ every turn.
+	if (round % 2 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isUsePassive = true;
 		playerStats.totalStats.isRapid = true;
 		// calculate % based on rank
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(25, card.rank);
 		const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
 		opponentStats.totalStats.defense =
       opponentStats.totalStats.defense - defPer;
@@ -108,7 +117,7 @@ export const rapidFire = ({
 			simulation
 		});
 	}
-	if (round % 3 === 2 && playerStats.totalStats.isRapid)
+	if (round % 2 === 1 && playerStats.totalStats.isRapid)
 		playerStats.totalStats.isRapid = false;
 	if (playerStats.totalStats.isUsePassive) {
 		// let inc = calcPercentRatio(6, card.rank);
@@ -209,11 +218,11 @@ export const crusher = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Decrease the **ATTACK** of enemies by __20%__. Their ATK increases by __10%__ each turn
+	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
 	if (round % 2 === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
 		// calculate ratio based on rank
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(25, card.rank);
 		const ratio = getRelationalDiff(opponentStats.totalStats.vitality, percent);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;

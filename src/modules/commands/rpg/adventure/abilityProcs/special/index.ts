@@ -20,7 +20,7 @@ export const harbingerOfDeath = ({
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
 	// as well as reducing all stats by {10}% as well as buffing all
-	// ally stats for 15%
+	// ally stats for 10%
 	if (!card) return;
 	let proc = true;
 	if (opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
@@ -30,8 +30,8 @@ export const harbingerOfDeath = ({
 	}
 	if (round % HARBINGER_OF_DEATH_PROC_ROUND === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
-		const percent = calcPercentRatio(15, card.rank);
-		const percentLoss = calcPercentRatio(10, card.rank);
+		const percent = calcPercentRatio(12, card.rank);
+		// const percentLoss = calcPercentRatio(10, card.rank);
 		// reset elemental advantage
 		// opponentStats.totalStats.effective = 1;
 		// playerStats.totalStats.effective = 1;
@@ -63,20 +63,21 @@ export const harbingerOfDeath = ({
 		playerStats.totalStats.isStackTB = false;
 		playerStats.totalStats.isRestrictResisted = false;
 		opponentStats.totalStats.isEndure = false;
+		playerStats.totalStats.isBleeding = false;
 
 		[ "vitality", "defense", "dexterity", "intelligence" ].map((stat) => {
 			const key = stat as keyof CharacterStatProps;
-			const statLoss = getRelationalDiff(
-				opponentStats.totalStats[key],
-				percentLoss
-			);
-			opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
+			// const statLoss = getRelationalDiff(
+			// 	opponentStats.totalStats[key],
+			// 	percentLoss
+			// );
+			// opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
 			const statGain = getRelationalDiff(playerStats.totalStats[key], percent);
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
-	    `${emoji.harbingerofdeath} as well as **Decreasing** all **Enemy Stats** by __${percentLoss}%__ and ` +
+	    `${emoji.harbingerofdeath} as well as ` +
 	    `buffing all **Ally Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

@@ -169,11 +169,13 @@ export const guardianAngel = ({
 			isItem: true,
 			simulation
 		});
-
-		return {
-			playerStats,
-			opponentStats,
-			basePlayerStats,
-		};
 	}
+	if (playerStats.totalStats.isBleeding && round % 2 === 0) {
+		playerStats.totalStats.isBleeding = false;
+	}
+	return {
+		playerStats,
+		opponentStats,
+		basePlayerStats,
+	};
 };
