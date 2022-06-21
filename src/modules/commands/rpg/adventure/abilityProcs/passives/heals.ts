@@ -24,9 +24,10 @@ export const surge = ({
 	const perStr = getRelationalDiff(playerStats.totalStats.originalHp, 45);
 	if (playerStats.totalStats.strength <= perStr && !playerStats.totalStats.isSurge) {
 		playerStats.totalStats.isSurge = true;
-		const percent = calcPercentRatio(75, card.rank);
+		const percent = calcPercentRatio(65, card.rank);
 		playerStats.totalStats.surgePercent = percent;
 
+		playerStats.totalStats.bleedResetOnRound = round + 2;
 		opponentStats.totalStats.isBleeding = true;
 
 		const defBuffPercent = calcPercentRatio(8, card.rank);
@@ -78,7 +79,25 @@ export const surge = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation
-		});	
+		});
+	}
+	if (playerStats.totalStats.bleedResetOnRound && playerStats.totalStats.bleedResetOnRound === round) {
+		opponentStats.totalStats.isBleeding = false;
+		const desc = `${opponentStats.name} has stopped **Bleeding** ${emoji.bleed}`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: true,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation
+		});
 	}
 
 	return {

@@ -170,7 +170,7 @@ export const guardianAngel = ({
 			simulation
 		});
 	}
-	if (playerStats.totalStats.isBleeding && round % 2 === 0) {
+	if (playerStats.totalStats.isBleeding) {
 		playerStats.totalStats.isBleeding = false;
 	}
 	return {

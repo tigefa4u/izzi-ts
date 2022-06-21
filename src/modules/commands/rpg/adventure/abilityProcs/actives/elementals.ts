@@ -71,9 +71,8 @@ export const elementalStrike = ({
 			simulation
 		});
 	}
-	const hasHarbinger = opponentStats.cards.find((a: any) => a?.abilityname === "harbinger of death");
-	if (round % 3 === 0 && hasHarbinger) {
-		const desc = "**[PSV]** gaining **Elemental Advantage** over **Harbinger of Death**";
+	if (round % 3 === 0) {
+		const desc = "**[PSV]** gaining **Elemental Advantage**";
 		playerStats.totalStats.effective = 1.4;
 		opponentStats.totalStats.effective = 0.8;
 		prepSendAbilityOrItemProcDescription({
