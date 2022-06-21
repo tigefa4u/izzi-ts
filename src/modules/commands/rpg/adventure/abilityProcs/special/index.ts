@@ -20,7 +20,7 @@ export const harbingerOfDeath = ({
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
 	// as well as reducing all stats by {10}% as well as buffing all
-	// ally stats for 10%
+	// ally stats for 14%
 	if (!card) return;
 	let proc = true;
 	if (opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
@@ -30,7 +30,7 @@ export const harbingerOfDeath = ({
 	}
 	if (round % HARBINGER_OF_DEATH_PROC_ROUND === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
-		const percent = calcPercentRatio(12, card.rank);
+		const percent = calcPercentRatio(14, card.rank);
 		// const percentLoss = calcPercentRatio(10, card.rank);
 		// reset elemental advantage
 		// opponentStats.totalStats.effective = 1;
@@ -44,7 +44,7 @@ export const harbingerOfDeath = ({
 		opponentStats.totalStats.evasionInc = 1;
 		opponentStats.totalStats.evasionTemp = 1;
 		opponentStats.totalStats.isEvadeHit = false;
-		opponentStats.totalStats.isCriticalHit = false;
+		// opponentStats.totalStats.isCriticalHit = false;
 
 		// playerStats.totalStats.isEvadeHit = false;
 		// playerStats.totalStats.isEvadeHit = false;

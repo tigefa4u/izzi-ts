@@ -263,4 +263,4 @@ export const BATTLE_TYPES = {
 	FLOOR: "FLOOR"
 };
 
-export const HARBINGER_OF_DEATH_PROC_ROUND = 4;
+export const HARBINGER_OF_DEATH_PROC_ROUND = 3;

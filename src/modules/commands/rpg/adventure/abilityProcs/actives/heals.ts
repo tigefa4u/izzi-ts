@@ -16,14 +16,18 @@ export const lifesteal = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Increase life steal by __25%__.
+	// Increase life steal by __25%__ and buff ATK by 10%.
 	if (round % 3 === 0) {
 		playerStats.totalStats.isLifesteal = true;
 		const percent = calcPercentRatio(25, card.rank);
+		const atkPercent = calcPercentRatio(10, card.rank);
+		const ratio = getRelationalDiff(playerStats.totalStats.vitality, atkPercent);
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		playerStats.totalStats.lifestealPercent = playerStats.totalStats.lifestealPercent
 			? playerStats.totalStats.lifestealPercent + percent
 			: percent;
-		const desc = `Increasing **lifesteal** of all allies by __${percent}%__`;
+		const desc = `Increasing **lifesteal** of all allies by __${percent}%__ ` +
+		`as well as increasing all ally **ATK** by __${atkPercent}__%`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
