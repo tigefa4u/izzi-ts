@@ -14,18 +14,18 @@ export const handleClientEvents = (client: Client) => {
 	client.on("warn", (warning) => {
 		console.log({ warning });
 	});
-	client.on("debug", (debug) => {
-		loggers.logApi("get", "[DEBUG]", debug);
-	});
+	// client.on("debug", (debug) => {
+	// 	loggers.logApi("get", "[DEBUG]", debug);
+	// });
 
-	client.on("apiRequest", (req) => {
-		loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route);
-	});
+	// client.on("apiRequest", (req) => {
+	// 	loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route);
+	// });
 
-	client.on("apiResponse", (req, res) => {
-		// loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
-		loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
-	});
+	// client.on("apiResponse", (req, res) => {
+	// 	// loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
+	// 	loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
+	// });
 
 	client.on("messageCreate", (context: Message) => {
 		const hasPermissions = validateChannelPermissions(context);
