@@ -64,7 +64,7 @@ export const surge = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 		const desc = `**${opponentStats.name}** is affected by **Bleed** ${emoji.bleed} ` +
-		`taking __${abilityDamage}__ damage`;
+		`taking __${bleedDamage}__ damage. ${defenseDiff > 0 ? `Also takes additional __${defenseDiff}__ damage` : ""}`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
