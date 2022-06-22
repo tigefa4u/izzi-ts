@@ -17,12 +17,12 @@ export const elementalStrike = ({
 	simulation
 }: any) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Deal __30%__ magic damage based on your **INT** as well as buffing your **INT** by __10%__
-	// Bonus passive proc - gain elemental advantage when against harbinger of death
+	// Deal __35%__ magic damage based on your **INT** as well as buffing your **INT** by __25%__
 	let damageDiff;
 	let damageDealt;
 	if (round % 2 === 0) {
-		const relDiff = getRelationalDiff(playerStats.totalStats.intelligence, 30);
+		const percent = calcPercentRatio(35, card.rank);
+		const relDiff = getRelationalDiff(playerStats.totalStats.intelligence, percent);
 		damageDealt = relDiff;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
@@ -32,7 +32,7 @@ export const elementalStrike = ({
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
 		);
-		const incPercent = calcPercentRatio(10, card.rank);
+		const incPercent = calcPercentRatio(25, card.rank);
 		if (!basePlayerStats.totalStats.tempEle) {
 			basePlayerStats.totalStats.tempEle = 1;
 		}
@@ -56,25 +56,6 @@ export const elementalStrike = ({
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
 		const desc = `Deals __${damageDealt}__ damage as well as increasing its **INT** by __${incPercent}%__`;
-		prepSendAbilityOrItemProcDescription({
-			playerStats,
-			enemyStats: opponentStats,
-			card,
-			message,
-			embed,
-			round,
-			isDescriptionOnly: false,
-			description: desc,
-			totalDamage: 0,
-			isPlayerFirst,
-			isItem: false,
-			simulation
-		});
-	}
-	if (round % 3 === 0) {
-		const desc = "**[PSV]** gaining **Elemental Advantage**";
-		playerStats.totalStats.effective = 1.4;
-		opponentStats.totalStats.effective = 0.8;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

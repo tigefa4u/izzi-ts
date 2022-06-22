@@ -18,7 +18,7 @@ export const surge = ({
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	// Need to rewird
 	// When your hp is below __45%__. Increase life steal of all alies by __75__% 
-	// deal 100% damage based on hp and bonus damage based on enemy defense
+	// deal 90% damage based on hp and bonus damage based on enemy defense
 	// as well as inc def by 8% and apply a bleed on the enemy dealing more damage over time.
 	let desc, abilityDamage = 0, damageDiff;
 	const perStr = getRelationalDiff(playerStats.totalStats.originalHp, 45);
@@ -54,7 +54,7 @@ export const surge = ({
 	if (opponentStats.totalStats.isBleeding) {
 		let defenseDiff = baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
 		if (defenseDiff < 0) defenseDiff = 0;
-		const percent = calcPercentRatio(100, card.rank);
+		const percent = calcPercentRatio(90, card.rank);
 		const bleedDamage = getRelationalDiff(playerStats.totalStats.strength, percent);
 		abilityDamage = bleedDamage + defenseDiff;
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - abilityDamage;
