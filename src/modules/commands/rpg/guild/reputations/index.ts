@@ -3,7 +3,7 @@ import { updateGuildMember } from "api/controllers/GuildMembersController";
 import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, MAX_GUILD_REPUTATION_POINTS } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, MAX_GUILD_REPUTATION_POINTS, MINIMUM_LEVEL_FOR_REPUTATION } from "helpers/constants";
 import loggers from "loggers";
 import {
 	getCooldown,
@@ -27,6 +27,13 @@ export const repGuild = async ({
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
+		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		if (user.level < MINIMUM_LEVEL_FOR_REPUTATION) {
+			embed.setDescription(`Summoner **${author.username}**, You must be atleast ` +
+            `level __${MINIMUM_LEVEL_FOR_REPUTATION}__ to endorse your guild.`);
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		const rep = 1;
 		if (isNaN(rep)) return;
 		const validGuild = await verifyMemberPermissions({
@@ -41,7 +48,6 @@ export const repGuild = async ({
 		validGuild.guild.points = validGuild.guild.points + rep;
 		validGuild.member.supporter_points = validGuild.member.supporter_points + rep;
 
-		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 
 		if (validGuild.member.supporter_points > MAX_GUILD_REPUTATION_POINTS) {
 			embed.setDescription("You have already given the " +
