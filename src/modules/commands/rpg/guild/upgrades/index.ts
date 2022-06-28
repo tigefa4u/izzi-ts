@@ -43,7 +43,7 @@ async function validateAndUpgradeGuild(
 	const validGuild = await verifyMemberPermissions({
 		context: context,
 		author: params.author,
-		params: [ "is_leader", "is_vice_leader" ],
+		params: [ "is_leader", "is_vice_leader", "is_admin" ],
 		isOriginServer: true,
 		isAdmin: true,
 		extras: { user_id: params.extras.user_id },
