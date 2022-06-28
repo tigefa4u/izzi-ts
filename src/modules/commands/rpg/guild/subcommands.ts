@@ -69,8 +69,8 @@ export const subcommands = [ {
 	name: "ademote",
 	alias: []
 }, {
-	name: "rep",
-	alias: []
+	name: "reputation",
+	alias: [ "rep" ]
 }, {
 	name: "report",
 	alias: []

@@ -49,7 +49,7 @@ inner join users u on g.user_id = u.id
 where g.is_vice_leader = true union
 select 'admin' as role, g.guild_id, g.user_id, u.user_tag, u.username from
 guild_members as g
-innjer join users u in g.user_id = u.id
+inner join users u on g.user_id = u.id
 where g.is_admin = true
 
 create index guild on guild_details (guild_id)

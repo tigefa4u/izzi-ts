@@ -68,7 +68,7 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 			apromote(params);
 		} else if (subcommand === "ademote") {
 			ademote(params);
-		} else if (subcommand === "rep") {
+		} else if (subcommand === "reputation") {
 			repGuild(params);
 		} else if (subcommand === "report") {
 			reportGuild(params);
