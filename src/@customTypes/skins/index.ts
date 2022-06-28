@@ -29,3 +29,5 @@ export type SkinProps = {
 }
 
 export type ISkinCollection = SkinCollectionProps & Pick<SkinProps, "name" | "filepath" | "metadata">;
+
+export type CreateSkinCollectionProps = Omit<SkinCollectionProps, "id"> | Omit<SkinCollectionProps, "id">[]

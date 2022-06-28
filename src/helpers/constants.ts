@@ -252,6 +252,7 @@ export const THREAD_CHANNEL_PERMISSIONS = [
 export const MAX_REQUESTS_PER_CHANNEL = 5;
 
 export const MAX_GUILD_ITEMS_PURCHASABLE = 50;
+export const MAX_GUILD_REPUTATION_POINTS = 10;
 
 export const HIDE_VISUAL_BATTLE_ARG = "hidebt";
 

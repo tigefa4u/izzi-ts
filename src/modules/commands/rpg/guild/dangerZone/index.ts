@@ -4,7 +4,7 @@ import {
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { delGuildMember } from "api/controllers/GuildMembersController";
-import { disbandAndBackupGuild } from "api/controllers/GuildsController";
+import { disbandAndBackupGuild, updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -123,7 +123,11 @@ async function validateAndLeaveGuild(
 		return;
 	}
 	if (options?.isConfirm) {
-		await delGuildMember({ id: validGuild.member.id });
+		validGuild.guild.points = validGuild.guild.points - validGuild.member.supporter_points;
+		await Promise.all([
+			delGuildMember({ id: validGuild.member.id }),
+			updateGuild({ guild_id: validGuild.guild.guild_id }, { points: validGuild.guild.points })
+		]);
 		params.extras.context.channel?.sendMessage(
 			"You have left your guild."
 		);
@@ -165,7 +169,8 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(
 							"Are you sure you want to leave your guild? " +
-                            "You will lose access to bonus stats and guild items!"
+                            "You will lose access to bonus stats and guild items! " +
+							"And your guild will lose reputation points!"
 						);
 				}
 				if (opts?.isDelete) {

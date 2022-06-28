@@ -34,7 +34,7 @@ export type GuildUpdateProps = Partial<GuildCreateProps>;
 
 export type GuildMaterializedViewProps = {
   guild_id: number;
-  role: "leader" | "vice_leader";
+  role: "leader" | "vice_leader" | "admin";
   user_id: number;
   user_tag: string;
   username: string;

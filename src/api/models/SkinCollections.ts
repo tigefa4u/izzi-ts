@@ -1,5 +1,5 @@
 import { PaginationProps } from "@customTypes/pagination";
-import { ISkinCollection, SkinCollectionProps, SkinProps } from "@customTypes/skins";
+import { CreateSkinCollectionProps, ISkinCollection, SkinCollectionProps, SkinProps } from "@customTypes/skins";
 import connection from "db";
 
 const tableName = "skin_collections";
@@ -64,4 +64,8 @@ export const get = async (params: { user_tag: string, id: number }): Promise<ISk
 
 export const del = async (params: { id: number }) => {
 	return connection(tableName).where(`${tableName}.id`, params.id).del();
+};
+
+export const create = async (data: CreateSkinCollectionProps) => {
+	return connection(tableName).insert(data);
 };

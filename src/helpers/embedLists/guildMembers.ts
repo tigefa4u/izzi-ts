@@ -2,7 +2,11 @@ import { GuildMemberResponseProps } from "@customTypes/guildMembers";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
 
-export const createGuildMemberList = (array: GuildMemberResponseProps[], currentPage: number, perPage: number) => {
+export const createGuildMemberList = (
+	array: GuildMemberResponseProps[],
+	currentPage: number,
+	perPage: number
+) => {
 	const fields: EmbedFieldData[] = [];
 	array.map((member, i) => {
 		fields.push({
@@ -12,11 +16,16 @@ export const createGuildMemberList = (array: GuildMemberResponseProps[], current
 				member.is_leader
 					? "| Clan Leader"
 					: member.is_vice_leader
-						? "| Clan Vice Leader" : ""
+						? "| Clan Vice Leader"
+						: member.is_admin
+							? "Clan Admin"
+							: ""
 			}`,
-			value: `Total Donations: ${
-				member.max_donation
-			} ${emoji.gold} | Usable Gold: ${member.donation || 0} ${emoji.gold}`,
+			value: `Total Donations: ${member.max_donation} ${
+				emoji.gold
+			} | Usable Gold: ${member.donation || 0} ${
+				emoji.gold
+			} | Supporter Points: ${member.supporter_points}`,
 		});
 	});
 	return fields;

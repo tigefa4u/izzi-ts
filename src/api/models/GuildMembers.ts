@@ -37,10 +37,10 @@ export const transformation = {
 		type: "boolean",
 		defaultsTo: false,
 	},
-	isWarhead: {
+	isAdmin: {
 		type: "boolean",
 		defaultsTo: false,
-		columnName: "is_warhead",
+		columnName: "is_admin",
 	},
 	isInWar: {
 		type: "boolean",
@@ -93,7 +93,7 @@ export const update = async (
 	const db = connection;
 	const result = await db(tableName).where(params).update(data);
 	const keys = Object.keys(data);
-	if (keys.includes("is_leader") || keys.includes("is_vice_leader")) {
+	if (keys.includes("is_leader") || keys.includes("is_vice_leader") || keys.includes("is_admin")) {
 		await db.raw(refresh_view);
 	}
 	return result;

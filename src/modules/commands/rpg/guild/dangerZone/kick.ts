@@ -1,5 +1,6 @@
 import { BaseProps } from "@customTypes/command";
 import { delGuildMember, getGuildMember } from "api/controllers/GuildMembersController";
+import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { getIdFromMentionedString } from "helpers";
@@ -39,7 +40,11 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		await delGuildMember({ id: member.id });
+		validGuild.guild.points = validGuild.guild.points - member.supporter_points;
+		await Promise.all([
+			delGuildMember({ id: member.id }),
+			updateGuild({ guild_id: validGuild.guild.guild_id }, { points: validGuild.guild.points })
+		]);
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Member **${mentionedUser.username}** has been kicked from your Guild!`);
 

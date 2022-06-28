@@ -17,3 +17,13 @@ export const getSkinById = async (params: Pick<SkinProps, "id">): Promise<SkinPr
 		return;
 	}
 };
+
+export const getSkinByCharacterId = async (params: { character_id: number | number[]; }) => {
+	try {
+		const result = await Skins.getByCharacterId(params);
+		return result;
+	} catch (err) {
+		loggers.error("api.controllers.SkinsController.getSkinByCharacterId(): something went wrong", err);
+		return;
+	}
+};

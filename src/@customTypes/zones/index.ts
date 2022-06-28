@@ -8,4 +8,5 @@ export type ZoneProps = {
 	description: string;
 	created_at: string;
 	updated_at: string;
+	is_guild_floor: boolean;
 }

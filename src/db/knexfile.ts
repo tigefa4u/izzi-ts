@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config({ path: "../../.env" });
+
 export default {
 	development: {
 		client: "pg",
@@ -10,6 +13,10 @@ export default {
 		pool: {
 			min: 1,
 			max: 5
+		},
+		migrations: {
+			tableName: "knex_migrations_ts",
+			directory: "migrations" 
 		}
 	},
 	onUpdateTrigger: (table: string) => `

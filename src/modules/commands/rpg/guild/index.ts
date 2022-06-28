@@ -16,7 +16,8 @@ import { donateToGuild } from "./donations";
 import { viewGuild } from "./information";
 import { viewMembers } from "./information/members";
 import { guildItems } from "./items";
-import { vdemote, vpromote } from "./promotions";
+import { ademote, apromote, vdemote, vpromote } from "./promotions";
+import { repGuild, reportGuild } from "./reputations";
 import { itemMarket } from "./shop";
 import { subcommands } from "./subcommands";
 import { upgradeGuild } from "./upgrades";
@@ -63,6 +64,14 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 			upgradeGuild(params);
 		} else if (subcommand === "souls") {
 			upgradeCard(params);
+		} else if (subcommand === "apromote") {
+			apromote(params);
+		} else if (subcommand === "ademote") {
+			ademote(params);
+		} else if (subcommand === "rep") {
+			repGuild(params);
+		} else if (subcommand === "report") {
+			reportGuild(params);
 		}
 		return;
 	} catch (err) {
@@ -74,7 +83,7 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 	}
 };
 
-type P = "is_leader" | "is_vice_leader";
+type P = "is_leader" | "is_vice_leader" | "is_admin";
 async function validateGuildMember(
 	id: number,
 	username: string,

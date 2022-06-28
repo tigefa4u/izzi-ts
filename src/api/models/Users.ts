@@ -1,4 +1,9 @@
-import { UserCreateProps, UserParams, UserProps, UserUpdateProps } from "@customTypes/users";
+import {
+	UserCreateProps,
+	UserParams,
+	UserProps,
+	UserUpdateProps,
+} from "@customTypes/users";
 import connection from "db";
 
 const tableName = "users";
@@ -84,12 +89,14 @@ export const transformation = {
 	},
 	dungeonMana: {
 		type: "number",
-		columnName: "dungeon_mana"
+		columnName: "dungeon_mana",
 	},
-	crystal: { type: "number" }
+	crystal: { type: "number" },
 };
 
-export const get: (params: UserParams) => Promise<UserProps[] | undefined> = async (params) => {
+export const get: (
+  params: UserParams
+) => Promise<UserProps[] | undefined> = async (params) => {
 	return await connection.select("*").from(tableName).where(params);
 };
 
@@ -108,13 +115,13 @@ export const update: (
 	return await connection(tableName).where(params).update(data);
 };
 
-export const getPlayerCount = async (params?: Pick<UserProps, "is_active">): Promise<{ count: string }[]> => {
+export const getPlayerCount = async (
+	params?: Pick<UserProps, "is_active">
+): Promise<{ count: string; status: string }[]> => {
 	const db = connection;
-	let query = db(tableName);
-
-	if (params?.is_active) {
-		query = query.where(params);
-	}
-
-	return query.count();
+	const query = db.select(db.raw("'active' as status, count(*)"))
+		.from(tableName)
+		.where(`${tableName}.is_active`, true)
+		.union(builder => builder.select(db.raw("'total' as status, count(*)")).from(tableName));
+	return query;
 };

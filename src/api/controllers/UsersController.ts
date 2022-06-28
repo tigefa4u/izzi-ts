@@ -180,7 +180,7 @@ export const levelUpUser = async (user: UserProps): Promise<UserProps> => {
 
 export const getTotalPlayers = async (
 	params?: Pick<UserProps, "is_active">
-): Promise<number | undefined> => {
+): Promise<{ count: string; status: string; }[] | undefined> => {
 	try {
 		// Need to figure out how to get both active and total count
 		// in same query
@@ -188,7 +188,7 @@ export const getTotalPlayers = async (
 		const result = await Cache.fetch(key, async () => {
 			return await Users.getPlayerCount(params);
 		});
-		return Number(result[0].count);
+		return result;
 	} catch (err) {
 		loggers.error(
 			"api.controllers.UsersController.getTotalPlayers(): something went wrong",

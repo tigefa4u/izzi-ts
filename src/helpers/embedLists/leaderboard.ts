@@ -35,7 +35,7 @@ export const createLBEmbedList = (
 						})`,
 						value: `Clan Level **${
 							array[obj.index].guild_level || 0
-						}** ${emoji.up}`,
+						}** ${emoji.up} | Reputation: **${array[obj.index].points}**`,
 					}
 				);
 			} else if (lb === "ranks") {

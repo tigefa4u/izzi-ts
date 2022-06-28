@@ -40,12 +40,17 @@ select * from guild_details as x where x.user_id = 54
 
 select * from guild_members where user_id = 54
 
+## CREATE MATERIALIZED VIEW
 create materialized view guild_details as select 'leader' as role, g.guild_id, g.user_id, u.user_tag, u.username from guild_members as g
 inner join users u on g.user_id = u.id
 where g.is_leader = true union
 select 'vice_leader' as role, g.guild_id, g.user_id, u.user_tag, u.username from guild_members as g
 inner join users u on g.user_id = u.id
-where g.is_vice_leader = true
+where g.is_vice_leader = true union
+select 'admin' as role, g.guild_id, g.user_id, u.user_tag, u.username from
+guild_members as g
+innjer join users u in g.user_id = u.id
+where g.is_admin = true
 
 create index guild on guild_details (guild_id)
 

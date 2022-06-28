@@ -75,6 +75,8 @@ async function validateAndInviteMember(
 			guild_id: validGuild.guild.id,
 			is_leader: false,
 			is_vice_leader: false,
+			is_admin: false,
+			supporter_points: 0
 		});
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)

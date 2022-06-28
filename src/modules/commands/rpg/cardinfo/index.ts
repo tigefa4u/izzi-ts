@@ -8,7 +8,7 @@ import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
 import { overallStats, prepareStatsDesc } from "helpers";
 import { getFloorsByCharacterId } from "api/controllers/StagesController";
-import { Message, MessageEmbed } from "discord.js";
+import { Client, Message, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
 import { DEFAULT_ERROR_TITLE, ranksMeta } from "helpers/constants";
@@ -25,6 +25,7 @@ import { getCharacterCardByRank } from "api/controllers/CardsController";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { fetchParamsFromArgs } from "utility/forParams";
+import { showCardSkins } from "./skinInfo";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -104,6 +105,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 				options.author,
 				charaInfo[0],
 				context.channel,
+				client,
 				{ rank: params.rank }
 			);
 			return;
@@ -158,7 +160,7 @@ async function handleCharacterSelect(
 	if (!options.extras?.cards) return;
 	const cardsMeta = groupByKey(options.extras.cards, "name");
 	const character = cardsMeta[value][0];
-	showCharacterDetails(options.author, character, options.channel, options.extras.filterParams);
+	showCharacterDetails(options.author, character, options.channel, options.client, options.extras.filterParams);
 	return;
 }
 
@@ -166,6 +168,7 @@ async function showCharacterDetails(
 	author: AuthorProps,
 	character: CharacterCardProps,
 	channel: ChannelProp,
+	client: Client,
 	filterParams?: { rank?: string }
 ) {
 	let embed = createEmbed(author);
@@ -220,6 +223,12 @@ async function showCharacterDetails(
 	if (msg) {
 		sentMessage = msg;
 	}
+	showCardSkins({
+		author,
+		channel,
+		character,
+		client
+	});
 	return;
 }
 

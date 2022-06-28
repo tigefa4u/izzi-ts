@@ -111,6 +111,8 @@ export const addGuild = async ({
 				donation: initialDonation,
 				max_donation: initialDonation,
 				is_vice_leader: false,
+				is_admin: false,
+				supporter_points: 0
 			}),
 		];
 

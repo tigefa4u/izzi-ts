@@ -3,6 +3,7 @@ import { getTotalPlayers } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
+import { parsePremiumUsername } from "helpers";
 import loggers from "loggers";
 
 export const status = async ({ context, client, options }: BaseProps) => {
@@ -10,9 +11,12 @@ export const status = async ({ context, client, options }: BaseProps) => {
 		if (!OWNER_DISCORDID) return;
 		const author = options.author;
 		const embed = createEmbed(author, client);
-		const totalPlayers = await getTotalPlayers();
-		const activePlayers = await getTotalPlayers({ is_active: true });
+		const playerCount = await getTotalPlayers();
+		if (!playerCount) return;
+		const totalPlayers = playerCount.find(p => p.status === "total")?.count || "0";
+		const activePlayers = playerCount.find(p => p.status === "active")?.count || "0";
 		const owner = await client.users.fetch(OWNER_DISCORDID);
+		owner.username = parsePremiumUsername(owner.username);
 		embed
 			.setTitle("izzi Stats")
 			.addFields([

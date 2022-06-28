@@ -22,6 +22,7 @@ export type CollectionProps = {
   updated_at: string;
   total_count?: number;
   name?: string;
+  metadata?: string;
 };
 
 export type CollectionParams = {

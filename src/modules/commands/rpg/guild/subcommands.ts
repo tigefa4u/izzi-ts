@@ -34,7 +34,6 @@ export const subcommands = [ {
 	name: "items",
 	alias: [ "itm" ]
 },
-
 {
 	name: "vdemote",
 	alias: []
@@ -61,5 +60,18 @@ export const subcommands = [ {
 },
 {
 	name: "souls",
+	alias: []
+},
+{
+	name: "apromote",
+	alias: []
+}, {
+	name: "ademote",
+	alias: []
+}, {
+	name: "rep",
+	alias: []
+}, {
+	name: "report",
 	alias: []
 } ];

@@ -1,6 +1,6 @@
 import { ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
-import { ISkinCollection } from "@customTypes/skins";
+import { CreateSkinCollectionProps, ISkinCollection, SkinCollectionProps } from "@customTypes/skins";
 import { UserProps } from "@customTypes/users";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
@@ -50,6 +50,16 @@ export const delSkinCollection = async (params: { id: number }) => {
 		return await SkinCollections.del(params);
 	} catch (err) {
 		loggers.error("api.controllers.SkinCollectionController.delSkinCollection(): something went wrong", err);
+		return;
+	}
+};
+
+export const createSkinCollection = async (data: CreateSkinCollectionProps) => {
+	try {
+		loggers.info("Creating skin collection with details: -> " + JSON.stringify(data));
+		return await SkinCollections.create(data);
+	} catch (err) {
+		loggers.error("api.controllers.SkinCollectionController.createSkinCollection()", err);
 		return;
 	}
 };

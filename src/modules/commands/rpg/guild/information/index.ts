@@ -19,15 +19,12 @@ type P = {
 
 function prepareItemBonusDesc(stats: GuildStatProps) {
 	if (!stats || isEmptyValue(stats)) return "";
-	const desc = `\n\n**Clan Bonus Item Stats ${emoji.up}**\n\n${
-		emoji.crossedswords
-	} **Bonus ATK:** (+__${stats.vitality}__)\n${
-		emoji.heart
-	} **Bonus HP:** (+__${stats.strength}__)\n${
-		emoji.shield
-	} **Bonus DEF:** (+__${stats.defense}__)\n${emoji.dash} **Bonus SPD:** (+__${
-		stats.dexterity
-	}__)\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
+	const desc = `\n\n**Clan Bonus Item Stats ${emoji.up}**` +
+	`\n\n${emoji.crossedswords} **Bonus ATK:** (+__${stats.vitality}__)` +
+	`\n${emoji.heart} **Bonus HP:** (+__${stats.strength}__)` +
+	`\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)` +
+	`\n${emoji.dash} **Bonus SPD:** (+__${stats.dexterity}__)` +
+	`\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
 
 	return desc;
 }
@@ -37,26 +34,34 @@ function prepareGuildDesc(
 	guild: GuildProps,
 	mc: number,
 	ic: number,
-	stats: Omit<CharacterStatProps, "precision" | "accuracy" | "evasion" | "critical">,
-	vice?: P
+	stats: Omit<
+    CharacterStatProps,
+    "precision" | "accuracy" | "evasion" | "critical"
+  >,
+	vice?: P,
+	admin?: P
 ) {
 	const desc = `All your clan stats are shown below!\n**Clan Leader:** ${
 		leader.username
-	}${vice ? `\n**Clan Vice Leader:** ${vice.username}` : ""}\n**Clan Name:** ${
-		guild.name
-	}\n**Clan Level:** ${guild.guild_level}\n**Clan Gold:** ${
+	}${vice ? `\n**Clan Vice Leader:** ${vice.username}` : ""}${
+		admin ? `\n**Clan Admin:** ${admin.username}` : ""
+	}\n**Clan Name:** ${guild.name}\n**Clan Level:** ${
+		guild.guild_level
+	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${
 		guild.gold
-	}\n**Clan Members:** __${mc}/${
+	} ${emoji.gold}\n**Clan Members:** __${mc}/${
 		guild.max_members
 	}__\n**Clan Items:** __${ic}__\n\n**Clan Bonus Stats** ${emoji.up}\n\n${
 		emoji.crossedswords
-	} **Bonus ATK:** (+__${stats.vitality}__)\n${
-		emoji.heart
-	} **Bonus HP:** (+__${stats.strength}__)\n${
-		emoji.shield
-	} **Bonus DEF:** (+__${stats.defense}__)\n${emoji.dash} **Bonus SPD:** (+__${
-		stats.dexterity
-	}__)\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)${prepareItemBonusDesc(guild.item_stats)}`;
+	} **Bonus ATK:** (+__${stats.vitality}__)\n${emoji.heart} **Bonus HP:** (+__${
+		stats.strength
+	}__)\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)\n${
+		emoji.dash
+	} **Bonus SPD:** (+__${stats.dexterity}__)\n${
+		emoji.radiobutton
+	} **Bonus INT:** (+__${stats.intelligence}__)${prepareItemBonusDesc(
+		guild.item_stats
+	)}`;
 
 	return desc;
 }
@@ -77,15 +82,19 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 		if (!validGuild) return;
 		const guildDetails = await getGuildDetails({ id: validGuild.guild.id });
 		if (!guildDetails) return;
-		const leader = guildDetails.filter((g) => g.role === "leader")[0];
+		const leader = guildDetails.find((g) => g.role === "leader");
 		if (!leader) {
-			loggers.error(`Not able to find Guild details for ID: ${validGuild.guild.id} from guild_details view`, {});
+			loggers.error(
+				`Not able to find Guild details for ID: ${validGuild.guild.id} from guild_details view`,
+				{}
+			);
 			context.channel?.sendMessage(
 				"Oh no, your guild is without a Leader. Please contact support!"
 			);
 			return;
 		}
-		const vice = guildDetails.filter((g) => g.role === "vice_leader")[0];
+		const vice = guildDetails.find((g) => g.role === "vice_leader");
+		const admin = guildDetails.find((g) => g.role === "admin");
 		const totalCount = await getTotalMemberAndItemCount({ id: validGuild.guild.id, });
 		const memberCount = totalCount?.filter((t) => t.type === "members")[0];
 		const itemCount = totalCount?.filter((t) => t.type === "items")[0];
@@ -104,7 +113,8 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 					memberCount?.count || 0,
 					itemCount?.count || 0,
 					stats,
-					vice
+					vice,
+					admin
 				)
 			);
 		if (validGuild.guild.banner) {

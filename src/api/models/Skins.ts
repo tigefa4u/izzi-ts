@@ -51,3 +51,18 @@ export const get = async (params: Partial<Pick<SkinProps, "name" | "id">>): Prom
 
 	return query;
 };
+
+export const getByCharacterId = async (params: { character_id: number | number[]; }): Promise<SkinProps[]> => {
+	if (!params.character_id) return [];
+	const db = connection;
+	let query = db.select("*")
+		.from(tableName);
+
+	if (typeof params.character_id === "object") {
+		query = query.whereIn(`${tableName}.character_id`, params.character_id);
+	} else {
+		query = query.where(`${tableName}.character_id`, "=", params.character_id);
+	}
+
+	return query;
+};

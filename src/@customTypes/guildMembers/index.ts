@@ -6,8 +6,10 @@ export type GuildMemberProps = {
     user_id: number;
     is_leader: boolean;
     is_vice_leader: boolean;
+    is_admin: boolean;
     donation: number;
     max_donation: number;
+    supporter_points: number;
 };
 
 export type GuildMemberCreateProps = Omit<GuildMemberProps, "id">;
