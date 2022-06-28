@@ -13,6 +13,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
+import { IZZI_WEBSITE } from "environment";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import { clientSidePagination } from "helpers/pagination";
 import loggers from "loggers";
@@ -231,11 +232,16 @@ const handlePurchaseSkin = async (params: {
 }) => {
 	try {
 		const { data, author, channel } = params;
-		const user = await getRPGUser({ user_tag: author.id });
-		if (!user) return;
 		const embed = createEmbed(author)
 			.setThumbnail(data.metadata.assets?.silver.small.filepath || data.filepath)
 			.setTitle(DEFAULT_ERROR_TITLE);
+		if (data.metadata.isSpecial) {
+			embed.setDescription(`This skin is not available at the moment, visit ${IZZI_WEBSITE}/skins for more info`);
+			channel?.sendMessage(embed);
+			return;
+		}
+		const user = await getRPGUser({ user_tag: author.id });
+		if (!user) return;
 		if (user.orbs < data.price) {
 			embed.setDescription(
 				"You do not have sufficient **Blue Orbs** " +
