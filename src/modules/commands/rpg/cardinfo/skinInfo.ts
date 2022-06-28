@@ -235,7 +235,7 @@ const handlePurchaseSkin = async (params: {
 		const embed = createEmbed(author)
 			.setThumbnail(data.metadata.assets?.silver.small.filepath || data.filepath)
 			.setTitle(DEFAULT_ERROR_TITLE);
-		if (data.metadata.isSpecial) {
+		if (data.metadata.isSpecial && data.metadata.isSpecial as any == "true") {
 			embed.setDescription(`This skin is not available at the moment, visit ${IZZI_WEBSITE}/skins for more info`);
 			channel?.sendMessage(embed);
 			return;

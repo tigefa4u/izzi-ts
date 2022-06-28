@@ -48,7 +48,6 @@ export const repGuild = async ({
 		validGuild.guild.points = validGuild.guild.points + rep;
 		validGuild.member.supporter_points = validGuild.member.supporter_points + rep;
 
-
 		if (validGuild.member.supporter_points > MAX_GUILD_REPUTATION_POINTS) {
 			embed.setDescription("You have already given the " +
             `Max allowed reputations **[${MAX_GUILD_REPUTATION_POINTS}]** to your guild.`);
