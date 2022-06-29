@@ -61,6 +61,7 @@ export type AbilityStackProps = StatStateProps &
     isUseWreckerPassive?: boolean;
     isReflectThornmailDamage?: boolean;
     isLifesteal?: boolean;
+    isLifestealProc?: boolean;
     lifestealPercent?: number;
     sleepResistPercent?: number;
     isSleepResisted?: boolean;

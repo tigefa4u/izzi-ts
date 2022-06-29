@@ -17,8 +17,9 @@ export const lifesteal = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase life steal by __25%__ and buff ATK by 10%.
-	if (round % 3 === 0 && !playerStats.totalStats.isLifesteal) {
+	if (round % 3 === 0 && !playerStats.totalStats.isLifestealProc) {
 		playerStats.totalStats.isLifesteal = true;
+		playerStats.totalStats.isLifestealProc = true;
 		const percent = calcPercentRatio(25, card.rank);
 		const atkPercent = calcPercentRatio(10, card.rank);
 		const ratio = getRelationalDiff(playerStats.totalStats.vitality, atkPercent);
