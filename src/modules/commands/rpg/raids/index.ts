@@ -4,6 +4,7 @@ import { RaidLootProps, RaidProps, RaidStatsProps } from "@customTypes/raids";
 import Cache from "cache";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { prepareHPBar } from "helpers/adventure";
 import { processHpBar, relativeDiff } from "helpers/battle";
 import { MAX_ENERGY_PER_RAID } from "helpers/constants";
@@ -113,7 +114,7 @@ export function prepareRaidBossEmbedDesc(raid: RaidProps, isEvent = false) {
 
 	const desc = `**Level ${stats.battle_stats.boss_level} ${
 		isEvent ? "Event" : "Raid"
-	} Boss**\n**${stats.remaining_strength} / ${stats.original_strength} ${
+	} Boss**\n**${numericWithComma(stats.remaining_strength)} / ${(numericWithComma(stats.original_strength))} ${
 		emoji.hp
 	}**\n${fakeHp.map((i) => i).join("")}\n\n**Element Type:** ${boss
 		.map((c) => emojiMap(c.type))
@@ -147,7 +148,7 @@ function prepareLoot(
 	isEvent = false
 ) {
 	const desc = `**__${isEvent ? "Event" : "Raid"} Rewards [For Everyone]__**\n${
-		loot.gold
+		numericWithComma(loot.gold)
 	} Gold ${emoji.gold}\n${boss
 		.map((b) => {
 			let desc = "";
@@ -173,7 +174,7 @@ function prepareLoot(
 		.join(
 			"\n"
 		)}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${
-		loot.extraGold
+		numericWithComma(loot.extraGold || 0)
 	}__ Gold ${emoji.gold}\n${
 		loot.rare
 			? boss.map((b) =>

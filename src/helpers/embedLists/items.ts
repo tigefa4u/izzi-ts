@@ -2,6 +2,7 @@ import { ItemProps } from "@customTypes/items";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { titleCase } from "title-case";
 
 export const createItemList = (
@@ -15,7 +16,7 @@ export const createItemList = (
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} ${titleCase(item.name)} ${emojiMap(
 				item.name
-			)}${options?.isMarket ? ` | ${item.price} ${emoji.gold}` : ""}`,
+			)}${options?.isMarket ? ` | ${numericWithComma(item.price)} ${emoji.gold}` : ""}`,
 			value: `Equip this item using \`\`equip <#id> ${item.id}\`\` | ID: ${item.id}`,
 		});
 	});

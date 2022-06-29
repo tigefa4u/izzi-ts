@@ -14,6 +14,7 @@ import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
 import { IZZI_WEBSITE } from "environment";
+import { numericWithComma } from "helpers";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import { clientSidePagination } from "helpers/pagination";
 import loggers from "loggers";
@@ -155,9 +156,9 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 	);
 	embed
 		.setDescription(
-			`**Skin Name:** ${titleCase(data.name)}\n**Price:** ${data.price} ${
-				emoji.blueorb
-			}\n**Popularity:** :gem:`
+			`**Skin Name:** ${titleCase(data.name)}\n**Price:** ${numericWithComma(
+				data.price
+			)} ${emoji.blueorb}\n**Popularity:** :gem:`
 		)
 		.setImage("attachment://card.jpg")
 		.attachFiles([ attachment ]);
@@ -176,7 +177,7 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 			handlePurchaseSkin({
 				data: skinDetails,
 				author,
-				channel
+				channel,
 			});
 			return;
 		},
@@ -233,10 +234,14 @@ const handlePurchaseSkin = async (params: {
 	try {
 		const { data, author, channel } = params;
 		const embed = createEmbed(author)
-			.setThumbnail(data.metadata.assets?.silver.small.filepath || data.filepath)
+			.setThumbnail(
+				data.metadata.assets?.silver.small.filepath || data.filepath
+			)
 			.setTitle(DEFAULT_ERROR_TITLE);
-		if (data.metadata.isSpecial && data.metadata.isSpecial as any == "true") {
-			embed.setDescription(`This skin is not available at the moment, visit ${IZZI_WEBSITE}/skins for more info`);
+		if (data.metadata.isSpecial && (data.metadata.isSpecial as any) == "true") {
+			embed.setDescription(
+				`This skin is not available at the moment, visit ${IZZI_WEBSITE}/skins for more info`
+			);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -245,7 +250,9 @@ const handlePurchaseSkin = async (params: {
 		if (user.orbs < data.price) {
 			embed.setDescription(
 				"You do not have sufficient **Blue Orbs** " +
-          `to purchase this skin **[${user.orbs} / ${data.price}]** ${emoji.blueorb}`
+          `to purchase this skin **[${numericWithComma(
+          	user.orbs
+          )} / ${numericWithComma(data.price)}]** ${emoji.blueorb}`
 			);
 			channel?.sendMessage(embed);
 			return;
@@ -257,12 +264,15 @@ const handlePurchaseSkin = async (params: {
 				user_tag: user.user_tag,
 				skin_id: data.id,
 				is_selected: false,
-				character_id: data.character_id
-			})
+				character_id: data.character_id,
+			}),
 		]);
-		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`You have spent __${data.price}__ Blue Orbs ${emoji.blueorb} ` +
-            `and successfully purchased **${titleCase(data.name)}**`);
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`You have spent __${numericWithComma(data.price)}__ Blue Orbs ${emoji.blueorb} ` +
+          `and successfully purchased **${titleCase(data.name)}**`
+			);
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {

@@ -4,14 +4,12 @@ import {
 	AbilityProcReturnType,
 	ItemProcMapProps,
 } from "@customTypes/battle";
-import { delay } from "helpers";
 import {
 	getPlayerDamageDealt,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
 import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
-import loggers from "loggers";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
@@ -32,6 +30,7 @@ type Stack = Pick<
   | "isSB"
   | "isTornado"
   | "isHarbingerOfDeath"
+  | "isLifesteal"
 >;
 function processStack(stats: Stack) {
 	[
@@ -48,6 +47,7 @@ function processStack(stats: Stack) {
 		"isSB",
 		"isTornado",
 		"isHarbingerOfDeath",
+		"isLifesteal"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;

@@ -29,6 +29,7 @@ import { createAttachment } from "commons/attachments";
 import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
+import { numericWithComma } from "helpers";
 
 export const battleRaidBoss = async ({
 	context,
@@ -259,10 +260,10 @@ async function processRaidResult({
 		.setTitle(`${emoji.welldone} Total Damage Dealt`)
 		.setDescription(
 			`**Summoner ${author.username}, You have dealt:**\n\n**__${
-				result.totalDamage || 0
+				numericWithComma(result.totalDamage || 0)
 			}__** Damage to ${isEvent ? "Event" : "Raid"} Boss\n\n**${
-				updateObj.stats.remaining_strength
-			} / ${updateObj.stats.original_strength} ${emoji.hp}**\n${fakeHp
+				numericWithComma(updateObj.stats.remaining_strength)
+			} / ${numericWithComma(updateObj.stats.original_strength)} ${emoji.hp}**\n${fakeHp
 				.map((i) => i)
 				.join("")}`
 		)

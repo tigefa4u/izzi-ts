@@ -14,6 +14,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { DEFAULT_SUCCESS_TITLE, MARKET_COMMISSION, MARKET_PRICE_CAP } from "helpers/constants";
 import loggers from "loggers";
@@ -135,7 +136,7 @@ export const sellCard = async ({
 						data.rank || ""
 					)}__ **Level ${data.character_level} ${titleCase(
 						data.name || ""
-					)}** on the Global Market? You will receive __${totalCost}__ ${
+					)}** on the Global Market? You will receive __${numericWithComma(totalCost)}__ ${
 						emoji.gold
 					}`;
 					embed = createConfirmationEmbed(author, client)

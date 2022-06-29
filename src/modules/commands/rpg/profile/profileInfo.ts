@@ -3,6 +3,7 @@ import { UserProps } from "@customTypes/users";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { DUNGEON_MAX_MANA } from "helpers/constants";
 import loggers from "loggers";
 
@@ -51,8 +52,9 @@ export const mana = async function ({
 			.setTitle(`${author.username}'s Mana Pool`)
 			.setDescription(
 				`**Mana:** __${result.data}/${result.metadata.max_mana}__ ` +
-          refillTimerDesc + `\n**Dungeon Mana:** __${result.metadata.dungeon_mana}/${DUNGEON_MAX_MANA}__ ` +
-		  refillDGManaTimerDesc
+          refillTimerDesc +
+          `\n**Dungeon Mana:** __${result.metadata.dungeon_mana}/${DUNGEON_MAX_MANA}__ ` +
+          refillDGManaTimerDesc
 			);
 		context.channel?.sendMessage(embed);
 		return;
@@ -159,7 +161,9 @@ export const shards = async function ({
 		const author = options.author;
 		const result = await getProfileInfo("shards", author.id);
 		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}__ ${emoji.shard} **shards**`
+			`**${author.username}** currently has __${numericWithComma(
+				+result.data
+			)}__ ${emoji.shard} **shards**`
 		);
 		return;
 	} catch (err) {
@@ -179,7 +183,9 @@ export const orbs = async function ({
 		const author = options.author;
 		const result = await getProfileInfo("orbs", author.id);
 		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}__ ${emoji.blueorb} **blue orbs**`
+			`**${author.username}** currently has __${numericWithComma(
+				+result.data
+			)}__ ${emoji.blueorb} **blue orbs**`
 		);
 		return;
 	} catch (err) {
@@ -199,7 +205,9 @@ export const points = async function ({
 		const author = options.author;
 		const result = await getProfileInfo("izzi_points", author.id);
 		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}__ ${emoji.izzipoints} **Izzi Points**`
+			`**${author.username}** currently has __${numericWithComma(
+				+result.data
+			)}__ ${emoji.izzipoints} **Izzi Points**`
 		);
 		return;
 	} catch (err) {
@@ -219,7 +227,9 @@ export const gold = async function ({
 		const author = options.author;
 		const result = await getProfileInfo("gold", author.id);
 		context.channel?.sendMessage(
-			`**${author.username}** currently has __${result.data}__ ${emoji.gold} **gold**`
+			`**${author.username}** currently has __${numericWithComma(
+				+result.data
+			)}__ ${emoji.gold} **gold**`
 		);
 		return;
 	} catch (err) {

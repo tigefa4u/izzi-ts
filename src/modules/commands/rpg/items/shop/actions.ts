@@ -15,6 +15,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -100,7 +101,7 @@ async function validateAndPurchaseItem(
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`You have successfully purchase **${titleCase(item.name)}** for __${
-					item.price
+					numericWithComma(item.price)
 				}__ gold ${emoji.gold} from the Global Item Market.`
 			);
 		params.channel?.sendMessage(embed);
@@ -142,7 +143,7 @@ export const purchaseItem = async ({
 					const attachment = createAttachment(data.filepath, "item.jpg");
 					const desc = `Are you sure you want to purchase **${titleCase(
 						data.name
-					)}** for __${data.price}__ gold ${emoji.gold}`;
+					)}** for __${numericWithComma(data.price)}__ gold ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
 						.setThumbnail("attachment://item.jpg")

@@ -14,7 +14,7 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData, MessageAttachment } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { getIdFromMentionedString } from "helpers";
+import { getIdFromMentionedString, numericWithComma } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { DATE_OPTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -141,7 +141,7 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 		{
 			name: `${emoji.moneybag} Gold`,
-			value: user.gold.toString(),
+			value: numericWithComma(user.gold),
 			inline: true,
 		},
 		{
@@ -195,17 +195,17 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 		{
 			name: `${emoji.izzipoints} Izzi Points`,
-			value: user.izzi_points.toString(),
+			value: numericWithComma(user.izzi_points),
 			inline: true,
 		},
 		{
 			name: `${emoji.shard} Shards`,
-			value: user.shards.toString(),
+			value: numericWithComma(user.shards),
 			inline: true,
 		},
 		{
 			name: `${emoji.blueorb} Blue Orbs`,
-			value: user.orbs.toString(),
+			value: numericWithComma(user.orbs),
 			inline: true,
 		},
 		{

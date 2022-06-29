@@ -405,3 +405,8 @@ export const parsePremiumUsername = (username: string) => {
 	}
 	return parsedUsername;
 };
+
+export const numericWithComma = (num: number) => {
+	const n = num;
+	return n.toLocaleString();
+};

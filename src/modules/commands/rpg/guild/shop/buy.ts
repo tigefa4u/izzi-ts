@@ -15,6 +15,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
@@ -162,7 +163,7 @@ export const buyItem = async ({
 						.setDescription(
 							`Are you sure, you'd like to purchase __${quantity}x__ ${titleCase(
 								marketItem.name
-							)} for __${totalCost}__ Gold? ${emoji.gold}`
+							)} for __${numericWithComma(totalCost)}__ Gold? ${emoji.gold}`
 						)
 						.attachFiles([ attachment ])
 						.setThumbnail("attachment://item.jpg");

@@ -19,6 +19,7 @@ import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
+import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
@@ -101,10 +102,10 @@ async function notifySeller(
 		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
 		.setDescription(
 			`Congratulations summoner! You have sold your __${
-				marketCard.rank
+				titleCase(marketCard.rank)
 			}__ **Level ${marketCard.character_level} ${titleCase(
 				marketCard.name
-			)}** on the Global Market and received __${totalCost}__ Gold ${
+			)}** on the Global Market and received __${numericWithComma(totalCost)}__ Gold ${
 				emoji.gold
 			}!\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`
 		);
@@ -116,9 +117,9 @@ function notifyBuyer(channel: ChannelProp, marketCard: IMarketProps) {
 		.setTitle(DEFAULT_SUCCESS_TITLE)
 		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
 		.setDescription(
-			`Congratulations summoner! You have spent __${marketCard.price}__ Gold ${
+			`Congratulations summoner! You have spent __${numericWithComma(marketCard.price)}__ Gold ${
 				emoji.gold
-			} and received __${marketCard.rank}__ **Level ${
+			} and received __${titleCase(marketCard.rank)}__ **Level ${
 				marketCard.character_level
 			} ${titleCase(marketCard.name)}** from the Global Market!`
 		);
@@ -265,9 +266,9 @@ export const purchaseCard = async ({
 			validateAndPurchaseCard,
 			async (data, opts) => {
 				if (data) {
-					const desc = `Are you sure you want to purchase **${titleCase(
+					const desc = `Are you sure you want to purchase __${titleCase(data.rank)}__ **${titleCase(
 						data.name
-					)}** for __${data.price}__ gold ${emoji.gold}`;
+					)}** for __${numericWithComma(data.price)}__ gold ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
 						.setThumbnail(data.metadata?.assets?.small.filepath || data.filepath);

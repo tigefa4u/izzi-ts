@@ -1,6 +1,7 @@
 import { Client } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { titleCase } from "title-case";
 
 export const createLBEmbedList = (
@@ -32,10 +33,10 @@ export const createLBEmbedList = (
 					{
 						name: `#${obj.index + 1}| ${array[obj.index].name || ""} (${
 							array[obj.index].guild_id
-						})`,
+						}) | ${numericWithComma(array[obj.index].gold)} ${emoji.gold}`,
 						value: `Clan Level **${
 							array[obj.index].guild_level || 0
-						}** ${emoji.up} | Reputation: **${array[obj.index].points}**`,
+						}** ${emoji.up} | Reputation **${array[obj.index].points}**`,
 					}
 				);
 			} else if (lb === "ranks") {
@@ -62,7 +63,9 @@ export const createLBEmbedList = (
 				{},
 				{
 					name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
-					value: `${titleCase(order)} **${array[obj.index][order]}** ${
+					value: `${titleCase(order)} **${
+						order === "gold" ? numericWithComma(array[obj.index][order]) : array[obj.index][order]
+					}** ${
 						order === "zone"
 							? `Max Floor **${array[obj.index]["max_floor"]}**`
 							: ""

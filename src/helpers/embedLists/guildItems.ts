@@ -3,6 +3,7 @@ import { GuildMarketProps } from "@customTypes/guildMarkets";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { titleCase } from "title-case";
 
 export function createGuildItemList(
@@ -34,7 +35,7 @@ export function createGuildMarketItemList(
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} | ${titleCase(
 				item.name
-			)} ${emojiMap(item.name)} | ${item.price} ${emoji.gold} | ID: ${
+			)} ${emojiMap(item.name)} | ${numericWithComma(item.price)} ${emoji.gold} | ID: ${
 				item.id
 			}`,
 			value: item.description,
