@@ -189,20 +189,18 @@ export const battleRaidBoss = async ({
 		}
 		await updateRaid({ id: updateObj.id }, { stats: updateObj.stats });
 
-		await processRaidLoot({
+		await Promise.all([ processRaidLoot({
 			client,
 			author,
 			raid: updateObj,
 			isEvent,
-		});
-
-		await processRaidResult({
+		}), processRaidResult({
 			result: result as BattleStats,
 			updateObj,
 			author,
 			isEvent,
 			channel: context.channel,
-		});
+		}) ]);
 		return;
 	} catch (err) {
 		loggers.error(

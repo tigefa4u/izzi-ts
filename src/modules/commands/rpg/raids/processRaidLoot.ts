@@ -8,7 +8,7 @@ import {
 } from "@customTypes/raids";
 import { UserProps } from "@customTypes/users";
 import { createCollection } from "api/controllers/CollectionsController";
-import { deleteRaid } from "api/controllers/RaidsController";
+import { deleteRaid, getRaid } from "api/controllers/RaidsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
@@ -43,7 +43,9 @@ export const processRaidLoot = async ({
 	try {
 		if (raid.stats.remaining_strength > 0) return;
 
-		deleteRaid({ id: raid.id });
+		const raidValid = await getRaid({ id: raid.id });
+		if (!raidValid) return;
+		await deleteRaid({ id: raid.id });
 
 		const lobby = raid.lobby;
 		const keys = Object.keys(lobby).map((i) => Number(i));
