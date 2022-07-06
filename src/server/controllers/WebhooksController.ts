@@ -97,16 +97,14 @@ export const processServerUpvote = async (req: Request, res: Response) => {
 			const shardReward = summoner.is_premium ? 10 : 5;
 			summoner.shards = summoner.shards + shardReward;
 			summoner.gold = summoner.gold + goldReward;
-			if (summoner.mana < summoner.max_mana) summoner.mana = summoner.max_mana;
 
 			let messageStr =
         "Thank you for voting **XeneX Server**! You have received " +
         `__${goldReward}__ Gold ${emoji.gold}, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
 		`__${shardReward}__ Shards ${emoji.shard} ` +
-        "and refilled your mana for dailying.";
+        "for dailying.";
 			const updateObj = {
 				shards: summoner.shards,
-				mana: summoner.mana,
 				gold: summoner.gold,
 				raid_pass: summoner.raid_pass,
 			};

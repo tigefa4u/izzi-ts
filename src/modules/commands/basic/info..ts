@@ -67,7 +67,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           "Use daily to gain __2000__ and 200xStreaks (up to 30) " +
           `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if premium) and 5 ${emoji.shard} ` +
           "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married! " +
-          `You get (3 or 4) ${emoji.izzipoints} IP if premium and Your mana gets refilled as you vote.`
+          `You get (3 or 4) ${emoji.izzipoints} IP if premium as you vote.`
 			);
 		context.channel?.sendMessage(embed);
 		return;
