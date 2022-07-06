@@ -78,7 +78,7 @@ export const harbingerOfDeath = ({
 		});
 		const desc = "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
 	    `${emoji.harbingerofdeath} as well as ` +
-	    `buffing all **Ally Stats** by __${percent}%__`;
+	    `buffing all **Ally Ability Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

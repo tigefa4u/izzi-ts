@@ -3,7 +3,12 @@ import { getDonation } from "api/controllers/DonationsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { BOT_VOTE_LINK, IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
+import {
+	BOT_VOTE_LINK,
+	IZZI_WEBSITE,
+	OFFICIAL_SERVER_LINK,
+	XENEX_VOTE_LINK,
+} from "environment";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { help } from ".";
@@ -47,15 +52,22 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 				})`
 			)
 			.setDescription(
-				`Vote for izzi here:-\n${BOT_VOTE_LINK}\n\n` +
+				`Vote for **__Izzi__** here:-\n${BOT_VOTE_LINK}\n\n` +
           " " +
           "Use daily to gain __2000__ and 150xStreaks (up to 30)" +
           " " +
-          `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if married) and 5 ${emoji.shard}` +
+          `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if married)` +
           " " +
-          "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married!" +
+          "as you vote! You get bonus __1000__ gold if you're married!" +
           " " +
-          "You get (5 to 7) IP if premium and Your mana as well as dungeon mana also gets refilled as you vote."
+          `You get (3 or 4) ${emoji.izzipoints} IP if premium and ` +
+		  "Your mana as well as dungeon mana also gets refilled as you vote." +
+          "\n\n" +
+          `Vote for **__Xenex Server__** here:-\n${XENEX_VOTE_LINK}\n\n` +
+          "Use daily to gain __2000__ and 200xStreaks (up to 30) " +
+          `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if premium) and 5 ${emoji.shard} ` +
+          "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married! " +
+          `You get (3 or 4) ${emoji.izzipoints} IP if premium and Your mana gets refilled as you vote.`
 			);
 		context.channel?.sendMessage(embed);
 		return;
@@ -77,19 +89,24 @@ export const donate = async ({
 	try {
 		if (!command) return;
 		const embed = createEmbed(options.author, client)
-			.setTitle(`Command: ${command.name} (Shortcuts: ${command.alias.join(", ")})\n${command.usage}`)
+			.setTitle(
+				`Command: ${command.name} (Shortcuts: ${command.alias.join(", ")})\n${
+					command.usage
+				}`
+			)
 			.setDescription(command.description);
 
 		const donation = (await getDonation(options.author.id)) || [];
 		if (donation?.length > 0) {
 			const total = donation.reduce((acc, r) => acc + r.amount, 0);
 			const [ str1, str2 ] = command.description.split("! [");
-			const newEmbed = createEmbed(options.author, client)
-				.setDescription(
-					`${str1}! You have spent a total of __$${total}__ so far${
-						total >= 100 ? ", and you're eligible for the **Ascended** Role." : "."
-					}`
-				);
+			const newEmbed = createEmbed(options.author, client).setDescription(
+				`${str1}! You have spent a total of __$${total}__ so far${
+					total >= 100
+						? ", and you're eligible for the **Ascended** Role."
+						: "."
+				}`
+			);
 			DMUser(client, newEmbed, options.author.id);
 		}
 		context.channel?.sendMessage(embed);

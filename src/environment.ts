@@ -19,6 +19,7 @@ export const BOT_INVITE_LINK = process.env.BOT_INVITE_LINK;
 export const OWNER_DISCORD_DISCRIMINATOR = process.env.OWNER_DISCORD_DISCRIMINATOR;
 export const OWNER_DISCORDID = process.env.OWNER_DISCORDID;
 export const BOT_VOTE_LINK = process.env.BOT_VOTE_LINK;
+export const XENEX_VOTE_LINK = process.env.XENEX_VOTE_LINK;
 export const AUTH_TOKEN = process.env.AUTH_TOKEN;
 export const API_DOMAIN = process.env.API_DOMAIN;
 export const TOTAL_SHARDS = Number(process.env.TOTAL_SHARDS); // total shards spawned on all machines together

@@ -9,8 +9,16 @@ app.use(express.json());
 
 const webhookAuth = "wKm(.DT#*XL,S#9F";
 const botID = "784851074472345633";
+const xenexID = "784087004806774815";
 function isWebhookAuth(req: Request, res: Response, next: () => void) {
-	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote" && req.body.bot === botID) {
+	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote") {
+		if ((req.body.bot && req.body.bot !== botID) || (req.body.guild && req.body.guild !== xenexID)) {
+			return res.status(401).send({
+				error: true,
+				message: "Unauthorized",
+				code: 401
+			});
+		}
 		return next();
 	}
 	return res.status(401).send({
