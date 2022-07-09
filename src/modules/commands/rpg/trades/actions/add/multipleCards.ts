@@ -30,7 +30,7 @@ export const addMultipleCards = async ({
 		}
 		channel?.sendMessage("Adding multiple cards to trade...");
 		if (params.limit && typeof params.limit === "object") {
-			params.limit = Number(params.limit[0]);
+			params.limit = Number(params.limit[0] || 1);
 		} else if (!params.limit) {
 			params.limit = 1;
 		} else if (params.limit > MAX_CARDS_IN_TRADE) {

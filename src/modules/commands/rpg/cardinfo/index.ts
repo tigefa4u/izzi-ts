@@ -83,7 +83,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			cname = params.name[0];
 		}
 		if (typeof params.rank === "object") {
-			params.rank = params.rank[0];
+			params.rank = params.rank[0] || "silver";
 		}
 		if (!cname) return;
 		const charaInfo = await getCharacterInfo({ name: cname.trim() });

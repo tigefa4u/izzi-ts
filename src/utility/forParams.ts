@@ -84,7 +84,9 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 			value.splice(0, 5);
 		}
 		if (index >= 0) {
-			Object.assign(params, { [argMap[index].name]: value });
+			if (typeof value === "object" && !value.some((v) => v === "")) {
+				Object.assign(params, { [argMap[index].name]: value });
+			}
 		}
 		i--;
 	}
