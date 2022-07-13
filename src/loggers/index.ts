@@ -14,6 +14,11 @@ const info = (infoMessage: string) => {
 	winstonLogger.info(infoMessage);
 };
 
+const debug = (...args: any[]) => {
+	// console.log(args.join(", "));
+	winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
+};
+
 const timerify = (...args: (string | number)[]) => {
 	const log = args.join(" -> ");
 	// console.log(log);
@@ -45,5 +50,6 @@ export default {
 	timerify,
 	startTimer,
 	endTimer,
-	logApi
+	logApi,
+	debug
 };

@@ -14,6 +14,19 @@ const infoTransporter = new transports.DailyRotateFile({
 	)
 });
 
+const debugTransporter = new transports.DailyRotateFile({
+	filename: "logs/debug-%DATE%.log",
+	datePattern: "YYYY-MM-DD-HH",
+	zippedArchive: true,
+	maxSize: "10g",
+	maxFiles: "7d",
+	format: format.combine(
+		format.errors({ stack: true }),
+		format.timestamp(),
+		format.json()
+	)
+});
+
 const errorTransporter = new transports.DailyRotateFile({
 	filename: "logs/error-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
@@ -52,6 +65,8 @@ const apiRequestResponseTransporter = new transports.DailyRotateFile({
 		format.json()
 	)
 });
+
+const winstonDebugLogger = createLogger({ transports: [ debugTransporter ] });
 
 const winstonErrorLogger = createLogger({
 	transports: [
@@ -141,9 +156,14 @@ const logApi = (info: string) => {
 	winstonAPILogger.info(info);
 };
 
+const debug = (debug: string) => {
+	winstonDebugLogger.info(debug);
+};
+
 export default {
 	error,
 	info,
 	logTime,
-	logApi
+	logApi,
+	debug
 };

@@ -14,9 +14,13 @@ export const handleClientEvents = (client: Client) => {
 	client.on("warn", (warning) => {
 		console.log({ warning });
 	});
-	// client.on("debug", (debug) => {
-	// 	loggers.logApi("get", "[DEBUG]", debug);
-	// });
+	client.on("debug", (debug) => {
+		loggers.debug(debug);
+		// if (debug.toLowerCase().includes("heartbeat")) {
+		// 	console.log({ debug });
+		// }
+		// loggers.logApi("get", "[DEBUG]", debug);
+	});
 
 	// client.on("apiRequest", (req) => {
 	// 	loggers.logApi(req.method, "[PRE APIRequest] path: ", req.path, req.route);
