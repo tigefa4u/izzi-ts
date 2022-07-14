@@ -20,36 +20,45 @@ import {
 	incrCooldown,
 } from "modules/cooldowns/channels";
 
+const ratelimitMap = new Map();
+
 const handleMessage = async (client: Client, context: Message) => {
 	try {
 		const { content } = context;
 		let args = content.toLowerCase().split(/\s+/);
 		const botId = getIdFromMentionedString(args[0]);
 		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
-			if (context.guild?.id) {
-				dropCollectables({
-					client,
-					author: context.author,
-					guild: context.guild,
-					channel: context.channel,
-				});
-			}
+			// if (context.guild?.id) {
+			// 	dropCollectables({
+			// 		client,
+			// 		author: context.author,
+			// 		guild: context.guild,
+			// 		channel: context.channel,
+			// 	});
+			// }
 			return;
 		}
 		const channelCD = await getChannelCooldown(
 			context.channel.id,
 			"channel-cd"
 		);
+		let ttl = await getTTL(context.channel.id, "channel-cd");
+		if (ttl < 0) {
+			ratelimitMap.delete("rate-limit-" + context.channel.id);
+		}
 		if (channelCD && channelCD >= MAX_REQUESTS_PER_CHANNEL) {
-			let ttl = await getTTL(context.channel.id, "channel-cd");
 			if (ttl < 0) {
 				clearCooldown(context.channel.id, "channel-cd");
 				ttl = 1;
 			}
-			context.channel.sendMessage(
-				`Summoner **${context.author.username}**, ` +
+			const messageSent = ratelimitMap.get("rate-limit-" + context.channel.id);
+			if (!messageSent) {
+				context.channel.sendMessage(
+					`Summoner **${context.author.username}**, ` +
 				`you are being rate limited for \`\`${ttl} seconds\`\` due to high bot activity`
-			);
+				);
+				ratelimitMap.set("rate-limit-" + context.channel.id, true);
+			}
 			return;
 		}
 		const cd = await getCooldown(context.author.id, "command-cd");
@@ -64,7 +73,7 @@ const handleMessage = async (client: Client, context: Message) => {
 		}
 		const command = await getCommand(args[1]);
 		if (!command) return;
-		setCooldown(context.author.id, "command-cd", 1);
+		setCooldown(context.author.id, "command-cd", 2);
 		args.shift();
 		if (
 			typeof commandCategory[command?.type as keyof CommandCategoryProps] !==
