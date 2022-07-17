@@ -146,7 +146,10 @@ export const createBattleCanvas = async (
 						filepath = card.metadata.assets[version].filepath;
 					}
 					startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const image = await loadImage(filepath);
+					const image = await loadImage(filepath).catch((err) => {
+						loggers.error("canvas.createBattleCanvas(): ERROR Unable to load filepath -> " + filepath, err);
+						throw err;
+					});
 					loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,

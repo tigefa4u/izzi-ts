@@ -7,9 +7,10 @@ import { handleClient, handleClientEvents } from "handlers/client";
 import "../module";
 import loggers from "loggers";
 import flushBattleCooldowns from "./autoClear/index";
-
+import { autoClear } from "modules/commands/rpg/adventure/battle/battlesPerChannelState";
 
 process.on("unhandledRejection", (error, promise) => {
+	autoClear();
 	loggers.error("UnhandledRejection: " + error + "promise was: " + promise, error);
 });
 
