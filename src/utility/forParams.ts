@@ -55,6 +55,8 @@ const argMap = [
 	}
 ];
 
+const exceptionalFilters = [ "is_favorite", "is_on_market" ];
+
 export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 	const params = {} as ParamsFromArgsRT<T>;
 	for (let i = 0; i < args.length; i++) {
@@ -84,8 +86,9 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 			value.splice(0, 5);
 		}
 		if (index >= 0) {
-			if (typeof value === "object" && !value.some((v) => v === "")) {
-				Object.assign(params, { [argMap[index].name]: value });
+			const key = argMap[index].name;
+			if (typeof value === "object" && (!value.some((v) => v === "") || exceptionalFilters.includes(key))) {
+				Object.assign(params, { [key]: value });
 			}
 		}
 		i--;
