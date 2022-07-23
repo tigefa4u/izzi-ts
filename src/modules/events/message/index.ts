@@ -28,14 +28,14 @@ const handleMessage = async (client: Client, context: Message) => {
 		let args = content.toLowerCase().split(/\s+/);
 		const botId = getIdFromMentionedString(args[0]);
 		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
-			// if (context.guild?.id) {
-			// 	dropCollectables({
-			// 		client,
-			// 		author: context.author,
-			// 		guild: context.guild,
-			// 		channel: context.channel,
-			// 	});
-			// }
+			if (context.guild?.id) {
+				dropCollectables({
+					client,
+					author: context.author,
+					guild: context.guild,
+					channel: context.channel,
+				});
+			}
 			return;
 		}
 		const channelCD = await getChannelCooldown(

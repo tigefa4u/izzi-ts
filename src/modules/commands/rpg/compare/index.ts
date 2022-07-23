@@ -51,7 +51,7 @@ export const compareCards = async ({
 		if (!args) {
 			return;
 		}
-		const charanames = charaArgs.split(",");
+		const charanames = charaArgs.split(",").map((e) => e.trim());
 		if (charanames.length > 3) {
 			embed.setDescription("You cannot compare more than 3 Cards");
 			context.channel?.sendMessage(embed);
