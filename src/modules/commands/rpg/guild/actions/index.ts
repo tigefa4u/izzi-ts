@@ -253,6 +253,7 @@ export const toggleTourneyMode = async ({
 			return;
 		}
 		await Cache.set(key, "true");
+		Cache.expire && await Cache.expire(key, 60 * 60 * 24 * 30);
 		embed.setDescription("Successfully set Tourney Mode: On");
 		context.channel?.sendMessage(embed);
 		return;
