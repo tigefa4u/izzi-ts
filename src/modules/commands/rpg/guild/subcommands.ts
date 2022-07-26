@@ -74,4 +74,7 @@ export const subcommands = [ {
 }, {
 	name: "report",
 	alias: []
+}, {
+	name: "tourney",
+	alias: []
 } ];

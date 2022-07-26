@@ -198,10 +198,12 @@ export const prepareTeamForBattle = async ({
 	team,
 	user_id,
 	id,
+	canAddGuildStats
 }: {
   team: TeamProps;
   user_id: number;
   id: string; // user tag (make sure)
+  canAddGuildStats: boolean;
 }) => {
 	const ids = team.metadata.filter(Boolean).map((m) => Number(m.collection_id));
 
@@ -217,7 +219,7 @@ export const prepareTeamForBattle = async ({
 
 	let guildStats = undefined as GuildStatProps;
 	let itemStats = undefined as GuildStatProps;
-	if (guildMember) {
+	if (guildMember && canAddGuildStats) {
 		const guild = await getGuild({ id: guildMember.guild_id });
 		if (guild) {
 			guildStats = guild.guild_stats;
@@ -316,7 +318,8 @@ export const validateAndPrepareTeam = async (
 	user_id: number,
 	user_tag: string,
 	selected_team_id: number,
-	channel: ChannelProp
+	channel: ChannelProp,
+	canAddGuildStats = true
 ) => {
 	const team = await getTeamById({
 		user_id: user_id,
@@ -332,6 +335,7 @@ export const validateAndPrepareTeam = async (
 		team,
 		user_id: user_id,
 		id: user_tag,
+		canAddGuildStats
 	});
 	if (!playerTeamStats) {
 		channel?.sendMessage(

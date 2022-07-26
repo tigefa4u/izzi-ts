@@ -23,6 +23,7 @@ import { confirmationInteraction } from "utility/ButtonInteractions";
 import { UserProps } from "@customTypes/users";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
+import Cache from "cache";
 
 async function confirmAndBattle(
 	params: ConfirmationInteractionParams<{
@@ -60,18 +61,22 @@ async function confirmAndBattle(
 			);
 			return;
 		}
+		const key = "tourney::" + context.guild?.id;
+		const canDisableGuildStats = await Cache.get(key);
 		const [ playerStats, opponentStats ] = await Promise.all([
 			validateAndPrepareTeam(
 				user.id,
 				user.user_tag,
 				user.selected_team_id,
-				params.channel
+				params.channel,
+				canDisableGuildStats ? false : true
 			),
 			validateAndPrepareTeam(
 				mentionedUser.id,
 				mentionedUser.user_tag,
 				mentionedUser.selected_team_id,
-				params.channel
+				params.channel,
+				canDisableGuildStats ? false : true
 			),
 		]);
 		if (!playerStats) {

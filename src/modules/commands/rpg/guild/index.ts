@@ -8,7 +8,7 @@ import { MessageEmbed } from "discord.js";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { addGuild, renameGuild, setBanner } from "./actions";
+import { addGuild, renameGuild, setBanner, toggleTourneyMode } from "./actions";
 import { inviteToGuild } from "./actions/invite";
 import { disbandGuild, leaveGuild } from "./dangerZone";
 import { kickFromGuild } from "./dangerZone/kick";
@@ -72,6 +72,8 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 			repGuild(params);
 		} else if (subcommand === "report") {
 			reportGuild(params);
+		} else if (subcommand === "tourney") {
+			toggleTourneyMode(params);
 		}
 		return;
 	} catch (err) {
