@@ -149,7 +149,8 @@ const emoji: EmojiProps = {
 	tradeic: ":mailbox_with_mail:",
 	renewaltaekwondo: "<:renewaltaekwondo:942164541775683676>",
 	warning: ":warning:",
-	bleed: "<:bleed:988330152935170069>"
+	bleed: "<:bleed:988330152935170069>",
+	chat: ":speech_balloon:"
 };
 
 export default emoji;

@@ -65,9 +65,9 @@ export const leaderboard = async ({
 };
 
 function prepareUrl(lb: string, order: string) {
-	// const base = "http://localhost:5011/api/v1";
+	// const base = "http://localhost:5011/api/v1/ums";
 	const base = `${API_DOMAIN}/api/v1/ums`;
-	const url = `/leaderboard/${lb}?per_page=10&order=${order}`;
+	const url = `/leaderboards/${lb}?per_page=10&order=${order}`;
 	return base + url;
 }
 
@@ -94,7 +94,7 @@ async function getLB(
 				`Top 10 User ${titleCase(
 					orderName
 				)} on Izzi are shown below. Want to view more than Top 10 results? ` +
-            `[Click here](${IZZI_WEBSITE}/leaderboard/${lb}?order=${order})` +
+            `[Click here](${IZZI_WEBSITE}/leaderboards?lb=${lb}${lb === "ranks" ? "" : `?order=${order}`})` +
             "\n**The Leaderboard is updated every 15 minutes**"
 			)
 			.setTitle(`User ${titleCase(orderName)} Leaderboard`);

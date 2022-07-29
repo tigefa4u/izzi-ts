@@ -38,6 +38,9 @@ export type UserProps = {
 	reached_max_ruin_at: Date;
 	dungeon_mana: number;
 	crystal: number;
+	metadata: {
+		status?: string;
+	};
 }
 
 export type UserParams = {

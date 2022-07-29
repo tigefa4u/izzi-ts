@@ -266,3 +266,5 @@ export const BATTLE_TYPES = {
 
 export const HARBINGER_OF_DEATH_PROC_ROUND = 3;
 export const MINIMUM_LEVEL_FOR_REPUTATION = 15;
+
+export const MAX_USER_STATUS_LENGTH = 80;

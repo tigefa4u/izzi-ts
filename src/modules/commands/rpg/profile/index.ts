@@ -14,7 +14,7 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData, MessageAttachment } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { getIdFromMentionedString, numericWithComma } from "helpers";
+import { getIdFromMentionedString, numericWithComma, parsePremiumUsername } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { DATE_OPTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -66,10 +66,6 @@ export const profile = async ({
 		const guildMember = await getGuildMember({ user_id: user.id });
 		if (guildMember) {
 			user.guild = (await getGuild({ id: guildMember.guild_id }))?.name;
-		}
-		const zone = await getZoneByLocationId({ location_id: user.ruin });
-		if (zone) {
-			user.zonename = zone.name;
 		}
 		if (user.selected_card_id) {
 			const result = await getCollectionById({
@@ -136,7 +132,7 @@ function prepareProfileFields(user: UserProps & P) {
 	const fields: EmbedFieldData[] = [
 		{
 			name: `${user.is_premium ? emoji.premium : emoji.shield2} Profile`,
-			value: `**${user.username}**`,
+			value: `**${parsePremiumUsername(user.username)}**`,
 			inline: true,
 		},
 		{
@@ -184,16 +180,6 @@ function prepareProfileFields(user: UserProps & P) {
 			inline: true,
 		},
 		{
-			name: "Floor",
-			value: (user.floor || 1).toString(),
-			inline: true,
-		},
-		{
-			name: `${emoji.zoneic} Zone`,
-			value: user.zonename || "None",
-			inline: true,
-		},
-		{
 			name: `${emoji.izzipoints} Izzi Points`,
 			value: numericWithComma(user.izzi_points),
 			inline: true,
@@ -216,6 +202,14 @@ function prepareProfileFields(user: UserProps & P) {
 			inline: true
 		}
 	];
+
+	if (user.metadata && user.metadata.status) {
+		fields.splice(0, 0, {
+			name: `User Status ${emoji.chat}`,
+			value: user.metadata.status,
+			inline: false
+		});
+	}
 
 	if (user.rank) {
 		fields.push(
