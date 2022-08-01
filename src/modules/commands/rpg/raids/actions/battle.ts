@@ -128,7 +128,7 @@ export const battleRaidBoss = async ({
 
 		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
-			currentRaid.stats.original_strength * ((multiplier * 12.5) / 100)
+			currentRaid.stats.original_strength * ((multiplier * 10) / 100)
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
