@@ -71,7 +71,7 @@ async function handleTeamSet(
 
 	params.channel?.sendMessage(
 		`Successfully assigned __${titleCase(collection.rank)}__ **${titleCase(
-			collection.name
+			collection.metadata?.nickname || collection.name
 		)}** Level ${collection.character_level} to __Position #${position}__`
 	);
 	return;

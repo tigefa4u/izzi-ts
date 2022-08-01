@@ -161,6 +161,7 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
+						metadata: {}
 					}
 				)
 			);
@@ -182,6 +183,7 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
+						metadata: {}
 					}
 				)
 			);

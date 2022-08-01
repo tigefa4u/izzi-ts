@@ -77,7 +77,7 @@ export const getCardInfo = async ({
 		);
 		const embed = createEmbed(author, client);
 		embed
-			.setTitle(`[#${infoData.row_number}] ${titleCase(infoData.name)}`)
+			.setTitle(`[#${infoData.row_number}] ${titleCase(infoData.metadata?.nickname || infoData.name)}`)
 			.setDescription(prepareInfoDescription(infoData, overAllStatData.totalStats))
 			.setImage("attachment://info.jpg")
 			.attachFiles([ attachment ]);

@@ -16,6 +16,7 @@ import { redirect } from "modules/commands/rpg/cardSpawn/redirect";
 import { cardCollection } from "modules/commands/rpg/collections";
 import { favorite } from "modules/commands/rpg/collections/favorite";
 import { getCardInfo } from "modules/commands/rpg/collections/info";
+import { nickname } from "modules/commands/rpg/collections/nickname";
 import { selectCard } from "modules/commands/rpg/collections/select";
 import { compareCards } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
@@ -136,6 +137,7 @@ const commandMap: CommandMapProps = {
 	laugh: laugh,
 	website: websiteUrls,
 	delete: deleteAccount,
+	nickname: nickname
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

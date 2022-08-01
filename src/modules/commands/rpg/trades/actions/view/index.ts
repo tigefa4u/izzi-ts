@@ -9,6 +9,7 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey } from "utility";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
+import { numericWithComma } from "helpers/index";
 
 const processViewCardsInTrade = (
 	params: SelectMenuCallbackParams<{ tradeQueue: TradeQueueProps }>,
@@ -112,7 +113,7 @@ export const viewTrade = async ({
 									)
 									.join(", ")}`
 								: ""
-						}\n__${trader.gold}__ gold ${emoji.gold}`;
+						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 					})
 					.join("\n\n")}`
 			);

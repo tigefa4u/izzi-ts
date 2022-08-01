@@ -1,3 +1,4 @@
+import { CardMetadataProps } from "@customTypes/cards";
 import {
 	CollectionCardInfoByRowNumberParams,
 	CollectionCardInfoProps,
@@ -38,6 +39,10 @@ export const getCardInfoByRowNumber = async (
 						throw new Error("Character not found for id: " + data.character_id);
 					}
 					const characterInfo = charainfo[0];
+					characterInfo.metadata = {
+						...characterInfo.metadata,
+						...data.metadata
+					} as CardMetadataProps;
 					if (skinArr) {
 						const idx = skinArr.findIndex(
 							(s) => s.character_id === characterInfo.character_id
@@ -51,7 +56,10 @@ export const getCardInfoByRowNumber = async (
 										characterInfo.rank
 									],
 								};
-								characterInfo.metadata = skinMeta;
+								characterInfo.metadata = {
+									...data.metadata,
+									...skinMeta
+								};
 							}
 						}
 					}
@@ -115,6 +123,10 @@ export const getCollectionById = async (params: {
 						throw new Error("Character not found for id: " + data.character_id);
 					}
 					const characterInfo = charaInfo[0];
+					characterInfo.metadata = {
+						...characterInfo.metadata,
+						...data.metadata
+					} as CardMetadataProps;
 					if (skinArr) {
 						const idx = skinArr.findIndex(
 							(s) => s.character_id === characterInfo.character_id
@@ -128,7 +140,10 @@ export const getCollectionById = async (params: {
 										characterInfo.rank
 									],
 								};
-								characterInfo.metadata = skinMeta;
+								characterInfo.metadata = {
+									...characterInfo.metadata,
+									...skinMeta
+								};
 							}
 						}
 					}
@@ -191,6 +206,7 @@ export const getCardForBattle = async (params: {
 				throw new Error("Character not found for id: " + data.character_id);
 			}
 			const characterInfo = charaInfo[0];
+			characterInfo.name = data.metadata?.nickname || characterInfo.name;
 			if (skinArr) {
 				const idx = skinArr.findIndex(
 					(s) => s.character_id === characterInfo.character_id

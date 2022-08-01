@@ -95,6 +95,7 @@ export type CommandMapProps = {
 	bonk: (params: BaseProps) => void;
 	website: (params: BaseProps) => void;
 	delete: (params: BaseProps) => void;
+	nickname: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

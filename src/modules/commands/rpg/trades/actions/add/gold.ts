@@ -2,6 +2,7 @@ import { TradeActionProps } from "@customTypes/trade";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_GOLD_IN_TRADE } from "helpers/constants";
 import loggers from "loggers";
 import { setTradeQueue } from "../../queue";
@@ -15,7 +16,8 @@ export const addGoldToTrade = async ({
 		if (!amount || isNaN(amount)) return;
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (amount > MAX_GOLD_IN_TRADE) {
-			embed.setDescription(`You cannot add more than __${MAX_GOLD_IN_TRADE}__ gold ${emoji.gold} in Trade!`);
+			embed.setDescription(`You cannot add more than __${numericWithComma(MAX_GOLD_IN_TRADE)}__ ` +
+			`gold ${emoji.gold} in Trade!`);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -40,7 +42,7 @@ export const addGoldToTrade = async ({
 			channel
 		});
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Successfully added __${amount}__ gold ${emoji.gold} to trade.`);
+			.setDescription(`Successfully added __${numericWithComma(amount)}__ gold ${emoji.gold} to trade.`);
         
 		channel?.sendMessage(embed);
 		return;

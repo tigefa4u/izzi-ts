@@ -159,7 +159,7 @@ export async function showTeam({
 			}
 			return `__Position #${item.position}__\n${
 				item.collection_id
-					? `**${titleCase(card.name)} ${emojiMap(card.type)} ${emojiMap(
+					? `**${titleCase(card.metadata?.nickname || card.name)} ${emojiMap(card.type)} ${emojiMap(
 						card.itemname || (item.item_id && item.itemName ? item.itemName : "") || ""
 					)}**\n__${titleCase(card.rank)}__ | Level ${
 						card.character_level

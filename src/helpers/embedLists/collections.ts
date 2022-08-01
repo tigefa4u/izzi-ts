@@ -10,7 +10,7 @@ export const createCollectionList = (array: CollectionReturnType[]) => {
 		fields.push({
 			name: `#${c.row_number} | ${
 				c.is_favorite ? emoji.favorite : ""
-			} ${titleCase(c.name)} | Level ${c.character_level} ${emojiMap(
+			} ${titleCase(c.metadata?.nickname || c.name)} | Level ${c.character_level} ${emojiMap(
 				c.type
 			)} ${emojiMap(c.abilityname)} ${
 				c.itemname ? emojiMap(c.itemname) + " " : ""

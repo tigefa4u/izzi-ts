@@ -28,12 +28,12 @@ export const eventActions = async ({
 	command,
 }: BaseProps) => {
 	try {
-		// const disableRaids = await Cache.get("disable-raids");
-		// const disableEvents = await Cache.get("disable-events");
-		// if (disableEvents || !disableRaids) {
-		// 	context.channel?.sendMessage("There are currently no events.");
-		// 	return;
-		// }
+		const disableRaids = await Cache.get("disable-raids");
+		const disableEvents = await Cache.get("disable-events");
+		if (disableEvents || !disableRaids) {
+			context.channel?.sendMessage("There are currently no events.");
+			return;
+		}
 		const subcommand = filterSubCommands(
 			args.shift() || "lobbies",
 			subcommands

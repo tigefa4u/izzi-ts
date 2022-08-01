@@ -253,8 +253,11 @@ export const prepareSkewedCollectionsForBattle = async ({
 		const tempCollectionsMeta = reorderObjectKey(collections, "id");
 		await Promise.all(team.metadata.map(async (m) => {
 			const card = tempCollectionsMeta[m.collection_id || 0];
+			const idx = collections.findIndex((c) => c.id === m.collection_id);
+			if (idx >= 0) {
+				collections[idx].name = collections[idx].metadata?.nickname || collections[idx].name;
+			}
 			if (card && !card.item_id && m.item_id) {
-				const idx = collections.findIndex((c) => c.id === m.collection_id);
 				if (idx >= 0) {
 					const item = await getItemById({ id: m.item_id });
 					if (item) {
