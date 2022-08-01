@@ -19,6 +19,7 @@ async function getProfileInfo(key: string, id: string) {
 			max_exp: user?.r_exp,
 			is_premium: user?.is_premium,
 			dungeon_mana: user?.dungeon_mana,
+			is_mini_premium: user?.is_mini_premium
 		},
 	};
 }
@@ -40,7 +41,7 @@ export const mana = async function ({
 		}
 
 		const refillTimerDesc = `[Refills __${
-			result.metadata.is_premium ? 3 : 2
+			(result.metadata.is_premium || result.metadata.is_mini_premium) ? 3 : 2
 		} mana__ ${
 			remainingMinutes ? `in ${remainingMinutes} minutes` : "every 4 minutes"
 		}]`;
@@ -119,7 +120,7 @@ export const permits = async function ({
 		let refilled_at = timestamp.setHours(
 			timestamp.getHours() + (result.metadata.is_premium ? 1 : 2)
 		);
-		if (result.metadata.is_premium) {
+		if (result.metadata.is_premium || result.metadata.is_mini_premium) {
 			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);
 		}
 		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
@@ -135,7 +136,7 @@ export const permits = async function ({
       		remainingHours < 0 ? 0 : remainingHours
       	} hours ${remainingMinutes} minutes]`
       	: `[Refills every ${
-      		result.metadata.is_premium ? "1 hour 30 minutes" : "2 hours"
+      		(result.metadata.is_premium || result.metadata.is_mini_premium) ? "1 hour 30 minutes" : "2 hours"
       	}]`;
 
 		context.channel?.sendMessage(
