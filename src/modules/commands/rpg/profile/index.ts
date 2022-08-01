@@ -258,6 +258,23 @@ function prepareProfileFields(user: UserProps & P) {
 			}
 		);
 	}
+	if (user.is_mini_premium) {
+		fields.push(
+			{
+				name: "Mini Premium Since",
+				value: new Date(user.mini_premium_since || "").toLocaleDateString(
+					"en-us",
+					DATE_OPTIONS
+				),
+				inline: true,
+			},
+			{
+				name: "Mini Premium Days Left",
+				value: (user.mini_premium_days_left || 0).toString(),
+				inline: true,
+			}
+		);
+	}
 	if (user.is_banned) {
 		fields.push({
 			name: "User Banned :x:",
