@@ -39,7 +39,8 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 			if (characterinfo.metadata?.nickname) {
 				await updateCollection({ id: characterinfo.id }, { metadata: {} });
 			}
-			context.channel?.sendMessage("Successfully removed nickname");
+			context.channel?.sendMessage(`#${rowid} **${titleCase(characterinfo.name)}** ` +
+            `will now be called **${titleCase(characterinfo.name)}**`);
 		}
 		return;
 	} catch (err) {
