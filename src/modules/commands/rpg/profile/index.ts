@@ -76,7 +76,7 @@ export const profile = async ({
 			if (result) {
 				const card = result[0];
 				user.itemname = card.itemname;
-				user.name = card.name;
+				user.name = card.metadata?.nickname || card.name;
 				const canvas = await createSingleCanvas(card, false);
 				if (canvas) {
 					user.attachment = createAttachment(
