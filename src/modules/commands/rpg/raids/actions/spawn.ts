@@ -109,8 +109,8 @@ export const createRaidBoss = async ({
 			power_level: stats.totalPowerLevel,
 			stats: stats.totalOverallStats,
 		},
-		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 5),
+		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 5),
 		difficulty: computedBoss.difficulty,
 		timestamp: dt.setHours(dt.getHours() + 1),
 	} as RaidStatsProps;
@@ -205,7 +205,7 @@ export const spawnRaid = async ({
 		});
 		if (!raid) return;
 
-		setCooldown(author.id, CDKey, user.is_premium ? 9000 : 60 * 60 * 3);
+		setCooldown(author.id, CDKey, (user.is_premium || user.is_mini_premium) ? 9000 : 60 * 60 * 3);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (isEvent) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);

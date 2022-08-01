@@ -62,5 +62,9 @@ export const subcommands = [
 	{
 		name: "redeem",
 		alias: []
+	},
+	{
+		name: "mlead",
+		alias: []
 	}
 ];

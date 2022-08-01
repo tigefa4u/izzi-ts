@@ -198,7 +198,7 @@ export const getTotalPlayers = async (
 	}
 };
 
-export const getAllUsers = async (params: { is_premium?: boolean } = {}) => {
+export const getAllUsers = async (params: { is_premium?: boolean; is_mini_premium?: boolean; } = {}) => {
 	try {
 		const result = await Users.get({
 			is_banned: false,

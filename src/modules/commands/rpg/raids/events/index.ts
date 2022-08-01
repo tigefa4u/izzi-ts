@@ -9,6 +9,7 @@ import { joinRaid } from "../actions/join";
 import { kickmember } from "../actions/kick";
 import { leaveLobby } from "../actions/leave";
 import { raidLobbies } from "../actions/lobbies";
+import { makeLeader } from "../actions/makeLeader";
 import { raidParty } from "../actions/party";
 import { memberReady } from "../actions/ready";
 import { spawnRaid } from "../actions/spawn";
@@ -27,12 +28,12 @@ export const eventActions = async ({
 	command,
 }: BaseProps) => {
 	try {
-		const disableRaids = await Cache.get("disable-raids");
-		const disableEvents = await Cache.get("disable-events");
-		if (disableEvents || !disableRaids) {
-			context.channel?.sendMessage("There are currently no events.");
-			return;
-		}
+		// const disableRaids = await Cache.get("disable-raids");
+		// const disableEvents = await Cache.get("disable-events");
+		// if (disableEvents || !disableRaids) {
+		// 	context.channel?.sendMessage("There are currently no events.");
+		// 	return;
+		// }
 		const subcommand = filterSubCommands(
 			args.shift() || "lobbies",
 			subcommands
@@ -83,6 +84,8 @@ export const eventActions = async ({
 			inviteToRaid(params);
 		} else if (subcommand === "battle") {
 			battleRaidBoss(params);
+		} else if (subcommand === "mlead") {
+			makeLeader(params);
 		}
 	} catch (err) {
 		loggers.error(

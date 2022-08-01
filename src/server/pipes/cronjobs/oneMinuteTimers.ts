@@ -42,8 +42,7 @@ async function raidTimers() {
 }
 
 async function boot() {
-	await autoKick();
-	await raidTimers();
+	await Promise.all([ autoKick(), raidTimers() ]);
 	process.exit(1);
 }
 

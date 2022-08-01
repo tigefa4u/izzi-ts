@@ -35,6 +35,39 @@ async function premiumTimer() {
 	}
 }
 
+async function miniPremiumTimer() {
+	try {
+		const users = await getAllUsers({ is_mini_premium: true });
+		if (!users) return;
+		await Promise.all(
+			users.map((user) => {
+				let params = {};
+				const oneDay = 1000 * 60 * 60 * 24;
+				const daysDiff = Math.abs(
+					new Date(user.mini_premium_since || "").valueOf() - new Date().valueOf()
+				);
+				const dayRatio = Math.round(daysDiff / oneDay);
+				let daysLeft = (user.mini_premium_days || 0) - dayRatio;
+				if (daysLeft <= 0) {
+					daysLeft = 0;
+					params = {
+						mini_premium_days_left: daysLeft,
+						is_mini_premium: false,
+						mini_premium_days: 0,
+					};
+				} else {
+					params = { mini_premium_days_left: daysLeft };
+				}
+				return updateRPGUser({ user_tag: user.user_tag }, params);
+			})
+		);
+		return;
+	} catch (err) {
+		loggers.error("cronjobs.premiumTier.miniPremiumTimer(): something went wrong", err);
+		return;
+	}
+}
+
 async function resetVoteTimers() {
 	try {
 		const users = await getAllUsers();
@@ -79,9 +112,12 @@ async function resetUserActive() {
 }
 
 async function boot() {
-	await resetVoteTimers();
-	await premiumTimer();
-	await resetUserActive();
+	await Promise.all([
+		resetVoteTimers(),
+		premiumTimer(),
+		miniPremiumTimer(),
+		resetUserActive()
+	]);
 	process.exit(1);
 }
 

@@ -18,6 +18,7 @@ import { joinRaid } from "./actions/join";
 import { kickmember } from "./actions/kick";
 import { leaveLobby } from "./actions/leave";
 import { raidLobbies } from "./actions/lobbies";
+import { makeLeader } from "./actions/makeLeader";
 import { raidParty } from "./actions/party";
 import { memberReady } from "./actions/ready";
 import { spawnRaid } from "./actions/spawn";
@@ -90,6 +91,8 @@ export const raidActions = async ({
 			inviteToRaid(params);
 		} else if (subcommand === "battle") {
 			battleRaidBoss(params);
+		} else if (subcommand === "mlead") {
+			makeLeader(params);
 		}
 	} catch (err) {
 		loggers.error(

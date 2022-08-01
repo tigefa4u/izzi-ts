@@ -41,6 +41,10 @@ export type UserProps = {
 	metadata: {
 		status?: string;
 	};
+	is_mini_premium?: boolean;
+	mini_premium_days_left?: number;
+	mini_premium_since?: string;
+	mini_premium_days?: number;
 }
 
 export type UserParams = {

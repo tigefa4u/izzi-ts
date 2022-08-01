@@ -247,7 +247,7 @@ async function initDrops(
 					}
 				}
 			}
-			if (user.is_premium) {
+			if (user.is_premium || user.is_mini_premium) {
 				rate = rate + 15;
 			}
 			const dropChance = [ rate, 100 - rate ];

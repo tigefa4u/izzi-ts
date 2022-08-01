@@ -54,7 +54,10 @@ export const vpromote = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		await updateGuildMember({ id: member.id }, { is_vice_leader: true });
+		await updateGuildMember({ id: member.id }, {
+			is_vice_leader: true,
+			is_admin: false 
+		});
 		const thumb = context.guild?.iconURL() || client.user?.displayAvatarURL();
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
@@ -146,9 +149,9 @@ export const apromote = async ({
 		});
 		if (!validGuild) return;
 		const guildDetails = await getGuildDetails({ id: validGuild.guild.id });
-		const vice = guildDetails?.filter((g) => g.role === "admin")[0];
+		const admin = guildDetails?.filter((g) => g.role === "admin")[0];
 		const embed = createEmbed(author);
-		if (vice) {
+		if (admin) {
 			embed.setDescription(
 				"Your guild already has an Admin! use ``guild members`` to view your guild members"
 			);
@@ -164,7 +167,10 @@ export const apromote = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		await updateGuildMember({ id: member.id }, { is_admin: true });
+		await updateGuildMember({ id: member.id }, {
+			is_admin: true,
+			is_vice_leader: false 
+		});
 		const thumb = context.guild?.iconURL() || client.user?.displayAvatarURL();
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
