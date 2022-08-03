@@ -25,6 +25,7 @@ async function confirmMakeLeader(
 	if (!leader.is_leader) {
 		embed.setDescription(`Summoner **${params.author.username}**, only the ` +
         "current Lobby Leader can use this command");
+		params.channel?.sendMessage(embed);
 		return;
 	}
 	const member = currentRaid.lobby[memberId];
