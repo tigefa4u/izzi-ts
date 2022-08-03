@@ -19,10 +19,16 @@ async function confirmMakeLeader(
 	if (!userId || !memberId) return;
 	const currentRaid = await validateCurrentRaid(userId, params.author, params.client, params.channel);
 	if (!currentRaid) return;
-	const member = currentRaid.lobby[memberId];
-	if (!member) return;
 	const embed = createEmbed(params.author, params.client)
 		.setTitle(DEFAULT_ERROR_TITLE);
+	const leader = currentRaid.lobby[userId];
+	if (!leader.is_leader) {
+		embed.setDescription(`Summoner **${params.author.username}**, only the ` +
+        "current Lobby Leader can use this command");
+		return;
+	}
+	const member = currentRaid.lobby[memberId];
+	if (!member) return;
 	if (member.is_leader) {
 		embed.setDescription(`**Summoner ${member.username}** is already the leader ` +
         `of this ${params.extras?.isEvent ? "Event" : "Raid"} Lobby`);

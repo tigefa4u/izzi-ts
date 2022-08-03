@@ -1,6 +1,7 @@
 import { GuildMemberResponseProps } from "@customTypes/guildMembers";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 
 export const createGuildMemberList = (
 	array: GuildMemberResponseProps[],
@@ -21,9 +22,9 @@ export const createGuildMemberList = (
 							? "Clan Admin"
 							: ""
 			}`,
-			value: `Total Donations: ${member.max_donation} ${
+			value: `Total Donations: ${numericWithComma(member.max_donation)} ${
 				emoji.gold
-			} | Usable Gold: ${member.donation || 0} ${
+			} | Usable Gold: ${numericWithComma(member.donation || 0)} ${
 				emoji.gold
 			} | Supporter Points: ${member.supporter_points}`,
 		});

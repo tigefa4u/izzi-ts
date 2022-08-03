@@ -4,10 +4,12 @@ import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MAX_DONATION,
+	GUILD_TOTAL_DONATION_THRESHOLD,
 } from "helpers/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
@@ -48,6 +50,13 @@ export const donateToGuild = async ({
 		if (!validGuild) return;
 		user.gold = user.gold - donation;
 		validGuild.guild.gold = validGuild.guild.gold + donation;
+		if (validGuild.guild.gold > GUILD_TOTAL_DONATION_THRESHOLD) {
+			embed.setDescription("Your guild has reached max " +
+			`guild donation threshold __${GUILD_TOTAL_DONATION_THRESHOLD}__, ` +
+			"Please use the remaining guild gold to receive more donations.");
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		let orbPerDonation = 0;
 		if (donation > 1000) {
 			orbPerDonation = Math.floor(donation / 1000);
@@ -60,6 +69,20 @@ export const donateToGuild = async ({
 			? validGuild.member.max_donation + donation
 			: 0 + donation;
 
+		const guildMemberUpdateParams = {
+			donation: validGuild.member.donation,
+			max_donation: validGuild.member.max_donation,
+		} as { donation: number; max_donation?: number; };
+		if (validGuild.member.max_donation > GUILD_TOTAL_DONATION_THRESHOLD) {
+			embed.setTitle("GUILD DONATION NOTICE")
+				.setDescription(`Summoner **${author.username}**, you've hit max guild ` +
+				`donation threshold __${numericWithComma(GUILD_TOTAL_DONATION_THRESHOLD)}__ ${emoji.gold}` +
+				"your total guild donations will no longer increase, but your usabel gold will be counted.");
+
+			context.channel?.sendMessage(embed);
+			delete guildMemberUpdateParams.max_donation;
+		}
+
 		const promises = [
 			updateRPGUser(
 				{ user_tag: user.user_tag },
@@ -71,10 +94,7 @@ export const donateToGuild = async ({
 			updateGuild({ id: validGuild.guild.id }, { gold: validGuild.guild.gold }),
 			updateGuildMember(
 				{ id: validGuild.member.id },
-				{
-					donation: validGuild.member.donation,
-					max_donation: validGuild.member.max_donation,
-				}
+				guildMemberUpdateParams
 			),
 		];
 
@@ -84,11 +104,11 @@ export const donateToGuild = async ({
 			.setDescription(
 				`Summoner ${
 					author.username
-				}, you have successfully donated __${donation}__ Gold ${
+				}, you have successfully donated __${numericWithComma(donation)}__ Gold ${
 					emoji.gold
 				} to your guild **${validGuild.guild.name}**!${
 					orbPerDonation > 0
-						? ` You have also received __${orbPerDonation}__${emoji.blueorb} Blue Orbs`
+						? ` You have also received __${numericWithComma(orbPerDonation)}__${emoji.blueorb} Blue Orbs`
 						: ""
 				}`
 			);

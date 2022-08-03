@@ -163,6 +163,7 @@ export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
 export const GUILD_MARKET_IDS = [ 2, 5 ];
 export const GUILD_MAX_DONATION = 10000000;
+export const GUILD_TOTAL_DONATION_THRESHOLD = 999999999;
 export const GUILD_MAX_LEVEL = 150;
 export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
 export const SOUL_ID = 2;

@@ -8,6 +8,7 @@ import {
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import loggers from "loggers";
 import { isEmptyValue } from "utility";
 import { verifyMemberPermissions } from "..";
@@ -48,7 +49,7 @@ function prepareGuildDesc(
 	}\n**Clan Name:** ${guild.name}\n**Clan Level:** ${
 		guild.guild_level
 	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${
-		guild.gold
+		numericWithComma(guild.gold)
 	} ${emoji.gold}\n**Clan Members:** __${mc}/${
 		guild.max_members
 	}__\n**Clan Items:** __${ic}__\n\n**Clan Bonus Stats** ${emoji.up}\n\n${
