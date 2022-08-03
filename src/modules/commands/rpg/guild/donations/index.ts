@@ -74,12 +74,13 @@ export const donateToGuild = async ({
 			max_donation: validGuild.member.max_donation,
 		} as { donation: number; max_donation?: number; };
 		if (validGuild.member.max_donation > GUILD_TOTAL_DONATION_THRESHOLD) {
-			embed.setTitle("GUILD DONATION NOTICE")
+			const newEmbed = createEmbed(author, client)
+				.setTitle("GUILD DONATION NOTICE")
 				.setDescription(`Summoner **${author.username}**, you've hit max guild ` +
 				`donation threshold __${numericWithComma(GUILD_TOTAL_DONATION_THRESHOLD)}__ ${emoji.gold}` +
 				"your total guild donations will no longer increase, but your usable gold will be counted.");
 
-			context.channel?.sendMessage(embed);
+			context.channel?.sendMessage(newEmbed);
 			delete guildMemberUpdateParams.max_donation;
 		}
 
