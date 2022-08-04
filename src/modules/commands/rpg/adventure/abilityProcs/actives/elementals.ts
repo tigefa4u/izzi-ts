@@ -186,7 +186,8 @@ export const tornado = ({
 	if (round % 2 === 0 && !playerStats.totalStats.isTornado) {
 		playerStats.totalStats.isTornado = true;
 		const percent = calcPercentRatio(20, card.rank);
-		const ratio = getRelationalDiff(playerStats.totalStats.vitality, percent);
+		const playerDamage = getPlayerDamageDealt(playerStats.totalStats, opponentStats.totalStats);
+		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = (ratio * 3);
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength < 0) opponentStats.totalStats.strength = 0;
