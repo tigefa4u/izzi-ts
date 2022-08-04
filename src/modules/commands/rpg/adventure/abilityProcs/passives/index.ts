@@ -20,20 +20,24 @@ export const wrecker = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card) return;
-	// 'At the start of the match increase your __ATK__ by __102%__. Your attack decreases by 17% each turn.'
+	// Rework - wrecker should buff all team atk
+	// 'At the start of the match increase your __ATK__ by __60%__. Your attack decreases by 6% each turn.'
 	if (round === 1 && !playerStats.totalStats.isWrecker) {
 		playerStats.totalStats.isWrecker = true;
 		card.isUseWreckerPassive = true;
-		playerStats.totalStats.vitality =
-      playerStats.totalStats.vitality - card.stats.vitality;
-		const percent = calcPercentRatio(102, card.rank);
-		const ratio = getRelationalDiff(card.stats.vitality, percent);
-		const atkInc = card.stats.vitality + ratio;
-		playerStats.totalStats.vitality = playerStats.totalStats.vitality + atkInc;
-		const desc = `increasing **ATK** by __${percent}%__`;
+		// 	playerStats.totalStats.vitality =
+		//   playerStats.totalStats.vitality - card.stats.vitality;
+		const percent = calcPercentRatio(60, card.rank);
+		const percentDec = calcPercentRatio(6, card.rank);
+		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, percent);
+		// const atkInc = card.stats.vitality + ratio;
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
+		const desc = `increasing all ally **ATK** by __${percent}%__. ` +
+		`All ally **ATK** will decrease by __${percentDec}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -50,8 +54,8 @@ export const wrecker = ({
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
-			const inc = calcPercentRatio(17, card.rank);
-			const decRatio = getRelationalDiff(card.stats.vitality, inc);
+			const inc = calcPercentRatio(6, card.rank);
+			const decRatio = getRelationalDiff(basePlayerStats.totalStats.vitality, inc);
 			playerStats.totalStats.vitality =
         playerStats.totalStats.vitality - decRatio;
 			if (playerStats.totalStats.vitality <= 0)
@@ -142,22 +146,28 @@ export const fightingSpirit = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// while your hp is low increase the **ATK** of all allies by __10%__
+	// boost atk & def, more like bulkup
+	// while your hp is low increase the **ATK** and **DEF** of all allies by __15%__
 	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (30 / 100));
 	if (
 		playerStats.totalStats.strength <= hpRatio &&
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(10, card.rank);
+		const percent = calcPercentRatio(15, card.rank);
 		if (!basePlayerStats.totalStats.fs) basePlayerStats.totalStats.fs = 1;
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
 			basePlayerStats.totalStats.fs * percent
 		);
+		const defIncRation = getRelationalDiff(
+			basePlayerStats.totalStats.defense,
+			basePlayerStats.totalStats.fs * percent
+		);
 		basePlayerStats.totalStats.fs++;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
-		const desc = `increasing **ATK** of all allies by __${percent}%__`;
+		playerStats.totalStats.defense = playerStats.totalStats.defense + defIncRation;
+		const desc = `increasing **ATK** and **DEF** of all allies by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

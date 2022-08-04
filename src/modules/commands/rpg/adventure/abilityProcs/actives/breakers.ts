@@ -224,9 +224,23 @@ export const crusher = ({
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(25, card.rank);
 		const ratio = getRelationalDiff(opponentStats.totalStats.vitality, percent);
+		const defDecratio = getRelationalDiff(opponentStats.totalStats.defense, percent);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
-		const desc = `Decreasing **__${opponentStats.name}'s__** **ATK** by __${percent}%__`;
+	  opponentStats.totalStats.defense = opponentStats.totalStats.defense - defDecratio;
+
+		let inc = 5;
+		if (
+			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
+				card.rank
+			)
+		) {
+			inc = 6;
+		}
+		const rel = getRelationalDiff(opponentStats.totalStats.vitality, inc);
+
+		const desc = `Decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. ` +
+		`**__${opponentStats.name}'s__** **ATK** will increase by __${rel}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -246,13 +260,13 @@ export const crusher = ({
 		playerStats.totalStats.isUseCrusher = false;
 	if (playerStats.totalStats.isUseCrusher) {
 		// let inc = calcPercentRatio(6, card.rank);
-		let inc = 10;
+		let inc = 5;
 		if (
 			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
 				card.rank
 			)
 		) {
-			inc = 14;
+			inc = 6;
 		}
 		const rel = getRelationalDiff(opponentStats.totalStats.vitality, inc);
 		opponentStats.totalStats.vitality = opponentStats.totalStats.vitality + rel;

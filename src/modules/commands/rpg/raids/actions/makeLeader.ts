@@ -79,8 +79,10 @@ export const makeLeader = async ({
 			},
 			confirmMakeLeader,
 			(data, opts) => {
-				embed = createConfirmationEmbed(author, client)
-					.setDescription(`Are you sure you want to transfer Lobby Leadership to **${data?.username}**`);
+				if (data) {
+					embed = createConfirmationEmbed(author, client)
+						.setDescription(`Are you sure you want to transfer Lobby Leadership to **${data?.username}**`);
+				}
 
 				if (opts?.isDelete) {
 					sentMessage.deleteMessage();
