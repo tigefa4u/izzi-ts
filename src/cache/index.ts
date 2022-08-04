@@ -7,7 +7,7 @@ import { CacheProps } from "./cacheTypes";
 // 	url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}`,
 // };
 
-const client = new redisClient({ password: REDIS_PASSWORD });
+const client = new redisClient({  });
 
 const Cache: CacheProps = {
 	get: (key) => client.get(key),
