@@ -52,7 +52,7 @@ export const redirect = async ({
 			resetChannels(params);
 			return;
 		}
-		const channelId = args[subcommand ? 1 : 0].substring(2).substring(0, 18);
+		const channelId = args[subcommand ? 1 : 0];
 		if (!channelId) return;
 		const channel = await getMentionedChannel(context, channelId);
 		if (!channel) return;

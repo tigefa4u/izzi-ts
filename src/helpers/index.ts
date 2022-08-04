@@ -102,8 +102,9 @@ export const getMentionedChannel = async (
 	context: BaseProps["context"],
 	id: string
 ) => {
-	const channel = context.guild?.channels.cache.get(id);
-	return channel;
+	if (!id) return;
+	id = id.replaceAll("<#", "").replaceAll(">", "");
+	return context.guild?.channels.fetch(id);
 };
 
 type T = {
