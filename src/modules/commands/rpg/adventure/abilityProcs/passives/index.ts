@@ -25,14 +25,14 @@ export const wrecker = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Rework - wrecker should buff all team atk
-	// 'At the start of the match increase your __ATK__ by __60%__. Your attack decreases by 6% each turn.'
+	// 'At the start of the match increase your __ATK__ by __50%__. Your attack decreases by 6% each turn.'
 	if (round === 1 && !playerStats.totalStats.isWrecker) {
 		playerStats.totalStats.isWrecker = true;
 		card.isUseWreckerPassive = true;
 		// 	playerStats.totalStats.vitality =
 		//   playerStats.totalStats.vitality - card.stats.vitality;
-		const percent = calcPercentRatio(60, card.rank);
-		const percentDec = calcPercentRatio(6, card.rank);
+		const percent = calcPercentRatio(50, card.rank);
+		const percentDec = calcPercentRatio(5, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, percent);
 		// const atkInc = card.stats.vitality + ratio;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
@@ -54,7 +54,7 @@ export const wrecker = ({
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
-			const inc = calcPercentRatio(6, card.rank);
+			const inc = calcPercentRatio(5, card.rank);
 			const decRatio = getRelationalDiff(basePlayerStats.totalStats.vitality, inc);
 			playerStats.totalStats.vitality =
         playerStats.totalStats.vitality - decRatio;
