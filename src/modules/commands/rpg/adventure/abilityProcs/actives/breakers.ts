@@ -237,10 +237,8 @@ export const crusher = ({
 		) {
 			inc = 6;
 		}
-		const rel = getRelationalDiff(opponentStats.totalStats.vitality, inc);
-
 		const desc = `Decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. ` +
-		`**__${opponentStats.name}'s__** **ATK** will increase by __${rel}%__ each round.`;
+		`**__${opponentStats.name}'s__** **ATK** will increase by __${inc}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
