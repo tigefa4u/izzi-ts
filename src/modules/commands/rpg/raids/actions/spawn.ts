@@ -109,8 +109,8 @@ export const createRaidBoss = async ({
 			power_level: stats.totalPowerLevel,
 			stats: stats.totalOverallStats,
 		},
-		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 3),
-		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 3),
+		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
 		difficulty: computedBoss.difficulty,
 		timestamp: dt.setHours(dt.getHours() + 1),
 	} as RaidStatsProps;
