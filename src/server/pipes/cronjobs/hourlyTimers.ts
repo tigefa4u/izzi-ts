@@ -5,6 +5,22 @@ import { createRaidBoss } from "modules/commands/rpg/raids/actions/spawn";
 import { computeRank } from "modules/commands/rpg/raids/computeBoss";
 import "../../../module";
 
+// {
+// 	1: {
+// 		"level": 69,
+// 		"votes": 0,
+// 		"energy": 25,
+// 		"user_id": 1,
+// 		"user_tag": "266457718942990337",
+// 		"username": "HoaX",
+// 		"is_leader": true,
+// 		"timestamp": 1659861429542,
+// 		"total_attack": 0,
+// 		"total_damage": 0,
+// 		"total_energy": 25
+// 	}
+// }
+
 const spawnRaids = async () => {
 	try {
 		const raidsDisabled = await Cache.get("disable-raids");

@@ -45,10 +45,11 @@ export const createRaidBoss = async ({
 	lobby,
 	isPrivate,
 }: C) => {
+	// character_id: i === 0 ? 611 : i === 1 ? 1044 : 1004
 	const raidBosses = (await Promise.all(
 		Array(computedBoss.bosses)
 			.fill(0)
-			.map(async () => {
+			.map(async (_, i) => {
 				const rank = randomElementFromArray(computedBoss.rank);
 				const level = randomNumber(
 					computedBoss.level[0],
