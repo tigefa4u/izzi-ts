@@ -26,5 +26,5 @@ export const TOTAL_SHARDS = Number(process.env.TOTAL_SHARDS); // total shards sp
 export const SHARD_LIST = process.env.SHARD_LIST ? JSON.parse(process.env.SHARD_LIST) : undefined; // shard id list
 export const PRIVACY_POLICY_URL = process.env.PRIVACY_POLICY_URL;
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
-// export const BOT_PREFIX = "iz";
-export const BOT_PREFIX = "tt";
+export const BOT_PREFIX = "iz";
+// export const BOT_PREFIX = "tt";
