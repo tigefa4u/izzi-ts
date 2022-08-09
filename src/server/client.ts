@@ -17,7 +17,7 @@ process.on("unhandledRejection", (error, promise) => {
 process.on("uncaughtException", async (error) => {
 	await flushBattleCooldowns();
 	loggers.error("UNCAUGHT_EXCEPTION FATAL ERROR: ", error);
-	// process.exit(1);
+	process.exit(1);
 });
 
 process.on("exit", async () => {
