@@ -6,7 +6,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message, MessageEmbed } from "discord.js";
 import { validateChannelPermissions } from "helpers";
-import { DEFAULT_ERROR_TITLE, MAX_RAID_LOBBY_MEMBERS, RAID_PING_NAME } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, MAX_RAID_LOBBY_MEMBERS, PERMIT_PER_RAID, RAID_PING_NAME } from "helpers/constants";
 import loggers from "loggers";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { DMUserViaApi } from "server/pipes/directMessage";
@@ -22,7 +22,7 @@ const validateAndJoinRaid = async ({ user_tag, raidId }: T) => {
 	const currentRaid = await getRaid({ id: raidId });
 	if (!currentRaid || Object.keys(currentRaid.lobby).length >= MAX_RAID_LOBBY_MEMBERS) return;
 	const user = await getRPGUser({ user_tag });
-	if (!user) return;
+	if (!user || (user.raid_pass < PERMIT_PER_RAID)) return;
 	const member = await getUserRaidLobby({ user_id: user.id });
 	if (member) return;
 	const lobbyMember = prepareInitialLobbyMember(
