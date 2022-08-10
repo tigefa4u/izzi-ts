@@ -26,6 +26,7 @@ import { dungeon } from "modules/commands/rpg/dungeon";
 import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
 import { guild } from "modules/commands/rpg/guild";
+import { guildEvents } from "modules/commands/rpg/guildEvents";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
 import { itemshop } from "modules/commands/rpg/items/shop";
 import { equip, unEquip } from "modules/commands/rpg/items/useItems";
@@ -137,7 +138,8 @@ const commandMap: CommandMapProps = {
 	laugh: laugh,
 	website: websiteUrls,
 	delete: deleteAccount,
-	nickname: nickname
+	nickname: nickname,
+	"guild event": guildEvents
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

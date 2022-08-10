@@ -102,9 +102,18 @@ export const getMentionedChannel = async (
 	context: BaseProps["context"],
 	id: string
 ) => {
-	if (!id) return;
+	if (!id || id === "") return;
 	id = id.replaceAll("<#", "").replaceAll(">", "");
 	return context.guild?.channels.fetch(id);
+};
+
+export const getMentionedRole = async (
+	context: BaseProps["context"],
+	id: string
+) => {
+	if (!id || id === "") return;
+	id = id.replaceAll("<@", "").replaceAll("&", "").replaceAll(">", "");
+	return context.guild?.roles.fetch(id);
 };
 
 type T = {
@@ -376,10 +385,10 @@ export const preparePlayerBase = ({
 	return baseStats;
 };
 
-export const validateChannelPermissions = (context: BaseProps["context"]) => {
+export const validateChannelPermissions = (context: BaseProps["context"], ch?: string) => {
 	let hasPermission = true;
 	if (!context.channel?.id) return false;
-	const permissionsMap = context.guild?.me?.permissionsIn(context.channel.id).serialize();
+	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id).serialize();
 	for (const permission of BOT_GLOBAL_PERMISSIONS) {
 		if (!permissionsMap || !permissionsMap[permission]) {
 			hasPermission = false;

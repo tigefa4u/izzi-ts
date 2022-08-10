@@ -52,6 +52,14 @@ const argMap = [
 	{
 		name: "year",
 		alias: [ "-year" ]
+	},
+	{
+		name: "channel",
+		alias: [ "-ch", "-channel" ]
+	},
+	{
+		name: "role",
+		alias: [ "-ro", "-role" ]
 	}
 ];
 

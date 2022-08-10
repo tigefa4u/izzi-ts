@@ -271,3 +271,5 @@ export const MINIMUM_LEVEL_FOR_REPUTATION = 15;
 export const MAX_USER_STATUS_LENGTH = 80;
 
 export const MAX_CARD_NICKNAME_LENGTH = 80;
+
+export const RAID_PING_NAME = "raid ping [bot]";

@@ -183,7 +183,9 @@ export const customButtonInteraction = async <P>(
 	options: (ButtonOptions & { params: P })[],
 	authorId: string,
 	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
-	callback: () => void
+	callback: () => void,
+	bypassFilter?: boolean,
+	maxClicks = 1
 ) => {
 	try {
 		const label = REACTIONS.confirm.label + "_" + (channel?.id || "") + "_" + generateUUID(4);
@@ -196,8 +198,8 @@ export const customButtonInteraction = async <P>(
 			})
 		);
 		const collector = channel?.createMessageComponentCollector({
-			filter: interactionFilter(authorId, verifyFilter, verifyObject),
-			max: 1,
+			filter: bypassFilter ? () => true : interactionFilter(authorId, verifyFilter, verifyObject),
+			max: maxClicks,
 			componentType: "BUTTON",
 			dispose: true,
 			time: 240_000

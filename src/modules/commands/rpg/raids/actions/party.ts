@@ -2,6 +2,7 @@ import { RaidActionProps, RaidLobbyProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { prepareHPBar } from "helpers/adventure";
 import { processHpBar, relativeDiff } from "helpers/battle";
 import { getLobbyMvp } from "helpers/raid";
@@ -48,8 +49,8 @@ export const raidParty = async ({
 				`**Level ${currentRaid.stats.battle_stats.boss_level} ${
 					isEvent ? "Event" : "Raid"
 				} Boss [${titleCase(currentRaid.stats.difficulty)}]\n${
-					currentRaid.stats.remaining_strength
-				} / ${currentRaid.stats.original_strength} ${emoji.hp}**\n${fakeHp
+					numericWithComma(currentRaid.stats.remaining_strength)
+				} / ${numericWithComma(currentRaid.stats.original_strength)} ${emoji.hp}**\n${fakeHp
 					.map((i) => i)
 					.join("")}\n\n${prepareRaidParty(currentRaid.lobby)}`
 			)

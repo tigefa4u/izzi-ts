@@ -185,7 +185,7 @@ export const deleteCollection = async (
 ) => {
 	try {
 		loggers.info("Deleting collections with: " + JSON.stringify(params));
-		return await Collections.destroy(params);
+		return Collections.destroy(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.deleteCollection(): something went wrong",
@@ -198,7 +198,7 @@ export const deleteCollection = async (
 export const verifyCollectionsById = async (params: { user_id: number; ids: number[] }) => {
 	try {
 		loggers.info("Verifying collections with: " + JSON.stringify(params));
-		return await Collections.verifyIds(params);
+		return Collections.verifyIds(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.verifyCollectionsById(): something went wrong",
