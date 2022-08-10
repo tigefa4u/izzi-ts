@@ -16,7 +16,7 @@ export const getCharacterById: (params: {
   id: number;
 }) => Promise<CharacterDetailsProps | undefined> = async function (params) {
 	try {
-		return await Characters.getCharacterById(params);
+		return Characters.getCharacterById(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.getCharacterById(): something went wrong ",
@@ -30,7 +30,7 @@ export const getCharacters: (
   params: FilterProps
 ) => Promise<CharactersReturnType> = async function (params: FilterProps) {
 	try {
-		return await Characters.get(params);
+		return Characters.get(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.getCharacters(): something went wrong for params:- " +

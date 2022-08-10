@@ -4,4 +4,13 @@ export const subcommands = [ {
 }, {
 	name: "view",
 	alias: []
+}, {
+	name: "raidping",
+	alias: [ "rping" ]
+}, {
+	name: "raidrecruit",
+	alias: [ "rec" ]
+}, {
+	name: "reset",
+	alias: []
 } ];

@@ -43,7 +43,7 @@ export const getCrate = async (params: { id: number; user_tag: string }) => {
 
 export const delCrate = async (params: { id: number }) => {
 	try {
-		return await Crates.del(params);
+		return Crates.del(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CratesController.delCrate(): something went wrong",

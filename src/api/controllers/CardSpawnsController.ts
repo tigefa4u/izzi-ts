@@ -19,7 +19,7 @@ export const createDropChannels = async (
 	data: CardSpawnCreateProps,
 ) => {
 	try {
-		return await CardSpawns.create(data);
+		return CardSpawns.create(data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CardSpawnsController.createDropChannels(): something went wrong",
@@ -31,7 +31,7 @@ export const createDropChannels = async (
 
 export const updateDropChannels = async (params: { id?: number; guild_id?: string }, data: CardSpawnUpdateProps) => {
 	try {
-		return await CardSpawns.update(params, data);
+		return CardSpawns.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CardSpawnsController.updateDropChannels(): something went wrong",
@@ -43,7 +43,7 @@ export const updateDropChannels = async (params: { id?: number; guild_id?: strin
 
 export const delDropChannels = async (params: { id: number }) => {
 	try {
-		return await CardSpawns.del(params);
+		return CardSpawns.del(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CardSpawnsController.delDropChannels(): something went wrong",
