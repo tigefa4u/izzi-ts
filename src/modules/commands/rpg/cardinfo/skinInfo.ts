@@ -39,11 +39,11 @@ export const showCardSkins = async ({
 }: Props) => {
 	try {
 		const embed = createEmbed(author)
-			.setTitle(`${titleCase(character.name)} Skin Collections`)
-			.setDescription(`View available skins for ${titleCase(character.name)}?`);
+			.setTitle(`${titleCase(character.name)} Skin Collections`);
 
 		const characterSkins = await getSkinByCharacterId({ character_id: character.id, });
 		if (!characterSkins || characterSkins.length <= 0) return;
+		embed.setDescription(`View __${characterSkins.length}__ available skins for ${titleCase(character.name)}?`);
 		const selectMenuOptions = {
 			menuOptions: [
 				{

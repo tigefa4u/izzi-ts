@@ -18,6 +18,7 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	isItem,
 	simulation
 }: AbilityProcDescriptionProps & { simulation: Simulation; }) => {
+	if (card?.metadata?.nickname) card.name = card.metadata.nickname;
 	const emotename = (isItem ? card?.itemname : card?.abilityname) || "";
 	let updatedDescription = `${emoji.up} **[Round ${round}]**\n${emoji.fast}`;
 	if (isDescriptionOnly) {

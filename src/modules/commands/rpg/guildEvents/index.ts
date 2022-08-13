@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { addGuildEvent } from "./create";
+import { addGuildEvent, toggleTourneyMode } from "./actions";
 import { resetGuildEvents } from "./dangerZone";
 import { raidPing } from "./raidPing";
 import { raidRecruit } from "./recruit";
@@ -27,6 +27,8 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			raidRecruit(params);
 		} else if (subcommand === "reset") {
 			resetGuildEvents(params);
+		} else if (subcommand === "tourney") {
+			toggleTourneyMode(params);
 		}
 		return;
 	} catch (err) {

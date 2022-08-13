@@ -31,8 +31,8 @@ export const wrecker = ({
 		card.isUseWreckerPassive = true;
 		// 	playerStats.totalStats.vitality =
 		//   playerStats.totalStats.vitality - card.stats.vitality;
-		const percent = calcPercentRatio(50, card.rank);
-		const percentDec = calcPercentRatio(5, card.rank);
+		const percent = calcPercentRatio(60, card.rank);
+		const percentDec = calcPercentRatio(6, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, percent);
 		// const atkInc = card.stats.vitality + ratio;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;

@@ -131,6 +131,11 @@ export const profile = async ({
 function prepareProfileFields(user: UserProps & P) {
 	const fields: EmbedFieldData[] = [
 		{
+			name: `User Status ${emoji.chat}`,
+			value: user.metadata.status || "Use ``iz update status <status>`` to set a user status",
+			inline: false
+		},
+		{
 			name: `${user.is_premium ? emoji.premium : emoji.shield2} Profile`,
 			value: `**${parsePremiumUsername(user.username)}**`,
 			inline: true,
@@ -185,13 +190,8 @@ function prepareProfileFields(user: UserProps & P) {
 			inline: true,
 		},
 		{
-			name: `${emoji.shard} Shards`,
-			value: numericWithComma(user.shards),
-			inline: true,
-		},
-		{
-			name: `${emoji.blueorb} Blue Orbs`,
-			value: numericWithComma(user.orbs),
+			name: "Shards / Orbs",
+			value: `${emoji.shard} ${numericWithComma(user.shards)} / ${emoji.blueorb} ${numericWithComma(user.orbs)}`,
 			inline: true,
 		},
 		{
@@ -203,34 +203,16 @@ function prepareProfileFields(user: UserProps & P) {
 		}
 	];
 
-	if (user.metadata && user.metadata.status) {
-		fields.splice(0, 0, {
-			name: `User Status ${emoji.chat}`,
-			value: user.metadata.status,
-			inline: false
-		});
-	}
-
 	if (user.rank) {
 		fields.push(
 			{
-				name: `Rank ${user.rankic || ""}`,
-				value: user.rank,
+				name: `DG Rank ${user.rankic || ""}`,
+				value: `${user.rankic} ${user.rank} ${user.divisionic} ${user.division}`,
 				inline: true,
 			},
 			{
-				name: `Division ${user.divisionic || ""}`,
-				value: user.division || "",
-				inline: true,
-			},
-			{
-				name: "Wins",
-				value: user.wins?.toString() || "",
-				inline: true,
-			},
-			{
-				name: "Loss",
-				value: user.loss?.toString() || "",
+				name: "Wins / Loss",
+				value: `[${user.wins} / ${user.loss}]`,
 				inline: true,
 			},
 			{
