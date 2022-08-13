@@ -132,7 +132,7 @@ function prepareProfileFields(user: UserProps & P) {
 	const fields: EmbedFieldData[] = [
 		{
 			name: `User Status ${emoji.chat}`,
-			value: user.metadata.status || "Use ``iz update status <status>`` to set a user status",
+			value: user.metadata?.status || "Use ``iz update status <status>`` to set a user status",
 			inline: false
 		},
 		{
@@ -181,7 +181,7 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 		{
 			name: `${emoji.permitsic} Raid Permit(s)`,
-			value: user.raid_pass.toString(),
+			value: `[${user.raid_pass} / ${user.max_raid_pass}]`,
 			inline: true,
 		},
 		{
@@ -206,8 +206,8 @@ function prepareProfileFields(user: UserProps & P) {
 	if (user.rank) {
 		fields.push(
 			{
-				name: `DG Rank ${user.rankic || ""}`,
-				value: `${user.rankic} ${user.rank} ${user.divisionic} ${user.division}`,
+				name: "DG Rank",
+				value: `${user.rankic} ${user.divisionic}`,
 				inline: true,
 			},
 			{
