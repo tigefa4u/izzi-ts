@@ -20,7 +20,7 @@ type T = {
 }
 const validateAndJoinRaid = async ({ user_tag, raidId }: T) => {
 	const currentRaid = await getRaid({ id: raidId });
-	if (!currentRaid || Object.keys(currentRaid.lobby).length >= MAX_RAID_LOBBY_MEMBERS) return;
+	if (!currentRaid || Object.keys(currentRaid.lobby).length >= MAX_RAID_LOBBY_MEMBERS || currentRaid.is_start) return;
 	const user = await getRPGUser({ user_tag });
 	if (!user || (user.raid_pass < PERMIT_PER_RAID)) return;
 	const member = await getUserRaidLobby({ user_id: user.id });
