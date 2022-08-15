@@ -57,6 +57,7 @@ export const addMultipleCards = async ({
 			limit: params.limit,
 			is_item: false,
 			name: params.name,
+			isExactMatch: true
 		};
 		const exclude_ids = trader.queue.map((i) => i.id);
 		if (exclude_ids.length > 0) {
