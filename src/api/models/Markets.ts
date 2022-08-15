@@ -63,8 +63,8 @@ export const getAll = async (
 	} else if (typeof params.name === "object") {
 		query = query.where(
 			`${characters}.name`,
-			"~",
-			`^(${params.name.join("|")}).*`
+			"~*",
+			`(${params.name.join("|")}).*`
 		);
 	}
 	if (typeof params.type === "string") {
@@ -72,8 +72,8 @@ export const getAll = async (
 	} else if (typeof params.type === "object") {
 		query = query.where(
 			`${tableName}.type`,
-			"~",
-			`^(${params.type.join("|")}).*`
+			"~*",
+			`(${params.type.join("|")}).*`
 		);
 	}
 	if (typeof params.abilityname === "string") {
@@ -85,8 +85,8 @@ export const getAll = async (
 	} else if (typeof params.abilityname === "object") {
 		query = query.where(
 			`${abilities}.name`,
-			"~",
-			`^(${params.abilityname.join("|")}).*`
+			"~*",
+			`(${params.abilityname.join("|")}).*`
 		);
 	}
 	if (typeof params.rank === "string") {
@@ -94,8 +94,8 @@ export const getAll = async (
 	} else if (typeof params.rank === "object") {
 		query = query.where(
 			`${collections}.rank`,
-			"~",
-			`^(${params.rank.join("|")}).*`
+			"~*",
+			`(${params.rank.join("|")}).*`
 		);
 	}
 

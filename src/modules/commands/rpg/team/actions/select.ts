@@ -52,6 +52,10 @@ export const selectTeam = async ({
 				user,
 			},
 		};
+		if (teams.length === 1) {
+			handleTeamSelect(params, teams[0].name);
+			return;
+		}
 		const name = args.join(" ");
 		if (name && name !== "") {
 			const tm = teams.find((t) => t.name.includes(name));

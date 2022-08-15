@@ -167,6 +167,10 @@ export const setTeam = async ({
 				collection: collection[0],
 			},
 		};
+		if (teams.length === 1) {
+			handleTeamView(params, teams[0].name);
+			return;
+		}
 		if (teamName && teamName !== "") {
 			const teamFound = teams.find((t) => t.name.includes(teamName));
 			if (teamFound) {

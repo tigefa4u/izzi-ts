@@ -95,6 +95,7 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 			})
 		]);
 
+		const name = collectionData.metadata?.nickname || collectionData.name;
 		const attachment = createAttachment(item.filepath, "item.jpg");
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
@@ -102,7 +103,7 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 				`**Level ${collectionData.character_level}** __${titleCase(
 					collectionData.rank
 				)}__ **${titleCase(
-					collectionData.name
+					name
 				)}** has successfully equipped **${titleCase(item.name)}** ${emojiMap(
 					item.name
 				)}`
@@ -143,12 +144,13 @@ export const unEquip = async ({
 		const item = await getItemById({ id: collectionData.item_id });
 		if (!item) return;
 		await updateCollection({ id: collectionData.id }, { item_id: null });
+		const name = collectionData.metadata?.nickname || collectionData.name;
 		const attachment = createAttachment(item.filepath, "item.jpg");
 		embed
 			.setDescription(
 				`**${titleCase(item.name)}** ${emojiMap(
 					item.name
-				)} has been removed from **${titleCase(collectionData.name)}**`
+				)} has been removed from **${titleCase(name)}**`
 			)
 			.setThumbnail("attachment://item.jpg")
 			.attachFiles([ attachment ]);

@@ -19,6 +19,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_BASE_STATS,
 	GUILD_CREATION_COST,
+	GUILD_STATUS_MAX_LENGTH,
 	INPUT_CHARACTERS_MAX_COUNT,
 } from "helpers/constants";
 import loggers from "loggers";
@@ -199,7 +200,7 @@ export const setBanner = async ({
 		const validGuild = await verifyMemberPermissions({
 			context,
 			author,
-			params: [ "is_leader", "is_vice_leader" ],
+			params: [ "is_leader", "is_vice_leader", "is_admin" ],
 			isOriginServer: true,
 			isAdmin: true,
 			extras: { user_id: user.id },
@@ -218,6 +219,44 @@ export const setBanner = async ({
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.guild.actions.setBanner(): something went wrong",
+			err
+		);
+		return;
+	}
+};
+
+export const setGuildStatus = async ({ client, context, options, args }: BaseProps) => {
+	try {
+		const author = options.author;
+		const status = args.join(" ");
+		if (!status || status === "") return;
+		if (status.length > GUILD_STATUS_MAX_LENGTH) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
+			`Status text should not be more than __${GUILD_STATUS_MAX_LENGTH}__ letters.`);
+			return;
+		}
+		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
+		if (!user) return;
+		const validGuild = await verifyMemberPermissions({
+			context,
+			author,
+			params: [ "is_leader", "is_vice_leader", "is_admin" ],
+			isOriginServer: true,
+			isAdmin: true,
+			extras: { user_id: user.id },
+		});
+		if (!validGuild) return;
+		await updateGuild({ guild_id: validGuild.guild.guild_id }, {
+			metadata: JSON.stringify({
+				...validGuild.guild.metadata as any,
+				status
+			})
+		});
+		context.channel?.sendMessage("Successfully updated Guild status.");
+		return;
+	} catch (err) {
+		loggers.error(
+			"modules.commands.rpg.guild.actions.setGuildStatus(): something went wrong",
 			err
 		);
 		return;

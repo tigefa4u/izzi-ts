@@ -77,4 +77,7 @@ export const subcommands = [ {
 }, {
 	name: "restore",
 	alias: []
+}, {
+	name: "status",
+	alias: []
 } ];

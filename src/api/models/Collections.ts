@@ -122,8 +122,8 @@ export const get = async (
 	} else if (typeof rank === "object") {
 		query = query.where(
 			`${tableName}.rank`,
-			"~",
-			`^(${rank.join("|")}).*`
+			"~*",
+			`(${rank.join("|")}).*`
 		);
 	}
 	if (limit) {

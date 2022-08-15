@@ -12,7 +12,7 @@ import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
-function computeCharacterStats(array: CharacterDetailsProps[]) {
+function createCharacterStatList(array: CharacterDetailsProps[]) {
 	const fields: EmbedFieldData[] = [];
 	array.map((character) => {
 		fields.push({
@@ -63,7 +63,7 @@ export const compareCards = async ({
 			if (findIndex >= 0) {
 				characters.splice(findIndex, 1);
 			}
-			const list = computeCharacterStats(characters);
+			const list = createCharacterStatList(characters);
 			embed.setTitle("Base Stats").addFields(list);
 
 			context.channel?.sendMessage(embed);

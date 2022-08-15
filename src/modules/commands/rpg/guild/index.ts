@@ -8,7 +8,7 @@ import { MessageEmbed } from "discord.js";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { addGuild, renameGuild, setBanner } from "./actions";
+import { addGuild, renameGuild, setBanner, setGuildStatus } from "./actions";
 import { inviteToGuild } from "./actions/invite";
 import { disbandGuild, leaveGuild } from "./dangerZone";
 import { kickFromGuild } from "./dangerZone/kick";
@@ -75,6 +75,8 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 			reportGuild(params);
 		} else if (subcommand === "restore") {
 			restoreGuild(params);
+		} else if (subcommand === "status") {
+			setGuildStatus(params);
 		}
 		return;
 	} catch (err) {
@@ -121,6 +123,11 @@ async function validateGuild(
 	return guild;
 }
 
+const guildLeaderMap = {
+	is_leader: "Leader",
+	is_vice_leader: "Vice Leader",
+	is_admin: "Admin"
+};
 function validateFlag(params: P[], isAdmin: boolean, member: GuildMemberProps, channel: ChannelProp) {
 	let flag = false;
 	for (const key of params) {
@@ -129,9 +136,10 @@ function validateFlag(params: P[], isAdmin: boolean, member: GuildMemberProps, c
 			break;
 		}
 	}
+	const adminStr = `${params.map(key => guildLeaderMap[key]).join(" or ")}`;
 	if (flag === false && isAdmin === true) {
 		channel?.sendMessage(
-			"You are not allowed to execute this command!"
+			`You are not allowed to execute this command! Only ${adminStr} can use this command.`
 		);
 		return;
 	}

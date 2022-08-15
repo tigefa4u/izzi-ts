@@ -20,12 +20,13 @@ type P = {
 
 function prepareItemBonusDesc(stats: GuildStatProps) {
 	if (!stats || isEmptyValue(stats)) return "";
-	const desc = `\n\n**Clan Bonus Item Stats ${emoji.up}**` +
-	`\n\n${emoji.crossedswords} **Bonus ATK:** (+__${stats.vitality}__)` +
-	`\n${emoji.heart} **Bonus HP:** (+__${stats.strength}__)` +
-	`\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)` +
-	`\n${emoji.dash} **Bonus SPD:** (+__${stats.dexterity}__)` +
-	`\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
+	const desc =
+    `\n\n**Clan Bonus Item Stats ${emoji.up}**` +
+    `\n\n${emoji.crossedswords} **Bonus ATK:** (+__${stats.vitality}__)` +
+    `\n${emoji.heart} **Bonus HP:** (+__${stats.strength}__)` +
+    `\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)` +
+    `\n${emoji.dash} **Bonus SPD:** (+__${stats.dexterity}__)` +
+    `\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
 
 	return desc;
 }
@@ -48,9 +49,9 @@ function prepareGuildDesc(
 		admin ? `\n**Clan Admin:** ${admin.username}` : ""
 	}\n**Clan Name:** ${guild.name}\n**Clan Level:** ${
 		guild.guild_level
-	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${
-		numericWithComma(guild.gold)
-	} ${emoji.gold}\n**Clan Members:** __${mc}/${
+	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${numericWithComma(
+		guild.gold
+	)} ${emoji.gold}\n**Clan Members:** __${mc}/${
 		guild.max_members
 	}__\n**Clan Items:** __${ic}__\n\n**Clan Bonus Stats** ${emoji.up}\n\n${
 		emoji.crossedswords
@@ -101,6 +102,9 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 		const itemCount = totalCount?.filter((t) => t.type === "items")[0];
 		const stats = validGuild.guild.guild_stats;
 		if (!stats) return;
+
+		const guildMeta = validGuild.guild.metadata as any;
+
 		const embed = createEmbed()
 			.setTitle(
 				`${emoji.beginner} ${
@@ -108,7 +112,10 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 				}`
 			)
 			.setDescription(
-				prepareGuildDesc(
+				`${emoji.chat} ${
+					guildMeta?.status ||
+          "Use ``iz guild status <text>`` to set guild status."
+				}\n\n${prepareGuildDesc(
 					leader,
 					validGuild.guild,
 					memberCount?.count || 0,
@@ -116,7 +123,7 @@ export const viewGuild = async ({ context, options }: BaseProps) => {
 					stats,
 					vice,
 					admin
-				)
+				)}`
 			);
 		if (validGuild.guild.banner) {
 			embed.setImage(validGuild.guild.banner);

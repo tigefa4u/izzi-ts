@@ -66,6 +66,10 @@ export const viewTeam = async ({
 				user_id,
 			},
 		};
+		if (teams.length === 1) {
+			handleTeamView(params, teams[0].name);
+			return;
+		}
 		const name = args.join(" ");
 		if (name !== "") {
 			const team = teams.find((t) => t.name.includes(name));

@@ -78,18 +78,18 @@ export const get: (
 		if (params.isExactMatch) {
 			query = query.whereIn(`${tableName}.name`, params.name);
 		} else {
-			query = query.where(`${tableName}.name`, "~", `^(${params.name.join("|")}).*`);
+			query = query.where(`${tableName}.name`, "~*", `(${params.name.join("|")}).*`);
 		}
 	}
 	if (typeof params.type === "string") {
 		query = query.where(`${tableName}.type`, "ilike", `%${params.type}%`);
 	} else if (typeof params.type === "object") {
-		query = query.where(`${tableName}.type`, "~", `^(${params.type.join("|")}).*`);
+		query = query.where(`${tableName}.type`, "~*", `(${params.type.join("|")}).*`);
 	}
 	if (typeof params.abilityname === "string") {
 		query = query.where(`${abilities}.name`, "ilike", `%${params.abilityname}%`);
 	} else if (typeof params.abilityname === "object") {
-		query = query.where(`${abilities}.name`, "~", `^(${params.abilityname.join("|")}).*`);
+		query = query.where(`${abilities}.name`, "~*", `(${params.abilityname.join("|")}).*`);
 	}
 	if (params.ids && params.ids.length > 0) {
 		query = query.whereIn(`${tableName}.id`, params.ids);
@@ -125,7 +125,7 @@ export const getCharactersForDex: (
 	if (typeof filter.type === "string") {
 		query = query.where(`${tableName}.type`, "ilike", `%${filter.type}%`);
 	} else if (typeof filter.type === "object") {
-		query = query.where(`${tableName}.type`, "~", `^(${filter.type.join("|")}).*`);
+		query = query.where(`${tableName}.type`, "~*", `(${filter.type.join("|")}).*`);
 	}
 	if (filter.year) {
 		query = query.whereRaw(`EXTRACT(YEAR from ${tableName}.created_at) = ?`, [ filter.year ]);

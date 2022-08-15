@@ -48,7 +48,7 @@ export const getAll: (
 	if (typeof filter?.name === "string") {
 		query = query.where(`${tableName}.name`, "ilike", `%${filter.name}%`);
 	} else if (typeof filter?.name === "object") {
-		query = query.where(`${tableName}.name`, "~", `^(${filter.name.join("|")}).*`);
+		query = query.where(`${tableName}.name`, "~*", `(${filter.name.join("|")}).*`);
 	}
 
 	query = db.select(db.raw(`${alias}.*, count(*) over() as total_count`))

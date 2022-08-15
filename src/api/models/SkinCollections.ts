@@ -42,7 +42,7 @@ export const getAll = async (params: { user_tag: string; name: string | string[]
 	if (typeof params.name === "string") {
 		query = query.where(`${cardSkins}.name`, "ilike", `%${params.name}%`);
 	} else if (typeof params.name === "object") {
-		query = query.where(`${cardSkins}.name`, "~", `^(${params.name.join("|")}).*`);
+		query = query.where(`${cardSkins}.name`, "~*", `(${params.name.join("|")}).*`);
 	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);

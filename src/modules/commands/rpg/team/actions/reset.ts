@@ -64,6 +64,10 @@ export const resetTeam = async ({
 				user,
 			},
 		};
+		if (teams.length === 1) {
+			handleTeamReset(params, teams[0].name);
+			return;
+		}
 		const name = args.join(" ");
 		if (name || name !== "") {
 			const team = teams.find((t) => t.name.includes(name));
