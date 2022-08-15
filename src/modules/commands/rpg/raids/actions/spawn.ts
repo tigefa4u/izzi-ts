@@ -15,7 +15,12 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE, HIGH_LEVEL_RAIDS, MIN_RAID_USER_LEVEL, PERMIT_PER_RAID } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	HIGH_LEVEL_RAIDS,
+	MIN_RAID_USER_LEVEL,
+	PERMIT_PER_RAID,
+} from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
@@ -33,6 +38,7 @@ import {
 } from "..";
 import { computeRank } from "../computeBoss";
 
+const spawnImmunity = [ "266457718942990337" ];
 type C = {
   computedBoss: PrepareLootProps;
   isEvent: boolean;
@@ -126,7 +132,7 @@ export const createRaidBoss = async ({
 	});
 	return {
 		raid,
-		raidBosses 
+		raidBosses,
 	};
 };
 
@@ -172,9 +178,14 @@ export const spawnRaid = async ({
 			return;
 		}
 		const difficulty = args.shift() || "e";
-		if (user.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(difficulty)) {
-			context.channel?.sendMessage(`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
-			"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
+		if (
+			user.level < MIN_RAID_USER_LEVEL &&
+      HIGH_LEVEL_RAIDS.includes(difficulty)
+		) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
+          "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
+			);
 			return;
 		}
 		const computedBoss = computeRank(difficulty, isEvent);
@@ -202,11 +213,16 @@ export const spawnRaid = async ({
 			lobby,
 			computedBoss,
 			isEvent,
-			isPrivate 
+			isPrivate,
 		});
 		if (!raid) return;
 
-		setCooldown(author.id, CDKey, (user.is_premium || user.is_mini_premium) ? 9000 : 60 * 60 * 3);
+		if (!spawnImmunity.includes(author.id))
+			setCooldown(
+				author.id,
+				CDKey,
+				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
+			);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (isEvent) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);
