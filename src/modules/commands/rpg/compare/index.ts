@@ -12,8 +12,27 @@ import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
+const getMaxStat = (array: CharacterDetailsProps[], key = "strength") => {
+	return array.reduce((acc, r) => {
+		return acc.stats[key as keyof CharacterStatProps] >
+      r.stats[key as keyof CharacterStatProps]
+			? acc
+			: r;
+	});
+};
+
 function createCharacterStatList(array: CharacterDetailsProps[]) {
 	const fields: EmbedFieldData[] = [];
+	const maxStatObj = {} as any;
+	[ "strength", "dexterity", "vitality", "defense", "intelligence" ].forEach(
+		(stat) => {
+			const obj = getMaxStat(array, stat);
+			maxStatObj[obj.id] = {
+				...maxStatObj[obj.id],
+				[stat]: `${obj.stats[stat as keyof CharacterStatProps]} ★`, 
+			};
+		}
+	);
 	array.map((character) => {
 		fields.push({
 			name: `${titleCase(character.name)}`,
@@ -24,7 +43,10 @@ function createCharacterStatList(array: CharacterDetailsProps[]) {
 					[ "evasion", "accuracy", "critical" ].includes(stat)
 						? ""
 						: `**${statRelationMap[stat as keyof CharacterStatProps]}:** ${
-							character.stats[stat as keyof CharacterStatProps]
+							// character.stats[stat as keyof CharacterStatProps]
+							(maxStatObj[character.id] || {})[stat]
+								? maxStatObj[character.id][stat]
+								: character.stats[stat as keyof CharacterStatProps]
 						}`
 				)
 				.join("\n")}`,
@@ -44,8 +66,7 @@ export const compareCards = async ({
 	try {
 		const author = options.author;
 		const embed = createEmbed(author, client);
-		embed
-			.setTitle(DEFAULT_ERROR_TITLE);
+		embed.setTitle(DEFAULT_ERROR_TITLE);
 
 		const charaArgs = args.join(" ");
 		if (!args) {
@@ -64,7 +85,11 @@ export const compareCards = async ({
 				characters.splice(findIndex, 1);
 			}
 			const list = createCharacterStatList(characters);
-			embed.setTitle("Base Stats").addFields(list);
+			embed.setTitle("Base Stats").addFields(list)
+				.setFooter({
+					text: "★ = Highest value for stat",
+					iconURL: author.displayAvatarURL()
+				});
 
 			context.channel?.sendMessage(embed);
 			return;
