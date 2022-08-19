@@ -2,7 +2,7 @@ import "../../../module";
 import { init } from ".";
 
 async function boot() {
-	init({
+	await init({
 		is_premium: true,
 		is_mini_premium: true 
 	});
