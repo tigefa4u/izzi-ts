@@ -227,7 +227,7 @@ async function initDrops(
 	if (isRare) {
 		array = array.filter((item) => {
 			let rate = item.rate || 10;
-			if (mvp && user.id === mvp.user_id) {
+			if (mvp && (user.id === mvp.user_id) && !item.isStaticDropRate) {
 				rate = rate + 10;
 			} else {
 				const leechers = Object.keys(raid.lobby)
@@ -247,7 +247,7 @@ async function initDrops(
 					}
 				}
 			}
-			if (user.is_premium || user.is_mini_premium) {
+			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
 				rate = rate + 15;
 			}
 			const dropChance = [ rate, 100 - rate ];

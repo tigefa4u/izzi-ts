@@ -185,7 +185,7 @@ function prepareLoot(
 					(r) =>
 						`__${r.number}x__ ${titleCase(r.rank)} of **${titleCase(
 							b.name
-						)}** (At ${r.rate}% drop rate)`
+						)}** (At ${r.rate}% drop rate per card)${r.isStaticDropRate ? " (Fixed %)" : ""}`
 				).join("\n")
 			).join("\n")
 			: ""

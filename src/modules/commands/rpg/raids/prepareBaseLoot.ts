@@ -27,10 +27,17 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "diamond",
+						rank: "legend",
 						rank_id: 4,
 						number: 2,
-						rate: 15.5
+						rate: 10.5
+					},
+					{
+						rank: "divine",
+						rank_id: 6,
+						number: 1,
+						rate: 0.5,
+						isStaticDropRate: true
 					}
 				],
 			}
@@ -47,7 +54,7 @@ const baseLoot = (): any => ({
 	},
 	m: {
 		default: {
-			level: [ 170, 200 ],
+			level: [ 120, 190 ],
 			rank: [ "silver" ],
 			loot: {
 				gold: randomNumber(25000, 30000),
@@ -81,6 +88,13 @@ const baseLoot = (): any => ({
 						rank_id: 5,
 						number: 1,
 						rate: 10
+					},
+					{
+						rank: "divine",
+						rank_id: 6,
+						number: 1,
+						rate: 0.85,
+						isStaticDropRate: true
 					}
 				],
 			}
@@ -100,7 +114,7 @@ const baseLoot = (): any => ({
 	},
 	h: {
 		default: {
-			level: [ 230, 300 ],
+			level: [ 250, 320 ],
 			rank: [ "platinum", "platinum" ],
 			loot: {
 				gold: randomNumber(35000, 40000),
@@ -138,7 +152,7 @@ const baseLoot = (): any => ({
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 0.85,
+						rate: 3.5,
 						number: 1
 					}
 				]
@@ -159,7 +173,7 @@ const baseLoot = (): any => ({
 	},
 	i: {
 		default: {
-			level: [ 350, 390 ],
+			level: [ 380, 400 ],
 			rank: [ "diamond", "platinum" ],
 			loot: {
 				gold: randomNumber(40000, 45000),
