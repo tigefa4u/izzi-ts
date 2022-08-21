@@ -15,7 +15,7 @@ export const handleClientEvents = (client: Client) => {
 		console.log({ warning });
 	});
 	client.on("debug", (debug) => {
-		loggers.debug(debug);
+		// loggers.debug(debug);
 		// if (debug.toLowerCase().includes("heartbeat")) {
 		// 	console.log({ debug });
 		// }
@@ -28,7 +28,7 @@ export const handleClientEvents = (client: Client) => {
 
 	client.on("apiResponse", (req, res) => {
 		// loggers.logApi(req.method, "[POST APIRequest] path: ", req.path, req.route);
-		loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
+		// loggers.logApi(req.method, `[APIResponse]: status: ${res.status}, status text: ${res.statusText}`);
 	});
 
 	client.on("messageCreate", (context: Message) => {
