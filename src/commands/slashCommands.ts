@@ -3,13 +3,13 @@ import { Client, Constants, GuildApplicationCommandManager } from "discord.js";
 import loggers from "loggers";
 
 export const registerSlashCommands = async (client: Client) => {
-	const guildId = "784087004806774815";
+	// const guildId = "784087004806774815";
 
-	const guild = client.guilds.cache.get(guildId);
+	// const guild = client.guilds.cache.get(guildId);
 	// if (guild) {
-	const commands = guild?.commands;
+	// const commands = guild?.commands;
 	// } else {
-	// const commands = client?.application?.commands;
+	const commands = client?.application?.commands;
 	// }
 	commands?.create({
 		name: "iz",
