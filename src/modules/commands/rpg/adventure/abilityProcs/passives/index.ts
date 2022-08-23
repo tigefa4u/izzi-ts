@@ -1,4 +1,5 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import emoji from "emojis/emoji";
 import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
@@ -205,15 +206,13 @@ export const dreamEater = ({
     !opponentStats.totalStats.originalHp
 	)
 		return;
-	// while the enemy is asleep deal 30% bonus damage and heal for 7% based on your base damage.
+	// while the enemy is asleep deal 120% bonus damage based on difference in ATK
+	// and heal for 80% based on damage dealt.
 	let abilityDamage, damageDiff;
 	if (opponentStats.totalStats.isAsleep) {
-		const baseDamage = getPlayerDamageDealt(
-			playerStats.totalStats,
-			opponentStats.totalStats
-		);
-		const percent = calcPercentRatio(30, card.rank);
-		abilityDamage = getRelationalDiff(baseDamage, percent);
+		const atkDifference = Math.abs(opponentStats.totalStats.vitality - playerStats.totalStats.vitality);
+		const percent = calcPercentRatio(120, card.rank);
+		abilityDamage = getRelationalDiff(atkDifference, percent);
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength <= 0)
@@ -228,8 +227,8 @@ export const dreamEater = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const healPercent = calcPercentRatio(7, card.rank);
-		const heal = getRelationalDiff(baseDamage, healPercent);
+		const healPercent = calcPercentRatio(80, card.rank);
+		const heal = getRelationalDiff(abilityDamage, healPercent);
 		playerStats.totalStats.strength = playerStats.totalStats.strength + heal;
 		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
@@ -244,7 +243,8 @@ export const dreamEater = ({
 		playerStats.totalStats.health = processedHealHpBar.health;
 		playerStats.totalStats.strength = processedHealHpBar.strength;
 
-		const desc = `Deals __${abilityDamage}__ damage and restores __${heal}__ **HP**`;
+		const desc = `Inflitcing a stack of **Nightmare** ${emoji.nightmare} on __${opponentStats.name}__ ` +
+		`dealing __${abilityDamage}__ damage and restores __${heal}__ **HP**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

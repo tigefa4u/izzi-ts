@@ -64,6 +64,7 @@ export const harbingerOfDeath = ({
 		playerStats.totalStats.isRestrictResisted = false;
 		opponentStats.totalStats.isEndure = false;
 		playerStats.totalStats.isBleeding = false;
+		playerStats.totalStats.isToxic = false;
 
 		[ "vitality", "defense", "dexterity", "intelligence" ].map((stat) => {
 			const key = stat as keyof CharacterStatProps;
