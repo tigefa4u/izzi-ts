@@ -163,7 +163,6 @@ export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
 export const GUILD_MARKET_IDS = [ 2, 5 ];
 export const GUILD_MAX_DONATION = 10000000;
-export const GUILD_TOTAL_DONATION_THRESHOLD = 999999999;
 export const GUILD_MAX_LEVEL = 150;
 export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
 export const SOUL_ID = 2;
@@ -232,7 +231,7 @@ export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
 
 export const MARKET_PURCHASE_LIMIT = 5;
 
-export const MAX_CHOSEN_SKINS_ALLOWED = 20;
+export const MAX_CHOSEN_SKINS_ALLOWED = 30;
 
 export const MIN_RAID_USER_LEVEL = 5;
 export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];
@@ -250,7 +249,7 @@ export const THREAD_CHANNEL_PERMISSIONS = [
 	"SEND_MESSAGES_IN_THREADS"
 ];
 
-export const MAX_REQUESTS_PER_CHANNEL = 5;
+export const MAX_REQUESTS_PER_CHANNEL = 6;
 
 export const MAX_GUILD_ITEMS_PURCHASABLE = 50;
 export const MAX_GUILD_REPUTATION_POINTS = 10;
@@ -275,3 +274,5 @@ export const MAX_CARD_NICKNAME_LENGTH = 80;
 export const RAID_PING_NAME = "raid ping [bot]";
 
 export const GUILD_STATUS_MAX_LENGTH = 350;
+
+export const MAX_GOLD_THRESHOLD = 999999999;
