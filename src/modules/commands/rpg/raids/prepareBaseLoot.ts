@@ -36,7 +36,7 @@ const baseLoot = (): any => ({
 						rank: "divine",
 						rank_id: 6,
 						number: 1,
-						rate: 0.5,
+						rate: 1.5,
 						isStaticDropRate: true
 					}
 				],
@@ -93,7 +93,7 @@ const baseLoot = (): any => ({
 						rank: "divine",
 						rank_id: 6,
 						number: 1,
-						rate: 0.85,
+						rate: 1.85,
 						isStaticDropRate: true
 					}
 				],
@@ -173,8 +173,8 @@ const baseLoot = (): any => ({
 	},
 	i: {
 		default: {
-			level: [ 380, 400 ],
-			rank: [ "diamond", "platinum" ],
+			level: [ 600, 600 ],
+			rank: [ "gold", "diamond", "platinum" ],
 			loot: {
 				gold: randomNumber(40000, 45000),
 				extraGold: randomNumber(32000, 35000),

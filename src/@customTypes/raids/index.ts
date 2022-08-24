@@ -47,6 +47,7 @@ export type RaidLootProps = {
         }
     };
     rare?: RaidLootDropProps[]
+    division?: string;
 }
 
 export type RaidStatsProps = {

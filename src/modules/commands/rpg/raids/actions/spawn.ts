@@ -4,6 +4,8 @@ import {
 	PrepareLootProps,
 	RaidActionProps,
 	RaidLobbyProps,
+	RaidLootDropProps,
+	RaidLootProps,
 	RaidStatsProps,
 } from "@customTypes/raids";
 import { getRandomCard } from "api/controllers/CardsController";
@@ -45,6 +47,37 @@ type C = {
   isPrivate: boolean;
   lobby: RaidLobbyProps;
 };
+
+const raidDivisions = {
+	d2: {
+		name: "D2",
+		min: 9000,
+		max: 13000,
+		rate: randomNumber(6, 12)
+	},
+	d1: {
+		name: "D1",
+		min: 13000,
+		max: 30000,
+		rate: randomNumber(9, 15)
+	}
+};
+
+const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
+	if (pl >= raidDivisions.d1.min && pl < raidDivisions.d1.max) {
+		loot.division = raidDivisions.d1.name;
+		loot.rare?.map((drop) => {
+			drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
+		});
+	} else if (pl >= raidDivisions.d2.min && pl < raidDivisions.d2.max) {
+		loot.division = raidDivisions.d2.name;
+		loot.rare?.map((drop) => {
+			drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+		});
+	}
+	return loot;
+};
+
 export const createRaidBoss = async ({
 	computedBoss,
 	isEvent,
@@ -109,6 +142,8 @@ export const createRaidBoss = async ({
 	);
 
 	const totalBossLevel: number = reducedLevel.character_level;
+	const computedLoot = calculateDropRateByPL(stats.totalPowerLevel, computedBoss.loot);
+
 	const raidStats = {
 		battle_stats: {
 			boss_level: totalBossLevel,
@@ -118,9 +153,10 @@ export const createRaidBoss = async ({
 		},
 		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
 		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		difficulty: computedBoss.difficulty,
+		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
 		timestamp: dt.setHours(dt.getHours() + 1),
 	} as RaidStatsProps;
+
 	const raid = await createRaid({
 		stats: raidStats,
 		lobby: lobby,
@@ -128,7 +164,7 @@ export const createRaidBoss = async ({
 		is_event: isEvent,
 		is_private: isPrivate,
 		raid_boss: JSON.stringify(raidBosses),
-		loot: computedBoss.loot,
+		loot: computedLoot,
 	});
 	return {
 		raid,
