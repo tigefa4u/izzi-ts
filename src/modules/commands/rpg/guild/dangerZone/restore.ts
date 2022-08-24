@@ -112,7 +112,8 @@ const restoreGuildData = async ({ guild, author, client, channel }: R) => {
 		guild_stats: guildMetadata.guild_stats,
 		guild_name: guildMetadata.guild_name,
 		item_stats: guildMetadata.item_stats,
-		gold: guildMetadata.gold
+		gold: guildMetadata.gold,
+		max_members: guildMetadata.max_members || 15
 	});
 
 	channel?.sendMessage(embed);

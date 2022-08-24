@@ -5,6 +5,10 @@ import {
 	UserUpdateProps,
 } from "@customTypes/users";
 import connection from "db";
+import emoji from "emojis/emoji";
+import { MAX_GOLD_THRESHOLD } from "helpers/constants";
+import { DMUserViaApi } from "server/pipes/directMessage";
+import { isEmptyValue } from "utility";
 
 const tableName = "users";
 export const transformation = {
@@ -112,6 +116,15 @@ export const update: (
   params: UserParams,
   data: UserUpdateProps
 ) => Promise<UserProps | undefined> = async (params, data) => {
+	if (data.gold && data.gold > MAX_GOLD_THRESHOLD) {
+		delete data.gold;
+		if (params.user_tag) {
+			const message = "Your Gold has reached max threshold " +
+			`__${MAX_GOLD_THRESHOLD}__ ${emoji.gold} and will not be updated`;
+			DMUserViaApi(params.user_tag, { content: message, });
+		}
+	}
+	if (isEmptyValue(data)) return;
 	return await connection(tableName).where(params).update(data);
 };
 
@@ -119,9 +132,12 @@ export const getPlayerCount = async (
 	params?: Pick<UserProps, "is_active">
 ): Promise<{ count: string; status: string }[]> => {
 	const db = connection;
-	const query = db.select(db.raw("'active' as status, count(*)"))
+	const query = db
+		.select(db.raw("'active' as status, count(*)"))
 		.from(tableName)
 		.where(`${tableName}.is_active`, true)
-		.union(builder => builder.select(db.raw("'total' as status, count(*)")).from(tableName));
+		.union((builder) =>
+			builder.select(db.raw("'total' as status, count(*)")).from(tableName)
+		);
 	return query;
 };

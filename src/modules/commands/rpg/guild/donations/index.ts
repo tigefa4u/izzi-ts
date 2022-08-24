@@ -9,7 +9,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MAX_DONATION,
-	GUILD_TOTAL_DONATION_THRESHOLD,
+	MAX_GOLD_THRESHOLD,
 } from "helpers/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
@@ -50,9 +50,9 @@ export const donateToGuild = async ({
 		if (!validGuild) return;
 		user.gold = user.gold - donation;
 		validGuild.guild.gold = validGuild.guild.gold + donation;
-		if (validGuild.guild.gold > GUILD_TOTAL_DONATION_THRESHOLD) {
+		if (validGuild.guild.gold > MAX_GOLD_THRESHOLD) {
 			embed.setDescription("Your guild has reached max " +
-			`guild donation threshold __${GUILD_TOTAL_DONATION_THRESHOLD}__, ` +
+			`guild donation threshold __${MAX_GOLD_THRESHOLD}__, ` +
 			"Please use the remaining guild gold to receive more donations.");
 			context.channel?.sendMessage(embed);
 			return;
@@ -73,11 +73,11 @@ export const donateToGuild = async ({
 			donation: validGuild.member.donation,
 			max_donation: validGuild.member.max_donation,
 		} as { donation: number; max_donation?: number; };
-		if (validGuild.member.max_donation > GUILD_TOTAL_DONATION_THRESHOLD) {
+		if (validGuild.member.max_donation > MAX_GOLD_THRESHOLD) {
 			const newEmbed = createEmbed(author, client)
 				.setTitle("GUILD DONATION NOTICE")
 				.setDescription(`Summoner **${author.username}**, you've hit max guild ` +
-				`donation threshold __${numericWithComma(GUILD_TOTAL_DONATION_THRESHOLD)}__ ${emoji.gold}` +
+				`donation threshold __${numericWithComma(MAX_GOLD_THRESHOLD)}__ ${emoji.gold}` +
 				"your total guild donations will no longer increase, but your usable gold will be counted.");
 
 			context.channel?.sendMessage(newEmbed);

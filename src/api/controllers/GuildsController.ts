@@ -69,7 +69,8 @@ export const disbandAndBackupGuild = async ({ guild }: { guild: GuildProps; }) =
 			guild_level: guild.guild_level,
 			gold: guild.gold,
 			ban_reason: guild.ban_reason,
-			is_banned: guild.is_banned
+			is_banned: guild.is_banned,
+			max_members: guild.max_members,
 		};
 		loggers.info("Disbanding guild with guild ID: " + guild.guild_id + " details -> " + JSON.stringify(guild));
 		await Promise.all([ delAllGuildMembers({ guild_id: guild.id }),
