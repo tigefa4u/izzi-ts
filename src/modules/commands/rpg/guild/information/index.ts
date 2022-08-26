@@ -8,7 +8,7 @@ import {
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { numericWithComma } from "helpers";
+import { getIdFromMentionedString, numericWithComma } from "helpers";
 import loggers from "loggers";
 import { isEmptyValue } from "utility";
 import { verifyMemberPermissions } from "..";
@@ -68,10 +68,15 @@ function prepareGuildDesc(
 	return desc;
 }
 
-export const viewGuild = async ({ context, options }: BaseProps) => {
+export const viewGuild = async ({ context, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
+		const mentionedId = getIdFromMentionedString(args.shift() || "");
+		let userId = author.id;
+		if (mentionedId !== "") {
+			userId = mentionedId;
+		}
+		const user = await getRPGUser({ user_tag: userId }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
 			context,

@@ -53,9 +53,9 @@ export const handleClientEvents = (client: Client) => {
 		handleDiscordServerJoin(client, guild);
 	});
 
-	client.on("guildDelete", (guild) => {
-		handleDiscordServerLeave(guild);
-	});
+	// client.on("guildDelete", (guild) => {
+	// 	handleDiscordServerLeave(guild);
+	// });
 };
 
 export const handleClient = (client: Client) => {

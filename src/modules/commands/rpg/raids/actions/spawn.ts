@@ -289,7 +289,7 @@ export const spawnRaid = async ({
 		embed
 			.setTitle(
 				`${emoji.warning} Raid Spawned! ${emoji.warning} [${titleCase(
-					computedBoss.difficulty
+					raid.stats.difficulty
 				)}] ${prepareRaidTimer(raid)}`
 			)
 			.setDescription(prepareRaidBossEmbedDesc(raid, isEvent))
