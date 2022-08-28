@@ -6,6 +6,7 @@ const soulMap: T = {
 	6: 1.75,
 	7: 1.95,
 	8: 1.95,
+	9: 1.95
 };
 
 export function getReqSouls(rank_id: number): number {

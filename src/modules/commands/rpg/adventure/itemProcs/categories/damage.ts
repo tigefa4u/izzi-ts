@@ -1,6 +1,9 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import { updateCollection } from "api/controllers/CollectionsController";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { ranksMeta } from "helpers/constants";
+import { titleCase } from "title-case";
 import { processItemStats } from "..";
 
 export const duskbladeOfDraktharr = ({
@@ -12,7 +15,7 @@ export const duskbladeOfDraktharr = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -36,7 +39,7 @@ export const duskbladeOfDraktharr = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 
 		return {
@@ -56,7 +59,7 @@ export const youmuusGhostblade = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -80,7 +83,7 @@ export const youmuusGhostblade = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 
 		return {
@@ -100,7 +103,7 @@ export const navoriQuickblades = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -110,7 +113,7 @@ export const navoriQuickblades = ({
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
 		const desc =
-        "**Ability:** Grants **(+60 ATK Damage)** and __20%__ **CRIT Chance**";
+      "**Ability:** Grants **(+60 ATK Damage)** and __20%__ **CRIT Chance**";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -124,7 +127,7 @@ export const navoriQuickblades = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 
 		return {
@@ -144,7 +147,7 @@ export const desolator = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -153,7 +156,24 @@ export const desolator = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "**Ability:** Your attacks reduce the enemy's **DEF** by __(-6)__ points))";
+		let desc =
+      "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
+
+		const chances = [ true, false ];
+		const canStealSouls = chances[probability([ 50, 50 ])];
+		if (canStealSouls && card.rank_id === ranksMeta.ultimate.rank_id) {
+			const soulsToSeal = opponentStats.cards.length || 0;
+			desc =
+			desc +
+			`**${playerStats.name}'s ${titleCase(card.name)}** has stolen __${
+				soulsToSeal
+			}__ Souls.`;
+
+			if (soulsToSeal > 0) {
+				card.souls = card.souls + soulsToSeal;
+				updateCollection({ id: card.id }, { souls: card.souls });
+			}
+		}
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -167,10 +187,10 @@ export const desolator = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 	}
-	opponentStats.totalStats.defense = opponentStats.totalStats.defense - 6;
+	opponentStats.totalStats.defense = opponentStats.totalStats.defense - 10;
 
 	return {
 		playerStats,
@@ -188,7 +208,7 @@ export const stormrazor = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -197,8 +217,7 @@ export const stormrazor = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc =
-        "**Ability:** Grants a chance to **Paralyze** the enemy";
+		const desc = "**Ability:** Grants a chance to **Paralyze** the enemy";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -212,10 +231,12 @@ export const stormrazor = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 	}
-	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	playerStats.totalStats.previousRound
+		? playerStats.totalStats.previousRound++
+		: null;
 	if (round == playerStats.totalStats.previousRound) {
 		if (opponentStats.totalStats.isStunned) {
 			opponentStats.totalStats.isStunned = false;
@@ -238,8 +259,8 @@ export const stormrazor = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
-		}); 
+			simulation,
+		});
 	}
 
 	return {
@@ -258,7 +279,7 @@ export const krakenSlayer = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -281,7 +302,7 @@ export const krakenSlayer = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
 		});
 
 		return {

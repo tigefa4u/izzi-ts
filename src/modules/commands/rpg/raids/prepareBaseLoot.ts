@@ -178,8 +178,8 @@ const baseLoot = (): any => ({
 	},
 	i: {
 		default: {
-			level: [ 600, 900 ],
-			rank: [ "gold", "diamond", "platinum" ],
+			level: [ 500, 700 ],
+			rank: [ "gold", "diamond", "platinum", "legend", "divine" ],
 			loot: {
 				gold: randomNumber(40000, 45000),
 				extraGold: randomNumber(32000, 35000),

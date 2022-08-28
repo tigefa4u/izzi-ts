@@ -68,7 +68,7 @@ const validateAndUpgradeCard = async (
 		channel?.sendMessage("Unable to level up, please contact support.");
 		return;
 	}
-	if (powerLevel.max_level !== card.character_level) {
+	if (card.character_level < powerLevel.max_level) {
 		embed.setDescription(
 			"This card must be max level before you can increase its level further."
 		);
@@ -151,7 +151,7 @@ export const upgradeCard = async ({
 							data.character_level
 						}** __${titleCase(data.rank)}__ **${titleCase(
 							data.name
-						)}** to **__Level ${data.character_level + 1}**__`
+						)}** to **__Level ${data.character_level + 1}__**`
 					);
 				}
 				if (opts?.isDelete) {
