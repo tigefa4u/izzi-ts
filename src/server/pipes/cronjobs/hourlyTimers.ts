@@ -21,6 +21,7 @@ import "../../../module";
 // 	}
 // }
 
+// This is triggered every 5mins
 const spawnRaids = async () => {
 	try {
 		const raidsDisabled = await Cache.get("disable-raids");
@@ -37,7 +38,7 @@ const spawnRaids = async () => {
 		}
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
-		return await Promise.all(Array(10).fill([ "e", "m", "h", "i" ]).map(async (difficultyMap) => {
+		return await Promise.all(Array(3).fill([ "e", "m", "h", "i" ]).map(async (difficultyMap) => {
 			await Promise.all(difficultyMap.map(async (difficulty: string) => {
 				const computedBoss = computeRank(difficulty, isEvent);
 				if (!computedBoss) return;
