@@ -25,6 +25,7 @@ import { crate } from "modules/commands/rpg/crates";
 import { dungeon } from "modules/commands/rpg/dungeon";
 import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
+import { upgradeCard } from "modules/commands/rpg/evolution/upgradeCard";
 import { guild } from "modules/commands/rpg/guild";
 import { guildEvents } from "modules/commands/rpg/guildEvents";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
@@ -139,7 +140,8 @@ const commandMap: CommandMapProps = {
 	website: websiteUrls,
 	delete: deleteAccount,
 	nickname: nickname,
-	"guild event": guildEvents
+	"guild event": guildEvents,
+	"upgrade card": upgradeCard,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

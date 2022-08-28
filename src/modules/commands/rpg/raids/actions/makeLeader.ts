@@ -44,6 +44,7 @@ async function confirmMakeLeader(
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Summoner **${member.username}** is now the Lobby Leader`);
 		params.channel?.sendMessage(embed);
+		return;
 	}
 	return member;
 }
@@ -90,9 +91,8 @@ export const makeLeader = async ({
 			}
 		);
 
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
+		embed.setButtons(buttons);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

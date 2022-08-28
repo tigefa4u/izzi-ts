@@ -345,9 +345,8 @@ async function visualizeSimulation({
 		}
 	);
 
-	if (buttons) {
-		embed.setButtons(buttons);
-	}
+	if (!buttons) return;
+	embed.setButtons(buttons);
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {

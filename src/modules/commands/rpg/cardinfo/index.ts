@@ -216,9 +216,8 @@ async function showCharacterDetails(
 			}
 		}
 	);
-	if (buttons) {
-		embed.setButtons(buttons);
-	}
+	if (!buttons) return;
+	embed.setButtons(buttons);
 	const msg = await channel?.sendMessage(embed);
 	if (msg) {
 		sentMessage = msg;

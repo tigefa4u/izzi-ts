@@ -17,7 +17,9 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, STARTER_CARD_EXP, STARTER_CARD_R_EXP } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_R_EXP 
+} from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -46,11 +48,11 @@ async function verifyAndProcessEvolution(
 		return;
 	}
 	const cardToEvolve = collection[0];
-	if (cardToEvolve.rank_id >= 9) {
+	if (cardToEvolve.rank_id >= ranksMeta.ultimate.rank_id) {
 		embed.setDescription("This card has already reached its max Evolution!");
 		params.channel?.sendMessage(embed);
 		return;
-	} else if (cardToEvolve.rank_id < 4) {
+	} else if (cardToEvolve.rank_id < ranksMeta.diamond.rank_id) {
 		embed.setDescription(
 			"Your card must be of Diamond rank to be able to be used in evolution!"
 		);
@@ -179,17 +181,6 @@ export const evolveCard = async ({
 			verifyAndProcessEvolution,
 			async (data, opts) => {
 				if (data) {
-					// const canvas = await createSingleCanvas(data.cardCanvas, false);
-					// if (!canvas) {
-					// 	context.channel?.sendMessage(
-					// 		"Unable to evolve this card, try again later"
-					// 	);
-					// 	throw new Error("Unable to create card canvas for confirmation");
-					// }
-					// const attachment = createAttachment(
-					// 	canvas.createJPEGStream(),
-					// 	"card.jpg"
-					// );
 					embed = createConfirmationEmbed(author, client)
 						.setTitle(
 							`${emoji.crossedswords} SOUL SACRIFICE ${emoji.crossedswords}`
@@ -203,8 +194,6 @@ export const evolveCard = async ({
 								data.cardToEvolve.name
 							)}\n\n**__${data.reqSouls}__ Souls**`
 						);
-					// .setThumbnail("attachment://card.jpg")
-					// .attachFiles([ attachment ]);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

@@ -69,9 +69,8 @@ export const showCardSkins = async ({
 			handleShowSkin
 		);
 
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
+		embed.setButtons(buttons);
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
