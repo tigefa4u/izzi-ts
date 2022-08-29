@@ -38,17 +38,15 @@ const spawnRaids = async () => {
 		}
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
-		return await Promise.all(Array(3).fill([ "e", "m", "h", "i" ]).map(async (difficultyMap) => {
-			await Promise.all(difficultyMap.map(async (difficulty: string) => {
-				const computedBoss = computeRank(difficulty, isEvent);
-				if (!computedBoss) return;
-				await createRaidBoss({
-					isPrivate: false,
-					isEvent,
-					computedBoss,
-					lobby: {}
-				});
-			}));
+		return await Promise.all([ "e", "m", "h", "i" ].map(async (difficulty) => {
+			const computedBoss = computeRank(difficulty, isEvent);
+			if (!computedBoss) return;
+			await createRaidBoss({
+				isPrivate: false,
+				isEvent,
+				computedBoss,
+				lobby: {}
+			});
 		}));
 	} catch (err) {
 		loggers.error("cronjobs.hourlyTimers.spawnRaids(): something went wrong", err);
