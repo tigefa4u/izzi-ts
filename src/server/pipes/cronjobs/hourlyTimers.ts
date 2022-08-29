@@ -38,7 +38,7 @@ const spawnRaids = async () => {
 		}
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
-		return await Promise.all([ "e", "m", "h", "i" ].map(async (difficulty) => {
+		return Promise.all([ "e", "m", "h", "i" ].map(async (difficulty) => {
 			const computedBoss = computeRank(difficulty, isEvent);
 			if (!computedBoss) return;
 			await createRaidBoss({
