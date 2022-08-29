@@ -139,6 +139,7 @@ export type BattleProcessProps = {
   card?: CollectionCardInfoProps & AbilityStackProps;
   enemyCard?: CollectionCardInfoProps & AbilityStackProps;
   simulation: Simulation;
+  isRaid?: boolean;
 };
 
 export type BattleUpdatedStats = {

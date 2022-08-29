@@ -511,6 +511,7 @@ async function simulatePlayerTurns({
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			round,
 			simulation,
+			isRaid
 		});
 		// if (updatedStats.forfeit) {
 		// 	// Should never execute

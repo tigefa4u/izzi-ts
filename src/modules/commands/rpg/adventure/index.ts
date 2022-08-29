@@ -240,6 +240,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			playerStats: playerBase,
 			enemyStats: enemyBase,
 			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
+			isRaid: false,
 			options: { hideVisualBattle: paramArgs === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
 		clearCooldown(author.id, "mana-battle");

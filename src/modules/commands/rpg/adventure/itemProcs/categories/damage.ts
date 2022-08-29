@@ -148,6 +148,7 @@ export const desolator = ({
 	card,
 	basePlayerStats,
 	simulation,
+	isRaid
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -159,21 +160,23 @@ export const desolator = ({
 		let desc =
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
-		const chances = [ true, false ];
-		const canStealSouls = chances[probability([ 50, 50 ])];
-		if (canStealSouls && card.rank_id === ranksMeta.ultimate.rank_id) {
-			const soulsToSeal = opponentStats.cards.length || 0;
-			desc =
-			desc +
-			`**${playerStats.name}'s ${titleCase(card.name)}** has stolen __${
-				soulsToSeal
-			}__ Souls.`;
+	  if (isRaid && card.rank_id === ranksMeta.ultimate.rank_id) {
+			const chances = [ true, false ];
+			const canStealSouls = chances[probability([ 50, 50 ])];
+			if (canStealSouls) {
+				const soulsToSeal = opponentStats.cards.length || 0;
+				desc =
+		desc +
+		`**${playerStats.name}'s ${titleCase(card.name)}** has stolen __${
+			soulsToSeal
+		}__ Souls.`;
 
-			if (soulsToSeal > 0) {
-				card.souls = card.souls + soulsToSeal;
-				updateCollection({ id: card.id }, { souls: card.souls });
+				if (soulsToSeal > 0) {
+					card.souls = card.souls + soulsToSeal;
+					updateCollection({ id: card.id }, { souls: card.souls });
+				}
 			}
-		}
+	  }
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

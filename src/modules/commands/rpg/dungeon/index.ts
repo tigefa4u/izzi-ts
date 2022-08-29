@@ -125,7 +125,8 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			context,
 			playerStats: playerTeamStats,
 			enemyStats,
-			title: `Dungeon Battle [${titleCase(userRank?.rank || "duke")}]`,
+			title: `__Dungeon Battle [${titleCase(userRank?.rank || "duke")}]__`,
+			isRaid: false,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
 		await refetchAndUpdateUserMana(author.id, MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
