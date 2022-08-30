@@ -224,10 +224,12 @@ export const getByRowNumber = async (params: {
   exclude_ids?: number[];
   is_on_cooldown?: boolean;
 }): Promise<CollectionProps[]> => {
+	const waifuId = 69;
 	const db = connection;
 	const alias = "collectionalias";
 	let query = db
-		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, id desc)`))
+		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, 
+			id ${params.user_id === waifuId ? "asc" : "desc"})`))
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.as(alias);
