@@ -140,6 +140,7 @@ export const getAll = async function (
 		offset: 0,
 	}
 ): Promise<CollectionProps[]> {
+	const waifuId = 69;
 	let queryParams = clone(params);
 	const character_ids = queryParams.character_ids;
 	delete queryParams.character_ids;
@@ -160,7 +161,8 @@ export const getAll = async function (
 	let query = db
 		.select(
 			db.raw(
-				`${tableName}.*, row_number() over(order by rank_id desc, id desc)`
+				`${tableName}.*, row_number() over(order by rank_id desc, id 
+					${params.user_id === waifuId ? "asc" : "desc"})`
 			)
 		)
 		.from(tableName)
@@ -169,8 +171,8 @@ export const getAll = async function (
 
 	query = db
 		.select(db.raw(`${alias}.*, count(*) over() as total_count`))
-		.from(query)
-		.orderBy(`${alias}.rank_id`, "desc");
+		.from(query);
+	// .orderBy(`${alias}.rank_id`, "desc");
 
 	if (character_ids) {
 		query = query.whereIn(`${alias}.character_id`, character_ids);
@@ -220,6 +222,7 @@ export const getByRowNumber = async (params: {
   row_number: number | number[];
   user_id: number;
   exclude_ids?: number[];
+  is_on_cooldown?: boolean;
 }): Promise<CollectionProps[]> => {
 	const db = connection;
 	const alias = "collectionalias";
@@ -242,6 +245,9 @@ export const getByRowNumber = async (params: {
 	} else if (typeof params.row_number === "object") {
 		query = query
 			.whereIn(`${alias}.row_number`, params.row_number);
+	}
+	if (typeof params.is_on_cooldown === "boolean") {
+		query = query.where(`${alias}.is_on_cooldown`, params.is_on_cooldown);
 	}
 
 	return query;
