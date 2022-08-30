@@ -23,6 +23,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 import { DMUserViaApi } from "server/pipes/directMessage";
+import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { prepareInitialLobbyMember } from "../../raids";
 import { prepareRaidViewEmbed } from "../../raids/actions/view";
@@ -36,12 +37,7 @@ const validateAndJoinRaid = async ({ user_tag, raidId, slotsLeft }: T) => {
 	const currentRaid = await getRaid({ id: raidId });
 	const currentLobbyLength = Object.keys(currentRaid?.lobby || {}).length;
 	const isLobbyFull = currentLobbyLength >= MAX_RAID_LOBBY_MEMBERS;
-	if (
-		!currentRaid ||
-    isLobbyFull ||
-    currentRaid.is_start
-	)
-		return;
+	if (!currentRaid || isLobbyFull || currentRaid.is_start) return;
 	const user = await getRPGUser({ user_tag });
 	if (!user || user.raid_pass < PERMIT_PER_RAID) return;
 	const member = await getUserRaidLobby({ user_id: user.id });
@@ -145,6 +141,27 @@ export const raidRecruit = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
+
+		if (guildEvent.metadata.abilities) {
+			const raidAbilities = currentRaid.raid_boss.map((b) => b.abilityname);
+			const hasRequiredAbility = raidAbilities.some((ab) =>
+				guildEvent.metadata.abilities?.includes(ab)
+			);
+			if (!hasRequiredAbility) {
+				embed.setDescription(
+					`Summoner **${
+						author.username
+					}**, you are not allowed to ping this raid. ` +
+					"Raid abilities allowed to be pinged are as follows:\n\n " +
+					`${guildEvent.metadata.abilities
+						.map((ab) => titleCase(ab))
+						.join("\n")}`
+				);
+				context.channel?.sendMessage(embed);
+				return;
+			}
+		}
+
 		const sendInChannel = (await context.guild.channels.fetch(
 			channel
 		)) as BaseProps["context"]["channel"];
