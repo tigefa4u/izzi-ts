@@ -11,6 +11,6 @@ export async function init(params: {
 		`update users set raid_pass = raid_pass + 1, raid_permit_refilled_at = now() 
         where is_banned = false and raid_pass < max_raid_pass and (is_premium = ${params.is_premium} ${
 	params.is_premium === true ? "or" : "and"
-} is_mini_premium = ${params.is_mini_premium}) and user_tag = '451594134638034944'`
+} is_mini_premium = ${params.is_mini_premium})`
 	);
 }
