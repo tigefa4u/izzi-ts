@@ -25,6 +25,7 @@ import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
+import { getSortCache } from "../sorting/sortCache";
 
 async function verifyAndProcessEvolution(
 	params: ConfirmationInteractionParams<{ id: number }>,
@@ -34,11 +35,12 @@ async function verifyAndProcessEvolution(
 	if (!id || isNaN(id)) return;
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
+	const sort = await getSortCache(params.author.id);
 	const collection = await getCardInfoByRowNumber({
 		row_number: id,
 		user_id: user.id,
 		user_tag: params.author.id,
-	});
+	}, sort);
 	const embed = createEmbed(params.author, params.client).setTitle(
 		DEFAULT_ERROR_TITLE
 	);

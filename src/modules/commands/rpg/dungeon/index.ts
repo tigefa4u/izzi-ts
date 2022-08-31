@@ -193,7 +193,8 @@ async function prepareDungeonBoss(userRank?: UserRankProps) {
 					item_id: item?.id || 0,
 					itemname: item?.name,
 					itemStats: item?.stats,
-					itemdescription: item?.description
+					itemdescription: item?.description,
+					is_on_cooldown: false
 				} as CollectionCardInfoProps;
 			})
 	);

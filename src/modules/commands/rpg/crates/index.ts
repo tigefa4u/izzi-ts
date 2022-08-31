@@ -70,6 +70,7 @@ async function openCrate({ context, client, args, options }: BaseProps) {
 					r_exp: BASE_XP * XP_GAIN_EXPONENT,
 					user_id: user.id,
 					is_item: false,
+					is_on_cooldown: false
 				});
 				cardsReceived.push({
 					rank: card.rank,

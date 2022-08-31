@@ -103,7 +103,7 @@ export const help = async ({
 				name: titleCase(key),
 				value: `${commandGroup[key]
 					.map((cmd: CommandProps) => cmd.name)
-					.join(" ")}`,
+					.join(", ")}`,
 				inline: true,
 			});
 		});

@@ -13,6 +13,7 @@ import { emojiMap } from "emojis";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { getSortCache } from "../sorting/sortCache";
 
 async function findItemInTeamAndRemove({
 	userId,
@@ -53,10 +54,11 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 		if (!cid || !itemId || isNaN(cid) || isNaN(itemId)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const sort = await getSortCache(author.id);
 		const collectionDataByRow = await getCardInfoByRowNumber({
 			row_number: cid,
 			user_id: user.id,
-		});
+		}, sort);
 		if (!collectionDataByRow) return;
 		const collectionData = collectionDataByRow[0];
 		const itemInCollection = await getCollection({
@@ -133,10 +135,11 @@ export const unEquip = async ({
 		if (!id || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const sort = await getSortCache(author.id);
 		const collectionDataByRow = await getCardInfoByRowNumber({
 			row_number: id,
 			user_id: user.id,
-		});
+		}, sort);
 		if (!collectionDataByRow) return;
 		const collectionData = collectionDataByRow[0];
 		if (!collectionData.item_id) return;

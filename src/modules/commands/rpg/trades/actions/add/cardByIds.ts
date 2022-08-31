@@ -3,6 +3,7 @@ import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController
 import { createEmbed } from "commons/embeds";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_CARDS_IN_TRADE } from "helpers/constants";
 import loggers from "loggers";
+import { getSortCache } from "modules/commands/rpg/sorting/sortCache";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { setTradeQueue } from "../../queue";
@@ -33,12 +34,15 @@ export const addCardByIds = async ({
 			user_id: trader.user_id,
 			row_number: ids,
 			is_on_market: false,
+			is_on_cooldown: false
 		};
 		// const exclude_ids = trader.queue.map((i) => i.id);
 		// if (exclude_ids.length > 0) {
 		// 	Object.assign(options, { exclude_ids });
 		// }
-		const collections = await getCardInfoByRowNumber(options);
+		const sort = await getSortCache(author.id);
+		let collections = await getCardInfoByRowNumber(options, sort);
+		collections = collections?.filter(c => !c.is_on_cooldown);
 		if (!collections || collections.length <= 0) {
 			embed.setDescription(
 				"The card(s) you are looking for is either not available or is on sale on the Global Market,"

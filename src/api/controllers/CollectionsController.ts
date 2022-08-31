@@ -9,6 +9,7 @@ import {
 } from "@customTypes/collections";
 import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
+import { SortProps } from "@customTypes/sorting";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
@@ -123,7 +124,8 @@ async function fetchCharacterDetails(filter: FilterProps) {
 
 export const getAllCollections = async (
 	filter: Omit<FilterProps, "series" | "category" | "ids"> & T,
-	pageProps: PageProps
+	pageProps: PageProps,
+	sort?: SortProps
 ): Promise<ResponseWithPagination<CollectionReturnType[]> | undefined> => {
 	try {
 		let charactersData = [] as C[];
@@ -138,7 +140,8 @@ export const getAllCollections = async (
 				...filter,
 				is_item: false
 			},
-			await paginationParams(pageProps)
+			await paginationParams(pageProps),
+			sort
 		);
 		if (charactersData.length <= 0) {
 			charactersData = await fetchCharacterDetails({ ids: result.map((r) => r.character_id), });

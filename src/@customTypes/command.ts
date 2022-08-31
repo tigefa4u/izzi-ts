@@ -96,8 +96,10 @@ export type CommandMapProps = {
 	website: (params: BaseProps) => void;
 	delete: (params: BaseProps) => void;
 	nickname: (params: BaseProps) => void;
+	wishlist: (params: BaseProps) => void;
 	"guild event": (params: BaseProps) => void;
 	"upgrade card": (params: BaseProps) => void;
+	"make a wish": (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

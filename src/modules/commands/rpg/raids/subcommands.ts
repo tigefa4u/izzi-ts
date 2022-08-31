@@ -41,7 +41,7 @@ export const subcommands = [
 	},
 	{
 		name: "votekick",
-		alias: [ "vk" ],
+		alias: [ "vk", "vkick" ],
 	},
 	{
 		name: "invite",

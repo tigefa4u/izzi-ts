@@ -142,6 +142,7 @@ async function processFloorWin({
 		is_on_market: false,
 		exp: STARTER_CARD_EXP,
 		r_exp: STARTER_CARD_R_EXP,
+		is_on_cooldown: false
 	};
 	const bodyParams: CollectionCreateProps[] = Array(multiplier)
 		.fill(options)

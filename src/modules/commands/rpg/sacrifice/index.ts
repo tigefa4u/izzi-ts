@@ -29,6 +29,7 @@ import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
+import { getSortCache } from "../sorting/sortCache";
 
 async function verifyAndProcessSacrifice(
 	params: ConfirmationInteractionParams<{
@@ -42,11 +43,12 @@ async function verifyAndProcessSacrifice(
 	if (!id || !sacrificeId || isNaN(id) || isNaN(sacrificeId)) return;
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
+	const sort = await getSortCache(params.author.id);
 	const collections = await getCardInfoByRowNumber({
 		row_number: [ id, sacrificeId ],
 		user_id: user.id,
 		user_tag: params.author.id,
-	});
+	}, sort);
 	if (!collections || collections.length < 2) {
 		params.channel?.sendMessage(
 			"We could not find the card you were looking for!"

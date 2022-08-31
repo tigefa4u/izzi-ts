@@ -4,6 +4,7 @@ import {
 	CollectionCardInfoProps,
 } from "@customTypes/collections";
 import { SkinProps } from "@customTypes/skins";
+import { SortProps } from "@customTypes/sorting";
 import loggers from "loggers";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 import * as Collections from "../models/Collections";
@@ -11,7 +12,8 @@ import { getCharacterInfo } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
 export const getCardInfoByRowNumber = async (
-	params: CollectionCardInfoByRowNumberParams
+	params: CollectionCardInfoByRowNumberParams,
+	sort?: SortProps
 ): Promise<CollectionCardInfoProps[] | undefined> => {
 	try {
 		if (!params.row_number) {
@@ -27,7 +29,10 @@ export const getCardInfoByRowNumber = async (
 		if (params.user_tag) {
 			skinArr = await getSkinArr(params.user_tag);
 		}
-		const result = await Collections.getByRowNumber(params);
+		const result = await Collections.getByRowNumber({
+			...params,
+			sort
+		});
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(
 				result.map(async (data) => {

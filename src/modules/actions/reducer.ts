@@ -48,6 +48,7 @@ import { eventActions } from "modules/commands/rpg/raids/events";
 import { give, hourly } from "modules/commands/rpg/resource";
 import { sacrificeCard } from "modules/commands/rpg/sacrifice";
 import { skins } from "modules/commands/rpg/skins";
+import { wishlist } from "modules/commands/rpg/wishlist";
 import { sort } from "modules/commands/rpg/sorting";
 import { spbt } from "modules/commands/rpg/spbt";
 import { team } from "modules/commands/rpg/team";
@@ -55,6 +56,7 @@ import { trade } from "modules/commands/rpg/trades";
 import { dex } from "modules/commands/rpg/xendex";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
+import { makeAWish } from "modules/commands/rpg/specialCommands/makeAWish";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -142,6 +144,8 @@ const commandMap: CommandMapProps = {
 	nickname: nickname,
 	"guild event": guildEvents,
 	"upgrade card": upgradeCard,
+	wishlist: wishlist,
+	"make a wish": makeAWish
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

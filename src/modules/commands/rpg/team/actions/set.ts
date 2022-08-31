@@ -11,6 +11,7 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 import { reorderObjectKey } from "utility";
 import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu, showTeam } from "..";
+import { getSortCache } from "../../sorting/sortCache";
 
 async function handleTeamSet(
 	params: SelectMenuCallbackParams<{
@@ -144,10 +145,11 @@ export const setTeam = async ({
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
 		const teamName = args.join(" ");
+		const sort = await getSortCache(author.id);
 		const collection = await getCardInfoByRowNumber({
 			row_number: id,
 			user_id,
-		});
+		}, sort);
 		if (!collection) return;
 		const teams = await getAllTeams({ user_id });
 		if (!teams || teams.length <= 0) {

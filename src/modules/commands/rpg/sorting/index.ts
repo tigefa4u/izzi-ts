@@ -19,12 +19,12 @@ const getSortMap = () => {
 			type: "sortOrder",
 			action: "desc",
 		},
-		{
-			name: "rank",
-			alias: [ "-r", "-rank", "rank" ],
-			type: "sortBy",
-			action: "rank_id",
-		},
+		// {
+		// 	name: "rank",
+		// 	alias: [ "-r", "-rank", "rank" ],
+		// 	type: "sortBy",
+		// 	action: "rank_id",
+		// },
 		{
 			name: "id",
 			alias: [ "-i" ],
@@ -37,9 +37,8 @@ const getSortMap = () => {
 export const sort = async ({ context, client, args, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const key = `sort::${author.id}`;
 		if (args[0] === "reset") {
-			delSortCache(key);
+			delSortCache(author.id);
 			context.channel?.sendMessage("Successfully reset sorting order");
 			return;
 		}
@@ -57,7 +56,7 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
 				Object.assign(params, { [sortMap[index].type]: sortMap[index].action });
 			}
 		}
-		await setSortCache(key, params);
+		await setSortCache(author.id, params);
 		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
@@ -69,6 +68,7 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
 			);
 
 		context.channel?.sendMessage(embed);
+		return;
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.sorting.sort(): something went wrong",

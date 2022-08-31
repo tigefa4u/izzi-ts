@@ -50,6 +50,7 @@ async function startUserJourney(author: AuthorProps) {
 		character_level: STARTER_CARD_LEVEL,
 		character_id: cardDetails.character_id,
 		is_item: false,
+		is_on_cooldown: false
 	};
 	loggers.info(
 		"modules.commands.rpg.profile.startJourney: New User created: " +

@@ -5,6 +5,7 @@ import {
 	ICollectionCreateProps,
 } from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
+import { SortProps } from "@customTypes/sorting";
 import connection from "db";
 import { safeParseQueryParams } from "helpers/transformation";
 import { clone } from "utility";
@@ -138,9 +139,12 @@ export const getAll = async function (
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
+	},
+	sort: SortProps = {
+		sortBy: "id",
+		sortOrder: "desc"
 	}
 ): Promise<CollectionProps[]> {
-	const waifuId = 69;
 	let queryParams = clone(params);
 	const character_ids = queryParams.character_ids;
 	delete queryParams.character_ids;
@@ -162,7 +166,7 @@ export const getAll = async function (
 		.select(
 			db.raw(
 				`${tableName}.*, row_number() over(order by rank_id desc, id 
-					${params.user_id === waifuId ? "asc" : "desc"})`
+					${sort ? sort.sortOrder : "desc"})`
 			)
 		)
 		.from(tableName)
@@ -223,13 +227,17 @@ export const getByRowNumber = async (params: {
   user_id: number;
   exclude_ids?: number[];
   is_on_cooldown?: boolean;
+  sort?: SortProps;
 }): Promise<CollectionProps[]> => {
-	const waifuId = 69;
+	const sort = params.sort || {
+		sortBy: "id",
+		sortOrder: "desc"
+	};
 	const db = connection;
 	const alias = "collectionalias";
 	let query = db
 		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, 
-			id ${params.user_id === waifuId ? "asc" : "desc"})`))
+			id ${sort ? sort.sortOrder : "desc"})`))
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.as(alias);
