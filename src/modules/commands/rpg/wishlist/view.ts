@@ -1,5 +1,6 @@
 import { FilterProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
+import { getRPGUser } from "api/controllers/UsersController";
 import { getWishlist } from "api/controllers/WishlistsContorller";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -16,10 +17,14 @@ export const viewWishlist = async ({ context, client, args, options }: BaseProps
 	try {
 		const author = options.author;
 		let mentionId = author.id;
-		const params = <FilterProps>fetchParamsFromArgs(args);
+		const clonedArgs = clone(args);
+		const params = <FilterProps>fetchParamsFromArgs(clonedArgs);
 		const mentionedUserId = getIdFromMentionedString(args.shift());
 		if (mentionedUserId !== "") {
-			mentionId = mentionedUserId;
+			const mentionedUser = await getRPGUser({ user_tag: mentionedUserId }, { cached: true });
+			if (mentionedUser) {
+				mentionId = mentionedUserId;
+			}
 		}
 		let embed = createEmbed();
 		let sentMessage: Message;
