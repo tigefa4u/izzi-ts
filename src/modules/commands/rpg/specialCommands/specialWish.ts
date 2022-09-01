@@ -15,7 +15,7 @@ const WISHES = {
 export const specialWish = async ({ client, context, args, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const wishes = [ WISHES.spawnReset, WISHES.love ];
+		const wishes = [ WISHES.spawnReset, WISHES.love, WISHES.song ];
 		const wish = randomElementFromArray(wishes);
 		const embed = createEmbed(author, client);
 
