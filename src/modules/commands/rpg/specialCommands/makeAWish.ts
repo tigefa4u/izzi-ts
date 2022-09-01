@@ -11,7 +11,6 @@ export const makeAWish = async (params: BaseProps) => {
 		const { context, options, args } = params;
 		const author = options.author;
 		if (!wishesFrom.includes(author.id)) {
-			context.channel?.sendMessage("You are not worthy of a wish!");
 			return;
 		}
 		const cmd = args.shift();

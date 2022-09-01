@@ -116,7 +116,7 @@ export const permits = async function ({
 		const result = await getProfileInfo("raid_pass", author.id);
 		const timestamp = new Date(new Date(result.metadata?.premit_refilled_at || "").toUTCString());
 		let refilled_at = timestamp.setHours(
-			timestamp.getHours() + (result.metadata.is_premium ? 1 : 2)
+			timestamp.getHours() + ((result.metadata.is_premium || result.metadata.is_mini_premium) ? 1 : 2)
 		);
 		if (result.metadata.is_premium || result.metadata.is_mini_premium) {
 			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);

@@ -29,14 +29,17 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const subcommand = filterSubCommands(args.shift() || "view", subcommands);
+		const cmd = args.shift();
+		const subcommand = filterSubCommands(cmd || "view", subcommands);
 		const params = {
 			context,
 			author,
 			args,
 			client,
 			user_id: user.id,
-			user
+			user,
+			canShowSelectedTeam: cmd ? true : false,
+			selectedTeamId: user.selected_team_id
 		};
 		if (subcommand === "create") {
 			createTeam(params);
