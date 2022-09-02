@@ -2,7 +2,7 @@ import { AuthorProps } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { SelectMenuCallbackParams } from "@customTypes/selectMenu";
-import { TeamProps } from "@customTypes/teams";
+import { TeamExtraProps, TeamProps } from "@customTypes/teams";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import { getAllTeams, updateTeam } from "api/controllers/TeamsController";
 import { createEmbed } from "commons/embeds";
@@ -140,7 +140,9 @@ export const setTeam = async ({
 	author,
 	user_id,
 	args,
-}: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
+	canShowSelectedTeam,
+	selectedTeamId
+}: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number } & TeamExtraProps) => {
 	try {
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
@@ -172,6 +174,16 @@ export const setTeam = async ({
 		if (teams.length === 1) {
 			handleTeamView(params, teams[0].name);
 			return;
+		}
+		if (!teamName || teamName === "") {
+			canShowSelectedTeam = true;
+		}
+		if (canShowSelectedTeam && selectedTeamId) {
+			const selectedTeam = teams.find((t) => t.id === selectedTeamId);
+			if (selectedTeam) {
+				handleTeamView(params, selectedTeam.name);
+				return;
+			}
 		}
 		if (teamName && teamName !== "") {
 			const teamFound = teams.find((t) => t.name.includes(teamName));

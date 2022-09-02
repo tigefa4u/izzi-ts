@@ -38,7 +38,7 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 			client,
 			user_id: user.id,
 			user,
-			canShowSelectedTeam: cmd ? true : false,
+			canShowSelectedTeam: args.length <= 0 ? true : false,
 			selectedTeamId: user.selected_team_id
 		};
 		if (subcommand === "create") {

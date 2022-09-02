@@ -9,7 +9,7 @@ import loggers from "loggers";
 import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu } from "..";
 
 async function handleTeamSelect(
-	params: SelectMenuCallbackParams<{ teams: TeamProps[]; user: UserProps; }>,
+	params: SelectMenuCallbackParams<{ teams: TeamProps[]; user: UserProps }>,
 	value?: string
 ) {
 	const teams = params.extras?.teams;
@@ -23,13 +23,23 @@ async function handleTeamSelect(
 		return;
 	}
 	user.selected_team_id = selected.id;
-	await updateRPGUser({ user_tag: user.user_tag }, { selected_team_id: user.selected_team_id });
-	params.channel?.sendMessage(`Successfully selected **__Team ${selected.name}__** to fight alongside you!`);
+	await updateRPGUser(
+		{ user_tag: user.user_tag },
+		{ selected_team_id: user.selected_team_id },
+		{ hydrateCache: true }
+	);
+	params.channel?.sendMessage(
+		`Successfully selected **__Team ${selected.name}__** to fight alongside you!`
+	);
 	return;
 }
 
 export const selectTeam = async ({
-	context, client, author, user, args 
+	context,
+	client,
+	author,
+	user,
+	args,
 }: Omit<BaseProps, "options"> & {
   author: AuthorProps;
   user: UserProps;

@@ -1,7 +1,7 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { SelectMenuCallbackParams } from "@customTypes/selectMenu";
-import { TeamProps } from "@customTypes/teams";
+import { TeamExtraProps, TeamProps } from "@customTypes/teams";
 import { getAllTeams } from "api/controllers/TeamsController";
 import { createEmbed } from "commons/embeds";
 import loggers from "loggers";
@@ -50,9 +50,7 @@ export const viewTeam = async ({
 }: Omit<BaseProps, "options"> & {
   author: AuthorProps;
   user_id: number;
-  canShowSelectedTeam?: boolean | null;
-  selectedTeamId?: number | null;
-}) => {
+} & TeamExtraProps) => {
 	try {
 		const teams = await getAllTeams({ user_id });
 		if (!teams || teams.length <= 0) {

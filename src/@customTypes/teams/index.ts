@@ -40,3 +40,8 @@ export type PrepareSkewedCollectionsForBattleProps = {
   name: string;
   team?: TeamProps;
 };
+
+export type TeamExtraProps = {
+  canShowSelectedTeam?: boolean | null;
+  selectedTeamId?: number | null;
+}
