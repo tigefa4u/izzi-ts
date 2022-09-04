@@ -11,5 +11,6 @@ export const soundCloudLinks = [
 	"https://soundcloud.com/hoax-406315365/ma-ma-ma/s-t3b14oeFK3n?si=3b31c61d7e2f4ccf866e6f17ea7c4a8d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
 	"https://soundcloud.com/hoax-406315365/people-help-the-people/s-5Db5iSoXGqN?si=3b31c61d7e2f4ccf866e6f17ea7c4a8d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
 	"https://soundcloud.com/hoax-406315365/rehab?si=3b31c61d7e2f4ccf866e6f17ea7c4a8d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
-	"https://soundcloud.com/hoax-406315365/sunshine/s-49G4rnxxrWB?si=3b31c61d7e2f4ccf866e6f17ea7c4a8d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
+	"https://soundcloud.com/hoax-406315365/sunshine/s-49G4rnxxrWB?si=3b31c61d7e2f4ccf866e6f17ea7c4a8d&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+	"https://soundcloud.com/hoax-406315365/places-youll-go/s-EB0DF4ycFAy?si=1d70152864614333819c01379691dc3f&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
 ];

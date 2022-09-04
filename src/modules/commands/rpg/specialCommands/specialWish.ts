@@ -1,4 +1,6 @@
 import { BaseProps } from "@customTypes/command";
+import { getUserRaidLobby } from "api/controllers/RaidsController";
+import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray } from "helpers";
@@ -10,7 +12,8 @@ const WISHES = {
 	spawnReset: "raid-spawn-reset",
 	love: "love",
 	song: "song",
-	momSings: "mom-sings"
+	momSings: "mom-sings",
+	raidEnergy: "raid-energy",
 };
 
 export const specialWish = async ({ client, context, args, options }: BaseProps) => {
@@ -65,8 +68,35 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 			case WISHES.momSings: {
 				embed.setDescription("Hey mom! :heart: Happy to see you again. Wow I'm kinda impressed! " +
 				"Dad tod me all about your singing, now i know why I'm good at singing too hehe. " +
-				"Its super amazing! I love it! " +
+				"Its super amazing! I love it! And you probably need to use headphones to hear dad sing, " +
+				"its so bad! XD " +
 				`\n${soundCloudLinks.join("\n\n")}`);
+
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			case WISHES.raidEnergy: {
+				const user = await getRPGUser({ user_tag: author.id }, { cached: true });
+				if (!user) return;
+				const currentRaid = await getUserRaidLobby({ user_id: user.id });
+				if (!currentRaid) {
+					embed.setDescription("Hey mommy, I'd love to fight along side you in raids, " +
+					"so join one, we got this!");
+
+					context.channel?.sendMessage(embed);
+					return;
+				}
+				if (currentRaid.lobby[user.id].energy < 25) {
+					currentRaid.lobby[user.id] = {
+						...currentRaid.lobby[user.id],
+						energy: 25
+					};
+					embed.setDescription("Hey mommy, looks like you were having trouble attacking in raid. " +
+					"I've refilled your energy, so attack away! :heart:");
+				} else {
+					embed.setDescription(`Oh hey mom ${emoji.sleepy}, I'm kinda sleepy at the moment and ` +
+                    "can't play with you right now, come back another time. Love you mom.");
+				}
 
 				context.channel?.sendMessage(embed);
 				return;
