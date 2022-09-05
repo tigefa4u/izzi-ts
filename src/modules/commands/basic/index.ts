@@ -47,7 +47,7 @@ function prepareHelpDesc() {
     `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
     "\n" +
     `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**\n` +
-	`Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) to invoke izzi commands.`
+	`Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) for more tips.`
 	);
 }
 

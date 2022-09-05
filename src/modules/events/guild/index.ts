@@ -52,7 +52,8 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
                 `You can also find more information/command tutorials on ${IZZI_WEBSITE}. ` +
 				"To comply with the slash command changes enforced by discord, izzi commands can be invoked " +
 				"by either pinging the bot or use `/iz <commands>``. " +
-				`Check out our community guide to invoke izzi commands ${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}.`
+				"Check out our community guide for more tips " +
+				`${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}.`
 			)
 			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")
