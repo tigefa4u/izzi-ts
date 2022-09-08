@@ -4,7 +4,7 @@ import { createGuild, disbandAndBackupGuild, getGuild, updateGuild } from "api/c
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
-import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
+import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK, SLASH_COMMANDS_KEYBOARD_SHORTCUTS } from "environment";
 import loggers from "loggers";
 import { getWebsiteUrls } from "modules/commands/basic";
 
@@ -47,9 +47,13 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 			.setDescription(
 				"I'am **izzi**, thank you for adding me!\nI simulate a card collecting JRPG battle Arena staged in " +
                 "**The Xenverse** with everything it needs!, " +
-                "\nTo get started ``iz help`` to get all available commands." +
+                "\nTo get started ``@izzi help or /iz help`` to get all available commands." +
                 `\nFor more assistance join our support server ${OFFICIAL_SERVER_LINK}. ` +
-                `You can also find more information/command tutorials on ${IZZI_WEBSITE}`
+                `You can also find more information/command tutorials on ${IZZI_WEBSITE}. ` +
+				"To comply with the slash command changes enforced by discord, izzi commands can be invoked " +
+				"by either pinging the bot or use `/iz <commands>``. " +
+				"Check out our community guide for more tips " +
+				`${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}.`
 			)
 			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")

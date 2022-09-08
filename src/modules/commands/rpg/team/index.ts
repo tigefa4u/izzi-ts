@@ -44,6 +44,9 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 		if (subcommand === "create") {
 			createTeam(params);
 		} else if (subcommand === "view") {
+			if (cmd === "view") {
+				params.canShowSelectedTeam = false;
+			}
 			viewTeam(params);
 		} else if (subcommand === "select") {
 			selectTeam(params);

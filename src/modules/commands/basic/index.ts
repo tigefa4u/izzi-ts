@@ -6,6 +6,7 @@ import {
 	BOT_INVITE_LINK,
 	IZZI_WEBSITE,
 	PRIVACY_POLICY_URL,
+	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
 } from "../../../environment";
 import { Client, EmbedFieldData } from "discord.js";
 import { groupByKey } from "utility";
@@ -45,7 +46,8 @@ function prepareHelpDesc() {
     "\n" +
     `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
     "\n" +
-    `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**`
+    `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**\n` +
+	`Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) for more tips.`
 	);
 }
 
