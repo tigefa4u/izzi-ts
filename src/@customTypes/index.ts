@@ -15,6 +15,7 @@ export type FilterProps = {
     rank_ids?: number | number[];
     is_favorite?: boolean;
     is_on_market?: boolean;
+    is_on_cooldown?: boolean;
     difficulty?: string[];
     isEvent?: boolean;
     limit?: number | number[];

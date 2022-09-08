@@ -77,7 +77,7 @@ const validateAndUpgradeCard = async (
 	}
 	const reqSouls = getReqSouls(card.rank_id);
 	const levelDifference = card.character_level - powerLevel.max_level;
-	if (levelDifference > CHARACTER_LEVEL_EXTENDABLE_LIMIT) {
+	if (levelDifference >= CHARACTER_LEVEL_EXTENDABLE_LIMIT) {
 		embed.setDescription("Your card has already reached its max level.");
 		channel?.sendMessage(embed);
 		return;

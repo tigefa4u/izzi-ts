@@ -64,7 +64,8 @@ export const addMultipleCards = async ({
 		if (exclude_ids.length > 0) {
 			Object.assign(options, { exclude_ids });
 		}
-		const collections = await getCollection(options);
+		let collections = await getCollection(options);
+		collections = collections?.filter((c) => !c.is_on_cooldown);
 		if (!collections || collections.length <= 0) {
 			embed.setDescription("You do not have sufficient cards to trade.");
 			channel?.sendMessage(embed);

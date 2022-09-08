@@ -50,6 +50,11 @@ function safeParseParams(params: FilterProps & { user_id: number }) {
 	} else {
 		delete params.is_on_market;
 	}
+	if (typeof params.is_on_cooldown === "object") {
+		params.is_on_cooldown = true;
+	} else {
+		delete params.is_on_cooldown;
+	}
 
 	delete params.rank;
 

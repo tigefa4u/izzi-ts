@@ -27,6 +27,9 @@ export type CollectionProps = {
     nickname?: string;
     tradedAt?: number;
   };
+  reqSouls?: number;
+  remainingHours?: number;
+  remainingMinutes?: number;
 };
 
 export type CollectionParams = {

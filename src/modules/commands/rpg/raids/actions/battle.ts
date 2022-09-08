@@ -274,7 +274,7 @@ async function processRaidResult({
 				result.totalDamage || 0
 			)}__** Damage to ${
 				isEvent ? "Event" : "Raid"
-			} Boss\n\n**${numericWithComma(
+			} Boss${result.soulGainText ? `\n${result.soulGainText}` : ""}\n\n**${numericWithComma(
 				updateObj.stats.remaining_strength
 			)} / ${numericWithComma(updateObj.stats.original_strength)} ${
 				emoji.hp

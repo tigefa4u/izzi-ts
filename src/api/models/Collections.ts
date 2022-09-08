@@ -41,6 +41,11 @@ export const transformation = {
 		default: false,
 		columnName: "is_on_market",
 	},
+	isOnCooldown: {
+		type: "boolean",
+		default: false,
+		columnName: "is_on_cooldown",
+	},
 	isItem: {
 		type: "boolean",
 		default: false,
@@ -154,6 +159,8 @@ export const getAll = async function (
 	delete queryParams.is_favorite;
 	const isOnMarket = queryParams.is_on_market;
 	delete queryParams.is_on_market;
+	const isOnCooldown = queryParams.is_on_cooldown;
+	delete queryParams.is_on_cooldown;
 
 	queryParams = safeParseQueryParams({
 		query: queryParams,
@@ -189,8 +196,11 @@ export const getAll = async function (
 	if (isFavorite === true || isFavorite === false) {
 		query = query.where(`${alias}.is_favorite`, isFavorite);
 	}
-	if (isOnMarket || isOnMarket) {
+	if (isOnMarket === true || isOnMarket === false) {
 		query = query.where(`${alias}.is_on_market`, isOnMarket);
+	}
+	if (isOnCooldown === true || isOnCooldown === false) {
+		query = query.where(`${alias}.is_on_cooldown`, isOnCooldown);
 	}
 	query = query.limit(pagination.limit).offset(pagination.offset);
 	return query;

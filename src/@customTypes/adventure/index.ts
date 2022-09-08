@@ -118,6 +118,7 @@ export type BattleStats = {
   totalDamage?: number;
   isVictory?: boolean;
   isForfeit?: boolean;
+  soulGainText?: string;
 };
 
 export type PrepareBattleDescriptionProps = {
