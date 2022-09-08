@@ -34,6 +34,7 @@ export const surge = ({
     !playerStats.totalStats.isSurge
 	) {
 		playerStats.totalStats.isSurge = true;
+		opponentStats.totalStats.isBleeding = true;
 		const percent = calcPercentRatio(65, card.rank);
 		playerStats.totalStats.surgePercent = percent;
 
@@ -63,14 +64,14 @@ export const surge = ({
 			simulation,
 		});
 	}
-	if (
-		playerStats.totalStats.isSurge &&
-    !opponentStats.totalStats.isBleeding &&
-    (playerStats.totalStats.bleedResetOnRound || 0) + 1 === round
-	) {
-		playerStats.totalStats.bleedResetOnRound = round + 2;
-		opponentStats.totalStats.isBleeding = true;
-	}
+	// if (
+	// 	playerStats.totalStats.isSurge &&
+	// !opponentStats.totalStats.isBleeding &&
+	// (playerStats.totalStats.bleedResetOnRound || 0) + 1 === round
+	// ) {
+	// 	playerStats.totalStats.bleedResetOnRound = round + 2;
+	// 	opponentStats.totalStats.isBleeding = true;
+	// }
 	if (opponentStats.totalStats.isBleeding) {
 		let defenseDiff =
       baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
