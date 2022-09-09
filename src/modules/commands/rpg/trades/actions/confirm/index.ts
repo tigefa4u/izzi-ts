@@ -164,14 +164,7 @@ export const confirmTrade = async ({
 						is_on_market: false,
 						is_on_cooldown: true
 					}
-				),
-				async () => {
-					const dt = new Date();
-					return trader_1.queue.map(async (q) => await Cache.set("card-cd::" + q.id, JSON.stringify({
-						timestamp: new Date(),
-						cooldownEndsAt: dt.setHours(dt.getHours() + 8)
-					})));
-				}
+				)
 			);
 		}
 		if (trader_2.queue.length > 0) {
@@ -201,9 +194,9 @@ export const confirmTrade = async ({
 			const dt = new Date();
 			await Cache.set("card-cd::" + q.id, JSON.stringify({
 				timestamp: new Date(),
-				cooldownEndsAt: dt.setHours(dt.getHours() + 8)
+				cooldownEndsAt: dt.setHours(dt.getHours() + 4)
 			}));
-			return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 8);
+			return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 4);
 		}));
 		embed.setDescription("Trade completed!");
 		channel?.sendMessage(embed);

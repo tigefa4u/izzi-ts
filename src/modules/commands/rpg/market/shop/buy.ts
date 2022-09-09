@@ -208,9 +208,9 @@ async function validateAndPurchaseCard(
 		const dt = new Date();
 		await Cache.set("card-cd::" + marketCard.collection_id, JSON.stringify({
 			timestamp: dt,
-			cooldownEndsAt: dt.setHours(dt.getHours() + 8)
+			cooldownEndsAt: dt.setHours(dt.getHours() + 4)
 		}));
-		Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 8);
+		Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
 		notifyBuyer(params.channel, marketCard);
 		const count = purhchaseExceeded.purchased + 1;
 		if (count >= MARKET_PURCHASE_LIMIT) {
