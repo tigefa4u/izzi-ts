@@ -206,10 +206,10 @@ async function validateAndPurchaseCard(
 		);
 		await delFromMarket({ id: marketCard.id });
 		const dt = new Date();
-		await Cache.set("card-cd::" + marketCard.collection_id, JSON.stringify({
-			timestamp: dt,
-			cooldownEndsAt: dt.setHours(dt.getHours() + 4)
-		}));
+		// await Cache.set("card-cd::" + marketCard.collection_id, JSON.stringify({
+		// 	timestamp: dt,
+		// 	cooldownEndsAt: dt.setHours(dt.getHours() + 4)
+		// }));
 		Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
 		notifyBuyer(params.channel, marketCard);
 		const count = purhchaseExceeded.purchased + 1;

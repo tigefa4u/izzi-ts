@@ -190,14 +190,14 @@ export const confirmTrade = async ({
 			);
 		}
 		await Promise.all(promises);
-		await Promise.all([ ...trader_1.queue, ...trader_2.queue ].map(async (q) => {
-			const dt = new Date();
-			await Cache.set("card-cd::" + q.id, JSON.stringify({
-				timestamp: new Date(),
-				cooldownEndsAt: dt.setHours(dt.getHours() + 4)
-			}));
-			return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 4);
-		}));
+		// await Promise.all([ ...trader_1.queue, ...trader_2.queue ].map(async (q) => {
+		// 	const dt = new Date();
+		// 	await Cache.set("card-cd::" + q.id, JSON.stringify({
+		// 		timestamp: new Date(),
+		// 		cooldownEndsAt: dt.setHours(dt.getHours() + 4)
+		// 	}));
+		// 	return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 4);
+		// }));
 		embed.setDescription("Trade completed!");
 		channel?.sendMessage(embed);
 		return;
