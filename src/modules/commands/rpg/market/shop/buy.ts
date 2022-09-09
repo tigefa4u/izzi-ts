@@ -210,7 +210,7 @@ async function validateAndPurchaseCard(
 		// 	timestamp: dt,
 		// 	cooldownEndsAt: dt.setHours(dt.getHours() + 4)
 		// }));
-		Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
+		// Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
 		notifyBuyer(params.channel, marketCard);
 		const count = purhchaseExceeded.purchased + 1;
 		if (count >= MARKET_PURCHASE_LIMIT) {
