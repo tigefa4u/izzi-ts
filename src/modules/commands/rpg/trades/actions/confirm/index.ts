@@ -162,7 +162,7 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
-						is_on_cooldown: true
+						// is_on_cooldown: true
 					}
 				)
 			);
@@ -184,7 +184,7 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
-						is_on_cooldown: true
+						// is_on_cooldown: true
 					}
 				)
 			);

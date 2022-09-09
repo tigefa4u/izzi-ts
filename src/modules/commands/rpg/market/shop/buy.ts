@@ -201,7 +201,7 @@ async function validateAndPurchaseCard(
 				is_on_market: false,
 				item_id: null,
 				is_favorite: false,
-				is_on_cooldown: true
+				// is_on_cooldown: true
 			}
 		);
 		await delFromMarket({ id: marketCard.id });
