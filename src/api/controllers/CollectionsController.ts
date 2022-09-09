@@ -11,7 +11,7 @@ import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
 import Cache from "cache";
-import { ranksMeta } from "helpers/constants";
+import { CHARACTER_LEVEL_EXTENDABLE_LIMIT, ranksMeta } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
@@ -159,8 +159,10 @@ export const getAllCollections = async (
 				if (c.rank_id === ranksMeta.ultimate.rank_id) {
 					const souls = getReqSouls(c.rank_id);
 					const levelDifference = c.character_level - (ranksMeta.ultimate.max_level || 70);
-					const extraSouls = Math.ceil(levelDifference ** 1.57);
-					reqSouls = souls + extraSouls;
+					if (levelDifference < CHARACTER_LEVEL_EXTENDABLE_LIMIT) {
+						const extraSouls = Math.ceil(levelDifference ** 1.57);
+						reqSouls = souls + extraSouls;
+					}
 				}
 				c.reqSouls = reqSouls;
 				let remainingHours = 0,

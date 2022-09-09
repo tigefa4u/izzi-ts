@@ -197,8 +197,8 @@ export const confirmTrade = async ({
 			);
 		}
 		await Promise.all(promises);
-		const dt = new Date();
 		await Promise.all([ ...trader_1.queue, ...trader_2.queue ].map(async (q) => {
+			const dt = new Date();
 			await Cache.set("card-cd::" + q.id, JSON.stringify({
 				timestamp: new Date(),
 				cooldownEndsAt: dt.setHours(dt.getHours() + 8)

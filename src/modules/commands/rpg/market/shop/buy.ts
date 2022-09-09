@@ -186,6 +186,8 @@ async function validateAndPurchaseCard(
 			is_banned: false,
 		});
 		if (!seller) {
+			await Promise.all([ updateCollection({ id: marketCard.collection_id }, { is_on_market: false }), 
+				delFromMarket({ id: marketCard.id }) ]);
 			params.channel?.sendMessage(
 				"The seller has either been banned or deleted their account."
 			);
