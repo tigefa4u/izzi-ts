@@ -27,6 +27,7 @@ export type SimulateBattleProps = {
   options?: {
     hideVisualBattle: boolean;
   };
+  multiplier?: number;
 };
 
 type StatStateProps = {
@@ -141,6 +142,7 @@ export type BattleProcessProps = {
   enemyCard?: CollectionCardInfoProps & AbilityStackProps;
   simulation: Simulation;
   isRaid?: boolean;
+  multiplier?: number;
 };
 
 export type BattleUpdatedStats = {

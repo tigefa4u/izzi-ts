@@ -102,7 +102,8 @@ const validateAndUpgradeCard = async (
 				)}** to **__Level ${card.character_level + 1}__**`
 			);
 		card.character_level = card.character_level + 1;
-		card.souls = 1;
+		card.souls =  totalSouls - card.souls;
+		if (card.souls < 0) card.souls = 0;
 		await updateCollection(
 			{ id },
 			{

@@ -138,6 +138,7 @@ export const battleRaidBoss = async ({
 			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
+			multiplier
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {
