@@ -50,6 +50,7 @@ export const simulateBattle = async ({
 	title = "__TEAM BATTLE__",
 	isRaid,
 	options,
+	multiplier
 }: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
@@ -127,6 +128,7 @@ export const simulateBattle = async ({
 				totalDamage,
 				isRaid,
 				simulation,
+				multiplier
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -457,9 +459,11 @@ async function simulatePlayerTurns({
 	totalDamage,
 	isRaid,
 	simulation,
+	multiplier
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     isRaid?: boolean;
+	multiplier?: number;
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
@@ -511,7 +515,8 @@ async function simulatePlayerTurns({
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			round,
 			simulation,
-			isRaid
+			isRaid,
+			multiplier
 		});
 		// if (updatedStats.forfeit) {
 		// 	// Should never execute

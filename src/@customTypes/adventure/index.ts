@@ -27,6 +27,7 @@ export type SimulateBattleProps = {
   options?: {
     hideVisualBattle: boolean;
   };
+  multiplier?: number;
 };
 
 type StatStateProps = {
@@ -118,6 +119,7 @@ export type BattleStats = {
   totalDamage?: number;
   isVictory?: boolean;
   isForfeit?: boolean;
+  soulGainText?: string;
 };
 
 export type PrepareBattleDescriptionProps = {
@@ -140,6 +142,7 @@ export type BattleProcessProps = {
   enemyCard?: CollectionCardInfoProps & AbilityStackProps;
   simulation: Simulation;
   isRaid?: boolean;
+  multiplier?: number;
 };
 
 export type BattleUpdatedStats = {

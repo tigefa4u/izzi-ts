@@ -62,6 +62,7 @@ export const ranksMeta: RanksMetaProps = {
 	ultimate: {
 		size: 9,
 		rank_id: 9,
+		max_level: 70
 	},
 };
 

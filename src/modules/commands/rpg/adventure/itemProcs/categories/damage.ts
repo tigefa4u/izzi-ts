@@ -148,7 +148,8 @@ export const desolator = ({
 	card,
 	basePlayerStats,
 	simulation,
-	isRaid
+	isRaid,
+	multiplier
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -160,23 +161,26 @@ export const desolator = ({
 		let desc =
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
-	  if (isRaid && card.rank_id === ranksMeta.ultimate.rank_id) {
+		if (isRaid && card.rank_id === ranksMeta.ultimate.rank_id) {
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];
 			if (canStealSouls) {
-				const soulsToSeal = opponentStats.cards.length || 0;
+				const soulsToSeal = (opponentStats.cards.length || 0) * (multiplier || 1);
 				desc =
-		desc +
-		`**${playerStats.name}'s ${titleCase(card.name)}** has stolen __${
-			soulsToSeal
-		}__ Souls.`;
+          desc +
+          `**${playerStats.name}'s ${titleCase(
+          	card.name
+          )}** has stolen __${soulsToSeal}__ Souls.`;
 
 				if (soulsToSeal > 0) {
+					playerStats.soulGainText = `• **${titleCase(
+						card.name
+					)}** has also gained __${soulsToSeal}__ Souls.`;
 					card.souls = card.souls + soulsToSeal;
 					updateCollection({ id: card.id }, { souls: card.souls });
 				}
 			}
-	  }
+		}
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

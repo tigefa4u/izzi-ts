@@ -60,10 +60,14 @@ const argMap = [
 	{
 		name: "role",
 		alias: [ "-ro", "-role" ]
+	},
+	{
+		name: "is_on_cooldown",
+		alias: [ "-cd" ]
 	}
 ];
 
-const exceptionalFilters = [ "is_favorite", "is_on_market" ];
+const exceptionalFilters = [ "is_favorite", "is_on_market", "is_on_cooldown" ];
 
 export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 	const params = {} as ParamsFromArgsRT<T>;

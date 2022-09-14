@@ -117,7 +117,6 @@ export const gifs: T[] = [
 			"https://i.kym-cdn.com/photos/images/newsfeed/001/000/252/735.gif",
 			"https://thumbs.gfycat.com/ScholarlyScientificBlackmamba-max-1mb.gif",
 			"https://i.imgur.com/DylehYr.gif",
-			"https://media.tenor.com/images/571178c566564d94ff392d33643e59c3/tenor.gif",
 			"https://media.tenor.com/images/cf9a069e14a72656be421aea3714b1e4/tenor.gif",
 		],
 		command_id: 118,
@@ -194,8 +193,6 @@ export const gifs: T[] = [
 	{
 		id: 66,
 		url: [
-			"https://media1.tenor.com/images/01806b1959041450c72cbaea4e09eb9b/tenor.gif?itemid=15981483",
-			"https://media4.giphy.com/media/irZQA0LSRtpWE/giphy.gif",
 			"https://media1.tenor.com/images/e62fc9360b184a7dd8a0e786d5d594fc/tenor.gif?itemid=12381387",
 			"https://i.pinimg.com/originals/1b/4a/4d/1b4a4d70324db4ebb5849dd67d1d6414.gif",
 			"https://media1.tenor.com/images/b6e68f18daa4c9f136f0926b0ab78f04/tenor.gif?itemid=6075636",

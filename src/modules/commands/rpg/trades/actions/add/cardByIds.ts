@@ -45,7 +45,8 @@ export const addCardByIds = async ({
 		collections = collections?.filter(c => !c.is_on_cooldown);
 		if (!collections || collections.length <= 0) {
 			embed.setDescription(
-				"The card(s) you are looking for is either not available or is on sale on the Global Market,"
+				"The card(s) you are looking for is either not available or on cooldown " +
+				"or is on sale on the Global Market,"
 			);
 			channel?.sendMessage(embed);
 			return;

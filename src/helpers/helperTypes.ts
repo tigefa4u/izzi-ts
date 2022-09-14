@@ -6,6 +6,7 @@ export type RanksMetaProps = {
         size: number;
         rank_id: number;
         color?: string;
+        max_level?: number;
     }
 }
 
