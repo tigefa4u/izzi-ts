@@ -7,11 +7,20 @@ import { getGuild } from "api/controllers/GuildsController";
 import { getStageForBattle } from "api/controllers/StagesController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
-import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
-import { DEFAULT_ERROR_TITLE, HIDE_VISUAL_BATTLE_ARG, MANA_PER_BATTLE } from "helpers/constants";
+import {
+	refetchAndUpdateUserMana,
+	validateFiveMinuteTimer,
+} from "helpers/battle";
+import {
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_STARTER_GUIDE_TITLE,
+	HIDE_VISUAL_BATTLE_ARG,
+	MANA_PER_BATTLE,
+} from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -30,7 +39,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		if (inBattle) {
 			await validateFiveMinuteTimer({
 				timestamp: inBattle.timestamp,
-				key: `cooldown::mana-battle-${author.id}` 
+				key: `cooldown::mana-battle-${author.id}`,
 			});
 			context.channel?.sendMessage(
 				"Your battle is still in progress. " +
@@ -85,7 +94,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		const card = await getCardForBattle({
 			id: user.selected_card_id,
 			user_id: user.id,
-			user_tag: user.user_tag
+			user_tag: user.user_tag,
 		});
 		if (!card) return;
 
@@ -121,18 +130,18 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			created_at: "",
 			updated_at: "",
 			souls: 0,
-			is_on_cooldown: false
+			is_on_cooldown: false,
 		} as CollectionCardInfoProps;
 		if (zone.metadata?.assets) {
 			enemyCard.filepath = zone.metadata.assets.small.filepath;
 		}
 		const paramArgs = (args.shift() || "").toLowerCase();
-		if (args && (paramArgs === "all")) {
+		if (args && paramArgs === "all") {
 			const inCd = await getCooldown(author.id, "mana-battle");
 			if (inCd) return;
 			if (
 				battleCardDetails.floor === user.max_floor &&
-		battleCardDetails.ruin === battleCardDetails.max_ruin
+        battleCardDetails.ruin === battleCardDetails.max_ruin
 			) {
 				const errorEmbed = createEmbed(author, client);
 				errorEmbed
@@ -163,7 +172,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 				multiplier: multiplier,
 				channel: context.channel,
 			});
-			user.mana = user.mana - (multiplier * MANA_PER_BATTLE);
+			user.mana = user.mana - multiplier * MANA_PER_BATTLE;
 			await Promise.all([
 				updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
 				clearCooldown(author.id, "mana-battle"),
@@ -242,7 +251,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			enemyStats: enemyBase,
 			title: `__Challenging Floor ${user.ruin}-${user.floor}__`,
 			isRaid: false,
-			options: { hideVisualBattle: paramArgs === HIDE_VISUAL_BATTLE_ARG ? true : false }
+			options: { hideVisualBattle: paramArgs === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 		});
 		clearCooldown(author.id, "mana-battle");
 		refetchAndUpdateUserMana(author.id);
@@ -259,6 +268,25 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			multiplier: 1,
 			channel: context.channel,
 		});
+
+		const key = "guide::" + author.id;
+		const starterGuide = await Cache.get(key);
+		if (starterGuide) {
+			const guideEmbed = createEmbed(author, client)
+				.setTitle(DEFAULT_STARTER_GUIDE_TITLE)
+				.setDescription(
+					`Yay! Well done Summoner **${author.username}**! You have completed ` +
+            "your first floor challenge. On defeating the floor boss you will receive gold and " +
+            "experience to advance further and level up. " +
+            "Your card will also receive exp to level up and become more powerful." +
+            "You can advance to the next floor using ``@izzi fl n`` or ``@izzi fl <number>``"
+				)
+				.setFooter({
+					iconURL: author.displayAvatarURL(),
+					text: "Guide will automatically expire in 10 mins.",
+				});
+			context.channel?.sendMessage(guideEmbed);
+		}
 		return;
 	} catch (err) {
 		loggers.error(

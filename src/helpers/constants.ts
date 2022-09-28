@@ -279,3 +279,5 @@ export const GUILD_STATUS_MAX_LENGTH = 350;
 export const MAX_GOLD_THRESHOLD = 999999999;
 
 export const CHARACTER_LEVEL_EXTENDABLE_LIMIT = 10;
+
+export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
