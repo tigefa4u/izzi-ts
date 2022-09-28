@@ -47,7 +47,7 @@ export const createCollection: (
 	}
 };
 
-type CT = { name?: string | string[]; type?: string | string[]; }
+type CT = { name?: string | string[]; type?: string | string[]; isExactMatch?: boolean; }
 const safeParseCharacterParams = (params = {} as CT) => {
 	const obj = {};
 	if (params.name) {
@@ -55,6 +55,9 @@ const safeParseCharacterParams = (params = {} as CT) => {
 	}
 	if (params.type) {
 		Object.assign(obj, { type: params.type });
+	}
+	if (params.isExactMatch) {
+		Object.assign(obj, { isExactMatch: params.isExactMatch });
 	}
 	return obj;
 };
