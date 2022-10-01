@@ -30,18 +30,18 @@ const baseLoot = (): any => ({
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 12.5
+						rate: 7.5
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 8.5,
+						rate: 3.25,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 2,
+						rate: .7,
 						number: 1,
 						isStaticDropRate: true
 					},
@@ -87,18 +87,18 @@ const baseLoot = (): any => ({
 						rank: "legend",
 						rank_id: 5,
 						number: 1,
-						rate: 14.5
+						rate: 8.5
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 10.5,
+						rate: 6.15,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 4,
+						rate: 2,
 						number: 1,
 					},
 				],
@@ -145,19 +145,19 @@ const baseLoot = (): any => ({
 					{
 						rank: "legend",
 						rank_id: 5,
-						rate: 16.2,
+						rate: 12.22,
 						number: 1
 					},
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 12.4,
+						rate: 9.43,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 6.5,
+						rate: 3.25,
 						number: 1
 					}
 				]
@@ -204,19 +204,19 @@ const baseLoot = (): any => ({
 					{
 						rank: "divine",
 						rank_id: 6,
-						rate: 14.5,
+						rate: 11.25,
 						number: 1,
 					},
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 8,
+						rate: 5.75,
 						number: 1,
 					},
 					{
 						rank: "exclusive",
 						rank_id: 8,
-						rate: 5,
+						rate: 2.05,
 						number: 1
 					}
 				],

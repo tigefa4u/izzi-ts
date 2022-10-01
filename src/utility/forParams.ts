@@ -64,6 +64,10 @@ const argMap = [
 	{
 		name: "is_on_cooldown",
 		alias: [ "-cd" ]
+	},
+	{
+		name: "collection_ids",
+		alias: [ "-cid" ]
 	}
 ];
 
