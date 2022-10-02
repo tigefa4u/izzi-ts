@@ -198,11 +198,11 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 			}
 			const guideEmbed = createEmbed(author, client).setTitle(DEFAULT_STARTER_GUIDE_TITLE + " Completed! " + 
 			emoji.welldone)
-				.setDescription(`Yay! Well done Summoner **${author.username}**! ` +
-			"Similarly on completing a zone use ``@izzi zn n`` to move to the next zone in the Xenverse.\n" +
+				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\n` +
+			"Similarly, on completing a zone use ``@izzi zn n`` to move to the next zone in the Xenverse.\n\n" +
 			"Congratulations on completing the starter guide! You are now ready to take on the " +
-			"challenges and head on your own path. Use ``@izzi h`` for more commands" +
-			"Hope your find the journey exciting and fun. Happy Hunting, GLHF!")
+			"challenges and head on your own path.\n\nUse ``@izzi h`` for more commands" +
+			"Hope your find the journey exciting and fun.\n\nHappy Hunting, GLHF!")
 				.setFooter({
 					text: "Guide will automatically expire in 10 mins",
 					iconURL: author.displayAvatarURL() 

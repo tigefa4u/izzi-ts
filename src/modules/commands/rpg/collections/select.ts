@@ -44,9 +44,9 @@ export const selectCard = async ({
 		
 		if (starterGuide) {
 			const embed = createEmbed(author, client).setTitle(`${DEFAULT_STARTER_GUIDE_TITLE} ${emoji.welldone}`)
-				.setDescription(`Yay! Well done Summoner **${author.username}**! You have selected ` +
-				"your first card from your card collection. To view all of your collections use ``@izzi inv``\n" +
-				"Now that you have selected your card it is now time to attack a floor boss. " +
+				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\nYou have selected ` +
+				"your first card from your card collection.\nTo view all of your collections use ``@izzi inv``\n" +
+				"Now that you have selected your card it is now time to attack a floor boss.\n" +
 				"Use ``@izzi bt`` to initiate a floor battle.")
 				.setFooter({
 					iconURL: author.displayAvatarURL(),

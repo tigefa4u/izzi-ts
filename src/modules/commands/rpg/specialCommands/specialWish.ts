@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { getUserRaidLobby } from "api/controllers/RaidsController";
+import { getUserRaidLobby, updateRaid, updateRaidEnergy } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
@@ -87,10 +87,12 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 					return;
 				}
 				if (currentRaid.lobby[user.id].energy < 25) {
-					currentRaid.lobby[user.id] = {
-						...currentRaid.lobby[user.id],
-						energy: 25
-					};
+					await updateRaidEnergy({ id: currentRaid.id }, {
+						[user.id]: {
+							...currentRaid.lobby[user.id],
+							energy: 25
+						}
+					});
 					embed.setDescription("Hey mommy, looks like you were having trouble attacking in raid. " +
 					"I've refilled your energy, so attack away! :heart:");
 				} else {

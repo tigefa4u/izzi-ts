@@ -47,12 +47,12 @@ export const starterGuide = async ({
 			return;
 		}
 		embed
-			.setDescription(`Welcome Summoner **${author.username}**! This is a starter guide to ` +
-            "help new players familiarize with the gameplay.\n\nYou have been moved to challenging " +
+			.setDescription(`Welcome Summoner **${author.username}**!\n\nThis is a starter guide to ` +
+            "help new players familiarize with the gameplay.\nYou have been moved to challenging " +
             "floor ``Zone 1 Floor 1`` in the Xenverse " +
             "(We will move you back to your original location if you were on a " +
-            "different location on completion of the guide)" +
-            "To begin with select a " +
+            "different location on completion of the guide)\n" +
+            "To begin, select a " +
             "card to fight alongside you using ``@izzi select 1``");
         
 		const cacheParams = {

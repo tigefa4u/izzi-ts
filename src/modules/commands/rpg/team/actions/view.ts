@@ -24,6 +24,7 @@ async function handleTeamView(
 	const teamDetails = await showTeam({
 		user_id: params.extras.user_id,
 		name: selected.name,
+		showGuildBonus: true
 	});
 	if (!teamDetails) {
 		params.channel?.sendMessage(

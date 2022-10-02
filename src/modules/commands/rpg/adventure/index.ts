@@ -275,10 +275,10 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			const guideEmbed = createEmbed(author, client)
 				.setTitle(DEFAULT_STARTER_GUIDE_TITLE)
 				.setDescription(
-					`Yay! Well done Summoner **${author.username}**! You have completed ` +
+					`Yay! Well done Summoner **${author.username}**!\n\nYou have completed ` +
             "your first floor challenge. On defeating the floor boss you will receive gold and " +
-            "experience to advance further and level up. " +
-            "Your card will also receive exp to level up and become more powerful." +
+            "experience to advance further and level up.\n" +
+            "Your card will also receive exp to level up and become more powerful.\n\n" +
             "You can advance to the next floor using ``@izzi fl n`` or ``@izzi fl <number>``"
 				)
 				.setFooter({
