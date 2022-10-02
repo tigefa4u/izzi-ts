@@ -18,13 +18,18 @@ export const registerSlashCommands = async (client: Client) => {
 			{
 				name: "options",
 				description: "use <commands> to invoke izzi",
-				type: Constants.ApplicationCommandOptionTypes.STRING
-			}
-		]
+				type: Constants.ApplicationCommandOptionTypes.STRING,
+			},
+		],
 	});
 	console.log("registered slash command");
-	// const allCommands = await getAllCommands();
-	// if (!allCommands) return;
+	const allCommands = await getAllCommands();
+	if (!allCommands) return;
+	allCommands.forEach(async (command) =>
+		client.application?.commands.cache
+			.find((c) => c.name === command.name)
+			?.delete()
+	);
 	// allCommands.forEach(async (command) => {
 	// 	try {
 	// 		await commands
