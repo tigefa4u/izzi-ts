@@ -165,6 +165,9 @@ export const simulateBattle = async ({
 			simulation.isForfeit = true;
 			return roundStats;
 		}
+		if (roundStats) {
+			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
+		}
 		return roundStats;
 	} catch (err) {
 		simulation.hasCrashed = true;

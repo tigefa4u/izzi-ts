@@ -1,8 +1,10 @@
 import { BattleProcessProps } from "@customTypes/adventure";
-import { randomElementFromArray } from "helpers";
+import emoji from "emojis/emoji";
+import { randomElementFromArray, round2Decimal } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
+import { titleCase } from "title-case";
 
 export * from "./stacks";
 export * from "./heals";
@@ -22,7 +24,7 @@ export const dragonRage = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: any) => {
 	if (!card) return;
 	// "While your health is below 35% lower your **INT** by __10%__ and increase your **ATK** by __35__% (OLD)
@@ -79,7 +81,7 @@ export const dragonRage = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -97,7 +99,7 @@ export const predator = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: any) => {
 	if (!card) return;
 	// Increase the **ATK/DEF** by __20%__ as well as increasing its **SPD** by __10%__
@@ -146,7 +148,7 @@ export const predator = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -163,7 +165,7 @@ export const bonePlating = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Buff your allies with **Bone Plating** taking, __30%__ less damage from normal attacks for 2 turns
@@ -191,7 +193,7 @@ export const bonePlating = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isPlatting)
@@ -218,7 +220,7 @@ export const killerInstincts = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: any) => {
 	if (!card) return;
 	// need to change
@@ -250,8 +252,7 @@ export const killerInstincts = ({
       basePlayerStats.totalStats.evasion *
       ((basePlayerStats.totalStats.evasionTemp * evaPercent) / 100);
 		basePlayerStats.totalStats.evasionTemp++;
-		playerStats.totalStats.evasion =
-		playerStats.totalStats.evasion + evaRatio;
+		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 
 		const desc =
       `increasing **INT** by __${incPercent}%__ as well as increasing **SPD** by __${incPercent}%__, ` +
@@ -268,7 +269,7 @@ export const killerInstincts = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -277,6 +278,23 @@ export const killerInstincts = ({
 	};
 };
 
+const abilitiesToResist = [
+	{
+		name: "Elemental Strike",
+		emoji: emoji.elementalstrike,
+		key: "elementalStrike"
+	},
+	{
+		name: "Electrocute",
+		emoji: emoji.electrocute,
+		key: "electrocute"
+	},
+	{
+		name: "Tornado",
+		emoji: emoji.tornado,
+		key: "tornado"
+	},
+];
 export const futureSight = ({
 	playerStats,
 	opponentStats,
@@ -286,11 +304,12 @@ export const futureSight = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
-	// as well as increasing **EVA** by __5%__.
+	// as well as increasing **EVA** by __15%__. Also gain __20%__ chance to evade Elemental strike or Electrocute
+	// or Misdirection.
 	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);
@@ -302,7 +321,25 @@ export const futureSight = ({
       relDiff * playerStats.totalStats.intelligenceTemp;
 		if (!basePlayerStats.totalStats.evasionTemp)
 			basePlayerStats.totalStats.evasionTemp = 1;
-		const evaPercent = calcPercentRatio(5, card.rank);
+
+		const abilityToResist = randomElementFromArray(abilitiesToResist);
+		const resistPercent = calcPercentRatio(20, card.rank);
+		if (playerStats.totalStats.abilityToResist) {
+			playerStats.totalStats.abilityToResist = {
+				...playerStats.totalStats.abilityToResist,
+				[abilityToResist.key]: {
+					percent: round2Decimal(
+						(playerStats.totalStats.abilityToResist[abilityToResist.key]
+							.percent || 0) +
+              resistPercent / 100
+					),
+				},
+			};
+		} else {
+			playerStats.totalStats.abilityToResist = { [abilityToResist.key]: { percent: (resistPercent / 100) } };
+		}
+
+		const evaPercent = calcPercentRatio(15, card.rank);
 		const evaRatio =
       basePlayerStats.totalStats.evasion *
       ((basePlayerStats.totalStats.evasionTemp * evaPercent) / 100);
@@ -311,7 +348,8 @@ export const futureSight = ({
       basePlayerStats.totalStats.evasion + evaRatio;
 		const desc =
       `increasing **INT** of all allies by __${percent}%__ as well as increasing ` +
-      `**Evasion Chances** by __${evaPercent}%__`;
+      `**Evasion Chances** by __${evaPercent}%__ and has also gained __${resistPercent}%__ chance to ` +
+      `evade **${abilityToResist.name} ${abilityToResist.emoji}**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -324,7 +362,7 @@ export const futureSight = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {

@@ -98,13 +98,13 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 			value = value.split(",");
 			args = args.slice(args.length);
 		}
-		if (value.length > 10) {
-			value.splice(0, 10);
+		if (value.length > 25) {
+			value.splice(0, 25);
 		}
 		if (index >= 0) {
 			const key = argMap[index].name;
 			if (typeof value === "object" && (!value.some((v) => v === "") || exceptionalFilters.includes(key))) {
-				Object.assign(params, { [key]: value });
+				Object.assign(params, { [key]: value.map((v) => v.trim()) });
 			}
 		}
 		i--;

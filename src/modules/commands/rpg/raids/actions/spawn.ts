@@ -53,13 +53,13 @@ const raidDivisions = {
 		name: "D2",
 		min: 9000,
 		max: 13000,
-		rate: randomNumber(6, 12)
+		rate: randomNumber(2, 3)
 	},
 	d1: {
 		name: "D1",
 		min: 13000,
 		max: 30000,
-		rate: randomNumber(9, 15)
+		rate: randomNumber(4, 5)
 	}
 };
 
@@ -67,12 +67,16 @@ const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
 	if (pl >= raidDivisions.d1.min && pl < raidDivisions.d1.max) {
 		loot.division = raidDivisions.d1.name;
 		loot.rare?.map((drop) => {
-			drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
+			}
 		});
 	} else if (pl >= raidDivisions.d2.min && pl < raidDivisions.d2.max) {
 		loot.division = raidDivisions.d2.name;
 		loot.rare?.map((drop) => {
-			drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+			}
 		});
 	}
 	return loot;
