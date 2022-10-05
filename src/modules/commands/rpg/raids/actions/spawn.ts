@@ -40,7 +40,7 @@ import {
 } from "..";
 import { computeRank } from "../computeBoss";
 
-const spawnImmunity = [ "266457718942990337" ];
+const spawnImmunity = [ "266457718942990337", "476049957904711682" ];
 type C = {
   computedBoss: PrepareLootProps;
   isEvent: boolean;
