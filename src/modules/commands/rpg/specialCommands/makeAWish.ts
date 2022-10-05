@@ -3,7 +3,7 @@ import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { sort } from "../sorting";
 import { makeAWishHelp } from "./help";
-import { setCharacterLevel } from "./hoaxCommands";
+import { addRaidDamage, setCharacterLevel } from "./hoaxCommands";
 import { specialWish } from "./specialWish";
 import { subcommands } from "./subcommands";
 
@@ -26,6 +26,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "help") {
 				makeAWishHelp(params);
+				return;
+			} else if (subcommand === "rdmg") {
+				addRaidDamage(params);
 				return;
 			}
 		}
