@@ -330,7 +330,7 @@ export const futureSight = ({
 				[abilityToResist.key]: {
 					percent: round2Decimal(
 						(playerStats.totalStats.abilityToResist[abilityToResist.key]
-							.percent || 0) +
+							?.percent || 0) +
               resistPercent / 100
 					),
 				},
