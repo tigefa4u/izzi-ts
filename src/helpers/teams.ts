@@ -103,7 +103,7 @@ export const prepareTotalOverallStats = async (
 	};
 
 	const totalOverallStats = result.reduce((acc, r) => {
-		return {
+		const reducedObj = {
 			vitality: acc.vitality + r.vitality,
 			defense: acc.defense + r.defense,
 			dexterity: acc.dexterity + r.dexterity,
@@ -114,7 +114,24 @@ export const prepareTotalOverallStats = async (
 			accuracy: 1,
 			critical: 1,
 			precision: 1,
-		};
+		} as OverallStatsProps;
+		if (acc.vitalityBonus || r.vitalityBonus) {
+			reducedObj.vitalityBonus = (acc.vitalityBonus || 0) + (r.vitalityBonus || 0);
+		}
+		if (acc.defenseBonus || r.defenseBonus) {
+			reducedObj.defenseBonus = (acc.defenseBonus || 0) + (r.defenseBonus || 0);
+		}
+
+		if (acc.strengthBonus || r.strengthBonus) {
+			reducedObj.strengthBonus = (acc.strengthBonus || 0) + (r.strengthBonus || 0);
+		}
+		if (acc.dexterityBonus || r.dexterityBonus) {
+			reducedObj.dexterityBonus = (acc.dexterityBonus || 0) + (r.dexterityBonus || 0);
+		}
+		if (acc.intelligenceBonus || r.intelligenceBonus) {
+			reducedObj.intelligenceBonus = (acc.intelligenceBonus || 0) + (r.intelligenceBonus || 0);
+		}
+		return reducedObj;
 	}, initialStats as OverallStatsProps);
 
 	const totalPowerLevel =

@@ -18,6 +18,33 @@ export const electrocute = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
+	if (opponentStats.totalStats.abilityToResist?.electrocute) {
+		const canResist = [ true, false ][
+			probability([ opponentStats.totalStats.abilityToResist.electrocute.percent, 100 ])
+		];
+
+		if (canResist) {
+			const desc = `but **${opponentStats.name}** was influenced by **Future Sight** taking **No damage.**`;
+			prepSendAbilityOrItemProcDescription({
+				playerStats,
+				enemyStats: opponentStats,
+				card,
+				message,
+				embed,
+				round,
+				isDescriptionOnly: false,
+				description: desc,
+				totalDamage: 0,
+				isPlayerFirst,
+				isItem: false,
+				simulation
+			});
+			return {
+				playerStats,
+				opponentStats
+			};
+		}
+	}
 	let damageDiff;
 	const procStun = [ true, false ];
 	let perDamage;
@@ -165,6 +192,33 @@ export const misdirection = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
+	if (opponentStats.totalStats.abilityToResist?.misdirection) {
+		const canResist = [ true, false ][
+			probability([ opponentStats.totalStats.abilityToResist.misdirection.percent, 100 ])
+		];
+
+		if (canResist) {
+			const desc = "but it **Failed.**";
+			prepSendAbilityOrItemProcDescription({
+				playerStats,
+				enemyStats: opponentStats,
+				card,
+				message,
+				embed,
+				round,
+				isDescriptionOnly: false,
+				description: desc,
+				totalDamage: 0,
+				isPlayerFirst,
+				isItem: false,
+				simulation
+			});
+			return {
+				playerStats,
+				opponentStats
+			};
+		}
+	}
 	let abilityDamage, damageDiff;
 	// inflict a stack of confusion on your enemies and gain a chance to cause them to inflict damage
 	// upon itself based on their attack as well as increasing **INT** of all allies by __20%__.

@@ -62,6 +62,7 @@ export const ranksMeta: RanksMetaProps = {
 	ultimate: {
 		size: 9,
 		rank_id: 9,
+		max_level: 70
 	},
 };
 
@@ -163,7 +164,6 @@ export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
 export const GUILD_MARKET_IDS = [ 2, 5 ];
 export const GUILD_MAX_DONATION = 10000000;
-export const GUILD_TOTAL_DONATION_THRESHOLD = 999999999;
 export const GUILD_MAX_LEVEL = 150;
 export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
 export const SOUL_ID = 2;
@@ -218,7 +218,7 @@ export const DUNGEON_DEFAULTS = {
 	numberOfRanks: 5,
 };
 
-export const BATTLES_PER_CHANNEL = 1;
+export const BATTLES_PER_CHANNEL = 2;
 export const BATTLE_FORFEIT_RETRIES = 1;
 
 export const USER_XP_GAIN_PER_BATTLE = 8;
@@ -232,7 +232,7 @@ export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
 
 export const MARKET_PURCHASE_LIMIT = 5;
 
-export const MAX_CHOSEN_SKINS_ALLOWED = 20;
+export const MAX_CHOSEN_SKINS_ALLOWED = 30;
 
 export const MIN_RAID_USER_LEVEL = 5;
 export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];
@@ -250,7 +250,7 @@ export const THREAD_CHANNEL_PERMISSIONS = [
 	"SEND_MESSAGES_IN_THREADS"
 ];
 
-export const MAX_REQUESTS_PER_CHANNEL = 5;
+export const MAX_REQUESTS_PER_CHANNEL = 6;
 
 export const MAX_GUILD_ITEMS_PURCHASABLE = 50;
 export const MAX_GUILD_REPUTATION_POINTS = 10;
@@ -275,3 +275,46 @@ export const MAX_CARD_NICKNAME_LENGTH = 80;
 export const RAID_PING_NAME = "raid ping [bot]";
 
 export const GUILD_STATUS_MAX_LENGTH = 350;
+
+export const MAX_GOLD_THRESHOLD = 999999999;
+
+export const CHARACTER_LEVEL_EXTENDABLE_LIMIT = 10;
+
+export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
+
+export const MAX_CONSUMABLE_SOULS = 700;
+
+export const CONSOLE_BUTTONS = {
+	VOTE: {
+		id: "vote",
+		label: "Vote",
+	},
+	FLOOR_BT: {
+		id: "floor_bt",
+		label: "Fl Bt"
+	},
+	FLOOR_BT_ALL: {
+		id: "floor_bt_all",
+		label: "Bt all"
+	},
+	NEXT_FLOOR: {
+		id: "next_floor",
+		label: "Fl n"
+	},
+	NEXT_ZONE: {
+		id: "next_zone",
+		label: "Zn n"
+	},
+	RAID_BATTLE: {
+		id: "raid_bt",
+		label: "Rd bt"
+	},
+	RAID_SPAWN: {
+		id: "raid_spawn",
+		label: "Raid spawn"
+	},
+	CONSOLE: {
+		id: "console",
+		label: "Console"
+	}
+};

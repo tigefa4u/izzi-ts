@@ -3,6 +3,8 @@ import { BaseProps } from "@customTypes/command";
 import { SelectMenuOptions } from "@customTypes/selectMenu";
 import { TeamProps } from "@customTypes/teams";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
+import { getGuild } from "api/controllers/GuildsController";
 import { getAllTeams } from "api/controllers/TeamsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -29,18 +31,24 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const subcommand = filterSubCommands(args.shift() || "view", subcommands);
+		const cmd = args.shift();
+		const subcommand = filterSubCommands(cmd || "view", subcommands);
 		const params = {
 			context,
 			author,
 			args,
 			client,
 			user_id: user.id,
-			user
+			user,
+			canShowSelectedTeam: args.length <= 0 ? true : false,
+			selectedTeamId: user.selected_team_id,
 		};
 		if (subcommand === "create") {
 			createTeam(params);
 		} else if (subcommand === "view") {
+			if (cmd === "view") {
+				params.canShowSelectedTeam = false;
+			}
 			viewTeam(params);
 		} else if (subcommand === "select") {
 			selectTeam(params);
@@ -82,14 +90,17 @@ export async function prepareAndSendTeamMenuEmbed<P>(
 	params: P,
 	callback: (params: P, value: string) => void,
 	extras?: {
-        title: string;
-        description: string;
-    }
+    title: string;
+    description: string;
+  }
 ) {
 	const embed = createEmbed(author, client)
 		.setTitle(extras?.title || `${author.username}'s Teams`)
-		.setDescription(extras?.description || "A list of all your Teams are shown in the Select Menu");
-	
+		.setDescription(
+			extras?.description ||
+        "A list of all your Teams are shown in the Select Menu"
+		);
+
 	const selectMenu = await selectionInteraction(
 		channel,
 		author.id,
@@ -109,9 +120,11 @@ export async function prepareAndSendTeamMenuEmbed<P>(
 export async function showTeam({
 	user_id,
 	name,
+	showGuildBonus = false
 }: {
   name: string;
   user_id: number;
+  showGuildBonus?: boolean;
 }) {
 	const result = await getAllTeams({
 		user_id,
@@ -131,9 +144,17 @@ export async function showTeam({
 			user_id,
 		});
 		if (!collections) return;
+		let guild;
+		if (showGuildBonus) {
+			const guildMember = await getGuildMember({ user_id: user_id });
+			if (guildMember) {
+				guild = await getGuild({ id: guildMember.guild_id });
+			}
+		}
 		totalOverallStats = await prepareTotalOverallStats({
 			collections,
-			isBattle: false 
+			isBattle: false,
+			guildStats: guild?.guild_stats,
 		});
 	}
 
@@ -141,7 +162,7 @@ export async function showTeam({
 		const desc = prepareDefaultTeamDescription();
 		return {
 			title: `Team ${name}`,
-			desc
+			desc,
 		};
 	}
 	const {
@@ -149,9 +170,10 @@ export async function showTeam({
 		totalOverallStats: totalTeamStats,
 		totalPowerLevel: totalTeamPowerLevel,
 	} = totalOverallStats;
-	const desc = `The Positions of the assigned cards are listed below.\n\n${teamPosition.sort((a, b) => {
-		return a.position > b.position ? 1 : -1;
-	})
+	const desc = `The Positions of the assigned cards are listed below.\n\n${teamPosition
+		.sort((a, b) => {
+			return a.position > b.position ? 1 : -1;
+		})
 		.map((item) => {
 			const card = collections.filter((c) => c.id === item.collection_id)[0];
 			if (!card) {
@@ -159,20 +181,34 @@ export async function showTeam({
 			}
 			return `__Position #${item.position}__\n${
 				item.collection_id
-					? `**${titleCase(card.metadata?.nickname || card.name)} ${emojiMap(card.type)} ${emojiMap(
-						card.itemname || (item.item_id && item.itemName ? item.itemName : "") || ""
-					)}**\n__${titleCase(card.rank)}__ | Level ${
-						card.character_level
+					? `**${titleCase(card.metadata?.nickname || card.name)} ${emojiMap(
+						card.type
+					)} ${emojiMap(
+						card.itemname ||
+                (item.item_id && item.itemName ? item.itemName : "") ||
+                ""
+					)}**\n__${titleCase(card.rank)}__ | Level ${card.character_level}`
+					: `Not Assigned | ${
+						item.itemName && item.item_id
+							? emojiMap(item.itemName)
+							: "Not Equipped"
 					}`
-					: `Not Assigned | ${item.itemName && item.item_id ? emojiMap(item.itemName) : "Not Equipped"}`
 			}`;
 		})
 		.join("\n\n")}\n\n**__Total Stats__**\n\n**Team HP:** ${
 		totalTeamStats.strength
-	}\n**Team ATK:** ${totalTeamStats.vitality}\n**Team DEF:** ${
-		totalTeamStats.defense
-	}\n**Team INT:** ${totalTeamStats.intelligence}\n**Team SPD:** ${
-		totalTeamStats.dexterity
+	}${
+		totalTeamStats.strengthBonus ? ` (+${totalTeamStats.strengthBonus})` : ""
+	}\n**Team ATK:** ${totalTeamStats.vitality}${
+		totalTeamStats.vitalityBonus ? ` (+${totalTeamStats.vitalityBonus})` : ""
+	}\n**Team DEF:** ${totalTeamStats.defense}${
+		totalTeamStats.defenseBonus ? ` (+${totalTeamStats.defenseBonus})` : ""
+	}\n**Team INT:** ${totalTeamStats.intelligence}${
+		totalTeamStats.intelligenceBonus
+			? ` (+${totalTeamStats.intelligenceBonus})`
+			: ""
+	}\n**Team SPD:** ${totalTeamStats.dexterity}${
+		totalTeamStats.dexterityBonus ? ` (+${totalTeamStats.dexterityBonus})` : ""
 	}\n\n**Power Level:** ${totalTeamPowerLevel}`;
 
 	return {
@@ -182,8 +218,11 @@ export async function showTeam({
 }
 
 function prepareDefaultTeamDescription() {
-	const desc = "The Positions of the assigned cards are listed below.\n\n" + 
-        `${[ 1, 2, 3 ].map((i) => `__Position #${i}__\nNot Assigned`).join("\n\n")}\n\n**__Total Stats__** 0`;
+	const desc =
+    "The Positions of the assigned cards are listed below.\n\n" +
+    `${[ 1, 2, 3 ]
+    	.map((i) => `__Position #${i}__\nNot Assigned`)
+    	.join("\n\n")}\n\n**__Total Stats__** 0`;
 
 	return desc;
 }

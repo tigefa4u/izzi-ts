@@ -34,11 +34,12 @@ async function validateAndSellCard(
 			is_item: false,
 			is_on_market: false,
 			id: params.extras.id,
-			user_id: user.id
+			user_id: user.id,
+			is_on_cooldown: false
 		});
 		if (!collection || collection.length <= 0) {
 			params.channel?.sendMessage(
-				"We could not find the card you were looking for in your collections. :no_entry:"
+				"The card you are looking for either does not exist in your collections or is on cooldown :no_entry:"
 			);
 			return;
 		}

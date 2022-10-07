@@ -5,6 +5,7 @@ import {
 	ICollectionCreateProps,
 } from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
+import { SortProps } from "@customTypes/sorting";
 import connection from "db";
 import { safeParseQueryParams } from "helpers/transformation";
 import { clone } from "utility";
@@ -39,6 +40,11 @@ export const transformation = {
 		type: "boolean",
 		default: false,
 		columnName: "is_on_market",
+	},
+	isOnCooldown: {
+		type: "boolean",
+		default: false,
+		columnName: "is_on_cooldown",
 	},
 	isItem: {
 		type: "boolean",
@@ -138,6 +144,10 @@ export const getAll = async function (
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
+	},
+	sort: SortProps = {
+		sortBy: "id",
+		sortOrder: "desc"
 	}
 ): Promise<CollectionProps[]> {
 	let queryParams = clone(params);
@@ -149,6 +159,8 @@ export const getAll = async function (
 	delete queryParams.is_favorite;
 	const isOnMarket = queryParams.is_on_market;
 	delete queryParams.is_on_market;
+	const isOnCooldown = queryParams.is_on_cooldown;
+	delete queryParams.is_on_cooldown;
 
 	queryParams = safeParseQueryParams({
 		query: queryParams,
@@ -160,7 +172,8 @@ export const getAll = async function (
 	let query = db
 		.select(
 			db.raw(
-				`${tableName}.*, row_number() over(order by rank_id desc, id desc)`
+				`${tableName}.*, row_number() over(order by rank_id desc, id 
+					${sort ? sort.sortOrder : "desc"})`
 			)
 		)
 		.from(tableName)
@@ -169,8 +182,8 @@ export const getAll = async function (
 
 	query = db
 		.select(db.raw(`${alias}.*, count(*) over() as total_count`))
-		.from(query)
-		.orderBy(`${alias}.rank_id`, "desc");
+		.from(query);
+	// .orderBy(`${alias}.rank_id`, "desc");
 
 	if (character_ids) {
 		query = query.whereIn(`${alias}.character_id`, character_ids);
@@ -183,8 +196,11 @@ export const getAll = async function (
 	if (isFavorite === true || isFavorite === false) {
 		query = query.where(`${alias}.is_favorite`, isFavorite);
 	}
-	if (isOnMarket || isOnMarket) {
+	if (isOnMarket === true || isOnMarket === false) {
 		query = query.where(`${alias}.is_on_market`, isOnMarket);
+	}
+	if (isOnCooldown === true || isOnCooldown === false) {
+		query = query.where(`${alias}.is_on_cooldown`, isOnCooldown);
 	}
 	query = query.limit(pagination.limit).offset(pagination.offset);
 	return query;
@@ -220,11 +236,18 @@ export const getByRowNumber = async (params: {
   row_number: number | number[];
   user_id: number;
   exclude_ids?: number[];
+  is_on_cooldown?: boolean;
+  sort?: SortProps;
 }): Promise<CollectionProps[]> => {
+	const sort = params.sort || {
+		sortBy: "id",
+		sortOrder: "desc"
+	};
 	const db = connection;
 	const alias = "collectionalias";
 	let query = db
-		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, id desc)`))
+		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, 
+			id ${sort ? sort.sortOrder : "desc"})`))
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.as(alias);
@@ -242,6 +265,9 @@ export const getByRowNumber = async (params: {
 	} else if (typeof params.row_number === "object") {
 		query = query
 			.whereIn(`${alias}.row_number`, params.row_number);
+	}
+	if (typeof params.is_on_cooldown === "boolean") {
+		query = query.where(`${alias}.is_on_cooldown`, params.is_on_cooldown);
 	}
 
 	return query;

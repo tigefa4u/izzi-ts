@@ -4,9 +4,11 @@ import loggers from "loggers";
 import { addGuildEvent, toggleTourneyMode } from "./actions";
 import { resetGuildEvents } from "./dangerZone";
 import { raidPing } from "./raidPing";
+import { abilityPing } from "./raidPing/abilityPing";
 import { raidRecruit } from "./recruit";
 import { subcommands } from "./subcommands";
 import { viewGuilldEvents } from "./view";
+import { raidPingView } from "./view/raidPingView";
 
 export const guildEvents = async ({ context, client, args, options }: BaseProps) => {
 	try {
@@ -29,6 +31,10 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			resetGuildEvents(params);
 		} else if (subcommand === "tourney") {
 			toggleTourneyMode(params);
+		} else if (subcommand === "abilityping") {
+			abilityPing(params);
+		} else if (subcommand === "raidpingview") {
+			raidPingView(params);
 		}
 		return;
 	} catch (err) {

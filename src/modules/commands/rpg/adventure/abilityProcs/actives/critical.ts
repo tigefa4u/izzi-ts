@@ -71,7 +71,7 @@ export const precision = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Increase the crit chances of all allies by 25% as well as increasing crit damage of allies by __8%__.
+	// Increase the crit chances of all allies by 40% as well as increasing crit damage of allies by __18%__.
 	// need to change prec to be 18%
 	if (!playerStats.totalStats.critNum) playerStats.totalStats.critNum = 2;
 	if (
@@ -87,7 +87,7 @@ export const precision = ({
 		playerStats.totalStats.critNum = playerStats.totalStats.critNum + num;
 		if (!basePlayerStats.totalStats.criticalTemp)
 			basePlayerStats.totalStats.criticalTemp = 1;
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(40, card.rank);
 		const crit =
       basePlayerStats.totalStats.critical *
       ((basePlayerStats.totalStats.criticalTemp * percent) / 100);

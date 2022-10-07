@@ -111,6 +111,7 @@ async function confirmAndBattle(
 			playerStats: playerStats.stats,
 			enemyStats: opponentStats.stats,
 			title: `__Team Battle Challenge ${params.author.username} vs ${mentionedUser.username}__`,
+			isRaid: false
 		});
 		Promise.all([
 			clearCooldown(params.author.id, "in-battle"),
@@ -199,9 +200,8 @@ export const teamBattle = async ({
 				}
 			}
 		);
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
+		embed.setButtons(buttons);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

@@ -50,6 +50,7 @@ export const simulateBattle = async ({
 	title = "__TEAM BATTLE__",
 	isRaid,
 	options,
+	multiplier
 }: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
@@ -127,6 +128,7 @@ export const simulateBattle = async ({
 				totalDamage,
 				isRaid,
 				simulation,
+				multiplier
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -162,6 +164,9 @@ export const simulateBattle = async ({
 			context.channel?.sendMessage("You have forfeit the battle");
 			simulation.isForfeit = true;
 			return roundStats;
+		}
+		if (roundStats) {
+			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
 		}
 		return roundStats;
 	} catch (err) {
@@ -345,9 +350,8 @@ async function visualizeSimulation({
 		}
 	);
 
-	if (buttons) {
-		embed.setButtons(buttons);
-	}
+	if (!buttons) return;
+	embed.setButtons(buttons);
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {
@@ -458,9 +462,11 @@ async function simulatePlayerTurns({
 	totalDamage,
 	isRaid,
 	simulation,
+	multiplier
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     isRaid?: boolean;
+	multiplier?: number;
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
@@ -512,6 +518,8 @@ async function simulatePlayerTurns({
 			playerStats: isPlayerFirst ? playerStats : enemyStats,
 			round,
 			simulation,
+			isRaid,
+			multiplier
 		});
 		// if (updatedStats.forfeit) {
 		// 	// Should never execute

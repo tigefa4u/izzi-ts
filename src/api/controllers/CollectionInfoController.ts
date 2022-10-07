@@ -4,6 +4,7 @@ import {
 	CollectionCardInfoProps,
 } from "@customTypes/collections";
 import { SkinProps } from "@customTypes/skins";
+import { SortProps } from "@customTypes/sorting";
 import loggers from "loggers";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 import * as Collections from "../models/Collections";
@@ -11,7 +12,8 @@ import { getCharacterInfo } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
 export const getCardInfoByRowNumber = async (
-	params: CollectionCardInfoByRowNumberParams
+	params: CollectionCardInfoByRowNumberParams,
+	sort?: SortProps
 ): Promise<CollectionCardInfoProps[] | undefined> => {
 	try {
 		if (!params.row_number) {
@@ -27,7 +29,10 @@ export const getCardInfoByRowNumber = async (
 		if (params.user_tag) {
 			skinArr = await getSkinArr(params.user_tag);
 		}
-		const result = await Collections.getByRowNumber(params);
+		const result = await Collections.getByRowNumber({
+			...params,
+			sort
+		});
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(
 				result.map(async (data) => {
@@ -41,7 +46,7 @@ export const getCardInfoByRowNumber = async (
 					const characterInfo = charainfo[0];
 					characterInfo.metadata = {
 						...characterInfo.metadata,
-						...data.metadata
+						...data.metadata,
 					} as CardMetadataProps;
 					if (skinArr) {
 						const idx = skinArr.findIndex(
@@ -52,13 +57,13 @@ export const getCardInfoByRowNumber = async (
 							if (skinArr[idx].metadata?.assets) {
 								const skinMeta = {
 									...skinArr[idx].metadata,
-									assets: (skinArr[idx].metadata.assets || {})[
+									assets: (skinArr[idx].metadata.assets || {} as any)[
 										characterInfo.rank
 									],
 								};
 								characterInfo.metadata = {
 									...data.metadata,
-									...skinMeta
+									...skinMeta,
 								};
 							}
 						}
@@ -125,7 +130,7 @@ export const getCollectionById = async (params: {
 					const characterInfo = charaInfo[0];
 					characterInfo.metadata = {
 						...characterInfo.metadata,
-						...data.metadata
+						...data.metadata,
 					} as CardMetadataProps;
 					if (skinArr) {
 						const idx = skinArr.findIndex(
@@ -136,13 +141,13 @@ export const getCollectionById = async (params: {
 							if (skinArr[idx].metadata?.assets) {
 								const skinMeta = {
 									...skinArr[idx].metadata,
-									assets: (skinArr[idx].metadata.assets || {})[
+									assets: (skinArr[idx].metadata.assets || {} as any)[
 										characterInfo.rank
 									],
 								};
 								characterInfo.metadata = {
 									...characterInfo.metadata,
-									...skinMeta
+									...skinMeta,
 								};
 							}
 						}
@@ -216,7 +221,7 @@ export const getCardForBattle = async (params: {
 					if (skinArr[idx].metadata?.assets) {
 						const skinMeta = {
 							...skinArr[idx].metadata,
-							assets: (skinArr[idx].metadata.assets || {})[characterInfo.rank],
+							assets: (skinArr[idx].metadata.assets || {} as any)[characterInfo.rank],
 						};
 						characterInfo.metadata = skinMeta;
 					}

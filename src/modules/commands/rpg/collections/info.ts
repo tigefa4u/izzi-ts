@@ -13,6 +13,7 @@ import { overallStats, prepareStatsDesc } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { getSortCache } from "../sorting/sortCache";
 
 function prepareInfoDescription(
 	infoData: CollectionCardInfoProps,
@@ -49,11 +50,12 @@ export const getCardInfo = async ({
 		if (!id || id <= 0 || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const sort = await getSortCache(author.id);
 		const infoDataByRow = await getCardInfoByRowNumber({
 			row_number: id,
 			user_id: user.id,
 			user_tag: author.id
-		});
+		}, sort);
 		if (!infoDataByRow) return;
 		const infoData = infoDataByRow[0];
 		if (!infoData || !infoData.characterInfo) return;

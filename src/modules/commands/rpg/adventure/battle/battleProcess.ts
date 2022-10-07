@@ -95,6 +95,8 @@ export const BattleProcess = async ({
 	opponentStats,
 	round,
 	simulation,
+	isRaid,
+	multiplier
 }: BattleProcessProps) => {
 	if (!opponentStats) {
 		throw new Error("Unable to process opponent");
@@ -113,6 +115,8 @@ export const BattleProcess = async ({
     	opponentStats,
     	round,
     	simulation,
+    	isRaid,
+    	multiplier
     });
 	if (rest.playerStats) {
 		playerStats.totalStats = rest.playerStats.totalStats;
@@ -197,6 +201,8 @@ async function processAbililtyOrItemProc({
 	opponentStats,
 	round,
 	simulation,
+	isRaid,
+	multiplier
 }: BattleProcessProps) {
 	let abilityProc = {} as AbilityProcReturnType,
 		abilityDamage = 0,
@@ -215,6 +221,8 @@ async function processAbililtyOrItemProc({
 			round,
 			opponentStats,
 			simulation,
+			isRaid,
+			multiplier
 		} as BattleProcessProps;
 		if (card.itemname) {
 			const itemCallable = itemProcMap[card.itemname as keyof ItemProcMapProps];

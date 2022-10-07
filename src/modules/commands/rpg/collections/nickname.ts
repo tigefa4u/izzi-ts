@@ -7,6 +7,7 @@ import { createEmbed } from "commons/embeds";
 import { DEFAULT_ERROR_TITLE, MAX_CARD_NICKNAME_LENGTH } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { getSortCache } from "../sorting/sortCache";
 
 export const nickname = async ({ context, client, args, options }: BaseProps) => {
 	try {
@@ -15,11 +16,12 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 		if (!rowid || isNaN(rowid) || rowid <= 0) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const sort = await getSortCache(author.id);
 		const rowData = await getCardInfoByRowNumber({
 			row_number: rowid,
 			user_id: user.id,
 			user_tag: author.id
-		});
+		}, sort);
 		if (!rowData || !rowData[0]) return;
 		const characterinfo = rowData[0];
 

@@ -1,15 +1,11 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { SelectMenuCallbackParams } from "@customTypes/selectMenu";
-import { TeamProps } from "@customTypes/teams";
+import { TeamExtraProps, TeamProps } from "@customTypes/teams";
 import { getAllTeams } from "api/controllers/TeamsController";
 import { createEmbed } from "commons/embeds";
 import loggers from "loggers";
-import {
-	prepareAndSendTeamMenuEmbed,
-	prepareTeamsForMenu,
-	showTeam,
-} from "..";
+import { prepareAndSendTeamMenuEmbed, prepareTeamsForMenu, showTeam } from "..";
 
 async function handleTeamView(
 	params: SelectMenuCallbackParams<{ teams: TeamProps[]; user_id: number }>,
@@ -28,9 +24,12 @@ async function handleTeamView(
 	const teamDetails = await showTeam({
 		user_id: params.extras.user_id,
 		name: selected.name,
+		showGuildBonus: true
 	});
 	if (!teamDetails) {
-		params.channel?.sendMessage(`Unable to view __Team ${selected.name}__. Please reset your team.`);
+		params.channel?.sendMessage(
+			`Unable to view __Team ${selected.name}__. Please reset your team.`
+		);
 		return;
 	}
 	const embed = createEmbed(params.author, params.client)
@@ -46,8 +45,13 @@ export const viewTeam = async ({
 	context,
 	author,
 	user_id,
-	args
-}: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
+	args,
+	canShowSelectedTeam,
+	selectedTeamId,
+}: Omit<BaseProps, "options"> & {
+  author: AuthorProps;
+  user_id: number;
+} & TeamExtraProps) => {
 	try {
 		const teams = await getAllTeams({ user_id });
 		if (!teams || teams.length <= 0) {
@@ -69,6 +73,13 @@ export const viewTeam = async ({
 		if (teams.length === 1) {
 			handleTeamView(params, teams[0].name);
 			return;
+		}
+		if (canShowSelectedTeam && selectedTeamId) {
+			const selectedTeam = teams.find((t) => t.id === selectedTeamId);
+			if (selectedTeam) {
+				handleTeamView(params, selectedTeam.name);
+				return;
+			}
 		}
 		const name = args.join(" ");
 		if (name !== "") {

@@ -13,6 +13,7 @@ export type GuildEventMetaProps = {
     role_name?: string;
     channel?: string;
     channel_name?: string;
+    abilities?: string[];
 }
 export type GuildEventsProps = {
     id: number;

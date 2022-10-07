@@ -66,7 +66,9 @@ export const handleDungeonBattleOutcome = async ({
           			: "division"
           	}${computeduserRank.division}`
           )}` +
-          `\n\nYou currently have __[${computeduserRank.exp} / ${computeduserRank.r_exp}]__`
+          `\n\nYou currently have __[${computeduserRank.exp} / ${
+          	computeduserRank.r_exp
+          }]__${result?.soulGainText ? `\n${result.soulGainText}` : ""}`
 			);
 
 		channel?.sendMessage(embed);

@@ -9,8 +9,8 @@ async function refillMana() {
 	await Promise.all([
 		connection.raw(
 			"update users set mana = mana + 3, mana_refilled_at = now() " +
-			"where is_banned = false and is_premium = true and mana < max_mana " +
-			"or is_mini_premium = true"
+			"where is_banned = false and mana < max_mana and (is_premium = true " +
+			"or is_mini_premium = true)"
 		),
 		connection.raw(
 			"update users set mana = mana + 2, mana_refilled_at = now() " +

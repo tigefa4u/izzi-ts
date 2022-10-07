@@ -9,6 +9,7 @@ import { SkinProps } from "@customTypes/skins";
 import { createSkinCollection } from "api/controllers/SkinCollectionController";
 import { getSkinByCharacterId } from "api/controllers/SkinsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { createWishlist, getWishlistBySkinId } from "api/controllers/WishlistsContorller";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageEmbed } from "discord.js";
@@ -69,9 +70,8 @@ export const showCardSkins = async ({
 			handleShowSkin
 		);
 
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
+		if (!buttons) return;
+		embed.setButtons(buttons);
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -143,6 +143,49 @@ const handleShowSkin = async (
 	return;
 };
 
+type T = {
+	skinDetails: SkinProps;
+	author: AuthorProps;
+	channel: ChannelProp;
+}
+const handleAddToWishlist = async ({
+	skinDetails,
+	author,
+	channel
+}: T) => {
+	try {
+		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
+
+		const wishlist = await getWishlistBySkinId({
+			skin_id: skinDetails.id,
+			user_tag: author.id
+		});
+		if (wishlist && wishlist.length > 0) {
+			embed.setDescription("This skin is already on your wishlist, " +
+			"use ``iz wishlist`` to view all items on your wishlist");
+			channel?.sendMessage(embed);
+			return;
+		}
+		await createWishlist({
+			is_skin: true,
+			character_id: skinDetails.character_id,
+			user_tag: author.id,
+			metadata: {
+				filepath: skinDetails.metadata.assets?.silver.small.filepath,
+				name: skinDetails.name
+			},
+			skin_id: skinDetails.id
+		});
+		embed.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(`Successfully added **${titleCase(skinDetails.name)}** to your Wishlist. ` +
+		"Use ``iz wishlist`` to view all the items in your wishlist.");
+		channel?.sendMessage(embed);
+	} catch (err) {
+		loggers.error("cardinfo.skinInfo.handleAddToWishlist(): something went wrong", err);
+	}
+	return;
+};
+
 type DescProps = {
   embed: MessageEmbed;
   data: SkinProps;
@@ -171,9 +214,24 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 				emoji: emoji.blueorb,
 				params: { skinDetails: data },
 			},
+			{
+				label: "Add to wishlist",
+				params: {
+					skinDetails: data,
+					id: "wishlist" 
+				}
+			}
 		],
 		author.id,
-		({ skinDetails }) => {
+		({ skinDetails, id }) => {
+			if (id === "wishlist") {
+				handleAddToWishlist({
+					skinDetails,
+					author,
+					channel
+				});
+				return;
+			}
 			handlePurchaseSkin({
 				data: skinDetails,
 				author,
@@ -187,9 +245,13 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 	);
 	if (buttons) {
 		if (embed.buttons) {
-			embed.buttons.components[0].setCustomId(
-				buttons.components[0].customId || "purchase"
-			);
+			embed.buttons.components.map((component, i) => {
+				if (buttons.components[i]) {
+					component.setCustomId(
+						buttons.components[i].customId || "purchase"
+					);
+				}
+			});
 			embed.buttons.setComponents(embed.buttons.components);
 		} else {
 			embed.setButtons(buttons);

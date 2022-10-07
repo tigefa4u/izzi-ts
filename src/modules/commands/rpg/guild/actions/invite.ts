@@ -53,9 +53,9 @@ async function validateAndInviteMember(
 	const validGuild = await verifyMemberPermissions({
 		context,
 		author,
-		params: [],
+		params: [ "is_admin", "is_leader", "is_vice_leader" ],
 		isOriginServer: false,
-		isAdmin: false,
+		isAdmin: true,
 		extras: { user_id: user.id },
 	});
 	if (!validGuild) return;

@@ -115,6 +115,7 @@ export const getRPGUser: (
 					username: user.username,
 					voted_at: user.voted_at,
 					vote_streak: user.vote_streak,
+					selected_team_id: user.selected_team_id
 				})
 			);
 			Cache.expire && Cache.expire(key, 60 * 60 * 23);
@@ -138,14 +139,16 @@ export const updateRPGUser: (
 ) => Promise<UserProps | undefined> = async (params, data, options) => {
 	try {
 		const result = await updateUser(params, data, options);
-		// const cacheHydrationData = await prepareCacheHydrationData(params, data);
 		loggers.info(
 			"api.controllers.UsersController.updateRPGUser(): updating user " +
         JSON.stringify(data)
 		);
-		// if (cacheHydrationData) {
-		// 	await hydrateUserCache(cacheHydrationData);
-		// }
+		if (options?.hydrateCache) {
+			const cacheHydrationData = await prepareCacheHydrationData(params, data);
+			if (cacheHydrationData) {
+				await hydrateUserCache(cacheHydrationData);
+			}
+		}
 		return result;
 	} catch (err) {
 		loggers.error(

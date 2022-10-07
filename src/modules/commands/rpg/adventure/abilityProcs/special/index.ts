@@ -44,6 +44,9 @@ export const harbingerOfDeath = ({
 		opponentStats.totalStats.evasionInc = 1;
 		opponentStats.totalStats.evasionTemp = 1;
 		opponentStats.totalStats.isEvadeHit = false;
+		opponentStats.totalStats.isPlatting = false;
+		opponentStats.totalStats.isToxic = false;
+		opponentStats.totalStats.isEndure = false;
 		// opponentStats.totalStats.isCriticalHit = false;
 
 		// playerStats.totalStats.isEvadeHit = false;
@@ -62,9 +65,7 @@ export const harbingerOfDeath = ({
 		playerStats.totalStats.isAsleep = false;
 		playerStats.totalStats.isStackTB = false;
 		playerStats.totalStats.isRestrictResisted = false;
-		opponentStats.totalStats.isEndure = false;
 		playerStats.totalStats.isBleeding = false;
-		playerStats.totalStats.isToxic = false;
 
 		[ "vitality", "defense", "dexterity", "intelligence" ].map((stat) => {
 			const key = stat as keyof CharacterStatProps;

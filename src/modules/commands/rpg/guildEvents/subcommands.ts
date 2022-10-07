@@ -16,4 +16,10 @@ export const subcommands = [ {
 }, {
 	name: "tourney",
 	alias: []
+}, {
+	name: "abilityping",
+	alias: [ "aping" ]
+}, {
+	name: "raidpingview",
+	alias: [ "rpview" ]
 } ];

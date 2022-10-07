@@ -2,7 +2,7 @@ import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
 import { ButtonOptions } from "@customTypes/button";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
-import { MessageActionRow } from "discord.js";
+import { Client, MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -110,14 +110,15 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		callback(isValid);
 
 		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			switch (id) {
 				case cancelLabel: {
+					buttonInteraction.deferUpdate();
 					callback(null, { isDelete: true });
 					break;
 				}
 				case confirmLabel: {
+					buttonInteraction.deferUpdate();
 					options = Object.assign({}, options);
 					options.isConfirm = true;
 					await fetch(params, options);
@@ -155,11 +156,11 @@ export const collectableInteraction = async <P>(
 			dispose: true,
 			time: 240_000
 		});
-		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
+		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
 			switch (id) {
 				case label: {
+					buttonInteraction.deferUpdate();
 					fetch({
 						...params,
 						user_tag: buttonInteraction.user.id,
@@ -178,11 +179,11 @@ export const collectableInteraction = async <P>(
 	}
 };
 
-export const customButtonInteraction = async <P>(
+export const customButtonInteraction = <P>(
 	channel: ChannelProp,
 	options: (ButtonOptions & { params: P })[],
 	authorId: string,
-	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp; client: Client; }) => void,
 	callback: () => void,
 	bypassFilter?: boolean,
 	maxClicks = 1
@@ -204,15 +205,17 @@ export const customButtonInteraction = async <P>(
 			dispose: true,
 			time: 240_000
 		});
-		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
+		// To disabled buttons on end - edit the message, setting the new buttons
+		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
 			options.map((option, i) => {
 				if (id === (label + "_" + i)) {
+					buttonInteraction.deferUpdate();
 					fetch({
 						...option.params,
 						user_tag: buttonInteraction.user.id,
-						channel
+						channel,
+						client: buttonInteraction.client
 					});
 					callback();
 				}

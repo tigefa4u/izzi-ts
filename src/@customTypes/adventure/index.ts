@@ -27,6 +27,7 @@ export type SimulateBattleProps = {
   options?: {
     hideVisualBattle: boolean;
   };
+  multiplier?: number;
 };
 
 type StatStateProps = {
@@ -100,6 +101,12 @@ export type AbilityStackProps = StatStateProps &
     canEvadeHarbingerOfDeath?: boolean;
     isBleeding?: boolean;
     bleedResetOnRound?: number;
+    resistByFutureSightPercent?: number;
+    abilityToResist?: {
+      [name: string]: {
+        percent: number;
+      };
+    };
   };
 
 export type BattleStats = {
@@ -118,6 +125,7 @@ export type BattleStats = {
   totalDamage?: number;
   isVictory?: boolean;
   isForfeit?: boolean;
+  soulGainText?: string;
 };
 
 export type PrepareBattleDescriptionProps = {
@@ -139,6 +147,8 @@ export type BattleProcessProps = {
   card?: CollectionCardInfoProps & AbilityStackProps;
   enemyCard?: CollectionCardInfoProps & AbilityStackProps;
   simulation: Simulation;
+  isRaid?: boolean;
+  multiplier?: number;
 };
 
 export type BattleUpdatedStats = {

@@ -43,5 +43,11 @@ then
     echo $(date -u)
     npx ts-node -r dotenv/config src/server/pipes/cronjobs/raidPermitPremiumRefill.ts
     echo "raid premium permit refill jobs completed.."
+elif [[ $job == "cdr" ]]
+then
+    echo "executing card cooldown reset jobs ###"
+    echo $(date -u)
+    npx ts-node -r dotenv/config src/server/pipes/cronjobs/resetCardCooldown.ts
+    echo "card cooldown reset jobs completed..."
 fi
 

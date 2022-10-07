@@ -15,7 +15,7 @@ export const handleClientEvents = (client: Client) => {
 		console.log({ warning });
 	});
 	client.on("debug", (debug) => {
-		// loggers.debug(debug);
+		loggers.debug(debug);
 		// if (debug.toLowerCase().includes("heartbeat")) {
 		// 	console.log({ debug });
 		// }

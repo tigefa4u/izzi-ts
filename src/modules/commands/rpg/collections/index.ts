@@ -11,6 +11,7 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
+import { getSortCache } from "../sorting/sortCache";
 
 function getRankId(rank_id: string) {
 	const keys = Object.keys(ranksMeta);
@@ -49,6 +50,11 @@ function safeParseParams(params: FilterProps & { user_id: number }) {
 	} else {
 		delete params.is_on_market;
 	}
+	if (typeof params.is_on_cooldown === "object") {
+		params.is_on_cooldown = true;
+	} else {
+		delete params.is_on_cooldown;
+	}
 
 	delete params.rank;
 
@@ -75,6 +81,7 @@ export const cardCollection = async ({
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;
 		}
+		const sort = await getSortCache(author.id);
 		const buttons = await paginatorInteraction(
 			context.channel,
 			author.id,
@@ -109,7 +116,8 @@ export const cardCollection = async ({
 				if (options?.isEdit) {
 					sentMessage.editMessage(embed);
 				}
-			}
+			},
+			sort
 		);
 		if (!buttons) return;
 

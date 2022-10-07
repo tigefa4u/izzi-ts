@@ -24,6 +24,7 @@ import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
+import { getSortCache } from "../sorting/sortCache";
 import { preComputeRequiredCards } from "./compute";
 
 async function confirmAndEnchantCard(
@@ -121,10 +122,11 @@ export const enchantCard = async ({
 		const params = fetchParamsFromArgs<FilterProps>(args);
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const sort = await getSortCache(author.id);
 		const card = await getCardInfoByRowNumber({
 			user_id: user.id,
 			row_number: id,
-		});
+		}, sort);
 		let cardsToExclude;
 		if (params.exclude) {
 			cardsToExclude = await getCharacterInfo({ name: params.exclude });

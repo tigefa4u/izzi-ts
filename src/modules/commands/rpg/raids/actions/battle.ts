@@ -138,6 +138,7 @@ export const battleRaidBoss = async ({
 			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
+			multiplier
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {
@@ -158,6 +159,12 @@ export const battleRaidBoss = async ({
 					currentRaid.id
 				}, Raid -> ${JSON.stringify(currentRaid)}`,
 				{}
+			);
+			return;
+		}
+		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
 			);
 			return;
 		}
@@ -190,18 +197,21 @@ export const battleRaidBoss = async ({
 		}
 		await updateRaid({ id: updateObj.id }, { stats: updateObj.stats });
 
-		await Promise.all([ processRaidLoot({
-			client,
-			author,
-			raid: updateObj,
-			isEvent,
-		}), processRaidResult({
-			result: result as BattleStats,
-			updateObj,
-			author,
-			isEvent,
-			channel: context.channel,
-		}) ]);
+		await Promise.all([
+			processRaidLoot({
+				client,
+				author,
+				raid: updateObj,
+				isEvent,
+			}),
+			processRaidResult({
+				result: result as BattleStats,
+				updateObj,
+				author,
+				isEvent,
+				channel: context.channel,
+			}),
+		]);
 		return;
 	} catch (err) {
 		loggers.error(
@@ -259,13 +269,17 @@ async function processRaidResult({
 	const embed = createEmbed(author)
 		.setTitle(`${emoji.welldone} Total Damage Dealt`)
 		.setDescription(
-			`**Summoner ${author.username}, You have dealt:**\n\n**__${
-				numericWithComma(result.totalDamage || 0)
-			}__** Damage to ${isEvent ? "Event" : "Raid"} Boss\n\n**${
-				numericWithComma(updateObj.stats.remaining_strength)
-			} / ${numericWithComma(updateObj.stats.original_strength)} ${emoji.hp}**\n${fakeHp
-				.map((i) => i)
-				.join("")}`
+			`**Summoner ${
+				author.username
+			}, You have dealt:**\n\n**__${numericWithComma(
+				result.totalDamage || 0
+			)}__** Damage to ${
+				isEvent ? "Event" : "Raid"
+			} Boss${result.soulGainText ? `\n${result.soulGainText}` : ""}\n\n**${numericWithComma(
+				updateObj.stats.remaining_strength
+			)} / ${numericWithComma(updateObj.stats.original_strength)} ${
+				emoji.hp
+			}**\n${fakeHp.map((i) => i).join("")}`
 		)
 		.setThumbnail("attachment://boss.jpg")
 		.attachFiles([ attachment ]);

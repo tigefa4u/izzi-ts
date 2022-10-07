@@ -5,6 +5,7 @@ import {
 	updateCollection,
 } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -161,6 +162,7 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
+						// is_on_cooldown: true
 					}
 				)
 			);
@@ -182,11 +184,20 @@ export const confirmTrade = async ({
 						item_id: null,
 						is_favorite: false,
 						is_on_market: false,
+						// is_on_cooldown: true
 					}
 				)
 			);
 		}
 		await Promise.all(promises);
+		// await Promise.all([ ...trader_1.queue, ...trader_2.queue ].map(async (q) => {
+		// 	const dt = new Date();
+		// 	await Cache.set("card-cd::" + q.id, JSON.stringify({
+		// 		timestamp: new Date(),
+		// 		cooldownEndsAt: dt.setHours(dt.getHours() + 4)
+		// 	}));
+		// 	return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 4);
+		// }));
 		embed.setDescription("Trade completed!");
 		channel?.sendMessage(embed);
 		return;

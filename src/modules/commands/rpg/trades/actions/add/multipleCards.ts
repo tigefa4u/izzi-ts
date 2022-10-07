@@ -57,13 +57,15 @@ export const addMultipleCards = async ({
 			limit: params.limit,
 			is_item: false,
 			name: params.name,
-			isExactMatch: true
+			isExactMatch: true,
+			is_on_cooldown: false
 		};
 		const exclude_ids = trader.queue.map((i) => i.id);
 		if (exclude_ids.length > 0) {
 			Object.assign(options, { exclude_ids });
 		}
-		const collections = await getCollection(options);
+		let collections = await getCollection(options);
+		collections = collections?.filter((c) => !c.is_on_cooldown);
 		if (!collections || collections.length <= 0) {
 			embed.setDescription("You do not have sufficient cards to trade.");
 			channel?.sendMessage(embed);

@@ -1,6 +1,6 @@
 import { CommandMapProps } from "@customTypes/command";
 import {
-	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug 
+	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug, sex 
 } from "modules/commands/basic/actions";
 import { status } from "modules/commands/basic/botStatus";
 import {
@@ -25,6 +25,7 @@ import { crate } from "modules/commands/rpg/crates";
 import { dungeon } from "modules/commands/rpg/dungeon";
 import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
+import { upgradeCard } from "modules/commands/rpg/evolution/upgradeCard";
 import { guild } from "modules/commands/rpg/guild";
 import { guildEvents } from "modules/commands/rpg/guildEvents";
 import { itemCollection, itemInfo } from "modules/commands/rpg/items";
@@ -47,6 +48,7 @@ import { eventActions } from "modules/commands/rpg/raids/events";
 import { give, hourly } from "modules/commands/rpg/resource";
 import { sacrificeCard } from "modules/commands/rpg/sacrifice";
 import { skins } from "modules/commands/rpg/skins";
+import { wishlist } from "modules/commands/rpg/wishlist";
 import { sort } from "modules/commands/rpg/sorting";
 import { spbt } from "modules/commands/rpg/spbt";
 import { team } from "modules/commands/rpg/team";
@@ -54,6 +56,8 @@ import { trade } from "modules/commands/rpg/trades";
 import { dex } from "modules/commands/rpg/xendex";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
+import { makeAWish } from "modules/commands/rpg/specialCommands/makeAWish";
+import { starterGuide } from "modules/commands/rpg/profile/guide";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -127,6 +131,7 @@ const commandMap: CommandMapProps = {
 	kiss: kiss,
 	"slow-kiss": slowKiss,
 	"tight-hug": tightHug,
+	sex: sex,
 	punch,
 	hug,
 	dance: dance,
@@ -139,7 +144,11 @@ const commandMap: CommandMapProps = {
 	website: websiteUrls,
 	delete: deleteAccount,
 	nickname: nickname,
-	"guild event": guildEvents
+	"guild event": guildEvents,
+	"upgrade card": upgradeCard,
+	wishlist: wishlist,
+	"make a wish": makeAWish,
+	guide: starterGuide
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

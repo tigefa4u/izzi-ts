@@ -9,6 +9,10 @@ import {
 } from "@customTypes/collections";
 import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
+import { SortProps } from "@customTypes/sorting";
+import Cache from "cache";
+import { CHARACTER_LEVEL_EXTENDABLE_LIMIT, ranksMeta } from "helpers/constants";
+import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
@@ -43,7 +47,7 @@ export const createCollection: (
 	}
 };
 
-type CT = { name?: string | string[]; type?: string | string[]; }
+type CT = { name?: string | string[]; type?: string | string[]; isExactMatch?: boolean; }
 const safeParseCharacterParams = (params = {} as CT) => {
 	const obj = {};
 	if (params.name) {
@@ -51,6 +55,9 @@ const safeParseCharacterParams = (params = {} as CT) => {
 	}
 	if (params.type) {
 		Object.assign(obj, { type: params.type });
+	}
+	if (params.isExactMatch) {
+		Object.assign(obj, { isExactMatch: params.isExactMatch });
 	}
 	return obj;
 };
@@ -123,7 +130,8 @@ async function fetchCharacterDetails(filter: FilterProps) {
 
 export const getAllCollections = async (
 	filter: Omit<FilterProps, "series" | "category" | "ids"> & T,
-	pageProps: PageProps
+	pageProps: PageProps,
+	sort?: SortProps
 ): Promise<ResponseWithPagination<CollectionReturnType[]> | undefined> => {
 	try {
 		let charactersData = [] as C[];
@@ -138,15 +146,57 @@ export const getAllCollections = async (
 				...filter,
 				is_item: false
 			},
-			await paginationParams(pageProps)
+			await paginationParams(pageProps),
+			sort
 		);
 		if (charactersData.length <= 0) {
 			charactersData = await fetchCharacterDetails({ ids: result.map((r) => r.character_id), });
 		}
-		const pagination = await paginationForResult({
-			data: result,
-			query: pageProps,
-		});
+		const [ pagination ] = await Promise.all([
+			paginationForResult({
+				data: result,
+				query: pageProps,
+			}),
+			...result.map(async (c) => {
+				let reqSouls = 0;
+				if (c.rank_id === ranksMeta.ultimate.rank_id) {
+					const souls = getReqSouls(c.rank_id);
+					const levelDifference = c.character_level - (ranksMeta.ultimate.max_level || 70);
+					if (levelDifference < CHARACTER_LEVEL_EXTENDABLE_LIMIT) {
+						const extraSouls = Math.ceil(levelDifference ** 1.57);
+						reqSouls = souls + extraSouls;
+					}
+				}
+				c.reqSouls = reqSouls;
+				let remainingHours = 0,
+					remainingMinutes = 0;
+				if (c.is_on_cooldown) {
+					const key = "card-cd::" + c.id;
+					try {
+						let cd = (await Cache.get(key)) as any;
+						if (cd) {
+							cd = JSON.parse(cd) as any;
+							const { cooldownEndsAt } = cd;
+							const remainingTime =
+            (cooldownEndsAt - new Date().getTime()) / 1000 / 60;
+							remainingHours = Math.floor(remainingTime / 60);
+							remainingMinutes = Math.floor(remainingTime % 60);
+							if (remainingHours < 0) {
+								remainingHours = 0;
+							}
+							if (remainingMinutes < 0) {
+								remainingMinutes = 0;
+							}
+						}
+					} catch (err) {
+						// pass
+					}
+					c.remainingHours = remainingHours;
+					c.remainingMinutes = remainingMinutes;
+				}
+
+			})
+		]);
 		const item_ids = result.filter((r) => r.item_id).map((c) => c.item_id);
 		let items = [] as ItemProps[];
 		if (item_ids.length > 0) {
@@ -206,4 +256,16 @@ export const verifyCollectionsById = async (params: { user_id: number; ids: numb
 		);
 		return;
 	}	
+};
+
+export const getCollectionsOnCooldown = async () => {
+	try {
+		return Collections.get({ is_on_cooldown: true });
+	} catch (err) {
+		loggers.error(
+			"api.controllers.CollectionsController.getCollectionsInCooldown(): something went wrong",
+			err
+		);
+		return;
+	}
 };

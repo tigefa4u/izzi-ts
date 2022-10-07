@@ -4,6 +4,7 @@ import {
 	CollectionCardInfoProps,
 	CollectionCreateProps,
 } from "@customTypes/collections";
+import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import {
@@ -14,10 +15,12 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createOrUpdateZoneBackup } from "api/controllers/ZonesController";
 import { createEmbed } from "commons/embeds";
+import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import {
 	BASE_XP,
+	CONSOLE_BUTTONS,
 	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
 	STARTER_CARD_EXP,
@@ -28,6 +31,29 @@ import {
 } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { floor } from "../../zoneAndFloor/floor";
+
+type T = {
+	user_tag: string;
+	client: Client;
+	channel: ChannelProp;
+	id: string;
+}
+const toggleNextFloor = async ({ user_tag, client, channel }: T) => {
+	const [ author, user ] = await Promise.all([
+		client.users.fetch(user_tag),
+		getRPGUser({ user_tag })
+	]);
+	if (!user) return;
+	floor({
+		context: { channel } as BaseProps["context"],
+		client,
+		options: { author },
+		args: [ "n" ]
+	});
+	return;
+};
 
 type P = {
   result: { isVictory: boolean };
@@ -82,6 +108,27 @@ export const processBattleResult = async ({
 						resp.cardXpGain
 					}xp__ through this battle!`
 				);
+
+			const button = customButtonInteraction(
+				channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
+						params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+					}
+				],
+				author.id,
+				toggleNextFloor,
+				() => {
+					return;
+				},
+				false,
+				10
+			);
+
+			if (button) {
+				embed.setButtons(button);
+			}
 		}
 
 		channel?.sendMessage(embed);
@@ -142,6 +189,7 @@ async function processFloorWin({
 		is_on_market: false,
 		exp: STARTER_CARD_EXP,
 		r_exp: STARTER_CARD_R_EXP,
+		is_on_cooldown: false
 	};
 	const bodyParams: CollectionCreateProps[] = Array(multiplier)
 		.fill(options)

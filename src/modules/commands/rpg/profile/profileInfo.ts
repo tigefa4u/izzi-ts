@@ -31,10 +31,9 @@ export const mana = async function ({
 	try {
 		const author = options.author;
 		const result = await getProfileInfo("mana", author.id);
-		const dt = new Date();
-		const timestamp = new Date(result.metadata?.mana_refilled_at || "") || dt;
+		const timestamp = new Date(new Date(result.metadata?.mana_refilled_at || "").toUTCString());
 		const refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 4);
-		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
+		const remainingTime = (refilled_at - new Date().getTime()) / 1000 / 60;
 		let remainingMinutes = Math.floor(remainingTime % 60);
 		if (remainingMinutes < 0) {
 			remainingMinutes = 0;
@@ -115,15 +114,14 @@ export const permits = async function ({
 	try {
 		const author = options.author;
 		const result = await getProfileInfo("raid_pass", author.id);
-		const dt = new Date();
-		const timestamp = new Date(result.metadata?.premit_refilled_at || "") || dt;
+		const timestamp = new Date(new Date(result.metadata?.premit_refilled_at || "").toUTCString());
 		let refilled_at = timestamp.setHours(
-			timestamp.getHours() + (result.metadata.is_premium ? 1 : 2)
+			timestamp.getHours() + ((result.metadata.is_premium || result.metadata.is_mini_premium) ? 1 : 2)
 		);
 		if (result.metadata.is_premium || result.metadata.is_mini_premium) {
 			refilled_at = timestamp.setMinutes(timestamp.getMinutes() + 30);
 		}
-		const remainingTime = (refilled_at - new Date().valueOf()) / 1000 / 60;
+		const remainingTime = (refilled_at - new Date().getTime()) / 1000 / 60;
 		const remainingHours = Math.floor(remainingTime / 60);
 		let remainingMinutes = Math.floor(remainingTime % 60);
 		if (remainingHours < 0 && remainingMinutes < 0) {

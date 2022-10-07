@@ -75,9 +75,8 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 					return;
 				}
 			);
-			if (buttons) {
-				embed.setButtons(buttons);
-			}
+			if (!buttons) return;
+			embed.setButtons(buttons);
 			const msg = await context.channel?.sendMessage(embed);
 			if (msg) {
 				sentMessage = msg;

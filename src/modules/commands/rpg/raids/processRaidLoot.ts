@@ -224,31 +224,29 @@ async function initDrops(
 ) {
 	if (!drop || drop.length <= 0) return [];
 	let array = clone(drop);
+	const leechers = Object.keys(raid.lobby)
+		.map((i) => Number(i))
+		.filter(
+			(x) =>
+				raid.lobby[x].total_damage <=
+				  Math.floor(raid.stats.original_strength * 0.12)
+		);
 	if (isRare) {
 		array = array.filter((item) => {
+			if (leechers.length > 0) {
+				const leecher = leechers.find(
+					(l) => raid.lobby[l].user_id === user.id
+				);
+				if (leecher) {
+					return false;
+				}
+			}
 			let rate = item.rate || 10;
 			if (mvp && (user.id === mvp.user_id) && !item.isStaticDropRate) {
 				rate = rate + 5;
-			} else {
-				const leechers = Object.keys(raid.lobby)
-					.map((i) => Number(i))
-					.filter(
-						(x) =>
-							raid.lobby[x].total_damage <=
-				  Math.floor(raid.stats.original_strength * 0.12)
-					);
-
-				if (leechers.length > 0) {
-					const leecher = leechers.find(
-						(l) => raid.lobby[l].user_id === user.id
-					);
-					if (leecher) {
-						return false;
-					}
-				}
 			}
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
-				rate = rate + 15;
+				rate = rate + 10;
 			}
 			const dropChance = [ rate, 100 - rate ];
 			const ratebool = [ true, false ];
@@ -273,6 +271,7 @@ async function initDrops(
 								rank_id: item.rank_id,
 								user_id: user.id,
 								name: boss.name,
+								is_on_cooldown: false
 							} as CollectionCreateProps & { name?: string })
 					)
 			)

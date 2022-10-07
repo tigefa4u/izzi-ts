@@ -5,6 +5,7 @@ type T = {
     url: string[];
     command_id: number;
 	name: string;
+	isRestricted?: boolean;
 }
 export const gifs: T[] = [
 	{
@@ -117,7 +118,6 @@ export const gifs: T[] = [
 			"https://i.kym-cdn.com/photos/images/newsfeed/001/000/252/735.gif",
 			"https://thumbs.gfycat.com/ScholarlyScientificBlackmamba-max-1mb.gif",
 			"https://i.imgur.com/DylehYr.gif",
-			"https://media.tenor.com/images/571178c566564d94ff392d33643e59c3/tenor.gif",
 			"https://media.tenor.com/images/cf9a069e14a72656be421aea3714b1e4/tenor.gif",
 		],
 		command_id: 118,
@@ -194,8 +194,6 @@ export const gifs: T[] = [
 	{
 		id: 66,
 		url: [
-			"https://media1.tenor.com/images/01806b1959041450c72cbaea4e09eb9b/tenor.gif?itemid=15981483",
-			"https://media4.giphy.com/media/irZQA0LSRtpWE/giphy.gif",
 			"https://media1.tenor.com/images/e62fc9360b184a7dd8a0e786d5d594fc/tenor.gif?itemid=12381387",
 			"https://i.pinimg.com/originals/1b/4a/4d/1b4a4d70324db4ebb5849dd67d1d6414.gif",
 			"https://media1.tenor.com/images/b6e68f18daa4c9f136f0926b0ab78f04/tenor.gif?itemid=6075636",
@@ -307,6 +305,22 @@ export const gifs: T[] = [
 		],
 		command_id: 122,
 		name: "poke"
+	},
+	{
+		id: 75,
+		url: [
+			"https://c.tenor.com/5WsyOyU4-z0AAAAC/cute-hold-hands.gif",
+			"https://i.kym-cdn.com/photos/images/original/000/932/535/6fb.gif",
+			"https://c.tenor.com/CEkiOjpsylwAAAAd/kitagawa-kitagawa-marin.gif",
+			"https://i.pinimg.com/originals/30/84/42/308442b4a479aba911023f70c68821d0.gif",
+			"https://2.bp.blogspot.com/-gynxgWcQHao/V-QdEjdSc3I/AAAAAAAADzw/gAkSuWxIJPsddCBU8yg51UCNvKQYvZfLQCLcB/s400/nagi%2Bno%2Basukara.gif",
+			"https://64.media.tumblr.com/9a3bcb6eeff06143a84fc80b80667cc5/444c54ff68cc8b65-b1/s540x810/15175215e6532a15c69d4bb0cf8ddf55f44b2798.gifv",
+			"https://64.media.tumblr.com/885fd2d72807e36cacd62a05035748e9/c3a594e03573c02e-28/s540x810/920352be998f22ac8dbff045a9c980cf953a82f0.gif",
+			"https://images.gr-assets.com/hostedimages/1635705836ra/32126905.gif",
+		],
+		command_id: 263,
+		name: "sex",
+		isRestricted: true
 	}
 ];
 
