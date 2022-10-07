@@ -15,6 +15,7 @@ import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { raidActions } from "modules/commands/rpg/raids/index";
+import { eventActions } from "modules/commands/rpg/raids/events";
 
 const prepareConsoleDescription = async (user: UserProps) => {
 	const hourlyTTl = await Cache.ttl("cooldown::hourly-" + user.user_tag);
@@ -181,8 +182,21 @@ const handleIntemediateConsoleButtons = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.RAID_BATTLE.id: {
+			const disableRaids = await Cache.get("disable-raids");
+			const disableEvents = await Cache.get("disable-events");
+			let isEvent = false;
+			if (disableEvents || !disableRaids) {
+				channel?.sendMessage("There are currently no events.");
+				return;
+			} else if (disableRaids && !disableEvents) {
+				isEvent = true;
+			}
 			options.args = [ "bt" ];
-			raidActions(options);
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}
 			return;
 		}
 	}
