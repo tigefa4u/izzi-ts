@@ -7,7 +7,7 @@ import { PLProps } from "@customTypes/powerLevel";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { updateCollection } from "api/controllers/CollectionsController";
 import { getPowerLevelByRankId } from "api/controllers/PowerLevelController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
@@ -15,6 +15,7 @@ import {
 	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
+	MAX_CONSUMABLE_SOULS,
 	ranksMeta,
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
@@ -26,12 +27,16 @@ const validateAndUpgradeCard = async (
 	params: ConfirmationInteractionParams<{
     userId: number;
     id: number;
+	isConsumeSouls: boolean;
+	soulsToConsume: number;
   }>,
 	options?: ConfirmationInteractionOptions
 ) => {
 	const { channel, client, author, extras } = params;
 	const userId = extras?.userId;
 	const id = extras?.id;
+	const isConsumeSouls = params.extras?.isConsumeSouls;
+	const soulsToConsume = params.extras?.soulsToConsume;
 	if (!userId || !id) return;
 	const collectionResult = await getCollectionById({
 		id,
@@ -50,8 +55,12 @@ const validateAndUpgradeCard = async (
 		card.rank_id !== ranksMeta.exclusive.rank_id &&
     card.rank_id !== ranksMeta.ultimate.rank_id
 	) {
+		let text = "You can only increase the level of an Exclusive or Ultimate ranked card.";
+		if (isConsumeSouls) {
+			text = "Your card must be Exclusive or Ultimate rank before it can consume souls.";
+		}
 		embed.setDescription(
-			"You can only increase the level of an Exclusive or Ultimate ranked card."
+			text
 		);
 		channel?.sendMessage(embed);
 		return;
@@ -65,7 +74,7 @@ const validateAndUpgradeCard = async (
 				id: card.id,
 			}
 		);
-		channel?.sendMessage("Unable to level up, please contact support.");
+		channel?.sendMessage(`Unable to ${isConsumeSouls ? "consume souls" : "level up"}, please contact support.`);
 		return;
 	}
 	if (card.character_level < powerLevel.max_level) {
@@ -81,6 +90,33 @@ const validateAndUpgradeCard = async (
 		embed.setDescription("Your card has already reached its max level.");
 		channel?.sendMessage(embed);
 		return;
+	}
+	if (isConsumeSouls) {
+		if (!soulsToConsume) return;
+		if (options?.isConfirm) {
+			embed.setTitle(DEFAULT_SUCCESS_TITLE)
+				.setDescription(`Your **Level ${card.character_level}** __${titleCase(card.rank)}__ **${titleCase(
+					card.name
+				)}** has successfully consumed __${soulsToConsume}__ Souls!`);
+
+			const user = await getRPGUser({ user_tag: author.id });
+			if (!user) return;
+			if (user.souls < soulsToConsume) {
+				embed.setTitle(DEFAULT_ERROR_TITLE)
+					.setDescription("You do not have sufficient souls to consume.");
+
+				params.channel?.sendMessage(embed);
+				return;
+			}
+			user.souls = user.souls - soulsToConsume;
+			await Promise.all([
+				updateCollection({ id: card.id }, { souls: card.souls + soulsToConsume }),
+				updateRPGUser({ user_tag: author.id }, { souls: user.souls })
+			]);
+			params.channel?.sendMessage(embed);
+			return;
+		}
+		return card;
 	}
 	const extraSouls = Math.ceil(levelDifference ** 1.57);
 	const totalSouls = reqSouls + extraSouls;
@@ -129,7 +165,28 @@ export const upgradeCard = async ({
 		if (isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const soulsToConsume = Number(args.shift());
 		let embed = createEmbed(author, client);
+		let isConsumeSouls = false;
+		if (!isNaN(soulsToConsume) && soulsToConsume > 0) {
+			if (soulsToConsume > MAX_CONSUMABLE_SOULS) {
+				embed.setTitle(DEFAULT_ERROR_TITLE)
+					.setDescription(`Summoner **${author.username}**, ` +
+					`you cannot consume more than __${MAX_CONSUMABLE_SOULS}__ Souls.`);
+			
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			if (user.souls < soulsToConsume) {
+				embed.setTitle(DEFAULT_ERROR_TITLE)
+					.setDescription(`Summoner **${author.username}**, You do not have ` +
+					`sufficient souls in your inventory **[ __${user.souls}__ ]**.`);
+
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			isConsumeSouls = true;
+		}
 		let sentMessage: Message;
 
 		const buttons = await confirmationInteraction(
@@ -142,17 +199,24 @@ export const upgradeCard = async ({
 				extras: {
 					id,
 					userId: user.id,
+					isConsumeSouls,
+					soulsToConsume
 				},
 			},
 			validateAndUpgradeCard,
 			(data, opts) => {
 				if (data) {
+					let text = `Are you sure you want to level up your **Level ${
+						data.character_level
+					}** __${titleCase(data.rank)}__ **${titleCase(
+						data.name
+					)}** to **__Level ${data.character_level + 1}__**`;
+
+					if (isConsumeSouls) {
+						text = `Are you sure you want to consume __${soulsToConsume}__ Souls?`;
+					}
 					embed = createConfirmationEmbed(author, client).setDescription(
-						`Are you sure you want to level up your **Level ${
-							data.character_level
-						}** __${titleCase(data.rank)}__ **${titleCase(
-							data.name
-						)}** to **__Level ${data.character_level + 1}__**`
+						text
 					);
 				}
 				if (opts?.isDelete) {

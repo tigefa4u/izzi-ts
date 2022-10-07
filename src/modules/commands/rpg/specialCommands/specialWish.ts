@@ -14,6 +14,7 @@ const WISHES = {
 	song: "song",
 	momSings: "mom-sings",
 	raidEnergy: "raid-energy",
+	siblings: "siblings"
 };
 
 export const specialWish = async ({ client, context, args, options }: BaseProps) => {
@@ -99,6 +100,13 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 					embed.setDescription(`Oh hey mom ${emoji.sleepy}, I'm kinda sleepy at the moment and ` +
                     "can't play with you right now, come back another time. Love you mom.");
 				}
+
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			case WISHES.siblings: {
+				embed.setDescription("Hey mom, I felt lonely when you and dad were away in Egypt. " +
+				"So, can I please get a Sister and a Brother <3.");
 
 				context.channel?.sendMessage(embed);
 				return;

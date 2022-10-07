@@ -85,6 +85,7 @@ export type ConfirmationInteractionOptions = {
 
 export type EmbedEditOptions = {
     reattachOnEdit?: boolean;
+    appendConsoleButton?: boolean;
 }
 
 export type OverallStatsProps = CharacterStatProps & {

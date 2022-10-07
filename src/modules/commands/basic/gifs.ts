@@ -5,6 +5,7 @@ type T = {
     url: string[];
     command_id: number;
 	name: string;
+	isRestricted?: boolean;
 }
 export const gifs: T[] = [
 	{
@@ -304,6 +305,22 @@ export const gifs: T[] = [
 		],
 		command_id: 122,
 		name: "poke"
+	},
+	{
+		id: 75,
+		url: [
+			"https://c.tenor.com/5WsyOyU4-z0AAAAC/cute-hold-hands.gif",
+			"https://i.kym-cdn.com/photos/images/original/000/932/535/6fb.gif",
+			"https://c.tenor.com/CEkiOjpsylwAAAAd/kitagawa-kitagawa-marin.gif",
+			"https://i.pinimg.com/originals/30/84/42/308442b4a479aba911023f70c68821d0.gif",
+			"https://2.bp.blogspot.com/-gynxgWcQHao/V-QdEjdSc3I/AAAAAAAADzw/gAkSuWxIJPsddCBU8yg51UCNvKQYvZfLQCLcB/s400/nagi%2Bno%2Basukara.gif",
+			"https://64.media.tumblr.com/9a3bcb6eeff06143a84fc80b80667cc5/444c54ff68cc8b65-b1/s540x810/15175215e6532a15c69d4bb0cf8ddf55f44b2798.gifv",
+			"https://64.media.tumblr.com/885fd2d72807e36cacd62a05035748e9/c3a594e03573c02e-28/s540x810/920352be998f22ac8dbff045a9c980cf953a82f0.gif",
+			"https://images.gr-assets.com/hostedimages/1635705836ra/32126905.gif",
+		],
+		command_id: 263,
+		name: "sex",
+		isRestricted: true
 	}
 ];
 

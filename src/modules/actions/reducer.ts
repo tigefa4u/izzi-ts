@@ -1,6 +1,6 @@
 import { CommandMapProps } from "@customTypes/command";
 import {
-	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug 
+	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug, sex 
 } from "modules/commands/basic/actions";
 import { status } from "modules/commands/basic/botStatus";
 import {
@@ -131,6 +131,7 @@ const commandMap: CommandMapProps = {
 	kiss: kiss,
 	"slow-kiss": slowKiss,
 	"tight-hug": tightHug,
+	sex: sex,
 	punch,
 	hug,
 	dance: dance,

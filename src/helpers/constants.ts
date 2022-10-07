@@ -281,3 +281,40 @@ export const MAX_GOLD_THRESHOLD = 999999999;
 export const CHARACTER_LEVEL_EXTENDABLE_LIMIT = 10;
 
 export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
+
+export const MAX_CONSUMABLE_SOULS = 700;
+
+export const CONSOLE_BUTTONS = {
+	VOTE: {
+		id: "vote",
+		label: "Vote",
+	},
+	FLOOR_BT: {
+		id: "floor_bt",
+		label: "Fl Bt"
+	},
+	FLOOR_BT_ALL: {
+		id: "floor_bt_all",
+		label: "Bt all"
+	},
+	NEXT_FLOOR: {
+		id: "next_floor",
+		label: "Fl n"
+	},
+	NEXT_ZONE: {
+		id: "next_zone",
+		label: "Zn n"
+	},
+	RAID_BATTLE: {
+		id: "raid_bt",
+		label: "Rd bt"
+	},
+	RAID_SPAWN: {
+		id: "raid_spawn",
+		label: "Raid spawn"
+	},
+	CONSOLE: {
+		id: "console",
+		label: "Console"
+	}
+};

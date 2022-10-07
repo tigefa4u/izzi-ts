@@ -3,8 +3,35 @@ import { updateCollection } from "api/controllers/CollectionsController";
 import { getRaid, updateRaid } from "api/controllers/RaidsController";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
+import { ranksMeta } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
+
+export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
+	try {
+		const author = options.author;
+		if (author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			return;
+		}
+		const id = Number(args.shift());
+		if (!id || isNaN(id)) return;
+		const rank = args.shift();
+		if (!rank) return;
+		const rankFound = ranksMeta[rank];
+		if (!rankFound) return;
+		await updateCollection({ id }, {
+			rank,
+			rank_id: rankFound.rank_id 
+		});
+		const msg = `Hey Dad, I've updated the character rank to __${rank}__ for the card ID: __${id}__`;
+		context.channel?.sendMessage(msg);
+		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
+	} catch (err) {
+		loggers.error("specialCommands.setCharacterRank(): something went wrong", err);
+		return;
+	}
+};
 
 export const setCharacterLevel = async ({ client, context, options, args }: BaseProps) => {
 	try {

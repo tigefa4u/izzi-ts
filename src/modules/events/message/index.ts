@@ -27,17 +27,18 @@ const handleMessage = async (client: Client, context: Message) => {
 		const { content } = context;
 		let args = content.toLowerCase().split(/\s+/);
 		const botId = getIdFromMentionedString(args[0]);
-		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
-			if (context.guild?.id) {
-				dropCollectables({
-					client,
-					author: context.author,
-					guild: context.guild,
-					channel: context.channel,
-				});
-			}
-			return;
-		}
+		if (botId !== BOT_PREFIX) return;
+		// if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
+		// 	if (context.guild?.id) {
+		// 		dropCollectables({
+		// 			client,
+		// 			author: context.author,
+		// 			guild: context.guild,
+		// 			channel: context.channel,
+		// 		});
+		// 	}
+		// 	return;
+		// }
 		const channelCD = await getChannelCooldown(
 			context.channel.id,
 			"channel-cd"

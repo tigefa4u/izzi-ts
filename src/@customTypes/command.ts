@@ -101,6 +101,7 @@ export type CommandMapProps = {
 	"upgrade card": (params: BaseProps) => void;
 	"make a wish": (params: BaseProps) => void;
 	guide: (params: BaseProps) => void;
+	sex: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed
