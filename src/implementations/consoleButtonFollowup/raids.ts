@@ -123,10 +123,10 @@ export const showRaidCommands = async ({
 		const buttons = customButtonInteraction(
 			channel,
 			[
-				{
-					label: CONSOLE_BUTTONS.RAID_SPAWN.label,
-					params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
-				},
+				// {
+				// 	label: CONSOLE_BUTTONS.RAID_SPAWN.label,
+				// 	params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
+				// },
 				{
 					label: CONSOLE_BUTTONS.RAID_BATTLE.label,
 					params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id },
