@@ -12,5 +12,12 @@ export const createButton: CreateButtonParams = (id, options) => {
 	if (options?.emoji) {
 		button.setEmoji(options.emoji);
 	}
+	if (options?.url) {
+		button.setURL(options.url);
+		button.setCustomId("");
+	}
+	if (typeof options?.isConsole === "boolean") {
+		button.setIsConsoleButton(options.isConsole);
+	}
 	return button;
 };

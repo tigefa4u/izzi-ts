@@ -95,7 +95,7 @@ export const transformation = {
 		type: "number",
 		columnName: "dungeon_mana",
 	},
-	crystal: { type: "number" },
+	souls: { type: "number" },
 };
 
 export const get: (

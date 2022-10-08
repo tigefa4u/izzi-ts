@@ -206,7 +206,7 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 		.setImage("attachment://card.jpg")
 		.attachFiles([ attachment ]);
 
-	const buttons = await customButtonInteraction(
+	const buttons = customButtonInteraction(
 		channel,
 		[
 			{

@@ -85,6 +85,7 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
@@ -181,6 +182,7 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

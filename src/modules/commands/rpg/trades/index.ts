@@ -266,6 +266,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);
