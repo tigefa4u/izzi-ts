@@ -47,7 +47,8 @@ export const raidLobbies = async ({
                             "All lobbies that match your " +
                             "requirements are shown below.",
 						title: `${isEvent ? "Event" : "Raid"} Lobbies`,
-					});
+					})
+						.setHideConsoleButtons(true);
 				} else {
 					embed.setDescription("No lobbies available");
 				}

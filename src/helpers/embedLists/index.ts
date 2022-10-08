@@ -48,7 +48,7 @@ export const createEmbedList = ({
 					? 0
 					: calcTotalPageCount(pageCount, currentPage, PAGE_FILTER.perPage)
 			} / ${totalCount}`,
-		});
+		}).setHideConsoleButtons(true);
 	if (list.length > 0) embed.addFields(list);
 	return embed;
 };
