@@ -43,7 +43,7 @@ declare module "discord.js" {
     setButtons: (buttons: MessageActionRow) => MessageEmbed;
     setConfirmation: (bool: boolean) => MessageEmbed;
     setPagination: (bool: boolean) => MessageEmbed;
-    setHideConsoleButtons: (bool: boolean) => void;
+    setHideConsoleButtons: (bool: boolean) => MessageEmbed;
   }
   interface Message {
     isInteraction: boolean;
@@ -95,6 +95,10 @@ MessageEmbed.prototype.setConfirmation = function (bool: boolean) {
 };
 MessageEmbed.prototype.setPagination = function (bool: boolean) {
 	this.isPagination = bool;
+	return this;
+};
+MessageEmbed.prototype.setHideConsoleButtons = function (bool: boolean) {
+	this.hideConsoleButtons = bool;
 	return this;
 };
 Message.prototype.editMessage = function (content: CustomProps, options) {

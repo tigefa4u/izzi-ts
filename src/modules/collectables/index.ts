@@ -118,7 +118,8 @@ export const dropCollectables = async ({
 				.setDescription("_A wild card has appeared._")
 				.attachFiles([ attachment ])
 				.setImage("attachment://claim.jpg")
-				.setFooter({ text: "Click on claim to claim this card" });
+				.setFooter({ text: "Click on claim to claim this card" })
+				.setHideConsoleButtons(true);
 
 			const buttons = await collectableInteraction(
 				dropChannel,
