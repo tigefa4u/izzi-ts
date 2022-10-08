@@ -361,5 +361,9 @@ export const CONSOLE_BUTTONS = {
 	HELP: {
 		id: "help",
 		label: "Help"
+	},
+	BACK: {
+		id: "back",
+		label: "Back"
 	}
 };

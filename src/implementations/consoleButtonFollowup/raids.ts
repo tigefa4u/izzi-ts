@@ -1,15 +1,105 @@
-import { ChannelProp } from "@customTypes";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import { BaseProps } from "@customTypes/command";
-import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
-import { Client, Message } from "discord.js";
 import { CONSOLE_BUTTONS } from "helpers/constants";
 import { prepareAndSendConsoleMenu } from "implementations/consoleButtons";
 import loggers from "loggers";
 import { raidActions } from "modules/commands/rpg/raids";
 import { eventActions } from "modules/commands/rpg/raids/events";
 import { customButtonInteraction } from "utility/ButtonInteractions";
+
+const handleRaidSpawnDifficultyButtons = async ({
+	id, client, channel, message, user_tag 
+}: P) => {
+	const [ author, disableRaids ] = await Promise.all([
+		client.users.fetch(user_tag),
+		Cache.get("disable-raids")
+	]);
+	const options = {
+		context: { channel } as BaseProps["context"],
+		client,
+		options: { author },
+		args: [] as string[]
+	};
+	let isEvent = false;
+	if (disableRaids) {
+		isEvent = true;
+	}
+	let difficulty = "i";
+	switch (id) {
+		case CONSOLE_BUTTONS.BACK.id: {
+			showRaidCommands({
+				id,
+				channel,
+				client,
+				message,
+				user_tag
+			});
+			return;
+		}
+		case "easy": {
+			difficulty = "e";
+			break;
+		}
+		case "medium": {
+			difficulty = "m";
+			break;
+		}
+		case "hard": {
+			difficulty = "h";
+			break;
+		}
+		case "immortal": {
+			difficulty = "i";
+			break;
+		}
+	}
+	options.args = [ "spawn", difficulty, "-p" ];
+	if (isEvent) {
+		eventActions(options);
+	} else {
+		raidActions(options);
+	}
+	return;
+};
+
+const showRaidSpawnDifficulty = async ({ message, channel }: Pick<P, "message" | "channel">) => {
+	const buttons = customButtonInteraction(
+		channel,
+		[
+			{
+				label: "Easy",
+				params: { id: "easy" }
+			},
+			{
+				label: "Medium",
+				params: { id: "medium" }
+			},
+			{
+				label: "Hard",
+				params: { id: "hard" }
+			},
+			{
+				label: "Immortal",
+				params: { id: "immortal" }
+			},
+			{
+				label: CONSOLE_BUTTONS.BACK.label,
+				params: { id: CONSOLE_BUTTONS.BACK.id },
+				style: "SECONDARY"
+			}
+		],
+		"",
+		handleRaidSpawnDifficultyButtons,
+		() => {
+			return;
+		},
+		true,
+		10
+	);
+	if (!buttons) return;
+	message.editButton(buttons);
+};
 
 const handleRaidButtons = async ({
 	id, channel, client, user_tag, message
@@ -86,17 +176,21 @@ const handleRaidButtons = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.RAID_SPAWN.id: {
-			let difficulty = "e";
-			if (rconfig) {
-				const { difficulty: configDifficulty } = JSON.parse(rconfig);
-				difficulty = configDifficulty;
-			}
-			options.args = [ "spawn", difficulty, "-p" ];
-			if (isEvent) {
-				eventActions(options);
-			} else {
-				raidActions(options);
-			}
+			showRaidSpawnDifficulty({
+				message,
+				channel 
+			});
+			// let difficulty = "e";
+			// if (rconfig) {
+			// 	const { difficulty: configDifficulty } = JSON.parse(rconfig);
+			// 	difficulty = configDifficulty;
+			// }
+			// options.args = [ "spawn", difficulty, "-p" ];
+			// if (isEvent) {
+			// 	eventActions(options);
+			// } else {
+			// 	raidActions(options);
+			// }
 			return;
 		}
 		case CONSOLE_BUTTONS.RAID_LEAVE.id: {
@@ -123,10 +217,10 @@ export const showRaidCommands = async ({
 		const buttons = customButtonInteraction(
 			channel,
 			[
-				// {
-				// 	label: CONSOLE_BUTTONS.RAID_SPAWN.label,
-				// 	params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
-				// },
+				{
+					label: CONSOLE_BUTTONS.RAID_SPAWN.label,
+					params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
+				},
 				{
 					label: CONSOLE_BUTTONS.RAID_BATTLE.label,
 					params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id },
