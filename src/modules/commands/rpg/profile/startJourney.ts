@@ -118,7 +118,7 @@ export const start: (params: BaseProps) => void = async ({
           "\nGood Luck, Happy Collecting!"
 			);
 
-		const buttons = await customButtonInteraction(
+		const buttons = customButtonInteraction(
 			context.channel,
 			[
 				{

@@ -1,10 +1,19 @@
 import { RaidActionProps } from "@customTypes/raids";
-import { getRaid, getUserRaidLobby, updateRaid } from "api/controllers/RaidsController";
+import {
+	getRaid,
+	getUserRaidLobby,
+	updateRaid,
+} from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import {
-	DEFAULT_ERROR_TITLE, HIGH_LEVEL_RAIDS, MAX_RAID_LOBBY_MEMBERS, MIN_RAID_USER_LEVEL, PERMIT_PER_RAID 
+	DEFAULT_ERROR_TITLE,
+	HIGH_LEVEL_RAIDS,
+	MAX_RAID_LOBBY_MEMBERS,
+	MIN_LEVEL_FOR_HIGH_RAIDS,
+	MIN_RAID_USER_LEVEL,
+	PERMIT_PER_RAID,
 } from "helpers/constants";
 import loggers from "loggers";
 import { prepareInitialLobbyMember } from "..";
@@ -55,14 +64,30 @@ export const joinRaid = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		if (user.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(raid.stats.difficulty)) {
-			context.channel?.sendMessage(`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
-			"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
+		if (
+			user.level < MIN_RAID_USER_LEVEL &&
+      HIGH_LEVEL_RAIDS.includes(raid.stats.difficulty)
+		) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
+          "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
+			);
+			return;
+		} else if (
+			user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+      [ "i", "immortal" ].includes(raid.stats.difficulty)
+		) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
+          "to be able to spawn or join __Immortal__ Raids."
+			);
 			return;
 		}
 		const lobby = raid.lobby;
 		if (Object.keys(lobby).length >= MAX_RAID_LOBBY_MEMBERS) {
-			embed.setDescription("The Challenger lobby you are trying to join is full!");
+			embed.setDescription(
+				"The Challenger lobby you are trying to join is full!"
+			);
 			context.channel?.sendMessage(embed);
 			return;
 		}
@@ -75,27 +100,34 @@ export const joinRaid = async ({
 				Object.keys(lobby).length <= 0 ? true : false
 			),
 		});
-        
-		const [ _, viewEmbed ] = await Promise.all([ updateRaid({ id: raid.id }, { lobby }), prepareRaidViewEmbed({
-			isEvent,
-			author,
-			client,
-			channel: context.channel,
-			currentRaid: raid
-		}) ]);
+
+		const [ _, viewEmbed ] = await Promise.all([
+			updateRaid({ id: raid.id }, { lobby }),
+			prepareRaidViewEmbed({
+				isEvent,
+				author,
+				client,
+				channel: context.channel,
+				currentRaid: raid,
+			}),
+		]);
 		if (!viewEmbed) return;
 
 		viewEmbed.setTitle(`${isEvent ? "Event" : "Raid"} View`);
 		context.channel?.sendMessage(viewEmbed);
-    
+
 		const followUpEmbed = createEmbed(author, client)
-			.setTitle(`${isEvent ? "Event" : "Raid"} Challenge Accepted ${emoji.welldone}!`)
-			.setDescription("Summoner, you have successfully joined a Raid Challenge! " +
-            "Invite others to join your conquest by using the following command: " +
-            `${isEvent ? "ev" : "rd"} join ${raid.id}!`)
+			.setTitle(
+				`${isEvent ? "Event" : "Raid"} Challenge Accepted ${emoji.welldone}!`
+			)
+			.setDescription(
+				"Summoner, you have successfully joined a Raid Challenge! " +
+          "Invite others to join your conquest by using the following command: " +
+          `${isEvent ? "ev" : "rd"} join ${raid.id}!`
+			)
 			.setFooter({
 				text: `Lobby Code: ${raid.id}`,
-				iconURL: author.displayAvatarURL()
+				iconURL: author.displayAvatarURL(),
 			});
 
 		context.channel?.sendMessage(followUpEmbed);

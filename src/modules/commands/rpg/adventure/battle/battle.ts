@@ -324,7 +324,7 @@ async function visualizeSimulation({
 		.setImage("attachment://battle.jpg");
 
 	let canEndBattle = false;
-	const buttons = await customButtonInteraction(
+	const buttons = customButtonInteraction(
 		context.channel,
 		[
 			{

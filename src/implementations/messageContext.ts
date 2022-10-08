@@ -66,14 +66,14 @@ const prepareConsoleButtonWrapper = (
 	channel: Props,
 	content: string | CustomEmbedProps
 ) => {
-	if (typeof content === "string") return content;
+	if (typeof content === "string" || content.hideConsoleButtons) return content;
 	try {
 		const hasSelectMenu = content.buttons?.components?.some(
 			(component) => component.type === "SELECT_MENU"
 		);
-		const consoleButton = prepareConsoleButton(channel);
 		if (hasSelectMenu)
 			return content;
+		const consoleButton = prepareConsoleButton(channel);
 		if (consoleButton) {
 			if (content.buttons) {
 				content.buttons.setComponents(
@@ -115,7 +115,7 @@ export const editMessage: (
   context: Message,
   content: string | CustomEmbedProps,
   options?: EmbedEditOptions
-) => Promise<Message> | undefined = async function (context, content, options) {
+) => Promise<Message> | undefined = function (context, content, options) {
 	try {
 		const responseObj = getResponseObj(content, options);
 		if (!context.editable) {
@@ -142,6 +142,32 @@ export const deleteMessage: (
 	} catch (err) {
 		loggers.error(
 			"implementations.messageContext.deleteMessage(): something went wrong",
+			err
+		);
+		throw err;
+	}
+};
+
+export const editButton: (
+	context: Message,
+	buttons: MessageActionRow
+) => Promise<Message<boolean>> | undefined = function (context, buttons) {
+	try {
+		let moreButtons = [] as MessageActionRowComponent[];
+		if (buttons.components.length > 5) {
+			moreButtons = buttons.components.splice(5, 10);
+		}
+		const componentsArr = [ buttons ];
+		if (moreButtons.length > 0) {
+			componentsArr.push({
+				...buttons,
+				components: moreButtons
+			} as MessageActionRow);
+		}
+		return context.edit({ components: componentsArr });
+	} catch (err) {
+		loggers.error(
+			"implementations.messageContext.editButton(): something went wrong",
 			err
 		);
 		throw err;

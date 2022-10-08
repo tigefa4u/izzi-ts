@@ -1,10 +1,9 @@
-import { ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { Client, DMChannel, TextChannel, ThreadChannel } from "discord.js";
+import { DMChannel, TextChannel, ThreadChannel } from "discord.js";
 import emoji from "emojis/emoji";
 import { BOT_VOTE_LINK } from "environment";
 import { numericWithComma } from "helpers";
@@ -14,11 +13,44 @@ import { battle } from "modules/commands/rpg/adventure";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { customButtonInteraction } from "utility/ButtonInteractions";
-import { raidActions } from "modules/commands/rpg/raids/index";
-import { eventActions } from "modules/commands/rpg/raids/events";
+import { showRaidCommands } from "./consoleButtonFollowup/raids";
+import { CustomButtonInteractionParams } from "@customTypes/button";
+import { getCooldown } from "modules/cooldowns";
+import { lottery } from "modules/commands/rpg/misc";
+import { hourly } from "modules/commands/rpg/resource";
 
 const prepareConsoleDescription = async (user: UserProps) => {
-	const hourlyTTl = await Cache.ttl("cooldown::hourly-" + user.user_tag);
+	const [ hourlyTTl, lotteryTTl, rconfig, disableRaids ] = await Promise.all([
+		Cache.ttl("cooldown::hourly-" + user.user_tag),
+		Cache.ttl("cooldown::lottery-" + user.user_tag),
+		Cache.get("rconfig::" + user.user_tag),
+		Cache.get("disable-raids"),
+	]);
+
+	let isEvent = false;
+	if (disableRaids) {
+		isEvent = true;
+	}
+	const cdKey = `${isEvent ? "event" : "raid"}-spawn`;
+	const raidCD = await getCooldown(user.user_tag, cdKey);
+	let remainingMins = 0,
+		remainingHours = 0;
+	let isRaidSpawnReady = false;
+	if (raidCD) {
+		const remainingTime =
+      (new Date(raidCD.timestamp).valueOf() - new Date().valueOf()) / 1000;
+		const remainingMS = remainingTime / 60;
+		remainingHours = Math.floor(remainingMS / 60);
+		remainingMins = Math.floor(remainingMS % 60);
+	}
+	if (remainingMins <= 0) {
+		isRaidSpawnReady = true;
+	}
+	let raidSpawnDifficulty = "None";
+	if (rconfig) {
+		const { difficulty } = JSON.parse(rconfig);
+		raidSpawnDifficulty = difficulty;
+	}
 	const votedAt = user.voted_at;
 	let isVoteReady = false;
 	let remainingVotingHours = 0,
@@ -34,8 +66,11 @@ const prepareConsoleDescription = async (user: UserProps) => {
 			isVoteReady = true;
 		}
 	}
-	let hourlyTTlToMin = Math.ceil(hourlyTTl / 60);
+	let hourlyTTlToMin = Math.ceil((hourlyTTl || 0) / 60);
 	if (hourlyTTlToMin < 0) hourlyTTlToMin = 0;
+
+	let lotteryTTlToMin = Math.ceil((lotteryTTl || 0) / 60);
+	if (lotteryTTlToMin < 0) lotteryTTlToMin = 0;
 	const desc =
     `**${emoji.premium} Premium Type:** ${
     	user.is_premium
@@ -50,8 +85,14 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	emoji.blueorb
     } Orbs:** ${numericWithComma(user.orbs)}\n**${emoji.soul} Card Souls:** ${
     	user.souls
+    }\n\n**:ticket: Raid Difficulty Configuration:** ${raidSpawnDifficulty}\n**:ticket: Raid Spawn:** ${
+    	isRaidSpawnReady
+    		? "Ready"
+    		: `${remainingHours} hours ${remainingMins} mins`
     }\n\n**:watch: Hourly**: ${
     	hourlyTTlToMin > 0 ? `${hourlyTTlToMin} mins` : "Ready"
+    }\n**:tickets: Lottery:** ${
+    	lotteryTTlToMin > 0 ? `${lotteryTTlToMin} mins` : "Ready"
     }\n**:alarm_clock: Vote:** ${
     	isVoteReady
     		? "Vote now!"
@@ -68,7 +109,7 @@ const handleConsoleButtonInteractions = async ({
 	client,
 	user_tag,
 	id,
-}: P) => {
+}: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
 	const options = {
 		context: { channel } as BaseProps["context"],
@@ -90,16 +131,22 @@ const handleConsoleButtonInteractions = async ({
 			zone(options);
 			return;
 		}
+		case CONSOLE_BUTTONS.LOTTERY.id: {
+			lottery(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.HOURLY.id: {
+			hourly(options);
+			return;
+		}
 	}
 };
 
-type P = {
-  channel: ChannelProp;
-  user_tag: string;
-  client: Client;
-  id: string;
-};
-const prepareAndSendConsoleMenu = async ({ channel, user_tag, client }: P) => {
+export const prepareAndSendConsoleMenu = async ({
+	channel,
+	user_tag,
+	client,
+}: CustomButtonInteractionParams) => {
 	const [ author, user ] = await Promise.all([
 		client.users.fetch(user_tag),
 		getRPGUser({ user_tag }),
@@ -124,6 +171,14 @@ const prepareAndSendConsoleMenu = async ({ channel, user_tag, client }: P) => {
 				params: { id: CONSOLE_BUTTONS.VOTE.id },
 				style: "LINK",
 				url: BOT_VOTE_LINK,
+			},
+			{
+				label: CONSOLE_BUTTONS.HOURLY.label,
+				params: { id: CONSOLE_BUTTONS.HOURLY.id }
+			},
+			{
+				label: CONSOLE_BUTTONS.LOTTERY.label,
+				params: { id: CONSOLE_BUTTONS.LOTTERY.id }
 			},
 			{
 				label: CONSOLE_BUTTONS.FLOOR_BT.label,
@@ -159,7 +214,8 @@ const handleIntemediateConsoleButtons = async ({
 	client,
 	id,
 	user_tag,
-}: P) => {
+	message,
+}: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
 	const options = {
 		context: { channel } as BaseProps["context"],
@@ -174,6 +230,7 @@ const handleIntemediateConsoleButtons = async ({
 				client,
 				user_tag,
 				id,
+				message,
 			});
 			return;
 		}
@@ -181,22 +238,14 @@ const handleIntemediateConsoleButtons = async ({
 			battle(options);
 			return;
 		}
-		case CONSOLE_BUTTONS.RAID_BATTLE.id: {
-			const disableRaids = await Cache.get("disable-raids");
-			const disableEvents = await Cache.get("disable-events");
-			let isEvent = false;
-			if (disableEvents || !disableRaids) {
-				channel?.sendMessage("There are currently no events.");
-				return;
-			} else if (disableRaids && !disableEvents) {
-				isEvent = true;
-			}
-			options.args = [ "bt" ];
-			if (isEvent) {
-				eventActions(options);
-			} else {
-				raidActions(options);
-			}
+		case CONSOLE_BUTTONS.RAID_COMMANDS.id: {
+			showRaidCommands({
+				channel,
+				client,
+				id,
+				user_tag,
+				message,
+			});
 			return;
 		}
 	}
@@ -211,10 +260,12 @@ export const prepareConsoleButton = (channel: CProps) => {
 				{
 					label: CONSOLE_BUTTONS.FLOOR_BT_ALL.label,
 					params: { id: CONSOLE_BUTTONS.FLOOR_BT_ALL.id },
+					isConsole: true,
 				},
 				{
-					label: CONSOLE_BUTTONS.RAID_BATTLE.label,
-					params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id },
+					label: CONSOLE_BUTTONS.RAID_COMMANDS.label,
+					params: { id: CONSOLE_BUTTONS.RAID_COMMANDS.id },
+					isConsole: true,
 				},
 				{
 					label: CONSOLE_BUTTONS.CONSOLE.label,

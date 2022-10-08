@@ -196,6 +196,7 @@ export const propose = async ({
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

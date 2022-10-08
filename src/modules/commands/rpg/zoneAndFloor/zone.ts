@@ -14,6 +14,7 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
+import { attachButtonToFloorEmbed } from ".";
 
 async function handleNextZone(params: {
     user: UserProps;
@@ -21,7 +22,7 @@ async function handleNextZone(params: {
     channel: ChannelProp
 }) {
 	const { user, zn } = params;
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
+	let embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
 	if ((user.ruin == user.max_ruin && zn == "n") || parseInt(zn) > user.max_ruin) {
 		embed
 			.setDescription(
@@ -60,6 +61,11 @@ async function handleNextZone(params: {
 			.setTitle(`Successfully travelled to __${titleCase(zone.name)}__\n[Zone ${user.ruin}]`)
 			.setDescription(zone.description)
 			.setImage("attachment://zone.jpg");
+
+		embed = attachButtonToFloorEmbed({
+			embed,
+			channel: params.channel
+		});
 	}
 	await updateRPGUser({ user_tag: user.user_tag }, {
 		max_floor: user.max_floor,

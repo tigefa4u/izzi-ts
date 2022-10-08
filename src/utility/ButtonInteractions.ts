@@ -2,7 +2,7 @@ import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
 import { ButtonOptions } from "@customTypes/button";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
-import { Client, MessageActionRow } from "discord.js";
+import { Client, Message, MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -183,7 +183,7 @@ export const customButtonInteraction = <P>(
 	channel: ChannelProp,
 	options: (ButtonOptions & { params: P })[],
 	authorId: string,
-	fetch: (params: P & { user_tag: string; channel: ChannelProp; client: Client; }) => void,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp; client: Client; message: Message; }) => void,
 	callback: () => void,
 	bypassFilter?: boolean,
 	maxClicks = 1
@@ -215,7 +215,8 @@ export const customButtonInteraction = <P>(
 						...option.params,
 						user_tag: buttonInteraction.user.id,
 						channel,
-						client: buttonInteraction.client
+						client: buttonInteraction.client,
+						message: buttonInteraction.message as Message
 					});
 					callback();
 				}

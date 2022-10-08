@@ -235,6 +235,7 @@ export const MARKET_PURCHASE_LIMIT = 5;
 export const MAX_CHOSEN_SKINS_ALLOWED = 30;
 
 export const MIN_RAID_USER_LEVEL = 5;
+export const MIN_LEVEL_FOR_HIGH_RAIDS = 25;
 export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];
 
 export const BOT_GLOBAL_PERMISSIONS: PermissionString[] = [
@@ -316,5 +317,45 @@ export const CONSOLE_BUTTONS = {
 	CONSOLE: {
 		id: "console",
 		label: "Console"
+	},
+	RAID_COMMANDS: {
+		id: "raid_commands",
+		label: "Rd Commands"
+	},
+	RAID_MAKE_PRIVATE: {
+		id: "raid_make_private",
+		label: "Rd Private"
+	},
+	RAID_MAKE_PUBLIC: {
+		id: "raid_make_public",
+		label: "Rd Public"
+	},
+	RAID_VIEW: {
+		id: "raid_view",
+		label: "Rd View"
+	},
+	RAID_START: {
+		id: "raid_start",
+		label: "Rd Start"
+	},
+	RAID_JOIN: {
+		id: "raid_join",
+		label: "Rd Join"
+	},
+	HOURLY: {
+		id: "hourly",
+		label: "Hourly"
+	},
+	LOTTERY: {
+		id: "lotto",
+		label: "Lottery"
+	},
+	RAID_LEAVE: {
+		id: "raid_leave",
+		label: "Rd Leave"
+	},
+	RAID_RECRUIT: {
+		id: "raid_recruit",
+		label: "Rd Recruit"
 	}
 };

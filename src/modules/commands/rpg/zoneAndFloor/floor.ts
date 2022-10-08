@@ -19,6 +19,7 @@ import { createSingleCanvas } from "helpers/canvas";
 import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { attachButtonToFloorEmbed } from ".";
 
 async function prepareStageStats(params: {
   rank: string;
@@ -48,7 +49,7 @@ async function handleNextFloor(params: {
 }) {
 	const { user, fl } = params;
 
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
+	let embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
 	if (
 		(user.floor == user.max_floor && fl == "n") ||
     parseInt(fl) > user.max_floor
@@ -123,6 +124,11 @@ async function handleNextFloor(params: {
 		.setImage("attachment://img.jpg")
 		.setThumbnail("attachment://zone.jpg")
 		.attachFiles([ attachment, zoneAttachment ]);
+
+	embed = attachButtonToFloorEmbed({
+		embed,
+		channel: params.channel 
+	});
 	return embed;
 }
 
