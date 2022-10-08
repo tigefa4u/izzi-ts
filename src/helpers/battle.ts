@@ -77,8 +77,8 @@ export const getPlayerDamageDealt = (
     randomNumber(0.87, 1, true); // This was 0.85 before
 	let atk = clone(Math.floor(vitality));
 	let def = clone(Math.floor(defense));
-	atk = atk + Math.floor(playerTotalStats.intelligence * (35 / 100)); // prev - 6
-	def = def + Math.floor(enemyTotalStats.intelligence * (40 / 100)); // prev - 10
+	atk = atk + Math.floor(playerTotalStats.intelligence * (6 / 100)); // prev - 6 (35)
+	def = def + Math.floor(enemyTotalStats.intelligence * (10 / 100)); // prev - 10 (40)
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
