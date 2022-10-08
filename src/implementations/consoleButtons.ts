@@ -18,6 +18,8 @@ import { CustomButtonInteractionParams } from "@customTypes/button";
 import { getCooldown } from "modules/cooldowns";
 import { lottery } from "modules/commands/rpg/misc";
 import { hourly } from "modules/commands/rpg/resource";
+import { help } from "modules/commands/basic";
+import { titleCase } from "title-case";
 
 const prepareConsoleDescription = async (user: UserProps) => {
 	const [ hourlyTTl, lotteryTTl, rconfig, disableRaids ] = await Promise.all([
@@ -46,10 +48,10 @@ const prepareConsoleDescription = async (user: UserProps) => {
 	if (remainingMins <= 0) {
 		isRaidSpawnReady = true;
 	}
-	let raidSpawnDifficulty = "None";
+	let raidSpawnDifficulty = "Use ``console rconfig <difficulty>(e/m/h/i)``";
 	if (rconfig) {
 		const { difficulty } = JSON.parse(rconfig);
-		raidSpawnDifficulty = difficulty;
+		raidSpawnDifficulty = titleCase(difficulty);
 	}
 	const votedAt = user.voted_at;
 	let isVoteReady = false;
@@ -139,6 +141,11 @@ const handleConsoleButtonInteractions = async ({
 			hourly(options);
 			return;
 		}
+		case CONSOLE_BUTTONS.HELP.id: {
+			options.args = [];
+			help(options);
+			return;
+		}
 	}
 };
 
@@ -161,7 +168,8 @@ export const prepareAndSendConsoleMenu = async ({
 	const desc = await prepareConsoleDescription(user);
 	const embed = createEmbed(author, client)
 		.setTitle("Console Menu " + emoji.crossedswords)
-		.setDescription(desc);
+		.setDescription(desc)
+		.setThumbnail(author.displayAvatarURL());
 
 	const buttons = customButtonInteraction(
 		channel,
@@ -192,6 +200,10 @@ export const prepareAndSendConsoleMenu = async ({
 				label: CONSOLE_BUTTONS.NEXT_ZONE.label,
 				params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id },
 			},
+			{
+				label: CONSOLE_BUTTONS.HELP.label,
+				params: { id: CONSOLE_BUTTONS.HELP.id }
+			}
 		],
 		author.id,
 		handleConsoleButtonInteractions,
