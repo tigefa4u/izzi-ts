@@ -357,5 +357,9 @@ export const CONSOLE_BUTTONS = {
 	RAID_RECRUIT: {
 		id: "raid_recruit",
 		label: "Rd Recruit"
+	},
+	HELP: {
+		id: "help",
+		label: "Help"
 	}
 };
