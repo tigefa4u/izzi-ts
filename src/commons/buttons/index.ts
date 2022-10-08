@@ -16,5 +16,8 @@ export const createButton: CreateButtonParams = (id, options) => {
 		button.setURL(options.url);
 		button.setCustomId("");
 	}
+	if (typeof options?.isConsole === "boolean") {
+		button.setIsConsoleButton(options.isConsole);
+	}
 	return button;
 };

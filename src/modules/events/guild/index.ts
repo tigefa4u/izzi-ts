@@ -1,4 +1,5 @@
 import { ChannelProp } from "@customTypes";
+import { CustomButtonInteractionParams } from "@customTypes/button";
 import { delGuildItems } from "api/controllers/GuildItemsController";
 import { delAllGuildMembers } from "api/controllers/GuildMembersController";
 import { createGuild, disbandAndBackupGuild, getGuild, updateGuild } from "api/controllers/GuildsController";
@@ -12,13 +13,7 @@ import { starterGuide } from "modules/commands/rpg/profile/guide";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { start } from "../../commands/rpg/profile/startJourney";
 
-type P = {
-	user_tag: string;
-	channel: ChannelProp;
-	client: Client;
-	id: string;
-}
-const startJourneyOrGuide = async ({ user_tag, channel, client, id }: P) => {
+const startJourneyOrGuide = async ({ user_tag, channel, client, id }: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
 	if (!author) return;
 	if (id === "start_journey") {

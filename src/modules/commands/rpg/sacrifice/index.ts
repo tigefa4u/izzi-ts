@@ -270,6 +270,7 @@ export const sacrificeCard = async ({
 		);
 		if (!buttons) return;
 		// await delay(2000); // wait till the canvas is prepared
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

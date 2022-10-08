@@ -1,5 +1,6 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
+import { CustomButtonInteractionParams } from "@customTypes/button";
 import {
 	CollectionCardInfoProps,
 	CollectionCreateProps,
@@ -34,18 +35,8 @@ import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { floor } from "../../zoneAndFloor/floor";
 
-type T = {
-	user_tag: string;
-	client: Client;
-	channel: ChannelProp;
-	id: string;
-}
-const toggleNextFloor = async ({ user_tag, client, channel }: T) => {
-	const [ author, user ] = await Promise.all([
-		client.users.fetch(user_tag),
-		getRPGUser({ user_tag })
-	]);
-	if (!user) return;
+const toggleNextFloor = async ({ user_tag, client, channel }: CustomButtonInteractionParams) => {
+	const author = await client.users.fetch(user_tag);
 	floor({
 		context: { channel } as BaseProps["context"],
 		client,

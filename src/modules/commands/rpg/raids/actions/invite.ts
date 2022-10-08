@@ -16,6 +16,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	HIGH_LEVEL_RAIDS,
 	MAX_RAID_LOBBY_MEMBERS,
+	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
 	REACTIONS,
@@ -52,9 +53,11 @@ async function validateAndAcceptRaid(
 		params.channel?.sendMessage("The Challenger Lobby is already full.");
 		return;
 	} else if (!currentRaid.lobby[userId].is_leader) {
-		params.channel?.sendMessage(`Summoner ${params.author.username}, You cannot invite others to the ${
-			isEvent ? "Event" : "Raid"
-		} Challenge!\nPlease ask the Lobby Leader to do so.`);
+		params.channel?.sendMessage(
+			`Summoner ${params.author.username}, You cannot invite others to the ${
+				isEvent ? "Event" : "Raid"
+			} Challenge!\nPlease ask the Lobby Leader to do so.`
+		);
 		return;
 	}
 
@@ -80,10 +83,25 @@ async function validateAndAcceptRaid(
 		);
 		return;
 	}
-	if (mentionedUser.level < MIN_RAID_USER_LEVEL && HIGH_LEVEL_RAIDS.includes(currentRaid.stats.difficulty)) {
-		params.channel?.sendMessage(`Summoner **${mentionedUser.username}** must be atleast level ` +
-		`__${MIN_RAID_USER_LEVEL}__ ` +
-		"to be able to spawn or join __high level(Hard / Immortal)__ Raids.");
+	if (
+		mentionedUser.level < MIN_RAID_USER_LEVEL &&
+    HIGH_LEVEL_RAIDS.includes(currentRaid.stats.difficulty)
+	) {
+		params.channel?.sendMessage(
+			`Summoner **${mentionedUser.username}** must be atleast level ` +
+        `__${MIN_RAID_USER_LEVEL}__ ` +
+        "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
+		);
+		return;
+	} else if (
+		mentionedUser.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+    [ "i", "immortal" ].includes(currentRaid.stats.difficulty)
+	) {
+		params.channel?.sendMessage(
+			`Summoner **${mentionedUser.username}** must be atleast level ` +
+        `__${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
+        "to be able to spawn or join __Immortal__ Raids."
+		);
 		return;
 	}
 	if (options?.isConfirm) {
@@ -99,8 +117,11 @@ async function validateAndAcceptRaid(
 		});
 		await updateRaid({ id: currentRaid.id }, { lobby });
 
-		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Summoner **${mentionedUser.username}** has accepted to join you on your conquest!`);
+		embed
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`Summoner **${mentionedUser.username}** has accepted to join you on your conquest!`
+			);
 
 		params.channel?.sendMessage(embed);
 		return;
@@ -120,7 +141,9 @@ export const inviteToRaid = async ({
 		const cooldownCommand = "invite-to-raid";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const mentionId = getIdFromMentionedString(args.shift() || "");
@@ -179,6 +202,7 @@ export const inviteToRaid = async ({
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

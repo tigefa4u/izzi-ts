@@ -11,6 +11,7 @@ import {
 import { getRandomCard } from "api/controllers/CardsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -20,6 +21,7 @@ import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import {
 	DEFAULT_ERROR_TITLE,
 	HIGH_LEVEL_RAIDS,
+	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
 } from "helpers/constants";
@@ -186,7 +188,10 @@ export const spawnRaid = async ({
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const [ user, rconfig ] = await Promise.all([
+			getRPGUser({ user_tag: author.id }),
+			Cache.get("rconfig::" + author.id)
+		]);
 		if (!user) return;
 		const currentRaid = await getUserRaidLobby({ user_id: user.id });
 		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
@@ -218,7 +223,14 @@ export const spawnRaid = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const difficulty = args.shift() || "e";
+		let difficulty = args.shift();
+		if (rconfig) {
+			const { difficulty: configDifficulty } = JSON.parse(rconfig);
+			difficulty = configDifficulty;
+		} else {
+			difficulty = "e";
+		}
+		if (!difficulty) return;
 		if (
 			user.level < MIN_RAID_USER_LEVEL &&
       HIGH_LEVEL_RAIDS.includes(difficulty)
@@ -226,6 +238,14 @@ export const spawnRaid = async ({
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
           "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
+			);
+			return;
+		}
+		if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+			[ "i", "immortal" ].includes(difficulty)) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
+          "to be able to spawn or join __Immortal__ Raids."
 			);
 			return;
 		}

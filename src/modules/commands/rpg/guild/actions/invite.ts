@@ -137,6 +137,7 @@ export const inviteToGuild = async ({
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand, 60);
 		const msg = await context.channel?.sendMessage(embed);
