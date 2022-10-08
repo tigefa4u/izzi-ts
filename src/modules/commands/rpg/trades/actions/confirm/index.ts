@@ -34,7 +34,7 @@ async function validateTraderQueue(
 			embed.setDescription(
 				"Trade has been cancelled due to insufficient cards. " +
           "(Hint: The card you are trying to Trade might be on the Global Market)"
-			);
+			).setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -45,14 +45,14 @@ async function validateTraderQueue(
 			if (hasSelectedCard) {
 				embed.setDescription(
 					"Trade has been cancelled. You cannot trade the card you've selected for battle!"
-				);
+				).setHideConsoleButtons(true);
 				channel?.sendMessage(embed);
 				return;
 			}
 		}
 	}
 	if (user.gold < trader.gold) {
-		embed.setDescription("Trade has been cancelled due to insufficient gold.");
+		embed.setDescription("Trade has been cancelled due to insufficient gold.").setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		return;
 	}
@@ -76,7 +76,7 @@ export const confirmTrade = async ({
 			embed.setDescription(
 				`Summoner **${author.username}**, you have already confirmed this Trade, ` +
           "please wait for the other participant to confirm"
-			);
+			).setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -90,7 +90,7 @@ export const confirmTrade = async ({
 		if (invokeTrade === false) {
 			tradeQueue[trader.user_tag] = trader;
 			queue.setTradeQueue(tradeId, tradeQueue);
-			embed.setDescription("Trade Confirmed");
+			embed.setDescription("Trade Confirmed").setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			viewTrade({
 				tradeQueue,
@@ -198,7 +198,7 @@ export const confirmTrade = async ({
 		// 	}));
 		// 	return Cache.expire && Cache.expire("card-cd::" + q.id, 60 * 60 * 4);
 		// }));
-		embed.setDescription("Trade completed!");
+		embed.setDescription("Trade completed!").setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {

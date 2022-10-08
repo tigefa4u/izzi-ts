@@ -224,10 +224,10 @@ export const spawnRaid = async ({
 			return;
 		}
 		let difficulty = args.shift();
-		if (rconfig) {
+		if (rconfig && !difficulty) {
 			const { difficulty: configDifficulty } = JSON.parse(rconfig);
 			difficulty = configDifficulty;
-		} else {
+		} else if (!difficulty) {
 			difficulty = "e";
 		}
 		if (!difficulty) return;

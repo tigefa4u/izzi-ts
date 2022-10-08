@@ -15,7 +15,8 @@ const emotions = async (params: { channel: ChannelProp; commandId: number; clien
 		const attachment = createAttachment(url, "gif.gif");
 		const embed = createEmbed(params.author)
 			.setImage("attachment://gif.gif")
-			.attachFiles([ attachment ]);
+			.attachFiles([ attachment ])
+			.setHideConsoleButtons(true);
 		params.channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error("commands.basic.emotions(): something went wrong", err);

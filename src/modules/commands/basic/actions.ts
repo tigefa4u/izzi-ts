@@ -39,7 +39,8 @@ const actions = async (params: {
 		const embed = createEmbed(params.author)
 			.setDescription(text)
 			.setImage("attachment://gif.gif")
-			.attachFiles([ attachment ]);
+			.attachFiles([ attachment ])
+			.setHideConsoleButtons(true);
 		params.channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error("commands.basic.actions(): something went wrong", err);
