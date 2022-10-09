@@ -60,10 +60,17 @@ const handleRaidSpawnDifficultyButtons = async ({
 	} else {
 		raidActions(options);
 	}
+	showRaidCommands({
+		id,
+		channel,
+		client,
+		message,
+		user_tag
+	});
 	return;
 };
 
-const showRaidSpawnDifficulty = async ({ message, channel }: Pick<P, "message" | "channel">) => {
+const showRaidSpawnDifficulty = async ({ message, channel, user_tag }: Pick<P, "message" | "channel" | "user_tag">) => {
 	const buttons = customButtonInteraction(
 		channel,
 		[
@@ -89,12 +96,12 @@ const showRaidSpawnDifficulty = async ({ message, channel }: Pick<P, "message" |
 				style: "SECONDARY"
 			}
 		],
-		"",
+		user_tag,
 		handleRaidSpawnDifficultyButtons,
 		() => {
 			return;
 		},
-		true,
+		false,
 		10
 	);
 	if (!buttons) return;
@@ -178,7 +185,8 @@ const handleRaidButtons = async ({
 		case CONSOLE_BUTTONS.RAID_SPAWN.id: {
 			showRaidSpawnDifficulty({
 				message,
-				channel 
+				channel,
+				user_tag
 			});
 			// let difficulty = "e";
 			// if (rconfig) {
@@ -256,7 +264,7 @@ export const showRaidCommands = async ({
 			() => {
 				return;
 			},
-			true,
+			false,
 			10
 		);
 

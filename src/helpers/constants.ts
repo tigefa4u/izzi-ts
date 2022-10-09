@@ -235,7 +235,8 @@ export const MARKET_PURCHASE_LIMIT = 5;
 export const MAX_CHOSEN_SKINS_ALLOWED = 30;
 
 export const MIN_RAID_USER_LEVEL = 5;
-export const MIN_LEVEL_FOR_HIGH_RAIDS = 25;
+export const MIN_LEVEL_FOR_HIGH_RAIDS = 22;
+export const IMMORTAL_RAIDS = [ "i", "immortal" ];
 export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];
 
 export const BOT_GLOBAL_PERMISSIONS: PermissionString[] = [
@@ -365,5 +366,17 @@ export const CONSOLE_BUTTONS = {
 	BACK: {
 		id: "back",
 		label: "Back"
+	},
+	JUMP_TO_FLOOR: {
+		id: "jump_to_floor",
+		label: "Jump to Floor"
+	},
+	UPGRADE_CARD_LEVEL: {
+		id: "upgrade_card_level",
+		label: "Upgrade Level"
+	},
+	EVOLVE_CARD: {
+		id: "evolve_card",
+		label: "Evolve Card"
 	}
 };

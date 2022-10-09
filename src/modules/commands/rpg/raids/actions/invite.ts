@@ -15,6 +15,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	HIGH_LEVEL_RAIDS,
+	IMMORTAL_RAIDS,
 	MAX_RAID_LOBBY_MEMBERS,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
@@ -95,7 +96,7 @@ async function validateAndAcceptRaid(
 		return;
 	} else if (
 		mentionedUser.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-    [ "i", "immortal" ].includes(currentRaid.stats.difficulty)
+    IMMORTAL_RAIDS.includes(currentRaid.stats.rawDifficulty)
 	) {
 		params.channel?.sendMessage(
 			`Summoner **${mentionedUser.username}** must be atleast level ` +

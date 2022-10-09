@@ -116,6 +116,7 @@ const handleShowSkin = async (
 					channel: params.channel,
 					author: params.author,
 				});
+				embed.setHideConsoleButtons(true);
 			}
 			if (opts?.isEdit) {
 				sentMessage.editMessage(embed);

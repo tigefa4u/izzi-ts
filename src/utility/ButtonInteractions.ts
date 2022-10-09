@@ -68,6 +68,23 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			callback(result, { isEdit: true });
 			return;
 		});
+
+		collector?.on("dispose", (interaction) => {
+			const message = interaction.message as Message;
+			message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+			message.editButton([ ...message.components ][0]);
+			return;
+		});
+
+		collector?.on("end", (collected) => {
+			collected.map((interaction) => {
+				const message = interaction.message as Message;
+				message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+				message.editButton([ ...message.components ][0]);
+			});
+			return;
+		});
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.paginatorInteraction(): something went wrong", err);
@@ -128,6 +145,23 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 			}
 			return;
 		});
+
+		collector?.on("dispose", (interaction) => {
+			const message = interaction.message as Message;
+			message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+			message.editButton([ ...message.components ][0]);
+			return;
+		});
+
+		collector?.on("end", (collected) => {
+			collected.map((interaction) => {
+				const message = interaction.message as Message;
+				message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+				message.editButton([ ...message.components ][0]);
+			});
+			return;
+		});
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.confirmationInteraction(): something went wrong", err);
@@ -172,6 +206,23 @@ export const collectableInteraction = async <P>(
 			}
 			return;
 		});
+
+		collector?.on("dispose", (interaction) => {
+			const message = interaction.message as Message;
+			message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+			message.editButton([ ...message.components ][0]);
+			return;
+		});
+
+		collector?.on("end", (collected) => {
+			collected.map((interaction) => {
+				const message = interaction.message as Message;
+				message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+				message.editButton([ ...message.components ][0]);
+			});
+			return;
+		});
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.collectableInteraction(): something went wrong", err);
@@ -220,6 +271,22 @@ export const customButtonInteraction = <P>(
 					});
 					callback();
 				}
+			});
+			return;
+		});
+
+		collector?.on("dispose", (interaction) => {
+			const message = interaction.message as Message;
+			message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+			message.editButton([ ...message.components ][0]);
+			return;
+		});
+
+		collector?.on("end", (collected) => {
+			collected.map((interaction) => {
+				const message = interaction.message as Message;
+				message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+				message.editButton([ ...message.components ][0]);
 			});
 			return;
 		});

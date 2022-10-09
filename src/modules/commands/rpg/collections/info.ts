@@ -1,4 +1,5 @@
-import { OverallStatsProps } from "@customTypes";
+import { AuthorProps, OverallStatsProps } from "@customTypes";
+import { CustomButtonInteractionParams } from "@customTypes/button";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
@@ -11,8 +12,12 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { overallStats, prepareStatsDesc } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { evolveCard } from "../evolution";
+import { upgradeCard } from "../evolution/upgradeCard";
 import { getSortCache } from "../sorting/sortCache";
 
 function prepareInfoDescription(
@@ -37,6 +42,29 @@ function prepareInfoDescription(
 
 	return desc;
 }
+
+const handleCardUpgrade = async ({
+	user_tag, client, id, channel, author, cardId, rowId
+} : CustomButtonInteractionParams & { author: AuthorProps; cardId: number; rowId?: number; }) => {
+	const options = {
+		context: { channel } as BaseProps["context"],
+		options: { author },
+		client,
+		args: [ `${cardId}` ]
+	};
+	switch (id) {
+		case CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id: {
+			upgradeCard(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.EVOLVE_CARD.id: {
+			if (!rowId) return;
+			options.args = [ `${rowId}` ];
+			evolveCard(options);
+			return;
+		}
+	}
+};
 
 export const getCardInfo = async ({
 	client,
@@ -84,6 +112,39 @@ export const getCardInfo = async ({
 			.setImage("attachment://info.jpg")
 			.attachFiles([ attachment ]);
 
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
+					params: {
+						id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
+						author,
+						cardId: infoData.id
+					}
+				},
+				{
+					label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
+					params: {
+						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
+						author,
+						cardId: infoData.id,
+						rowId: infoData.row_number
+					}
+				}
+			],
+			author.id,
+			handleCardUpgrade,
+			() => {
+				return;
+			},
+			false,
+			2
+		);
+
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

@@ -221,6 +221,20 @@ export const prepareAndSendConsoleMenu = async ({
 	return;
 };
 
+const showRaidCommandsWrapper = async (params: CustomButtonInteractionParams) => {
+	const author = await params.client.users.fetch(params.user_tag);
+	const embed = createEmbed(author, params.client)
+		.setTitle("Raid Commands")
+		.setDescription("View all available Raid command buttons.")
+		.setHideConsoleButtons(true);
+
+	const message = await params.channel?.sendMessage(embed);
+	if (message) {
+		params.message = message;
+		showRaidCommands(params);
+	}
+};
+
 const handleIntemediateConsoleButtons = async ({
 	channel,
 	client,
@@ -251,7 +265,7 @@ const handleIntemediateConsoleButtons = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.RAID_COMMANDS.id: {
-			showRaidCommands({
+			showRaidCommandsWrapper({
 				channel,
 				client,
 				id,

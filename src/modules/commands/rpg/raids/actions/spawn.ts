@@ -21,6 +21,7 @@ import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import {
 	DEFAULT_ERROR_TITLE,
 	HIGH_LEVEL_RAIDS,
+	IMMORTAL_RAIDS,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
@@ -162,6 +163,7 @@ export const createRaidBoss = async ({
 		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
 		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
 		timestamp: dt.setHours(dt.getHours() + 1),
+		rawDifficulty: computedBoss.difficulty
 	} as RaidStatsProps;
 
 	const raid = await createRaid({
@@ -240,9 +242,8 @@ export const spawnRaid = async ({
           "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
 			);
 			return;
-		}
-		if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-			[ "i", "immortal" ].includes(difficulty)) {
+		} else if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+			IMMORTAL_RAIDS.includes(difficulty)) {
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
           "to be able to spawn or join __Immortal__ Raids."

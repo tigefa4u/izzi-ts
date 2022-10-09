@@ -10,6 +10,7 @@ import emoji from "emojis/emoji";
 import {
 	DEFAULT_ERROR_TITLE,
 	HIGH_LEVEL_RAIDS,
+	IMMORTAL_RAIDS,
 	MAX_RAID_LOBBY_MEMBERS,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
@@ -75,7 +76,7 @@ export const joinRaid = async ({
 			return;
 		} else if (
 			user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-      [ "i", "immortal" ].includes(raid.stats.difficulty)
+      IMMORTAL_RAIDS.includes(raid.stats.rawDifficulty)
 		) {
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +

@@ -89,7 +89,8 @@ export const compareCards = async ({
 				.setFooter({
 					text: "★ = Highest value for stat",
 					iconURL: author.displayAvatarURL()
-				});
+				})
+				.setHideConsoleButtons(true);
 
 			context.channel?.sendMessage(embed);
 			return;

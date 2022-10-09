@@ -1,6 +1,6 @@
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
-import { ENERGY_PER_ATTACK, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
+import { CONSOLE_BUTTONS, ENERGY_PER_ATTACK, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";
@@ -30,6 +30,12 @@ import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { numericWithComma } from "helpers";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { CustomButtonInteractionParams } from "@customTypes/button";
+import Cache from "cache";
+import { eventActions } from "../events";
+import { raidActions } from "..";
+import { BaseProps } from "@customTypes/command";
 
 export const battleRaidBoss = async ({
 	context,
@@ -222,6 +228,32 @@ export const battleRaidBoss = async ({
 	}
 };
 
+const handleButtonClick = async ({
+	id, channel, client, user_tag, message 
+}: CustomButtonInteractionParams) => {
+	const [ author, disableRaids ] = await Promise.all([
+		client.users.fetch(user_tag),
+		Cache.get("disable-raids")
+	]);
+	let isEvent = false;
+	if (disableRaids) isEvent = true;
+
+	const options = {
+		context: { channel } as BaseProps["context"],
+		args: [ "bt" ],
+		options: { author },
+		client
+	};
+	if (id === CONSOLE_BUTTONS.RAID_BATTLE.id) {
+		if (isEvent) {
+			eventActions(options);
+		} else {
+			raidActions(options);
+		}
+	}
+	return;
+};
+
 type R = {
   result: BattleStats;
   updateObj: RaidProps;
@@ -284,6 +316,26 @@ async function processRaidResult({
 		.setThumbnail("attachment://boss.jpg")
 		.attachFiles([ attachment ]);
 
+	const buttons = customButtonInteraction(
+		channel,
+		[
+			{
+				label: CONSOLE_BUTTONS.RAID_BATTLE.label,
+				params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id }
+			}
+		],
+		author.id,
+		handleButtonClick,
+		() => {
+			return;
+		},
+		true,
+		10
+	);
+
+	if (buttons) {
+		embed.setButtons(buttons);
+	}
 	channel?.sendMessage(embed);
 	return;
 }
