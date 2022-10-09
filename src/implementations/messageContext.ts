@@ -164,6 +164,9 @@ export const editButton: (
 				components: moreButtons
 			} as MessageActionRow);
 		}
+		if (!context.editable) {
+			throw new Error("Message not editable. Message ID: " + context.id);
+		}
 		return context.edit({ components: componentsArr });
 	} catch (err) {
 		loggers.error(
