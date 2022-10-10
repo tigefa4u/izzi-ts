@@ -19,6 +19,7 @@ import { customButtonInteraction } from "utility/ButtonInteractions";
 import { evolveCard } from "../evolution";
 import { upgradeCard } from "../evolution/upgradeCard";
 import { getSortCache } from "../sorting/sortCache";
+import { selectCard } from "./select";
 
 function prepareInfoDescription(
 	infoData: CollectionCardInfoProps,
@@ -61,6 +62,12 @@ const handleCardUpgrade = async ({
 			if (!rowId) return;
 			options.args = [ `${rowId}` ];
 			evolveCard(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.SELECT_CARD.id: {
+			if (!rowId) return;
+			options.args = [ `${rowId}` ];
+			selectCard(options);
 			return;
 		}
 	}
@@ -127,6 +134,15 @@ export const getCardInfo = async ({
 					label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
 					params: {
 						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
+						author,
+						cardId: infoData.id,
+						rowId: infoData.row_number
+					}
+				},
+				{
+					label: CONSOLE_BUTTONS.SELECT_CARD.label,
+					params: {
+						id: CONSOLE_BUTTONS.SELECT_CARD.id,
 						author,
 						cardId: infoData.id,
 						rowId: infoData.row_number

@@ -61,6 +61,24 @@ const handleRaidViewButtons = async ({
 			raidRecruit(options);
 			return;	
 		}
+		case CONSOLE_BUTTONS.RAID_START.id: {
+			options.args = [ "start" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}	
+			return;
+		}
+		case CONSOLE_BUTTONS.RAID_PARTY.id: {
+			options.args = [ "lobby" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}	
+			return;
+		}
 	} 
 };
 
@@ -98,6 +116,14 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 				{
 					label: CONSOLE_BUTTONS.RAID_RECRUIT.label,
 					params: { id: CONSOLE_BUTTONS.RAID_RECRUIT.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_START.label,
+					params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_PARTY.label,
+					params: { id: CONSOLE_BUTTONS.RAID_PARTY.id }
 				}
 			],
 			author.id,

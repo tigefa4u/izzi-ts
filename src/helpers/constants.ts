@@ -378,5 +378,13 @@ export const CONSOLE_BUTTONS = {
 	EVOLVE_CARD: {
 		id: "evolve_card",
 		label: "Evolve Card"
+	},
+	RAID_PARTY: {
+		id: "raid_party",
+		label: "Rd Party"
+	},
+	SELECT_CARD: {
+		id: "select_card",
+		label: "Select Card"
 	}
 };
