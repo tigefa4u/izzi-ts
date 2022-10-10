@@ -88,6 +88,7 @@ export const getRPGUser: (
   params: Pick<UserProps, "user_tag">,
   options?: {
     cached: boolean;
+	ignoreBannedUser?: boolean;
   }
 ) => Promise<UserProps | undefined> = async (params, options) => {
 	try {
@@ -104,6 +105,9 @@ export const getRPGUser: (
 				"api.controllers.UsersController.getRPGUser: User not found " +
           params.user_tag
 			);
+			return;
+		}
+		if (!options?.ignoreBannedUser && user.is_banned) {
 			return;
 		}
 		if (options?.cached) {
