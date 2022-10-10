@@ -39,6 +39,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
 			maxComponents: 10, // Max number of clicks
+			time: 600_000
 		});
 		let result = await fetch(params, pageFilter, options);
 		callback(result);
@@ -120,7 +121,8 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
-			maxComponents: 1
+			maxComponents: 1,
+			time: 600_000
 		});
 		const isValid = await fetch(params, options);
 		if (!isValid) return;
@@ -188,7 +190,7 @@ export const collectableInteraction = async <P>(
 			max: 1,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 240_000
+			time: 600_000
 		});
 		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
@@ -254,7 +256,7 @@ export const customButtonInteraction = <P>(
 			max: maxClicks,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 240_000
+			time: 600_000
 		});
 		// To disabled buttons on end - edit the message, setting the new buttons
 		collector?.on("collect", (buttonInteraction) => {
