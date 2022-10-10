@@ -243,7 +243,7 @@ export const spawnRaid = async ({
 			);
 			return;
 		} else if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-			IMMORTAL_RAIDS.includes(difficulty)) {
+			IMMORTAL_RAIDS.includes(difficulty) && !isEvent) {
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
           "to be able to spawn or join __Immortal__ Raids."

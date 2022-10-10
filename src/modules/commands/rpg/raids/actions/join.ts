@@ -76,7 +76,8 @@ export const joinRaid = async ({
 			return;
 		} else if (
 			user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-      IMMORTAL_RAIDS.includes(raid.stats.rawDifficulty)
+      IMMORTAL_RAIDS.includes(raid.stats.rawDifficulty) &&
+	  !isEvent
 		) {
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +

@@ -96,7 +96,8 @@ async function validateAndAcceptRaid(
 		return;
 	} else if (
 		mentionedUser.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-    IMMORTAL_RAIDS.includes(currentRaid.stats.rawDifficulty)
+    IMMORTAL_RAIDS.includes(currentRaid.stats.rawDifficulty) &&
+	!isEvent
 	) {
 		params.channel?.sendMessage(
 			`Summoner **${mentionedUser.username}** must be atleast level ` +
