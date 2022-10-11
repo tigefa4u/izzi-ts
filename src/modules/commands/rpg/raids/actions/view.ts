@@ -119,7 +119,7 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 				},
 				{
 					label: CONSOLE_BUTTONS.RAID_START.label,
-					params: { id: CONSOLE_BUTTONS.RAID_SPAWN.id }
+					params: { id: CONSOLE_BUTTONS.RAID_START.id }
 				},
 				{
 					label: CONSOLE_BUTTONS.RAID_PARTY.label,
