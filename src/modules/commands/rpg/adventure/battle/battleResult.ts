@@ -33,16 +33,29 @@ import {
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
+import { battle } from "..";
 import { floor } from "../../zoneAndFloor/floor";
+import { zone } from "../../zoneAndFloor/zone";
 
-const toggleNextFloor = async ({ user_tag, client, channel }: CustomButtonInteractionParams) => {
+const toggleNextFloor = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
-	floor({
+	const options = {
 		context: { channel } as BaseProps["context"],
 		client,
 		options: { author },
-		args: [ "n" ]
-	});
+		args: [ "bt" ]
+	};
+	switch (id) {
+		case CONSOLE_BUTTONS.NEXT_FLOOR.id: {
+			options.args = [ "n" ];
+			floor(options);
+			return;
+		}
+
+		case CONSOLE_BUTTONS.FLOOR_BT.id: {
+			battle(options);
+		}
+	}
 	return;
 };
 
@@ -73,6 +86,11 @@ export const processBattleResult = async ({
 		const embed = createEmbed(author)
 			.setTitle(`Defeated ${emoji.cry}`)
 			.setDescription("Better luck next time.");
+
+		const menu = [ {
+			label: CONSOLE_BUTTONS.FLOOR_BT.label,
+			params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
+		} ];
 		if (result.isVictory) {
 			const resp = await processFloorWin({
 				enemyCard,
@@ -100,28 +118,26 @@ export const processBattleResult = async ({
 					}xp__ through this battle!`
 				);
 
-			const button = customButtonInteraction(
-				channel,
-				[
-					{
-						label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
-						params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
-					}
-				],
-				author.id,
-				toggleNextFloor,
-				() => {
-					return;
-				},
-				false,
-				10
-			);
-
-			if (button) {
-				embed.setButtons(button);
-			}
+			menu.push({
+				label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
+				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+			});
 		}
 
+		const button = customButtonInteraction(
+			channel,
+			menu,
+			author.id,
+			toggleNextFloor,
+			() => {
+				return;
+			},
+			false,
+			10
+		);
+		if (button) {
+			embed.setButtons(button);
+		}
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -219,6 +235,7 @@ async function upgradeUser(
 ) {
 	let desc;
 	const upgradeObject = {};
+	let showNextZoneButton = false;
 	if (card.floor == card.max_floor && card.ruin == card.max_ruin) {
 		if (card.floor == card.max_ruin_floor && card.ruin == card.max_ruin) {
 			desc =
@@ -235,6 +252,7 @@ async function upgradeUser(
 				max_ruin: user.max_ruin,
 				max_floor: 1,
 			});
+			showNextZoneButton = true;
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
 				max_ruin: user.max_ruin,
@@ -259,7 +277,36 @@ async function upgradeUser(
 				user_tag: user.user_tag 
 			});
 		}
-		channel?.sendMessage(desc);
+		const msg = await channel?.sendMessage(desc);
+		if (msg && showNextZoneButton) {
+			const buttons = customButtonInteraction(
+				channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.NEXT_ZONE.label,
+						params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id }
+					}
+				],
+				author.id,
+				({ id, client }) => {
+					zone({
+						context: { channel } as BaseProps["context"],
+						options: { author },
+						args: [ "n" ],
+						client
+					});
+					return;
+				},
+				() => {
+					return;
+				},
+				false,
+				10
+			);
+			if (buttons) {
+				msg.editButton(buttons);
+			}
+		}
 	}
 	const requiredExp = user.r_exp;
 	let currentExp = user.exp;
