@@ -235,6 +235,8 @@ export const MARKET_PURCHASE_LIMIT = 5;
 export const MAX_CHOSEN_SKINS_ALLOWED = 30;
 
 export const MIN_RAID_USER_LEVEL = 5;
+export const MIN_LEVEL_FOR_HIGH_RAIDS = 22;
+export const IMMORTAL_RAIDS = [ "i", "immortal" ];
 export const HIGH_LEVEL_RAIDS = [ "h", "i", "hard", "immortal" ];
 
 export const BOT_GLOBAL_PERMISSIONS: PermissionString[] = [
@@ -279,3 +281,110 @@ export const GUILD_STATUS_MAX_LENGTH = 350;
 export const MAX_GOLD_THRESHOLD = 999999999;
 
 export const CHARACTER_LEVEL_EXTENDABLE_LIMIT = 10;
+
+export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
+
+export const MAX_CONSUMABLE_SOULS = 700;
+
+export const CONSOLE_BUTTONS = {
+	VOTE: {
+		id: "vote",
+		label: "Vote",
+	},
+	FLOOR_BT: {
+		id: "floor_bt",
+		label: "Fl Bt"
+	},
+	FLOOR_BT_ALL: {
+		id: "floor_bt_all",
+		label: "Bt all"
+	},
+	NEXT_FLOOR: {
+		id: "next_floor",
+		label: "Fl n"
+	},
+	NEXT_ZONE: {
+		id: "next_zone",
+		label: "Zn n"
+	},
+	RAID_BATTLE: {
+		id: "raid_bt",
+		label: "Rd bt"
+	},
+	RAID_SPAWN: {
+		id: "raid_spawn",
+		label: "Raid spawn"
+	},
+	CONSOLE: {
+		id: "console",
+		label: "Console"
+	},
+	RAID_COMMANDS: {
+		id: "raid_commands",
+		label: "Rd Commands"
+	},
+	RAID_MAKE_PRIVATE: {
+		id: "raid_make_private",
+		label: "Rd Private"
+	},
+	RAID_MAKE_PUBLIC: {
+		id: "raid_make_public",
+		label: "Rd Public"
+	},
+	RAID_VIEW: {
+		id: "raid_view",
+		label: "Rd View"
+	},
+	RAID_START: {
+		id: "raid_start",
+		label: "Rd Start"
+	},
+	RAID_JOIN: {
+		id: "raid_join",
+		label: "Rd Join"
+	},
+	HOURLY: {
+		id: "hourly",
+		label: "Hourly"
+	},
+	LOTTERY: {
+		id: "lotto",
+		label: "Lottery"
+	},
+	RAID_LEAVE: {
+		id: "raid_leave",
+		label: "Rd Leave"
+	},
+	RAID_RECRUIT: {
+		id: "raid_recruit",
+		label: "Rd Recruit"
+	},
+	HELP: {
+		id: "help",
+		label: "Help"
+	},
+	BACK: {
+		id: "back",
+		label: "Back"
+	},
+	JUMP_TO_FLOOR: {
+		id: "jump_to_floor",
+		label: "Jump to Floor"
+	},
+	UPGRADE_CARD_LEVEL: {
+		id: "upgrade_card_level",
+		label: "Upgrade Level"
+	},
+	EVOLVE_CARD: {
+		id: "evolve_card",
+		label: "Evolve Card"
+	},
+	RAID_PARTY: {
+		id: "raid_party",
+		label: "Rd Party"
+	},
+	SELECT_CARD: {
+		id: "select_card",
+		label: "Select Card"
+	}
+};

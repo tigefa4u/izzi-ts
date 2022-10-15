@@ -1,9 +1,11 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
+import { CustomButtonInteractionParams } from "@customTypes/button";
 import {
 	CollectionCardInfoProps,
 	CollectionCreateProps,
 } from "@customTypes/collections";
+import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import {
@@ -14,10 +16,12 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createOrUpdateZoneBackup } from "api/controllers/ZonesController";
 import { createEmbed } from "commons/embeds";
+import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import {
 	BASE_XP,
+	CONSOLE_BUTTONS,
 	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
 	STARTER_CARD_EXP,
@@ -28,6 +32,37 @@ import {
 } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { battle } from "..";
+import { floor } from "../../zoneAndFloor/floor";
+import { zone } from "../../zoneAndFloor/zone";
+
+const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
+	const author = await client.users.fetch(user_tag);
+	const options = {
+		context: { channel } as BaseProps["context"],
+		client,
+		options: { author },
+		args: [ "bt" ]
+	};
+	switch (id) {
+		case CONSOLE_BUTTONS.NEXT_FLOOR.id: {
+			options.args = [ "n" ];
+			floor(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.FLOOR_BT.id: {
+			battle(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.NEXT_ZONE.id: {
+			options.args = [ "n" ];
+			zone(options);
+			return;
+		}
+	}
+	return;
+};
 
 type P = {
   result: { isVictory: boolean };
@@ -56,6 +91,8 @@ export const processBattleResult = async ({
 		const embed = createEmbed(author)
 			.setTitle(`Defeated ${emoji.cry}`)
 			.setDescription("Better luck next time.");
+
+		let button;
 		if (result.isVictory) {
 			const resp = await processFloorWin({
 				enemyCard,
@@ -82,8 +119,27 @@ export const processBattleResult = async ({
 						resp.cardXpGain
 					}xp__ through this battle!`
 				);
+
+		} else {
+			button = customButtonInteraction(
+				channel,
+				[ {
+					label: CONSOLE_BUTTONS.FLOOR_BT.label,
+					params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
+				} ],
+				author.id,
+				handleButtonActions,
+				() => {
+					return;
+				},
+				false,
+				10
+			);
 		}
 
+		if (button) {
+			embed.setButtons(button);
+		}
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -181,6 +237,7 @@ async function upgradeUser(
 ) {
 	let desc;
 	const upgradeObject = {};
+	const menu = [];
 	if (card.floor == card.max_floor && card.ruin == card.max_ruin) {
 		if (card.floor == card.max_ruin_floor && card.ruin == card.max_ruin) {
 			desc =
@@ -196,6 +253,10 @@ async function upgradeUser(
 				user_tag: user.user_tag,
 				max_ruin: user.max_ruin,
 				max_floor: 1,
+			});
+			menu.push({
+				label: CONSOLE_BUTTONS.NEXT_ZONE.label,
+				params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id }
 			});
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
@@ -213,6 +274,10 @@ async function upgradeUser(
 				user.max_floor = user.max_ruin_floor;
 				Object.assign(upgradeObject, { max_floor: user.max_floor, });
 			}
+			menu.push({
+				label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
+				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+			});
 			Object.assign(upgradeObject, { max_ruin_floor: user.max_ruin_floor });
 			user.gold = user.gold + 500;
 			await createOrUpdateZoneBackup({
@@ -221,7 +286,23 @@ async function upgradeUser(
 				user_tag: user.user_tag 
 			});
 		}
-		channel?.sendMessage(desc);
+		const msg = await channel?.sendMessage(desc);
+		if (msg && menu.length > 0) {
+			const buttons = customButtonInteraction(
+				channel,
+				menu,
+				author.id,
+				handleButtonActions,
+				() => {
+					return;
+				},
+				false,
+				10
+			);
+			if (buttons) {
+				msg.editButton(buttons);
+			}
+		}
 	}
 	const requiredExp = user.r_exp;
 	let currentExp = user.exp;

@@ -11,7 +11,7 @@ import { getFloorsByCharacterId } from "api/controllers/StagesController";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
-import { DEFAULT_ERROR_TITLE, ranksMeta } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, ranksMeta } from "helpers/constants";
 import { AuthorProps, ChannelProp, FilterProps } from "@customTypes";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import {
@@ -20,12 +20,14 @@ import {
 } from "@customTypes/selectMenu";
 import { clone, groupByKey } from "utility";
 import { PageProps } from "@customTypes/pagination";
-import { RanksMetaProps } from "helpers/helperTypes";
 import { getCharacterCardByRank } from "api/controllers/CardsController";
-import { paginatorInteraction } from "utility/ButtonInteractions";
+import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { showCardSkins } from "./skinInfo";
+import { CustomButtonInteractionParams } from "@customTypes/button";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -164,6 +166,53 @@ async function handleCharacterSelect(
 	return;
 }
 
+const handleJumpToFloor = async ({
+	client, channel, user_tag, id, message, location
+}: CustomButtonInteractionParams & { location: NormalizeFloorProps; }) => {
+	if (id !== CONSOLE_BUTTONS.JUMP_TO_FLOOR.id) return;
+	const [ author, user ] = await Promise.all([
+		client.users.fetch(user_tag),
+		getRPGUser({ user_tag })
+	]);
+	if (!user) {
+		channel?.sendMessage(
+			`Uh oh! Summoner **${author.username}**, please start your journey in the Xenverse ` +
+        "using ``@izzi start``"
+		);
+		return;
+	}
+	const options = {
+		context: { channel } as BaseProps["context"],
+		options: { author },
+		args: [ `${location.floors[0]}` ],
+		client
+	};
+
+	if (location.zone > user.max_ruin) {
+		channel?.sendMessage(
+			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this zone yet!`
+		);
+		return;
+	} else if (location.floors[0] > user.max_ruin_floor && location.zone <= user.max_ruin) {
+		channel?.sendMessage(
+			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this floor yet!`
+		);
+		return;
+	}
+	await updateRPGUser({ user_tag: author.id }, { ruin: location.zone, });
+	floor(options);
+	return;
+};
+
+/**
+ * Main function that invokes card info details
+ * @param author 
+ * @param character 
+ * @param channel 
+ * @param client 
+ * @param filterParams 
+ * @returns 
+ */
 async function showCharacterDetails(
 	author: AuthorProps,
 	character: CharacterCardProps,
@@ -205,6 +254,7 @@ async function showCharacterDetails(
 			if (data) {
 				params.refetchCard = true;
 				embed = await prepareCinfoDetails(embed, data.data, location);
+				embed.setHideConsoleButtons(true);
 			} else {
 				embed.setDescription("Unable to show character information.");
 			}
@@ -217,6 +267,30 @@ async function showCharacterDetails(
 		}
 	);
 	if (!buttons) return;
+	if (location && location.zone > 0 && location.floors.length > 0) {
+		const extraButtons = customButtonInteraction(
+			channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.JUMP_TO_FLOOR.label,
+					params: {
+						id: CONSOLE_BUTTONS.JUMP_TO_FLOOR.id,
+						location 
+					}
+				}
+			],
+			author.id,
+			handleJumpToFloor,
+			() => {
+				return;
+			},
+			true,
+			10
+		);
+		if (extraButtons) {
+			buttons.components.push(...extraButtons.components);
+		}
+	}
 	embed.setButtons(buttons);
 	const msg = await channel?.sendMessage(embed);
 	if (msg) {

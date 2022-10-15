@@ -17,14 +17,14 @@ export const addGoldToTrade = async ({
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (amount > MAX_GOLD_IN_TRADE) {
 			embed.setDescription(`You cannot add more than __${numericWithComma(MAX_GOLD_IN_TRADE)}__ ` +
-			`gold ${emoji.gold} in Trade!`);
+			`gold ${emoji.gold} in Trade!`).setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (user.gold < amount) {
-			embed.setDescription("You do not have sufficient gold to trade.");
+			embed.setDescription("You do not have sufficient gold to trade.").setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -42,7 +42,8 @@ export const addGoldToTrade = async ({
 			channel
 		});
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Successfully added __${numericWithComma(amount)}__ gold ${emoji.gold} to trade.`);
+			.setDescription(`Successfully added __${numericWithComma(amount)}__ gold ${emoji.gold} to trade.`)
+			.setHideConsoleButtons(true);
         
 		channel?.sendMessage(embed);
 		return;

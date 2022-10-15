@@ -21,7 +21,8 @@ export const addCardByIds = async ({
 		const trader = tradeQueue[author.id];
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (trader.queue.length > MAX_CARDS_IN_TRADE) {
-			embed.setDescription(`You cannot trade more than __${MAX_CARDS_IN_TRADE}__ cards at once`);
+			embed.setDescription(`You cannot trade more than __${MAX_CARDS_IN_TRADE}__ cards at once`)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -47,7 +48,7 @@ export const addCardByIds = async ({
 			embed.setDescription(
 				"The card(s) you are looking for is either not available or on cooldown " +
 				"or is on sale on the Global Market,"
-			);
+			).setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -73,7 +74,7 @@ export const addCardByIds = async ({
 				: 0
 		} card(s) have been added to the trade! Use \`\`tr cancel/confirm/view\`\` to cancel/confirm/view the trade.`;
 
-		embed.setTitle(DEFAULT_SUCCESS_TITLE).setDescription(desc);
+		embed.setTitle(DEFAULT_SUCCESS_TITLE).setDescription(desc).setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		viewTrade({
 			author,

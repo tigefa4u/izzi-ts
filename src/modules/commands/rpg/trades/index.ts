@@ -45,7 +45,8 @@ async function clearTrade(
 			`Summoner **${username}** is currently in a Trade! ` +
         "Use ``tr cancel/confirm`` to confirm/cancel your current trade."
 		)
-		.setFooter({ text: `Trade ID: ${tradeId}. Your trade will auto expire in 10mins.`, });
+		.setFooter({ text: `Trade ID: ${tradeId}. Your trade will auto expire in 10mins.`, })
+		.setHideConsoleButtons(true);
 	channel?.sendMessage(embed);
 	return;
 }
@@ -139,7 +140,8 @@ async function validateAndConfirmTrade(
 			.setFooter({
 				text: "Your trade will auto expire in 10mins",
 				iconURL: author.displayAvatarURL() 
-			});
+			})
+			.setHideConsoleButtons(true);
 
 		params.channel?.sendMessage(embed);
 		return;
@@ -197,7 +199,8 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 				.setDescription(
 					`Summoner **${author.username}** You are currently in trade. ` +
 					"Use ``tr cancel/confirm`` to cancel/confirm the trade"
-				);
+				)
+				.setHideConsoleButtons(true);
 			context.channel?.sendMessage(embed);
 			return;
 		}
@@ -218,7 +221,8 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 				.setDescription(
 					`Summoner **${mentionedUser.username}** is currently in trade. ` +
 				"Use ``tr cancel/confirm`` to cancel/confirm the trade"
-				);
+				)
+				.setHideConsoleButtons(true);
 			context.channel?.sendMessage(embed);
 			return;	
 		}
@@ -266,6 +270,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		);
 		if (!buttons) return;
 
+		embed.setHideConsoleButtons(true);
 		embed.setButtons(buttons);
 		setCooldown(author.id, cooldownCommand);
 		const msg = await context.channel?.sendMessage(embed);

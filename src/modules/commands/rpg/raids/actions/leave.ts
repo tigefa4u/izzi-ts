@@ -76,6 +76,7 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 				}
 			);
 			if (!buttons) return;
+			embed.setHideConsoleButtons(true);
 			embed.setButtons(buttons);
 			const msg = await context.channel?.sendMessage(embed);
 			if (msg) {

@@ -2,7 +2,7 @@ import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
 import { ButtonOptions } from "@customTypes/button";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
-import { MessageActionRow } from "discord.js";
+import { Client, Message, MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -39,6 +39,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
 			maxComponents: 10, // Max number of clicks
+			time: 600_000
 		});
 		let result = await fetch(params, pageFilter, options);
 		callback(result);
@@ -68,6 +69,23 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			callback(result, { isEdit: true });
 			return;
 		});
+
+		// collector?.on("dispose", (interaction) => {
+		// 	const message = interaction.message as Message;
+		// 	message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 	message.editButton([ ...message.components ][0]);
+		// 	return;
+		// });
+
+		// collector?.on("end", (collected) => {
+		// 	collected.map((interaction) => {
+		// 		const message = interaction.message as Message;
+		// 		message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 		message.editButton([ ...message.components ][0]);
+		// 	});
+		// 	return;
+		// });
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.paginatorInteraction(): something went wrong", err);
@@ -103,21 +121,23 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
-			maxComponents: 1
+			maxComponents: 1,
+			time: 600_000
 		});
 		const isValid = await fetch(params, options);
 		if (!isValid) return;
 		callback(isValid);
 
 		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			switch (id) {
 				case cancelLabel: {
+					buttonInteraction.deferUpdate();
 					callback(null, { isDelete: true });
 					break;
 				}
 				case confirmLabel: {
+					buttonInteraction.deferUpdate();
 					options = Object.assign({}, options);
 					options.isConfirm = true;
 					await fetch(params, options);
@@ -127,6 +147,23 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 			}
 			return;
 		});
+
+		// collector?.on("dispose", (interaction) => {
+		// 	const message = interaction.message as Message;
+		// 	message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 	message.editButton([ ...message.components ][0]);
+		// 	return;
+		// });
+
+		// collector?.on("end", (collected) => {
+		// 	collected.map((interaction) => {
+		// 		const message = interaction.message as Message;
+		// 		message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 		message.editButton([ ...message.components ][0]);
+		// 	});
+		// 	return;
+		// });
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.confirmationInteraction(): something went wrong", err);
@@ -153,13 +190,13 @@ export const collectableInteraction = async <P>(
 			max: 1,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 240_000
+			time: 600_000
 		});
-		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
+		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
 			switch (id) {
 				case label: {
+					buttonInteraction.deferUpdate();
 					fetch({
 						...params,
 						user_tag: buttonInteraction.user.id,
@@ -171,6 +208,23 @@ export const collectableInteraction = async <P>(
 			}
 			return;
 		});
+
+		// collector?.on("dispose", (interaction) => {
+		// 	const message = interaction.message as Message;
+		// 	message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 	message.editButton([ ...message.components ][0]);
+		// 	return;
+		// });
+
+		// collector?.on("end", (collected) => {
+		// 	collected.map((interaction) => {
+		// 		const message = interaction.message as Message;
+		// 		message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 		message.editButton([ ...message.components ][0]);
+		// 	});
+		// 	return;
+		// });
+	
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.collectableInteraction(): something went wrong", err);
@@ -178,11 +232,11 @@ export const collectableInteraction = async <P>(
 	}
 };
 
-export const customButtonInteraction = async <P>(
+export const customButtonInteraction = <P>(
 	channel: ChannelProp,
 	options: (ButtonOptions & { params: P })[],
 	authorId: string,
-	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp; client: Client; message: Message; }) => void,
 	callback: () => void,
 	bypassFilter?: boolean,
 	maxClicks = 1
@@ -202,23 +256,42 @@ export const customButtonInteraction = async <P>(
 			max: maxClicks,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 240_000
+			time: 600_000
 		});
-		collector?.on("collect", async (buttonInteraction) => {
-			buttonInteraction.deferUpdate();
+		// To disabled buttons on end - edit the message, setting the new buttons
+		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
 			options.map((option, i) => {
 				if (id === (label + "_" + i)) {
+					buttonInteraction.deferUpdate();
 					fetch({
 						...option.params,
 						user_tag: buttonInteraction.user.id,
-						channel
+						channel,
+						client: buttonInteraction.client,
+						message: buttonInteraction.message as Message
 					});
 					callback();
 				}
 			});
 			return;
 		});
+
+		// collector?.on("dispose", (interaction) => {
+		// 	const message = interaction.message as Message;
+		// 	message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 	message.editButton([ ...message.components ][0]);
+		// 	return;
+		// });
+
+		// collector?.on("end", (collected) => {
+		// 	collected.map((interaction) => {
+		// 		const message = interaction.message as Message;
+		// 		message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
+		// 		message.editButton([ ...message.components ][0]);
+		// 	});
+		// 	return;
+		// });
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.customInteraction(): something went wrong", err);

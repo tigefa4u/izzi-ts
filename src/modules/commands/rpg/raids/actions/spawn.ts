@@ -11,6 +11,7 @@ import {
 import { getRandomCard } from "api/controllers/CardsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -20,6 +21,8 @@ import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import {
 	DEFAULT_ERROR_TITLE,
 	HIGH_LEVEL_RAIDS,
+	IMMORTAL_RAIDS,
+	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
 } from "helpers/constants";
@@ -40,7 +43,7 @@ import {
 } from "..";
 import { computeRank } from "../computeBoss";
 
-const spawnImmunity = [ "266457718942990337" ];
+const spawnImmunity = [ "266457718942990337", "476049957904711682" ];
 type C = {
   computedBoss: PrepareLootProps;
   isEvent: boolean;
@@ -53,13 +56,13 @@ const raidDivisions = {
 		name: "D2",
 		min: 9000,
 		max: 13000,
-		rate: randomNumber(6, 12)
+		rate: randomNumber(2, 3)
 	},
 	d1: {
 		name: "D1",
 		min: 13000,
 		max: 30000,
-		rate: randomNumber(9, 15)
+		rate: randomNumber(4, 5)
 	}
 };
 
@@ -67,12 +70,16 @@ const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
 	if (pl >= raidDivisions.d1.min && pl < raidDivisions.d1.max) {
 		loot.division = raidDivisions.d1.name;
 		loot.rare?.map((drop) => {
-			drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
+			}
 		});
 	} else if (pl >= raidDivisions.d2.min && pl < raidDivisions.d2.max) {
 		loot.division = raidDivisions.d2.name;
 		loot.rare?.map((drop) => {
-			drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+			}
 		});
 	}
 	return loot;
@@ -156,6 +163,7 @@ export const createRaidBoss = async ({
 		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
 		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
 		timestamp: dt.setHours(dt.getHours() + 1),
+		rawDifficulty: computedBoss.difficulty
 	} as RaidStatsProps;
 
 	const raid = await createRaid({
@@ -182,7 +190,10 @@ export const spawnRaid = async ({
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const [ user, rconfig ] = await Promise.all([
+			getRPGUser({ user_tag: author.id }),
+			Cache.get("rconfig::" + author.id)
+		]);
 		if (!user) return;
 		const currentRaid = await getUserRaidLobby({ user_id: user.id });
 		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
@@ -214,7 +225,14 @@ export const spawnRaid = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const difficulty = args.shift() || "e";
+		let difficulty = args.shift();
+		if (rconfig && !difficulty) {
+			const { difficulty: configDifficulty } = JSON.parse(rconfig);
+			difficulty = configDifficulty;
+		} else if (!difficulty) {
+			difficulty = "e";
+		}
+		if (!difficulty) return;
 		if (
 			user.level < MIN_RAID_USER_LEVEL &&
       HIGH_LEVEL_RAIDS.includes(difficulty)
@@ -222,6 +240,13 @@ export const spawnRaid = async ({
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
           "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
+			);
+			return;
+		} else if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+			IMMORTAL_RAIDS.includes(difficulty) && !isEvent) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
+          "to be able to spawn or join __Immortal__ Raids."
 			);
 			return;
 		}

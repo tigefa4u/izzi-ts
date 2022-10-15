@@ -155,6 +155,7 @@ const emoji: EmojiProps = {
 	sleepy: "<a:AEMJ_sleepy:833074440769765446>",
 	dance: "<a:AEMJ_anime_dancing:856012313102516275>",
 	cooldown: ":hourglass:",
+	blush: "<a:AEMJ_IchikaBlush:961550202806890516>",
 };
 
 export default emoji;

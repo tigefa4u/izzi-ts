@@ -57,6 +57,7 @@ export const ping = async ({ context, client }: BaseProps) => {
 			Date.now() - context.createdTimestamp
 		}ms\`\`** WS: **\`\`${Math.round(client.ws.ping)}ms\`\`**`
 	);
+	return;
 };
 
 export const invite = async ({ context, client }: BaseProps) => {

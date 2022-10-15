@@ -1,16 +1,86 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
+import { CustomButtonInteractionParams } from "@customTypes/button";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
+import { BaseProps } from "@customTypes/command";
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
-import { Client } from "discord.js";
+import { Client, Message } from "discord.js";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { prepareRaidBossEmbedDesc, prepareRaidTimer } from "..";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { prepareRaidBossEmbedDesc, prepareRaidTimer, raidActions } from "..";
+import { raidRecruit } from "../../guildEvents/recruit";
+import { eventActions } from "../events";
 import { validateCurrentRaid } from "./validateRaid";
+
+const handleRaidViewButtons = async ({
+	user_tag, client, channel, id, raidId, message
+}: CustomButtonInteractionParams & { raidId?: number; }) => {
+	const author = await client.users.fetch(user_tag);
+	const disableRaids = await Cache.get("disable-raids");
+	let isEvent = false;
+	if (disableRaids) {
+		isEvent = true;
+	}
+	const options = {
+		context: {
+			channel,
+			guild: message.guild 
+		} as BaseProps["context"],
+		client,
+		args: [] as string[],
+		options: { author }
+	};
+	switch (id) {
+		case CONSOLE_BUTTONS.RAID_JOIN.id: {
+			if (!raidId) return;
+			options.args = [ "join", `${raidId}` ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}
+			return;
+		}
+		case CONSOLE_BUTTONS.RAID_LEAVE.id: {
+			options.args = [ "leave" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}
+			return;	
+		}
+		case CONSOLE_BUTTONS.RAID_RECRUIT.id: {
+			raidRecruit(options);
+			return;	
+		}
+		case CONSOLE_BUTTONS.RAID_START.id: {
+			options.args = [ "start" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}	
+			return;
+		}
+		case CONSOLE_BUTTONS.RAID_PARTY.id: {
+			options.args = [ "lobby" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}	
+			return;
+		}
+	} 
+};
 
 export const viewRaid = async ({ context, client, options, isEvent }: RaidActionProps) => {
 	try {
@@ -28,8 +98,47 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 			currentRaid
 		});
 		if (!embed) return;
+
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.RAID_JOIN.label,
+					params: {
+						id: CONSOLE_BUTTONS.RAID_JOIN.id,
+						raidId: currentRaid.id 
+					}
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_LEAVE.label,
+					params: { id: CONSOLE_BUTTONS.RAID_LEAVE.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_RECRUIT.label,
+					params: { id: CONSOLE_BUTTONS.RAID_RECRUIT.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_START.label,
+					params: { id: CONSOLE_BUTTONS.RAID_START.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_PARTY.label,
+					params: { id: CONSOLE_BUTTONS.RAID_PARTY.id }
+				}
+			],
+			author.id,
+			handleRaidViewButtons,
+			() => {
+				return;
+			},
+			true,
+			10
+		);
+
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
 		context.channel?.sendMessage(embed);
-        
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.viewRaid(): something went wrong", err);

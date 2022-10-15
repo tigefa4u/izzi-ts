@@ -116,6 +116,7 @@ const handleShowSkin = async (
 					channel: params.channel,
 					author: params.author,
 				});
+				embed.setHideConsoleButtons(true);
 			}
 			if (opts?.isEdit) {
 				sentMessage.editMessage(embed);
@@ -206,7 +207,7 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 		.setImage("attachment://card.jpg")
 		.attachFiles([ attachment ]);
 
-	const buttons = await customButtonInteraction(
+	const buttons = customButtonInteraction(
 		channel,
 		[
 			{

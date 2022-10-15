@@ -33,7 +33,8 @@ const processViewCardsInTrade = (
 
 	const embed = createEmbed(params.author, params.client)
 		.setTitle("View Cards in Trade")
-		.setDescription(desc);
+		.setDescription(desc)
+		.setHideConsoleButtons(true);
 
 	params.channel?.sendMessage(embed);
 	return;
@@ -63,7 +64,7 @@ const viewCardsInTrade = async ({
 
 	const embed = createEmbed()
 		.setTitle("View Trade Cards")
-		.setDescription("View all the cards in trade.");
+		.setDescription("View all the cards in trade.").setHideConsoleButtons(true);
 	const params = {
 		author,
 		channel,
@@ -116,7 +117,8 @@ export const viewTrade = async ({
 						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 					})
 					.join("\n\n")}`
-			);
+			)
+			.setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		await viewCardsInTrade({
 			client,

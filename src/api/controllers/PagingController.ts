@@ -78,7 +78,7 @@ export const pageFunc = async <T>(
 						pageName: options.pageName,
 						pageCount: data.data.length,
 						client: options.client
-					});
+					}).setHideConsoleButtons(true);
 					if (options.filepath) {
 						const attachment = createAttachment(options.filepath, "thumbnail.jpeg");
 						embed.setThumbnail("attachment://thumbnail.jpeg")

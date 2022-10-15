@@ -180,7 +180,7 @@ export const sanitizeArgs = (args: string[]) => {
 	return args;
 };
 
-export const delay = async (ms: number) =>
+export const delay = (ms: number) =>
 	new Promise((resolve) => setTimeout(resolve, ms));
 
 export const getIdFromMentionedString = (id = "") => {
@@ -420,3 +420,5 @@ export const numericWithComma = (num: number) => {
 	const n = num;
 	return n.toLocaleString();
 };
+
+export const round2Decimal = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;

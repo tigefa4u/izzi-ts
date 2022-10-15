@@ -23,6 +23,7 @@ export type FilterProps = {
     isExactMatch?: boolean;
     exclude?: string[];
     year?: number;
+    collection_ids?: number[];
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]
@@ -84,6 +85,7 @@ export type ConfirmationInteractionOptions = {
 
 export type EmbedEditOptions = {
     reattachOnEdit?: boolean;
+    appendConsoleButton?: boolean;
 }
 
 export type OverallStatsProps = CharacterStatProps & {

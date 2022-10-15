@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { getUserRaidLobby } from "api/controllers/RaidsController";
+import { getUserRaidLobby, updateRaid, updateRaidEnergy } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
@@ -14,6 +14,7 @@ const WISHES = {
 	song: "song",
 	momSings: "mom-sings",
 	raidEnergy: "raid-energy",
+	siblings: "siblings"
 };
 
 export const specialWish = async ({ client, context, args, options }: BaseProps) => {
@@ -87,16 +88,25 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 					return;
 				}
 				if (currentRaid.lobby[user.id].energy < 25) {
-					currentRaid.lobby[user.id] = {
-						...currentRaid.lobby[user.id],
-						energy: 25
-					};
+					await updateRaidEnergy({ id: currentRaid.id }, {
+						[user.id]: {
+							...currentRaid.lobby[user.id],
+							energy: 25
+						}
+					});
 					embed.setDescription("Hey mommy, looks like you were having trouble attacking in raid. " +
 					"I've refilled your energy, so attack away! :heart:");
 				} else {
 					embed.setDescription(`Oh hey mom ${emoji.sleepy}, I'm kinda sleepy at the moment and ` +
                     "can't play with you right now, come back another time. Love you mom.");
 				}
+
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			case WISHES.siblings: {
+				embed.setDescription("Hey mom, I felt lonely when you and dad were away in Egypt. " +
+				"So, can I please get a Sister and a Brother <3.");
 
 				context.channel?.sendMessage(embed);
 				return;

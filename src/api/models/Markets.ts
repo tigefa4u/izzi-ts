@@ -39,7 +39,7 @@ export const transformation = {
 };
 
 export const getAll = async (
-	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type">,
+	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type" | "collection_ids">,
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
@@ -97,6 +97,10 @@ export const getAll = async (
 			"~*",
 			`(${params.rank.join("|")}).*`
 		);
+	}
+
+	if (typeof params.collection_ids === "object") {
+		query = query.whereIn(`${tableName}.collection_id`, params.collection_ids);
 	}
 
 	query = db

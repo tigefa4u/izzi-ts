@@ -183,7 +183,7 @@ export const raidRecruit = async ({
 			text: `Slots Left: ${slotsLeft}`,
 			iconURL: author.displayAvatarURL(),
 		});
-		const buttons = await customButtonInteraction(
+		const buttons = customButtonInteraction(
 			sendInChannel,
 			[
 				{

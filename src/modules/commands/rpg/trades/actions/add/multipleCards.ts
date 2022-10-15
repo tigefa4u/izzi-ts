@@ -91,7 +91,7 @@ export const addMultipleCards = async ({
 				: 0
 		} card(s) have been added to the trade! Use \`\`tr cancel/confirm/view\`\` to cancel/confirm/view the trade.`;
 
-		embed.setTitle(DEFAULT_SUCCESS_TITLE).setDescription(desc);
+		embed.setTitle(DEFAULT_SUCCESS_TITLE).setDescription(desc).setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		viewTrade({
 			author,

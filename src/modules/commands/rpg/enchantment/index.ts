@@ -230,6 +230,7 @@ export const enchantCard = async ({
 			}
 		);
 
+		embed.setHideConsoleButtons(true);
 		if (buttons) {
 			embed.setButtons(buttons);
 			setCooldown(author.id, "enchant");

@@ -165,6 +165,9 @@ export const simulateBattle = async ({
 			simulation.isForfeit = true;
 			return roundStats;
 		}
+		if (roundStats) {
+			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
+		}
 		return roundStats;
 	} catch (err) {
 		simulation.hasCrashed = true;
@@ -321,7 +324,7 @@ async function visualizeSimulation({
 		.setImage("attachment://battle.jpg");
 
 	let canEndBattle = false;
-	const buttons = await customButtonInteraction(
+	const buttons = customButtonInteraction(
 		context.channel,
 		[
 			{

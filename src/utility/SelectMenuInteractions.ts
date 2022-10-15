@@ -33,7 +33,7 @@ export const selectionInteraction = async <P>(
 
 		collector?.on("collect", async (interaction) => {
 			if (!interaction.isSelectMenu()) return;
-			interaction.deferUpdate();
+			await interaction.deferUpdate();
 			callback(params, interaction.values[0]);
 			return;
 		});

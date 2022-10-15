@@ -4,7 +4,9 @@ import {
 	Message,
 	MessageActionRow,
 	MessageAttachment,
+	MessageButton,
 	MessageEmbed,
+	MessageSelectMenu,
 	NewsChannel,
 	TextChannel,
 	ThreadChannel,
@@ -12,6 +14,7 @@ import {
 import implementSendMessage, {
 	editMessage as implementEditMessage,
 	deleteMessage as implementDeleteMessage,
+	editButton as implementEditButton
 } from "implementations/messageContext";
 import { CustomEmbedProps } from "@customTypes/embed";
 import { EmbedEditOptions } from "@customTypes/index";
@@ -35,21 +38,32 @@ declare module "discord.js" {
     isConfirmation: boolean;
     isPagination: boolean;
     buttons: MessageActionRow;
+    hideConsoleButtons: boolean;
     attachFiles: (attachments: MessageAttachment[]) => MessageEmbed;
     setButtons: (buttons: MessageActionRow) => MessageEmbed;
     setConfirmation: (bool: boolean) => MessageEmbed;
     setPagination: (bool: boolean) => MessageEmbed;
+    setHideConsoleButtons: (bool: boolean) => MessageEmbed;
   }
   interface Message {
+    isInteraction: boolean;
     editMessage: (
       content: CustomProps,
       options?: EmbedEditOptions
     ) => Promise<Message> | undefined;
-    isInteraction: boolean;
     deleteMessage: () => Promise<Message<boolean>> | undefined;
+    editButton: (button: MessageActionRow) => Promise<Message> | undefined;
   }
   interface Interaction {
     isInteraction: boolean;
+  }
+  interface MessageButton {
+    isConsoleButton: boolean;
+    setIsConsoleButton: (bool: boolean) => void;
+  }
+  interface MessageSelectMenu {
+    isConsoleButton: boolean;
+    setIsConsoleButton: (bool: boolean) => void;
   }
 }
 
@@ -83,11 +97,25 @@ MessageEmbed.prototype.setPagination = function (bool: boolean) {
 	this.isPagination = bool;
 	return this;
 };
+MessageEmbed.prototype.setHideConsoleButtons = function (bool: boolean) {
+	this.hideConsoleButtons = bool;
+	return this;
+};
 Message.prototype.editMessage = function (content: CustomProps, options) {
 	return implementEditMessage(this, content, options);
 };
 Message.prototype.deleteMessage = function () {
 	return implementDeleteMessage(this);
+};
+Message.prototype.editButton = function (button: MessageActionRow) {
+	return implementEditButton(this, button);
+};
+MessageButton.prototype.setIsConsoleButton = function (bool: boolean) {
+	this.isConsoleButton = bool;
+	return this;
+};
+MessageSelectMenu.prototype.setIsConsoleButton = function (bool: boolean) {
+	throw new Error("Unimplemented");
 };
 Message.prototype.isInteraction = false;
 Interaction.prototype.isInteraction = true;

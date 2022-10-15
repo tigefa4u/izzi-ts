@@ -1,6 +1,6 @@
 import { CommandMapProps } from "@customTypes/command";
 import {
-	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug 
+	bonk, lick, pat, poke, spank, cuddle, slap, bite, kill, kiss, slowKiss, tightHug, punch, hug, sex 
 } from "modules/commands/basic/actions";
 import { status } from "modules/commands/basic/botStatus";
 import {
@@ -57,6 +57,8 @@ import { dex } from "modules/commands/rpg/xendex";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { makeAWish } from "modules/commands/rpg/specialCommands/makeAWish";
+import { starterGuide } from "modules/commands/rpg/profile/guide";
+import { console } from "modules/commands/rpg/console";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -130,6 +132,7 @@ const commandMap: CommandMapProps = {
 	kiss: kiss,
 	"slow-kiss": slowKiss,
 	"tight-hug": tightHug,
+	sex: sex,
 	punch,
 	hug,
 	dance: dance,
@@ -145,7 +148,9 @@ const commandMap: CommandMapProps = {
 	"guild event": guildEvents,
 	"upgrade card": upgradeCard,
 	wishlist: wishlist,
-	"make a wish": makeAWish
+	"make a wish": makeAWish,
+	guide: starterGuide,
+	console: console,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

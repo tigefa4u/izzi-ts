@@ -20,6 +20,8 @@ import loggers from "loggers";
 import { createAttachment } from "commons/attachments";
 import { createSingleCanvas } from "helpers/canvas";
 import { getRandomCard } from "api/controllers/CardsController";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { starterGuide } from "./guide";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -112,10 +114,36 @@ export const start: (params: BaseProps) => void = async ({
           " " +
           `__${titleCase(cardDetails.rank)}__ copy of` +
           " " +
-          `**${titleCase(cardDetails.name)}**` +
+          `**${titleCase(cardDetails.name)}** Use \`\`@izzi select 1\`\` to select the card.` +
           "\nGood Luck, Happy Collecting!"
 			);
 
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: "Start Guide",
+					params: {
+						context,
+						client,
+						args: [],
+						options,
+					}
+				}
+			],
+			author.id,
+			starterGuide,
+			() => {
+				return;
+			},
+			false,
+			1
+		);
+
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
+	
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

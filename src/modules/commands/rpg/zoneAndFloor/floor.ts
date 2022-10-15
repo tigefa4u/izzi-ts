@@ -8,15 +8,18 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getStageForBattle } from "api/controllers/StagesController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
+import Cache from "cache";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import { emojiMap } from "emojis";
+import emoji from "emojis/emoji";
 import { baseStatRatio, calcPower, parsePremiumUsername, prepareAbilityDescription } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { attachButtonToFloorEmbed } from ".";
 
 async function prepareStageStats(params: {
   rank: string;
@@ -46,7 +49,7 @@ async function handleNextFloor(params: {
 }) {
 	const { user, fl } = params;
 
-	const embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
+	let embed = createEmbed().setTitle(DEFAULT_ERROR_TITLE);
 	if (
 		(user.floor == user.max_floor && fl == "n") ||
     parseInt(fl) > user.max_floor
@@ -121,6 +124,11 @@ async function handleNextFloor(params: {
 		.setImage("attachment://img.jpg")
 		.setThumbnail("attachment://zone.jpg")
 		.attachFiles([ attachment, zoneAttachment ]);
+
+	embed = attachButtonToFloorEmbed({
+		embed,
+		channel: params.channel 
+	});
 	return embed;
 }
 
@@ -156,7 +164,11 @@ async function handleZoneFloors(params: {
 export const floor = async ({ context, client, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id });
+		const key = "guide::" + author.id;
+		const [ user, starterGuide ] = await Promise.all([
+			getRPGUser({ user_tag: author.id }),
+			Cache.get(key)
+		]);
 		if (!user) return;
 		const fl = args.shift();
 		if (!fl) {
@@ -171,7 +183,7 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 		const embed = await handleNextFloor({
 			user,
 			fl,
-			channel: context.channel,
+			channel: context.channel
 		});
 		if (!embed) return;
 		embed.setAuthor({
@@ -179,6 +191,31 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 			iconURL: author.displayAvatarURL(),
 		});
 		context.channel?.sendMessage(embed);
+
+
+		if (starterGuide) {
+			await Cache.del(key);
+			const userData = JSON.parse(starterGuide) as any;
+			if (userData.moveToOrigin) {
+				await updateRPGUser({ user_tag: author.id }, {
+					floor: userData.floor,
+					ruin: userData.ruin
+				});
+			}
+			const guideEmbed = createEmbed(author, client).setTitle(DEFAULT_STARTER_GUIDE_TITLE + " Completed! " + 
+			emoji.welldone)
+				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\n` +
+			"Similarly, on completing a zone use ``@izzi zn n`` to move to the next zone in the Xenverse.\n\n" +
+			"Congratulations on completing the starter guide! You are now ready to take on the " +
+			"challenges and head on your own path.\n\nUse ``@izzi h`` for more commands" +
+			"Hope your find the journey exciting and fun.\n\nHappy Hunting, GLHF!")
+				.setFooter({
+					text: "Guide will automatically expire in 10 mins",
+					iconURL: author.displayAvatarURL() 
+				});
+			context.channel?.sendMessage(guideEmbed);
+		}
+		return;
 	} catch (err) {
 		loggers.error(
 			"modules.commands.rpg.zoneAndFloor.floor(): something went wrong",

@@ -104,7 +104,7 @@ export const cardCollection = async ({
               "All Cards in your inventory that match your " +
               "requirements are shown below.",
 						title: "Collections",
-					});
+					}).setHideConsoleButtons(true);
 				} else {
 					embed.setDescription(
 						"You currently have no collections. Start claiming cards to go on your journey in the Xenverse!"

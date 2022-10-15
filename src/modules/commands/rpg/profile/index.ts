@@ -58,7 +58,10 @@ export const profile = async ({
 			if (marriage) {
 				const marriedUser = await getRPGUser(
 					{ user_tag: marriage.married_to },
-					{ cached: true }
+					{
+						cached: true,
+						ignoreBannedUser: true 
+					}
 				);
 				user.married_to = marriedUser?.username;
 			}

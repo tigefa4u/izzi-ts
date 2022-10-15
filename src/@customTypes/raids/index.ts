@@ -61,6 +61,7 @@ export type RaidStatsProps = {
     original_strength: number;
     difficulty: string;
     timestamp: number;
+    rawDifficulty: string;
 }
 
 export type RaidProps = {

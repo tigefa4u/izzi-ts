@@ -101,6 +101,12 @@ export type AbilityStackProps = StatStateProps &
     canEvadeHarbingerOfDeath?: boolean;
     isBleeding?: boolean;
     bleedResetOnRound?: number;
+    resistByFutureSightPercent?: number;
+    abilityToResist?: {
+      [name: string]: {
+        percent: number;
+      };
+    };
   };
 
 export type BattleStats = {
