@@ -37,7 +37,7 @@ import { battle } from "..";
 import { floor } from "../../zoneAndFloor/floor";
 import { zone } from "../../zoneAndFloor/zone";
 
-const toggleNextFloor = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
+const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
 	const options = {
 		context: { channel } as BaseProps["context"],
@@ -51,9 +51,14 @@ const toggleNextFloor = async ({ user_tag, client, channel, id }: CustomButtonIn
 			floor(options);
 			return;
 		}
-
 		case CONSOLE_BUTTONS.FLOOR_BT.id: {
 			battle(options);
+			return;
+		}
+		case CONSOLE_BUTTONS.NEXT_ZONE.id: {
+			options.args = [ "n" ];
+			zone(options);
+			return;
 		}
 	}
 	return;
@@ -87,10 +92,7 @@ export const processBattleResult = async ({
 			.setTitle(`Defeated ${emoji.cry}`)
 			.setDescription("Better luck next time.");
 
-		const menu = [ {
-			label: CONSOLE_BUTTONS.FLOOR_BT.label,
-			params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
-		} ];
+		let button;
 		if (result.isVictory) {
 			const resp = await processFloorWin({
 				enemyCard,
@@ -118,23 +120,23 @@ export const processBattleResult = async ({
 					}xp__ through this battle!`
 				);
 
-			menu.push({
-				label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
-				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
-			});
+		} else {
+			button = customButtonInteraction(
+				channel,
+				[ {
+					label: CONSOLE_BUTTONS.FLOOR_BT.label,
+					params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
+				} ],
+				author.id,
+				handleButtonActions,
+				() => {
+					return;
+				},
+				false,
+				10
+			);
 		}
 
-		const button = customButtonInteraction(
-			channel,
-			menu,
-			author.id,
-			toggleNextFloor,
-			() => {
-				return;
-			},
-			false,
-			10
-		);
 		if (button) {
 			embed.setButtons(button);
 		}
@@ -235,7 +237,7 @@ async function upgradeUser(
 ) {
 	let desc;
 	const upgradeObject = {};
-	let showNextZoneButton = false;
+	const menu = [];
 	if (card.floor == card.max_floor && card.ruin == card.max_ruin) {
 		if (card.floor == card.max_ruin_floor && card.ruin == card.max_ruin) {
 			desc =
@@ -252,7 +254,10 @@ async function upgradeUser(
 				max_ruin: user.max_ruin,
 				max_floor: 1,
 			});
-			showNextZoneButton = true;
+			menu.push({
+				label: CONSOLE_BUTTONS.NEXT_ZONE.label,
+				params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id }
+			});
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
 				max_ruin: user.max_ruin,
@@ -269,6 +274,10 @@ async function upgradeUser(
 				user.max_floor = user.max_ruin_floor;
 				Object.assign(upgradeObject, { max_floor: user.max_floor, });
 			}
+			menu.push({
+				label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
+				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+			});
 			Object.assign(upgradeObject, { max_ruin_floor: user.max_ruin_floor });
 			user.gold = user.gold + 500;
 			await createOrUpdateZoneBackup({
@@ -278,25 +287,12 @@ async function upgradeUser(
 			});
 		}
 		const msg = await channel?.sendMessage(desc);
-		if (msg && showNextZoneButton) {
+		if (msg && menu.length > 0) {
 			const buttons = customButtonInteraction(
 				channel,
-				[
-					{
-						label: CONSOLE_BUTTONS.NEXT_ZONE.label,
-						params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id }
-					}
-				],
+				menu,
 				author.id,
-				({ id, client }) => {
-					zone({
-						context: { channel } as BaseProps["context"],
-						options: { author },
-						args: [ "n" ],
-						client
-					});
-					return;
-				},
+				handleButtonActions,
 				() => {
 					return;
 				},

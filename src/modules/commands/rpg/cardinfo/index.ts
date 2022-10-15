@@ -193,7 +193,7 @@ const handleJumpToFloor = async ({
 			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this zone yet!`
 		);
 		return;
-	} else if (location.floors[0] > user.max_floor) {
+	} else if (location.floors[0] > user.max_ruin_floor && location.zone <= user.max_ruin) {
 		channel?.sendMessage(
 			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this floor yet!`
 		);
