@@ -73,7 +73,10 @@ export const cardCollection = async ({
 		if (!user) return;
 		let params = <FilterProps & { user_id: number; }>fetchParamsFromArgs(args);
 		params = safeParseParams(params);
-		Object.assign(params, { user_id: user.id });
+		Object.assign(params, {
+			user_id: user.id,
+			isFetchSeries: true 
+		});
 		let embed = createEmbed();
 		let sentMessage: Message;
 		const filter = clone(PAGE_FILTER);

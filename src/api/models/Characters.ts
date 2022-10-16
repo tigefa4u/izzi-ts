@@ -8,6 +8,7 @@ import connection from "db";
 
 const tableName = "characters";
 const abilities = "passives";
+const cards = "cards";
 export const transformation = {
 	id: {
 		type: "number",
@@ -67,6 +68,11 @@ export const get: (
 		)
 		.from(tableName)
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`);
+
+	if (params.series) {
+		query = query.innerJoin(cards, `${cards}.character_id`, `${tableName}.id`)
+			.where(`${cards}.series`, "ilike", `%${params.series}%`);
+	}
 
 	if (typeof params.name === "string") {
 		if (params.isExactMatch) {

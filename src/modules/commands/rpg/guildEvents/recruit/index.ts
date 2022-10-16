@@ -203,7 +203,7 @@ export const raidRecruit = async ({
 			11
 		);
 		if (!buttons) return;
-		raidEmbed.setButtons(buttons);
+		raidEmbed.setButtons(buttons).setHideConsoleButtons(true);
 		sendInChannel.sendMessage(raidEmbed);
 		const raidPingMessage =
       `All <@&${guildEvent.metadata.role}> Raiders assemble! ` +
