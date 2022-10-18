@@ -181,26 +181,32 @@ const baseLoot = (): any => ({
 			level: [ 400, 700 ],
 			rank: [ "gold", "diamond", "platinum", "legend", "divine" ],
 			loot: {
-				gold: randomNumber(40000, 45000),
+				gold: randomNumber(40000, 50000),
 				extraGold: randomNumber(32000, 35000),
 				drop: [
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 8
+						number: 9
 					},
 					{
 						rank: "gold",
 						rank_id: 2,
-						number: 8
+						number: 9
 					},
 					{
 						rank: "silver",
 						rank_id: 1,
-						number: 8
+						number: 9
 					},
 				],
 				rare: [
+					{
+						rank: "legend",
+						rank_id: 5,
+						rate: 12.22,
+						number: 1
+					},
 					{
 						rank: "divine",
 						rank_id: 6,
@@ -210,16 +216,16 @@ const baseLoot = (): any => ({
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 5.75,
+						rate: 7.75,
 						number: 1,
 					},
-					{
-						rank: "exclusive",
-						rank_id: 8,
-						rate: 2.15,
-						number: 1,
-						isStaticDropRate: true
-					}
+					// {
+					// 	rank: "exclusive",
+					// 	rank_id: 8,
+					// 	rate: 2.15,
+					// 	number: 1,
+					// 	isStaticDropRate: true
+					// }
 				],
 			}
 		},
