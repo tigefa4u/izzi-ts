@@ -20,7 +20,7 @@ import * as Collections from "../models/Collections";
 import { getCharacterById, getCharacters } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
-type T = { user_id: number };
+type T = { user_id: number; };
 type C = {
   id: number;
   abilityname: string;
@@ -129,13 +129,13 @@ async function fetchCharacterDetails(filter: FilterProps) {
 }
 
 export const getAllCollections = async (
-	filter: Omit<FilterProps, "series" | "category" | "ids"> & T,
+	filter: Omit<FilterProps, "category" | "ids"> & T,
 	pageProps: PageProps,
 	sort?: SortProps
 ): Promise<ResponseWithPagination<CollectionReturnType[]> | undefined> => {
 	try {
 		let charactersData = [] as C[];
-		if (filter.name || filter.type || filter.abilityname) {
+		if (filter.name || filter.type || filter.abilityname || filter.series) {
 			charactersData = await fetchCharacterDetails(filter);
 		}
 		if (charactersData.length > 0) {

@@ -13,7 +13,10 @@ export const checkUserBanned = async (
 	author: AuthorProps,
 	command: string
 ) => {
-	const user = await getRPGUser({ user_tag: author.id });
+	const user = await getRPGUser({ user_tag: author.id }, {
+		ignoreBannedUser: true,
+		cached: false 
+	});
 	const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 	if (command !== "start" && !user) {
 		embed.setDescription(
