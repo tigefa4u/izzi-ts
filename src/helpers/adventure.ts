@@ -92,7 +92,7 @@ export const addTeamEffectiveness = async ({
 }) => {
 	const types = cards.map((c) => String(c?.type)).filter(Boolean);
 	const enemyTypes = enemyCards.map((c) => String(c?.type)).filter(Boolean);
-	let effective = 0;
+	let effective = 0; // range (-9, 9)
 	await Promise.all(
 		types.map((t) =>
 			enemyTypes.map(async (e) => {
@@ -111,15 +111,24 @@ export const addTeamEffectiveness = async ({
 		)
 	);
 
-	if (effective > 0) {
-		playerStats.effective = 1.4;
-		opponentStats.effective = 0.8;
-	} else if (effective === 0) {
-		playerStats.effective = 1;
-		opponentStats.effective = 1;
+	const isValueNegative = (effective < 0);
+	let playerEffective = 1.4, opponentEffective = 0.8;
+	effective = Math.abs(effective);
+
+	if (effective === 0) {
+		playerEffective = 1;
+		opponentEffective = 1;
+	} else if (effective > 1 && effective <= 5) {
+		playerEffective = 1.6;
+	} else if (effective > 5) {
+		playerEffective = 1.8;
+	}
+	if (isValueNegative) {
+		playerStats.effective = opponentEffective;
+		opponentStats.effective = playerEffective;
 	} else {
-		playerStats.effective = 0.8;
-		opponentStats.effective = 1.4;
+		playerStats.effective = playerEffective;
+		opponentStats.effective = opponentEffective;
 	}
 	return {
 		playerStats,
