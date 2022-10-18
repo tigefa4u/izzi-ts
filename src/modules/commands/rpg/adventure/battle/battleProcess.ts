@@ -9,7 +9,10 @@ import {
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
-import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
+import {
+	ABILITY_BUFF_MAX_PERCENT,
+	HARBINGER_OF_DEATH_PROC_ROUND,
+} from "helpers/constants";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
@@ -47,7 +50,7 @@ function processStack(stats: Stack) {
 		"isSB",
 		"isTornado",
 		"isHarbingerOfDeath",
-		"isLifestealProc"
+		"isLifestealProc",
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -87,6 +90,27 @@ function processUnableToAttack<T extends BattleStats>(
 	);
 }
 
+function capStatBuff(x1: number, x2: number) {
+	const maxBuff = Math.ceil((ABILITY_BUFF_MAX_PERCENT / 100) * x2);
+	const buffCap = x2 + maxBuff;
+	if (x1 > buffCap) {
+		return Math.ceil(buffCap);
+	}
+	return x1;
+}
+
+type B = BattleStats["totalStats"];
+function processStatBuffCap(stats: B, baseStats: B) {
+	stats.vitality = capStatBuff(stats.vitality, baseStats.vitality);
+	stats.defense = capStatBuff(stats.defense, baseStats.defense);
+	stats.intelligence = capStatBuff(
+		stats.intelligence,
+		baseStats.intelligence
+	);
+	stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
+	return stats;
+}
+
 export const BattleProcess = async ({
 	baseEnemyStats,
 	basePlayerStats,
@@ -96,7 +120,7 @@ export const BattleProcess = async ({
 	round,
 	simulation,
 	isRaid,
-	multiplier
+	multiplier,
 }: BattleProcessProps) => {
 	if (!opponentStats) {
 		throw new Error("Unable to process opponent");
@@ -116,7 +140,7 @@ export const BattleProcess = async ({
     	round,
     	simulation,
     	isRaid,
-    	multiplier
+    	multiplier,
     });
 	if (rest.playerStats) {
 		playerStats.totalStats = rest.playerStats.totalStats;
@@ -127,6 +151,10 @@ export const BattleProcess = async ({
 		opponentStats.totalStats.isEvadeHit = false;
 	}
 	playerStats.totalStats = processStack(playerStats.totalStats);
+	playerStats.totalStats = processStatBuffCap(
+		playerStats.totalStats,
+		isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
+	);
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
@@ -202,7 +230,7 @@ async function processAbililtyOrItemProc({
 	round,
 	simulation,
 	isRaid,
-	multiplier
+	multiplier,
 }: BattleProcessProps) {
 	let abilityProc = {} as AbilityProcReturnType,
 		abilityDamage = 0,
@@ -222,7 +250,7 @@ async function processAbililtyOrItemProc({
 			opponentStats,
 			simulation,
 			isRaid,
-			multiplier
+			multiplier,
 		} as BattleProcessProps;
 		if (card.itemname) {
 			const itemCallable = itemProcMap[card.itemname as keyof ItemProcMapProps];

@@ -286,6 +286,8 @@ export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
 
 export const MAX_CONSUMABLE_SOULS = 700;
 
+export const ABILITY_BUFF_MAX_PERCENT = 195;
+
 export const CONSOLE_BUTTONS = {
 	VOTE: {
 		id: "vote",
