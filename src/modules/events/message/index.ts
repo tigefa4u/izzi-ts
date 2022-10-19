@@ -27,7 +27,8 @@ const handleMessage = async (client: Client, context: Message) => {
 		const { content } = context;
 		let args = content.toLowerCase().split(/\s+/);
 		const botId = getIdFromMentionedString(args[0]);
-		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
+		// || botId === DISCORD_CLIENT_ID
+		if (!(botId === BOT_PREFIX) || !args[1]) {
 			if (context.guild?.id) {
 				dropCollectables({
 					client,
