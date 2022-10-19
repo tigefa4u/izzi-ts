@@ -4,6 +4,7 @@ import { getAllCommands } from "api/controllers/CommandsController";
 import { createEmbed } from "commons/embeds";
 import {
 	BOT_INVITE_LINK,
+	GUIDE_DOCS,
 	IZZI_WEBSITE,
 	PRIVACY_POLICY_URL,
 	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
@@ -17,6 +18,8 @@ import {
 	SelectMenuOptions,
 } from "@customTypes/selectMenu";
 import loggers from "loggers";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 
 function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
 	const embed = createEmbed(undefined, client)
@@ -120,6 +123,31 @@ export const help = async ({
 			)
 			.setFooter({ text: "Filters include -n (name) -r (rank) -t (element type) -a (ability)", });
 
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					style: "LINK",
+					url: GUIDE_DOCS
+				},
+				{
+					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
+					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
+					style: "LINK",
+					url: `${GUIDE_DOCS}/change-logs`
+				}
+			],
+			options.author.id,
+			() => {
+				return;
+			},
+			() => {
+				return;
+			},
+			true
+		);
 		const rulesEmbed = createEmbed(options.author, client)
 			.setTitle("IzzI Rules")
 			.setDescription("**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
@@ -130,6 +158,10 @@ export const help = async ({
 				"• Supporting someone who is doing these.\n" + 
 				"**Note: Exchanging izzi assets for any other assets, real money or server roles " +
 				"is considered Cross Trading**");
+			
+		if (buttons) {
+			rulesEmbed.setButtons(buttons);
+		}
 		context.channel?.sendMessage(embed);
 		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {

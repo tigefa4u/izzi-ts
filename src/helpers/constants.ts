@@ -386,5 +386,13 @@ export const CONSOLE_BUTTONS = {
 	SELECT_CARD: {
 		id: "select_card",
 		label: "Select Card"
+	},
+	GUIDE: {
+		id: "guide",
+		label: "Guide"
+	},
+	CHANGE_LOGS: {
+		id: "change_log",
+		label: "Change Logs"
 	}
 };

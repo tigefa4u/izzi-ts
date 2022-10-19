@@ -132,6 +132,9 @@ export const get = async (
 			`(${rank.join("|")}).*`
 		);
 	}
+	if (typeof queryParams.is_on_market === "boolean") {
+		query = query.where(`${tableName}.is_on_market`, queryParams.is_on_market);
+	}
 	if (limit) {
 		query = query.limit(limit);
 	}
@@ -238,6 +241,7 @@ export const getByRowNumber = async (params: {
   exclude_ids?: number[];
   is_on_cooldown?: boolean;
   sort?: SortProps;
+  is_on_market?: boolean;
 }): Promise<CollectionProps[]> => {
 	const sort = params.sort || {
 		sortBy: "id",
@@ -268,6 +272,9 @@ export const getByRowNumber = async (params: {
 	}
 	if (typeof params.is_on_cooldown === "boolean") {
 		query = query.where(`${alias}.is_on_cooldown`, params.is_on_cooldown);
+	}
+	if (typeof params.is_on_market === "boolean") {
+		query = query.where(`${alias}.is_on_market`, params.is_on_market);
 	}
 
 	return query;
