@@ -191,7 +191,7 @@ export const prepareBattleDesc = ({
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
 		.join(" ")}${
 		enemyStats.totalStats.effective < 1
-			? `\nElement Effectiveness: ${getElementalEffectiveStatus(
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
 				enemyStats.totalStats.effective
 			)}`
 			: ""
@@ -212,7 +212,7 @@ export const prepareBattleDesc = ({
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
 		.join(" ")}${
 		playerStats.totalStats.effective < 1
-			? `\nElement Effectiveness: ${getElementalEffectiveStatus(
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
 				playerStats.totalStats.effective
 			)}`
 			: ""
