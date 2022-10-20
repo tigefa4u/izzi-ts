@@ -388,3 +388,22 @@ export const CONSOLE_BUTTONS = {
 		label: "Select Card"
 	}
 };
+
+export const ELEMENTAL_ADVANTAGES = {
+	DEFAULT: {
+		p1: 1.4,
+		p2: 0.8
+	},
+	EFFECTIVE: {
+		p1: 1.6,
+		p2: 0.6
+	},
+	SUPER_EFFECTIVE: {
+		p1: 1.8,
+		p2: 0.4
+	},
+	NEUTRAL: {
+		p1: 1,
+		p2: 1
+	}
+};

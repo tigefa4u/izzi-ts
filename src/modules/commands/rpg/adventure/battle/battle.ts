@@ -17,7 +17,7 @@ import {
 	recreateBattleEmbed,
 	simulateBattleDescription,
 } from "helpers/battle";
-import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT } from "helpers/constants";
+import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, ELEMENTAL_ADVANTAGES } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
@@ -614,6 +614,18 @@ async function simulatePlayerTurns({
 	};
 }
 
+function getElementalEffectiveStatus(num: number) {
+	switch (num) {
+		case ELEMENTAL_ADVANTAGES.DEFAULT.p2:
+			return "it was **Effective..**";
+		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
+			return "it was **Slightly Effective...**";
+		case ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2:
+			return "it was **Super Effective!**";
+		default:
+			return "";
+	}
+}
 function updateBattleDesc({
 	isPlayerFirst,
 	turn,
@@ -665,7 +677,7 @@ function updateBattleDesc({
 			isCriticalHit
 				? "**CRITICAL HIT**"
 				: opponentStats.totalStats.effective < 1
-					? "it was **Super Effective!**"
+					? getElementalEffectiveStatus(opponentStats.totalStats.effective)
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
 						: ""
