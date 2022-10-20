@@ -121,7 +121,7 @@ export const addTeamEffectiveness = async ({
 	} else if (effective === 2) {
 		playerEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p1;
 		opponentEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p2;
-	} else if (effective > 3) {
+	} else if (effective >= 3) {
 		playerEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p1;
 		opponentEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2;
 	}
