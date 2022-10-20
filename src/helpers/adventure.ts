@@ -12,6 +12,7 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { overallStats } from "helpers";
 import loggers from "loggers";
+import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
 import { ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
 
@@ -111,8 +112,9 @@ export const addTeamEffectiveness = async ({
 		)
 	);
 
-	const isValueNegative = (effective < 0);
-	let playerEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p1, opponentEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
+	const isValueNegative = effective < 0;
+	let playerEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p1,
+		opponentEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
 	effective = Math.abs(effective);
 
 	if (effective === 0) {
@@ -187,7 +189,13 @@ export const prepareBattleDesc = ({
 	) as CollectionCardInfoProps[];
 	const desc = `**${playerStats.name}**\nElement Type: ${filterPlayerCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		enemyStats.totalStats.effective < 1
+			? `\nElement Effectiveness: ${getElementalEffectiveStatus(
+				enemyStats.totalStats.effective
+			)}`
+			: ""
+	}\n${
 		filterPlayerCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank].size)
 				.fill(":star:")
@@ -202,7 +210,13 @@ export const prepareBattleDesc = ({
 		enemyStats.name
 	}**\nElement Type: ${filterEnemyCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		playerStats.totalStats.effective < 1
+			? `\nElement Effectiveness: ${getElementalEffectiveStatus(
+				playerStats.totalStats.effective
+			)}`
+			: ""
+	}\n${
 		filterEnemyCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank].size)
 				.fill(":star:")

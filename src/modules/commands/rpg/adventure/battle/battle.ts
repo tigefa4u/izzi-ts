@@ -614,14 +614,14 @@ async function simulatePlayerTurns({
 	};
 }
 
-function getElementalEffectiveStatus(num: number) {
+export function getElementalEffectiveStatus(num: number) {
 	switch (num) {
 		case ELEMENTAL_ADVANTAGES.DEFAULT.p2:
-			return "it was **Effective..**";
+			return "**Effective**";
 		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
-			return "it was **Slightly Effective...**";
+			return "**Slightly Effective**";
 		case ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2:
-			return "it was **Super Effective!**";
+			return "**Super Effective!**";
 		default:
 			return "";
 	}
@@ -677,7 +677,7 @@ function updateBattleDesc({
 			isCriticalHit
 				? "**CRITICAL HIT**"
 				: opponentStats.totalStats.effective < 1
-					? getElementalEffectiveStatus(opponentStats.totalStats.effective)
+					? "it was " + getElementalEffectiveStatus(opponentStats.totalStats.effective)
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
 						: ""
