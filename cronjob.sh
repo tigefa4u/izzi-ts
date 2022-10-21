@@ -50,4 +50,4 @@ then
     npx ts-node -r dotenv/config src/server/pipes/cronjobs/resetCardCooldown.ts
     echo "card cooldown reset jobs completed..."
 fi
-
+exit 0
