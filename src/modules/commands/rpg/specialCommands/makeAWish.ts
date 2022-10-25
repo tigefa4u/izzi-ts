@@ -29,6 +29,7 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "rdmg") {
 				addRaidDamage(params);
+				return;
 			} else if (subcommand === "chr") {
 				setCharacterRank(params);
 				return;
