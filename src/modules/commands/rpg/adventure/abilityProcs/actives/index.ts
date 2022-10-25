@@ -309,7 +309,7 @@ export const futureSight = ({
 	if (!card) return;
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
 	// as well as increasing **EVA** by __15%__. Also gain __80%__ chance to evade Elemental strike, Electrocute
-	// and Misdirection.
+	// and Tornado.
 	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);

@@ -336,6 +336,7 @@ export const eclipse = ({
 	}
 	// Harness the power of Eclipse and gain knowledge beyond your enemies
 	// increasing your **INT** by __30%__ as well as **Buffing** the **DEF** of all allies by __20%__.
+	// gain 80% chance to resist misdirection.
 	if (round % 3 === 0 && !playerStats.totalStats.isEclipse) {
 		playerStats.totalStats.isEclipse = true;
 		playerStats.totalStats.previousRound = round;
@@ -366,7 +367,7 @@ export const eclipse = ({
 		playerStats.totalStats.defense =
       basePlayerStats.totalStats.defense + defDiff;
 
-		const resistPercent = calcPercentRatio(15, card.rank);
+		const resistPercent = calcPercentRatio(80, card.rank);
 		if (playerStats.totalStats.abilityToResist?.misdirection) {
 			playerStats.totalStats.abilitiesToResist.misdirection = {
 				percent: round2Decimal(
