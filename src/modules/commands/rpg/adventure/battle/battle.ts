@@ -617,9 +617,9 @@ async function simulatePlayerTurns({
 export function getElementalEffectiveStatus(num: number) {
 	switch (num) {
 		case ELEMENTAL_ADVANTAGES.DEFAULT.p2:
-			return "**Effective**";
-		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
 			return "**Slightly Effective**";
+		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
+			return "**Effective**";
 		case ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2:
 			return "**Super Effective!**";
 		default:
