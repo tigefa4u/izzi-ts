@@ -12,8 +12,9 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { overallStats } from "helpers";
 import loggers from "loggers";
+import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
-import { ranksMeta } from "./constants";
+import { ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];
@@ -92,7 +93,7 @@ export const addTeamEffectiveness = async ({
 }) => {
 	const types = cards.map((c) => String(c?.type)).filter(Boolean);
 	const enemyTypes = enemyCards.map((c) => String(c?.type)).filter(Boolean);
-	let effective = 0;
+	let effective = 0; // range (-9, 9)
 	await Promise.all(
 		types.map((t) =>
 			enemyTypes.map(async (e) => {
@@ -111,15 +112,27 @@ export const addTeamEffectiveness = async ({
 		)
 	);
 
-	if (effective > 0) {
-		playerStats.effective = 1.4;
-		opponentStats.effective = 0.8;
-	} else if (effective === 0) {
-		playerStats.effective = 1;
-		opponentStats.effective = 1;
+	const isValueNegative = effective < 0;
+	let playerEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p1,
+		opponentEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
+	effective = Math.abs(effective);
+
+	if (effective === 0) {
+		playerEffective = ELEMENTAL_ADVANTAGES.NEUTRAL.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.NEUTRAL.p2;
+	} else if (effective === 2) {
+		playerEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p2;
+	} else if (effective >= 3) {
+		playerEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2;
+	}
+	if (isValueNegative) {
+		playerStats.effective = opponentEffective;
+		opponentStats.effective = playerEffective;
 	} else {
-		playerStats.effective = 0.8;
-		opponentStats.effective = 1.4;
+		playerStats.effective = playerEffective;
+		opponentStats.effective = opponentEffective;
 	}
 	return {
 		playerStats,
@@ -142,14 +155,14 @@ export const addEffectiveness = async ({
         playerType as keyof EffectivenessProps
 			].affects.findIndex((i) => i === enemyType);
 			if (index >= 0) {
-				playerStats.effective = 1.4;
+				playerStats.effective = ELEMENTAL_ADVANTAGES.DEFAULT.p1;
 			} else {
 				Object.keys(effectiveness).forEach((type) => {
 					const tempIndex = effectiveness[
             type as keyof EffectivenessProps
 					].affects.findIndex((i) => i === playerType);
 					if (tempIndex >= 0 && type === enemyType) {
-						playerStats.effective = 0.8;
+						playerStats.effective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
 					}
 				});
 			}
@@ -176,7 +189,13 @@ export const prepareBattleDesc = ({
 	) as CollectionCardInfoProps[];
 	const desc = `**${playerStats.name}**\nElement Type: ${filterPlayerCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		enemyStats.totalStats.effective < 1
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
+				enemyStats.totalStats.effective
+			)}`
+			: ""
+	}\n${
 		filterPlayerCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank].size)
 				.fill(":star:")
@@ -191,7 +210,13 @@ export const prepareBattleDesc = ({
 		enemyStats.name
 	}**\nElement Type: ${filterEnemyCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		playerStats.totalStats.effective < 1
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
+				playerStats.totalStats.effective
+			)}`
+			: ""
+	}\n${
 		filterEnemyCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank].size)
 				.fill(":star:")

@@ -308,8 +308,8 @@ export const futureSight = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
-	// as well as increasing **EVA** by __15%__. Also gain __20%__ chance to evade Elemental strike or Electrocute
-	// or Misdirection.
+	// as well as increasing **EVA** by __15%__. Also gain __80%__ chance to evade Elemental strike, Electrocute
+	// and Misdirection.
 	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);
@@ -322,22 +322,23 @@ export const futureSight = ({
 		if (!basePlayerStats.totalStats.evasionTemp)
 			basePlayerStats.totalStats.evasionTemp = 1;
 
-		const abilityToResist = randomElementFromArray(abilitiesToResist);
-		const resistPercent = calcPercentRatio(20, card.rank);
-		if (playerStats.totalStats.abilityToResist) {
-			playerStats.totalStats.abilityToResist = {
-				...playerStats.totalStats.abilityToResist,
-				[abilityToResist.key]: {
-					percent: round2Decimal(
-						(playerStats.totalStats.abilityToResist[abilityToResist.key]
-							?.percent || 0) +
+		const resistPercent = calcPercentRatio(80, card.rank);
+		abilitiesToResist.map((item) => {
+			if (playerStats.totalStats.abilityToResist) {
+				playerStats.totalStats.abilityToResist = {
+					...playerStats.totalStats.abilityToResist,
+					[item.key]: {
+						percent: round2Decimal(
+							(playerStats.totalStats.abilityToResist[item.key]
+								?.percent || 0) +
               resistPercent / 100
-					),
-				},
-			};
-		} else {
-			playerStats.totalStats.abilityToResist = { [abilityToResist.key]: { percent: (resistPercent / 100) } };
-		}
+						),
+					},
+				};
+			} else {
+				playerStats.totalStats.abilityToResist = { [item.key]: { percent: (resistPercent / 100) } };
+			}
+		});
 
 		const evaPercent = calcPercentRatio(15, card.rank);
 		const evaRatio =
@@ -349,7 +350,7 @@ export const futureSight = ({
 		const desc =
       `increasing **INT** of all allies by __${percent}%__ as well as increasing ` +
       `**Evasion Chances** by __${evaPercent}%__ and has also gained __${resistPercent}%__ chance to ` +
-      `evade **${abilityToResist.name} ${abilityToResist.emoji}**`;
+      `evade ${abilitiesToResist.map((item) => `**${item.name} ${item.emoji}**`).join(", ")}`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
