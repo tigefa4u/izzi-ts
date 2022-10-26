@@ -103,6 +103,7 @@ export type CommandMapProps = {
 	guide: (params: BaseProps) => void;
 	sex: (params: BaseProps) => void;
 	console: (params: BaseProps) => void;
+	changelogs: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

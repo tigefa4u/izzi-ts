@@ -614,14 +614,14 @@ async function simulatePlayerTurns({
 	};
 }
 
-export function getElementalEffectiveStatus(num: number) {
+export function getElementalEffectiveStatus(num: number, isBattle?: boolean) {
 	switch (num) {
 		case ELEMENTAL_ADVANTAGES.DEFAULT.p2:
-			return "**Slightly Effective**";
+			return "**Slightly Effective**" + (isBattle ? " :star:" : "");
 		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
-			return "**Effective**";
+			return "**Effective**" + (isBattle ? " :star::star:" : "");
 		case ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2:
-			return "**Super Effective!**";
+			return "**Super Effective!**" + (isBattle ? " :star::star::star:" : "");
 		default:
 			return "";
 	}

@@ -192,7 +192,8 @@ export const prepareBattleDesc = ({
 		.join(" ")}${
 		enemyStats.totalStats.effective < 1
 			? `\nEffectiveness: ${getElementalEffectiveStatus(
-				enemyStats.totalStats.effective
+				enemyStats.totalStats.effective,
+				true
 			)}`
 			: ""
 	}\n${
@@ -213,7 +214,8 @@ export const prepareBattleDesc = ({
 		.join(" ")}${
 		playerStats.totalStats.effective < 1
 			? `\nEffectiveness: ${getElementalEffectiveStatus(
-				playerStats.totalStats.effective
+				playerStats.totalStats.effective,
+				true
 			)}`
 			: ""
 	}\n${
