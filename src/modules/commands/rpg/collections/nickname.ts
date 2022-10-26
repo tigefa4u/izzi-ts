@@ -1,9 +1,10 @@
 import { CardMetadataProps } from "@customTypes/cards";
 import { BaseProps } from "@customTypes/command";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
-import { updateCollection } from "api/controllers/CollectionsController";
+import { resetAllNicknames, updateCollection } from "api/controllers/CollectionsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
+import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE, MAX_CARD_NICKNAME_LENGTH } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -12,10 +13,15 @@ import { getSortCache } from "../sorting/sortCache";
 export const nickname = async ({ context, client, args, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const rowid = Number(args.shift());
-		if (!rowid || isNaN(rowid) || rowid <= 0) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		if (args[0] === "reset") {
+			await resetAllNicknames(user.id);
+			context.channel?.sendMessage("Successfully reset all character nicknames " + emoji.celebration);
+			return;
+		}
+		const rowid = Number(args.shift());
+		if (!rowid || isNaN(rowid) || rowid <= 0) return;
 		const sort = await getSortCache(author.id);
 		const rowData = await getCardInfoByRowNumber({
 			row_number: rowid,

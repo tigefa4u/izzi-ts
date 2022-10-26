@@ -304,3 +304,9 @@ export const verifyIds = async (params: { user_id: number; ids: number[] }) => {
 
 	return query;
 };
+
+export const resetAllNicknames = (user_id: number) => {
+	const db = connection;
+	const query = db(tableName).where({ user_id }).update({ metadata: {} });
+	return query;
+};

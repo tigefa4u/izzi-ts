@@ -232,7 +232,7 @@ export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
 
 export const MARKET_PURCHASE_LIMIT = 5;
 
-export const MAX_CHOSEN_SKINS_ALLOWED = 30;
+export const MAX_CHOSEN_SKINS_ALLOWED = 50;
 
 export const MIN_RAID_USER_LEVEL = 5;
 export const MIN_LEVEL_FOR_HIGH_RAIDS = 22;

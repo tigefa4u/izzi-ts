@@ -269,3 +269,15 @@ export const getCollectionsOnCooldown = async () => {
 		return;
 	}
 };
+
+export const resetAllNicknames = async (user_id: number) => {
+	try {
+		return Collections.resetAllNicknames(user_id);
+	} catch (err) {
+		loggers.error(
+			"api.controllers.CollectionsController.resetAllNicknames(): something went wrong",
+			err
+		);
+		return;
+	}	
+};

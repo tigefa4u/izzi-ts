@@ -33,6 +33,10 @@ export const makeAWish = async (params: BaseProps) => {
 			} else if (subcommand === "chr") {
 				setCharacterRank(params);
 				return;
+			} else if (subcommand === "re") {
+				params.args = [ "raid-energy" ];
+				specialWish(params);
+				return;
 			}
 		}
 		specialWish(params);
