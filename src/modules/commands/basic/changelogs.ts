@@ -17,6 +17,7 @@ export const viewChangeLogs = ({ context, options, client }: BaseProps) => {
 				{
 					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
 					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
+					style: "LINK",
 					url: `${GUIDE_DOCS}/change-logs`
 				}
 			],
