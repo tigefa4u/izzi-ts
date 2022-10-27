@@ -205,13 +205,11 @@ const handleJumpToFloor = async ({
 		);
 		return;
 	}
-	await Promise.all([
-		updateRPGUser({ user_tag: author.id }, {
-			ruin: location.zone,
-			max_floor: zoneDetails.max_floor 
-		}),
-		floor(options)
-	]);
+	await updateRPGUser({ user_tag: author.id }, {
+		ruin: location.zone,
+		max_floor: zoneDetails.max_floor 
+	});
+	floor(options);
 	return;
 };
 
