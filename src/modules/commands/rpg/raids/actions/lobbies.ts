@@ -70,7 +70,7 @@ export const raidLobbies = async ({
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.raidLobbies(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.raidLobbies: ERROR", err);
 		return;
 	}
 };

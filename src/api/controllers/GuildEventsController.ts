@@ -6,7 +6,7 @@ export const getAllGuildEvents = async (guild_id: string) => {
 	try {
 		return GuildEvents.get(guild_id);
 	} catch (err) {
-		loggers.error("api.controllers.GuildEventsController.getAllGuildEvents(): something went wrong", err);
+		loggers.error("api.controllers.GuildEventsController.getAllGuildEvents: ERROR", err);
 		return;
 	}
 };
@@ -18,7 +18,7 @@ export const getGuildEventByName = async ({ guild_id, name }: { guild_id: string
 			name 
 		});
 	} catch (err) {
-		loggers.error("api.controllers.GuildEventsController.getAllGuildEvents(): something went wrong", err);
+		loggers.error("api.controllers.GuildEventsController.getAllGuildEvents: ERROR", err);
 		return;
 	}
 };
@@ -27,7 +27,7 @@ export const updateGuildEvent = async (params: { guild_id: string; id?: number; 
 	try {
 		return GuildEvents.update(params, data);
 	} catch (err) {
-		loggers.error("api.controllers.GuildEventsController.updateGuildEvent(): something went wrong", err);
+		loggers.error("api.controllers.GuildEventsController.updateGuildEvent: ERROR", err);
 		return;
 	}
 };
@@ -36,7 +36,7 @@ export const createGuildEvent = async (data: GuildEventsCreateProps) => {
 	try {
 		return GuildEvents.create(data);
 	} catch (err) {
-		loggers.error("api.controllers.GuildEventsController.createGuildEvent(): something went wrong", err);
+		loggers.error("api.controllers.GuildEventsController.createGuildEvent: ERROR", err);
 		return;
 	}
 };
@@ -45,7 +45,7 @@ export const deleteRaidPing = async (guild_id: string) => {
 	try {
 		return GuildEvents.delRaidPing(guild_id);
 	} catch (err) {
-		loggers.error("api.controllers.GuildEventsController.deleteRaidPing(): something went wrong", err);
+		loggers.error("api.controllers.GuildEventsController.deleteRaidPing: ERROR", err);
 		return;
 	}
 };

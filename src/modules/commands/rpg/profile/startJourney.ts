@@ -148,7 +148,7 @@ export const start: (params: BaseProps) => void = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.startJourney.start(): something went wrong",
+			"modules.commands.rpg.startJourney.start: ERROR",
 			err
 		);
 		return;

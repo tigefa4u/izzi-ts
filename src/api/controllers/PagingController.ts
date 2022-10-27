@@ -108,7 +108,7 @@ export const pageFunc = async <T>(
 			sentMessage = msg;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.PagingController.pageFunc(): something went wrong", err);
+		loggers.error("api.controllers.PagingController.pageFunc: ERROR", err);
 		throw err;
 	}
 };

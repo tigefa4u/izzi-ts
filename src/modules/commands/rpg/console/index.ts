@@ -41,7 +41,7 @@ export const console = async ({ client, context, options, args }: BaseProps) => 
 		});
 		return;
 	} catch (err) {
-		loggers.error("rpg.console(): something went wrong", err);
+		loggers.error("rpg.console: ERROR", err);
 		return;
 	}
 };

@@ -290,7 +290,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.index.battle(): something went wrong",
+			"modules.commands.rpg.adventure.index.battle: ERROR",
 			err
 		);
 		return;

@@ -77,7 +77,7 @@ export const memberReady = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.memberReady(): something went wrong",
+			"modules.commands.rpg.raids.actions.memberReady: ERROR",
 			err
 		);
 		return;

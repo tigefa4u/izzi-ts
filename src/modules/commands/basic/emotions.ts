@@ -19,7 +19,7 @@ const emotions = async (params: { channel: ChannelProp; commandId: number; clien
 			.setHideConsoleButtons(true);
 		params.channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error("commands.basic.emotions(): something went wrong", err);
+		loggers.error("commands.basic.emotions: ERROR", err);
 	}
 	return;
 };

@@ -96,7 +96,7 @@ export const raidActions = async ({
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.raidActions(): something went wrong",
+			"modules.commands.rpg.raids.raidActions: ERROR",
 			err
 		);
 		return;

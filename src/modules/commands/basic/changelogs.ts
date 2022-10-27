@@ -38,7 +38,7 @@ export const viewChangeLogs = ({ context, options, client }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.basic.changelogs.viewChangeLogs(): something went wrong", err);
+		loggers.error("modules.commands.basic.changelogs.viewChangeLogs: ERROR", err);
 		return;
 	}
 };

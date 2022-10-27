@@ -210,7 +210,7 @@ export const teamBattle = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.teamBattle(): something went wrong",
+			"modules.commands.rpg.team.teamBattle: ERROR",
 			err
 		);
 		return;

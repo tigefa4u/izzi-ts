@@ -40,7 +40,7 @@ export const createUser: (
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersController.createUser(): something went wrong",
+			"api.controllers.UsersController.createUser: ERROR",
 			err
 		);
 		return;
@@ -54,7 +54,7 @@ export const getUser: (params: UserParams) => Promise<UserProps | undefined> =
   		return result && result[0];
   	} catch (err) {
   		loggers.error(
-  			"api.controllers.UsersController.getUser(): something weont wrong",
+  			"api.controllers.UsersController.getUser: something weont wrong",
   			err
   		);
   		return;
@@ -77,7 +77,7 @@ export const updateUser: (
 		return await Users.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersControler.updateUser(): something went wrong",
+			"api.controllers.UsersControler.updateUser: ERROR",
 			err
 		);
 		return;
@@ -129,7 +129,7 @@ export const getRPGUser: (
 		// }
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersController.getRPGUser(): something went wrong",
+			"api.controllers.UsersController.getRPGUser: ERROR",
 			err
 		);
 		return;
@@ -144,8 +144,8 @@ export const updateRPGUser: (
 	try {
 		const result = await updateUser(params, data, options);
 		loggers.info(
-			"api.controllers.UsersController.updateRPGUser(): updating user " +
-        JSON.stringify(data)
+			"api.controllers.UsersController.updateRPGUser: updating user " +
+        JSON.stringify(params) + JSON.stringify(data)
 		);
 		if (options?.hydrateCache) {
 			const cacheHydrationData = await prepareCacheHydrationData(params, data);
@@ -156,7 +156,7 @@ export const updateRPGUser: (
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersController.updateRPGUser(): someting went wrong",
+			"api.controllers.UsersController.updateRPGUser: someting went wrong",
 			err
 		);
 		return;
@@ -198,7 +198,7 @@ export const getTotalPlayers = async (
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersController.getTotalPlayers(): something went wrong",
+			"api.controllers.UsersController.getTotalPlayers: ERROR",
 			err
 		);
 		return;
@@ -215,7 +215,7 @@ export const getAllUsers = async (params: { is_premium?: boolean; is_mini_premiu
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersController.getAllUsers(): something went wrong",
+			"api.controllers.UsersController.getAllUsers: ERROR",
 			err
 		);
 		return;

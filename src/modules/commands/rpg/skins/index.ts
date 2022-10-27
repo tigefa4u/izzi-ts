@@ -29,7 +29,7 @@ export const skins = ({ context, args, client, options }: BaseProps) => {
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.skins.skins(): something went wrong", err);
+		loggers.error("modules.commands.rpg.skins.skins: ERROR", err);
 		return;
 	}
 };

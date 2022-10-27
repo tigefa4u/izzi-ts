@@ -28,7 +28,7 @@ export const setCharacterRank = async ({ client, context, options, args }: BaseP
 		context.channel?.sendMessage(msg);
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 	} catch (err) {
-		loggers.error("specialCommands.setCharacterRank(): something went wrong", err);
+		loggers.error("specialCommands.setCharacterRank: ERROR", err);
 		return;
 	}
 };
@@ -52,7 +52,7 @@ export const setCharacterLevel = async ({ client, context, options, args }: Base
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 		return;
 	} catch (err) {
-		loggers.error("specialCommands.setCharacterLevel(): something went wrong", err);
+		loggers.error("specialCommands.setCharacterLevel: ERROR", err);
 		return;
 	}
 };
@@ -98,7 +98,7 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 		return;
 	} catch (err) {
-		loggers.error("specialCommands.addRaidDamage(): something went wrong", err);
+		loggers.error("specialCommands.addRaidDamage: ERROR", err);
 		return;
 	}
 };

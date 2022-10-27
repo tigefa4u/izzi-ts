@@ -186,7 +186,7 @@ export const buyItem = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.shop.buy.buyItem(): something went wrong",
+			"modules.commands.rpg.guild.shop.buy.buyItem: ERROR",
 			err
 		);
 		return;

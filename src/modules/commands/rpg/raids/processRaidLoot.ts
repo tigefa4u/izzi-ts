@@ -106,7 +106,7 @@ export const processRaidLoot = async ({
 
 		await createCollection(collections);
 
-		loggers.info("raid.processRaidLoot(): Distributing raid loot rewards: " + JSON.stringify(allRewards));
+		loggers.info("raid.processRaidLoot: Distributing raid loot rewards: " + JSON.stringify(allRewards));
         
 		allRewards.map(
 			(reward) =>
@@ -125,7 +125,7 @@ export const processRaidLoot = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.processRaidLoot(): something went wrong",
+			"modules.commands.rpg.raids.processRaidLoot: ERROR",
 			err
 		);
 		return;

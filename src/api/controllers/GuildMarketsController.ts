@@ -25,7 +25,7 @@ export const getGuildMarket = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildMarketsController.getGuildMarket(): something went wrong",
+			"api.controllers.GuildMarketsController.getGuildMarket: ERROR",
 			err
 		);
 		return;
@@ -43,7 +43,7 @@ export const getGuildMarketItem = async (params: { id: number }) => {
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildMarketsController.getGuildMarketItem(): something went wrong",
+			"api.controllers.GuildMarketsController.getGuildMarketItem: ERROR",
 			err
 		);
 		return;

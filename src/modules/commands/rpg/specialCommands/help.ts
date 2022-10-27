@@ -16,7 +16,7 @@ export const makeAWishHelp = async ({ context, client, options }: BaseProps) => 
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("specialCommands.help.makeAWishHelp(): something went wrong", err);
+		loggers.error("specialCommands.help.makeAWishHelp: ERROR", err);
 		return;
 	}
 };

@@ -87,7 +87,7 @@ export const addCardByIds = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.add.addCardByIds(): something went wrong",
+			"modules.commands.rpg.trades.actions.add.addCardByIds: ERROR",
 			err
 		);
 		return;

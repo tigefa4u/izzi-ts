@@ -280,7 +280,7 @@ export const sacrificeCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.sacrifice.index.sacrificeCard(): something went wrong",
+			"modules.commands.rpg.sacrifice.index.sacrificeCard: ERROR",
 			err
 		);
 		return;

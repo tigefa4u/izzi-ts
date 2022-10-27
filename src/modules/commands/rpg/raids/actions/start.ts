@@ -66,7 +66,7 @@ export const startRaid = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.showEnergy(): something went wrong",
+			"modules.commands.rpg.raids.actions.showEnergy: ERROR",
 			err
 		);
 		return;

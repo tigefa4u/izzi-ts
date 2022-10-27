@@ -43,7 +43,7 @@ const actions = async (params: {
 			.setHideConsoleButtons(true);
 		params.channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error("commands.basic.actions(): something went wrong", err);
+		loggers.error("commands.basic.actions: ERROR", err);
 	}
 	return;
 };

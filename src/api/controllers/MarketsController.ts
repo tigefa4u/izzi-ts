@@ -24,7 +24,7 @@ export const getMarket = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.MarketsController.getMarket(): something went wrong",
+			"api.controllers.MarketsController.getMarket: ERROR",
 			err
 		);
 		return;
@@ -35,7 +35,7 @@ export const getMarketCollection = async (params: { is_on_market: boolean, colle
 	try {
 		return await Markets.getMarketCollection(params);
 	} catch (err) {
-		loggers.error("api.controllers.MarksController.getMarketCollection(): something went wrong", err);
+		loggers.error("api.controllers.MarksController.getMarketCollection: ERROR", err);
 		return;
 	}
 };
@@ -45,7 +45,7 @@ export const delFromMarket = async (params: { id?: number; collection_ids?: numb
 		loggers.info("Deleting card from market: " + JSON.stringify(params));
 		return await Markets.del(params);
 	} catch (err) {
-		loggers.error("api.controllers.MarketsController.delFromMarket(): something went wrong", err);
+		loggers.error("api.controllers.MarketsController.delFromMarket: ERROR", err);
 		return;
 	}
 };
@@ -54,7 +54,7 @@ export const createMarketCard = async (data: MarketCreateProps) => {
 	try {
 		return await Markets.create(data);
 	} catch (err) {
-		loggers.error("api.controllers.MarketsController.createMarketCard(): something went wrong", err);
+		loggers.error("api.controllers.MarketsController.createMarketCard: ERROR", err);
 		return;
 	}
 };

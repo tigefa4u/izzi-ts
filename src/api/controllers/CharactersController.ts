@@ -19,7 +19,7 @@ export const getCharacterById: (params: {
 		return Characters.getCharacterById(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacterById(): something went wrong ",
+			"api.controllers.getCharacterById: ERROR ",
 			err
 		);
 		return;
@@ -33,7 +33,7 @@ export const getCharacters: (
 		return Characters.get(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacters(): something went wrong for params:- " +
+			"api.controllers.getCharacters: ERROR for params:- " +
         JSON.stringify(params),
 			err
 		);
@@ -74,7 +74,7 @@ export const getCharacterInfo: (
 		return;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacterInfo(): something went wrong",
+			"api.controllers.getCharacterInfo: ERROR",
 			err
 		);
 		return;
@@ -106,7 +106,7 @@ export const getDex: (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CharactersController.getDex(): something went wrong",
+			"api.controllers.CharactersController.getDex: ERROR",
 			err
 		);
 		return;

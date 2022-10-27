@@ -34,7 +34,7 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.profile.updateIzziProfile(): something went wrong",
+			"modules.commands.rpg.profile.updateIzziProfile: ERROR",
 			err
 		);
 		return;

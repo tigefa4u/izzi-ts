@@ -93,7 +93,7 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.misc.lottery(): something went wrong",
+			"modules.commands.rpg.misc.lottery: ERROR",
 			err
 		);
 		return;

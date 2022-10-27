@@ -272,7 +272,7 @@ export const showRaidCommands = async ({
 		message.editButton(buttons);
 	} catch (err) {
 		loggers.error(
-			"consoleButtonFollowup.showRaidCommands(): something went wrong",
+			"consoleButtonFollowup.showRaidCommands: ERROR",
 			err
 		);
 	}

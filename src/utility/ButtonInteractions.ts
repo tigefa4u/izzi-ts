@@ -48,6 +48,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		collector?.on("collect", async (buttonInteraction) => {
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
+			loggers.info(`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
 			switch (id) {
 				case binLabel: {
 					callback(null, { isDelete: true });
@@ -88,7 +89,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 	
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.paginatorInteraction(): something went wrong", err);
+		loggers.error("utility.ButtonInteractions.paginatorInteraction: ERROR", err);
 		return;
 	}
 };
@@ -130,6 +131,7 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 
 		collector?.on("collect", async (buttonInteraction) => {
 			const id = buttonInteraction.customId;
+			loggers.info(`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
 			switch (id) {
 				case cancelLabel: {
 					buttonInteraction.deferUpdate();
@@ -166,7 +168,7 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 	
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.confirmationInteraction(): something went wrong", err);
+		loggers.error("utility.ButtonInteractions.confirmationInteraction: ERROR", err);
 		return;
 	}
 };
@@ -194,6 +196,7 @@ export const collectableInteraction = async <P>(
 		});
 		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
+			loggers.info(`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
 			switch (id) {
 				case label: {
 					buttonInteraction.deferUpdate();
@@ -227,7 +230,7 @@ export const collectableInteraction = async <P>(
 	
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.collectableInteraction(): something went wrong", err);
+		loggers.error("utility.ButtonInteractions.collectableInteraction: ERROR", err);
 		return;
 	}
 };
@@ -261,6 +264,7 @@ export const customButtonInteraction = <P>(
 		// To disabled buttons on end - edit the message, setting the new buttons
 		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
+			loggers.info(`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
 			options.map((option, i) => {
 				if (id === (label + "_" + i)) {
 					buttonInteraction.deferUpdate();
@@ -294,7 +298,7 @@ export const customButtonInteraction = <P>(
 		// });
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.customInteraction(): something went wrong", err);
+		loggers.error("utility.ButtonInteractions.customInteraction: ERROR", err);
 		return;
 	}
 };

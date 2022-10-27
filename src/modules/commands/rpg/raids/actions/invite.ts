@@ -214,7 +214,7 @@ export const inviteToRaid = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.inviteToRaid(): something went wrong",
+			"modules.commands.rpg.raids.actions.inviteToRaid: ERROR",
 			err
 		);
 		return;

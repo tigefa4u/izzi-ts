@@ -76,7 +76,7 @@ export const removeTeam = async ({ context, client, author, user }: Omit<BasePro
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.selectTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.selectTeam: ERROR",
 			err
 		);
 		return;

@@ -244,7 +244,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.upgrades.upgradeGuild(): something went wrong",
+			"modules.commands.rpg.guild.upgrades.upgradeGuild: ERROR",
 			err
 		);
 		return;

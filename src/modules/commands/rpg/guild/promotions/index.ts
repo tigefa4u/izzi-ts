@@ -71,7 +71,7 @@ export const vpromote = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.promotions.vpromote(): something went wrong",
+			"modules.commands.rpg.guild.promotions.vpromote: ERROR",
 			err
 		);
 		return;
@@ -117,7 +117,7 @@ export const vdemote = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.promotions.vdemote(): something went wrong",
+			"modules.commands.rpg.guild.promotions.vdemote: ERROR",
 			err
 		);
 		return;
@@ -184,7 +184,7 @@ export const apromote = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.promotions.apromote(): something went wrong",
+			"modules.commands.rpg.guild.promotions.apromote: ERROR",
 			err
 		);
 		return;
@@ -230,7 +230,7 @@ export const ademote = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.promotions.ademote(): something went wrong",
+			"modules.commands.rpg.guild.promotions.ademote: ERROR",
 			err
 		);
 		return;

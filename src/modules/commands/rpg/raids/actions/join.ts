@@ -136,7 +136,7 @@ export const joinRaid = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.joinRaid(): something went wrong",
+			"modules.commands.rpg.raids.actions.joinRaid: ERROR",
 			err
 		);
 		return;

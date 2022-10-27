@@ -18,7 +18,7 @@ export const getCharacterCardByRank: (params: {
 		});
 		return result;
 	} catch (err) {
-		loggers.error("api.controllers.CardsController.getCharacterByRank(): something went wrong ", err);
+		loggers.error("api.controllers.CardsController.getCharacterByRank: ERROR ", err);
 		return;
 	}
 };
@@ -29,7 +29,7 @@ export const getCardBySeries: (params: {
 	try {
 		return await Cards.getBySeries(params);
 	} catch (err) {
-		loggers.error("api.controllers.CardsController.getCardBySeries(): something went wrong", err);
+		loggers.error("api.controllers.CardsController.getCardBySeries: ERROR", err);
 		return;
 	}
 };
@@ -38,7 +38,7 @@ export const getRandomCard = async (params: CardParams, limit: number) => {
 	try {
 		return await Cards.getRandomCard(params, limit);
 	} catch (err) {
-		loggers.error("api.controllers.CardsController.getRandomCard(): something went wrong", err);
+		loggers.error("api.controllers.CardsController.getRandomCard: ERROR", err);
 		return;
 	}
 };

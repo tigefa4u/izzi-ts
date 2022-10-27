@@ -81,7 +81,7 @@ export const guild = async ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.guild(): something went wrong",
+			"modules.commands.rpg.guild.guild: ERROR",
 			err
 		);
 		return;
@@ -184,7 +184,7 @@ export const verifyMemberPermissions = async (params: {
 		};
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.verifyMemberPermissions(): something went wrong",
+			"modules.commands.rpg.guild.verifyMemberPermissions: ERROR",
 			err
 		);
 		return;

@@ -173,7 +173,7 @@ export const simulateBattle = async ({
 		simulation.hasCrashed = true;
 		battlesPerChannel.set(context.channel.id, 0);
 		loggers.error(
-			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
+			"modules.commands.rpg.adventure.battle.simulateBattle: ERROR",
 			err
 		);
 		return;
@@ -221,7 +221,7 @@ async function sendBattleDescription({
 		);
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+			"modules.commands.rpg.adventure.battle.visualizeSimulation: ERROR",
 			err
 		);
 		return;
@@ -355,7 +355,7 @@ async function visualizeSimulation({
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {
-		context.channel?.sendMessage("Something went wrong with your battle");
+		context.channel?.sendMessage("ERROR with your battle");
 		throw new Error("Message Object not found to edit battle");
 	}
 
@@ -396,7 +396,7 @@ async function visualizeSimulation({
 				await message.editMessage(newEmbed, { reattachOnEdit: true });
 			} catch (err) {
 				loggers.error(
-					"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+					"modules.commands.rpg.adventure.battle.visualizeSimulation: ERROR",
 					err
 				);
 				if (roundStats) roundStats.isForfeit = true;

@@ -204,7 +204,7 @@ export const setTeam = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.setTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.setTeam: ERROR",
 			err
 		);
 		return;

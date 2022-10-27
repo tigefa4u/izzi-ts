@@ -143,7 +143,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		});
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.dungeon(): something went wrong", err);
+		loggers.error("modules.commands.rpg.dungeon: ERROR", err);
 		return;
 	}
 };

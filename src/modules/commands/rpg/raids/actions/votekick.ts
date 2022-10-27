@@ -85,7 +85,7 @@ export const voteKickMember = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.voteKickMember(): something went wrong",
+			"modules.commands.rpg.raids.actions.voteKickMember: ERROR",
 			err
 		);
 		return;

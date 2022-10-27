@@ -62,7 +62,7 @@ export const handleClient = (client: Client) => {
 	// handleGuildEvents(client, discord);
 	client.on("ready", async () => {
 		console.log("listening");
-		// registerSlashCommands(client);
+		registerSlashCommands(client);
 		client?.user?.setPresence({
 			activities: [
 				{
@@ -79,12 +79,13 @@ export const handleClient = (client: Client) => {
 			if (client?.shard?.ids.includes(0)) {
 				// client.user.setAvatar("./izzi.jpeg")
 				console.log(`Logged in as ${client?.user?.tag}!`);
+				loggers.info(`Logged in as ${client?.user?.tag}`);
 				// setInterval(async () => {
 				// await redisClient.flushAll();
 				// }, 1000 * 60 * 60 * 2);
 			}
 		} catch (err) {
-			loggers.error("handlers.handleClient(): APP CRASHED", err);
+			loggers.error("handlers.handleClient: APP CRASHED", err);
 			return;
 		}
 	});

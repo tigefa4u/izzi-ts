@@ -21,7 +21,7 @@ export const getCrates = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CratesController.getCrates(): something went wrong",
+			"api.controllers.CratesController.getCrates: ERROR",
 			err
 		);
 		return;
@@ -34,7 +34,7 @@ export const getCrate = async (params: { id: number; user_tag: string }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CratesController.getCrate(): something went wrong",
+			"api.controllers.CratesController.getCrate: ERROR",
 			err
 		);
 		return;
@@ -46,7 +46,7 @@ export const delCrate = async (params: { id: number }) => {
 		return Crates.del(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CratesController.delCrate(): something went wrong",
+			"api.controllers.CratesController.delCrate: ERROR",
 			err
 		);
 		return;

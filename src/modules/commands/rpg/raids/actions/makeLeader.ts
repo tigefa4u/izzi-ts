@@ -100,7 +100,7 @@ export const makeLeader = async ({
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.makeLeader() something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.makeLeader() ERROR", err);
 		return;
 	}
 };

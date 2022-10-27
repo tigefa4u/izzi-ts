@@ -40,7 +40,7 @@ export const createCollection: (
 		return await Collections.create(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.createCollection(): something went wrong",
+			"api.controllers.CollectionsController.createCollection: ERROR",
 			err
 		);
 		return;
@@ -89,7 +89,7 @@ export const getCollection: (
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getCollection(): something went wrong",
+			"api.controllers.CollectionsController.getCollection: ERROR",
 			err
 		);
 		return;
@@ -110,7 +110,7 @@ export const updateCollection = async (
 		return await Collections.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.updateCollection(): something went wrong",
+			"api.controllers.CollectionsController.updateCollection: ERROR",
 			err
 		);
 		return;
@@ -223,7 +223,7 @@ export const getAllCollections = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getAllCollections(): something went wrong",
+			"api.controllers.CollectionsController.getAllCollections: ERROR",
 			err
 		);
 		return;
@@ -238,7 +238,7 @@ export const deleteCollection = async (
 		return Collections.destroy(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.deleteCollection(): something went wrong",
+			"api.controllers.CollectionsController.deleteCollection: ERROR",
 			err
 		);
 		return;
@@ -251,7 +251,7 @@ export const verifyCollectionsById = async (params: { user_id: number; ids: numb
 		return Collections.verifyIds(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.verifyCollectionsById(): something went wrong",
+			"api.controllers.CollectionsController.verifyCollectionsById: ERROR",
 			err
 		);
 		return;
@@ -263,7 +263,7 @@ export const getCollectionsOnCooldown = async () => {
 		return Collections.get({ is_on_cooldown: true });
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getCollectionsInCooldown(): something went wrong",
+			"api.controllers.CollectionsController.getCollectionsInCooldown: ERROR",
 			err
 		);
 		return;
@@ -275,7 +275,7 @@ export const resetAllNicknames = async (user_id: number) => {
 		return Collections.resetAllNicknames(user_id);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.resetAllNicknames(): something went wrong",
+			"api.controllers.CollectionsController.resetAllNicknames: ERROR",
 			err
 		);
 		return;

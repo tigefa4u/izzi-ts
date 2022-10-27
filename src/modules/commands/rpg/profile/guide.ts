@@ -74,7 +74,7 @@ export const starterGuide = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.profile.guide.starterGuide(): something went wrong", err);
+		loggers.error("commands.rpg.profile.guide.starterGuide: ERROR", err);
 		return;
 	}
 };

@@ -124,7 +124,7 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"events.guild.handleDiscordServerJoin(): something went wrong",
+			"events.guild.handleDiscordServerJoin: ERROR",
 			err
 		);
 		return;
@@ -141,7 +141,7 @@ export const handleDiscordServerLeave = async (guild: Guild) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"events.guild.handleDiscordServerLeave(): something went wrong",
+			"events.guild.handleDiscordServerLeave: ERROR",
 			err
 		);
 		return; 

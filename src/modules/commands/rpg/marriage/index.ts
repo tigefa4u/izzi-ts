@@ -53,7 +53,7 @@ export const divorce = async ({ context, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.marriage.divorce(): something went wrong",
+			"modules.commands.rpg.marriage.divorce: ERROR",
 			err
 		);
 		return;
@@ -206,7 +206,7 @@ export const propose = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.marriage.propose(): something went wrong",
+			"modules.commands.rpg.marriage.propose: ERROR",
 			err
 		);
 		return;

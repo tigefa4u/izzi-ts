@@ -28,6 +28,7 @@ import { showCardSkins } from "./skinInfo";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
+import { getZoneByLocationId } from "api/controllers/ZonesController";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -148,7 +149,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardinfo.cinfo(): something went wrong",
+			"modules.commands.rpg.cardinfo.cinfo: ERROR",
 			err
 		);
 		return;
@@ -170,15 +171,20 @@ const handleJumpToFloor = async ({
 	client, channel, user_tag, id, message, location
 }: CustomButtonInteractionParams & { location: NormalizeFloorProps; }) => {
 	if (id !== CONSOLE_BUTTONS.JUMP_TO_FLOOR.id) return;
-	const [ author, user ] = await Promise.all([
+	const [ author, user, zoneDetails ] = await Promise.all([
 		client.users.fetch(user_tag),
-		getRPGUser({ user_tag })
+		getRPGUser({ user_tag }),
+		getZoneByLocationId({ location_id: location.zone })
 	]);
 	if (!user) {
 		channel?.sendMessage(
 			`Uh oh! Summoner **${author.username}**, please start your journey in the Xenverse ` +
         "using ``@izzi start``"
 		);
+		return;
+	}
+	if (!zoneDetails) {
+		channel?.sendMessage("We could not find the zone you were looking for. Please contact support.");
 		return;
 	}
 	const options = {
@@ -199,8 +205,13 @@ const handleJumpToFloor = async ({
 		);
 		return;
 	}
-	await updateRPGUser({ user_tag: author.id }, { ruin: location.zone, });
-	floor(options);
+	await Promise.all([
+		updateRPGUser({ user_tag: author.id }, {
+			ruin: location.zone,
+			max_floor: zoneDetails.max_floor 
+		}),
+		floor(options)
+	]);
 	return;
 };
 
@@ -323,7 +334,7 @@ const fetchCharacterInfoMeta = async (
 		});
 		if (!card) {
 			loggers.error(
-				"cardinfo.fetchCharacterInfoMeta(): " +
+				"cardinfo.fetchCharacterInfoMeta: " +
           `Unable to find card for character ${params.character.name} with rank ${rank}`,
 				{}
 			);

@@ -11,7 +11,7 @@ export const getGuildMember = async (params: { user_id: number }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildMembersController.getGuildMember(): something went wrong",
+			"api.controllers.GuildMembersController.getGuildMember: ERROR",
 			err
 		);
 		return;
@@ -37,7 +37,7 @@ export const getAllGuildMembers = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildMembersController.getAllGuildMembers(): something went wrong",
+			"api.controllers.GuildMembersController.getAllGuildMembers: ERROR",
 			err
 		);
 		return;
@@ -49,7 +49,7 @@ export const updateGuildMember = async (params: { id?: number; user_id?: number 
 		loggers.info("Updating Guild Member with: " + JSON.stringify(data));
 		return await GuildMembers.update(params, data);
 	} catch (err) {
-		loggers.error("api.controller.GuildMembersController.updateGuildMember(): something went wrong", err);
+		loggers.error("api.controller.GuildMembersController.updateGuildMember: ERROR", err);
 		return;
 	}
 };
@@ -59,7 +59,7 @@ export const delGuildMember = async (params: { id: number }) => {
 		loggers.info("Deleting Guild Member with: " + JSON.stringify(params));
 		return await GuildMembers.del(params);
 	} catch (err) {
-		loggers.error("api.controller.GuildMembersController.delGuildMember(): something went wrong", err);
+		loggers.error("api.controller.GuildMembersController.delGuildMember: ERROR", err);
 		return;
 	}
 };
@@ -69,7 +69,7 @@ export const delAllGuildMembers = async (params: { guild_id: number }) => {
 		loggers.info("Deleting All Guild Members with: " + JSON.stringify(params));
 		return await GuildMembers.del(params);
 	} catch (err) {
-		loggers.error("api.controller.GuildMembersController.delAllGuildMembers(): something went wrong", err);
+		loggers.error("api.controller.GuildMembersController.delAllGuildMembers: ERROR", err);
 		return;
 	}
 };
@@ -79,7 +79,7 @@ export const createGuildMember = async (data: GuildMemberCreateProps | GuildMemb
 		loggers.info("Creating Guild Member with: " + JSON.stringify(data));
 		return await GuildMembers.create(data);
 	} catch (err) {
-		loggers.error("api.controller.GuildMembersController.createGuildMember(): something went wrong", err);
+		loggers.error("api.controller.GuildMembersController.createGuildMember: ERROR", err);
 		return;
 	}
 };

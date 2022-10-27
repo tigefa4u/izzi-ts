@@ -88,7 +88,7 @@ export const leaveLobby = async ({ context, options, client, isEvent }: RaidActi
 		context.channel?.sendMessage(`You have left the ${isEvent ? "Event" : "Raid"} Challenge`);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.leaveLobby(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.leaveLobby: ERROR", err);
 		return;
 	}
 };

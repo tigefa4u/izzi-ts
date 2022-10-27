@@ -39,7 +39,7 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guildEvents.default(): something went wrong",
+			"modules.commands.rpg.guildEvents.default: ERROR",
 			err
 		);
 		return;

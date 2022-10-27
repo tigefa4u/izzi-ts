@@ -81,7 +81,7 @@ export const raidPing = async ({ options, context, args, client }: BaseProps) =>
 		context.channel?.sendMessage(embed); 
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.guildEvents.raidPing.index(): something went wrong", err);
+		loggers.error("modules.commands.rpg.guildEvents.raidPing.index: ERROR", err);
 		return;
 	}
 };

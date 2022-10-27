@@ -68,7 +68,7 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"module.commands.basic.gamble.bet(): something went wrong",
+			"module.commands.basic.gamble.bet: ERROR",
 			err
 		);
 		return;

@@ -147,7 +147,7 @@ export const inviteToGuild = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.actions.invite.inviteToGuild(): something went wrong",
+			"modules.commands.rpg.guild.actions.invite.inviteToGuild: ERROR",
 			err
 		);
 		return;

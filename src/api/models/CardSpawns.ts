@@ -1,4 +1,4 @@
-import { CardSpawnCreateProps, CardSpawnProps } from "@customTypes/cardSpawns";
+import { CardSpawnProps } from "@customTypes/cardSpawns";
 import connection from "db";
 
 const tableName = "redirect_drops";

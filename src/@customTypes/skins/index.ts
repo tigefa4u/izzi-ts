@@ -1,5 +1,5 @@
 import { AssetImageProps } from "@customTypes";
-import { CardMetadataAssetProps, CardMetadataProps } from "@customTypes/cards";
+import { CardMetadataAssetProps } from "@customTypes/cards";
 import { RanksMetaProps } from "helpers/helperTypes";
 
 export type SkinCollectionProps = {

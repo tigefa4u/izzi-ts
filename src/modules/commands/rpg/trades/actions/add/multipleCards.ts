@@ -104,7 +104,7 @@ export const addMultipleCards = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.add.addMultipleCards(): something went wrong",
+			"modules.commands.rpg.trades.actions.add.addMultipleCards: ERROR",
 			err
 		);
 		return;

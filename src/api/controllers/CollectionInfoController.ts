@@ -98,7 +98,7 @@ export const getCardInfoByRowNumber = async (
 		}
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionInfoController.getCardInfoByRowNumber(): something went wrong",
+			"api.controllers.CollectionInfoController.getCardInfoByRowNumber: ERROR",
 			err
 		);
 		return;
@@ -183,7 +183,7 @@ export const getCollectionById = async (params: {
 		}
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionInfoController.getCollectionById(): something went wrong",
+			"api.controllers.CollectionInfoController.getCollectionById: ERROR",
 			err
 		);
 		return;
@@ -252,7 +252,7 @@ export const getCardForBattle = async (params: {
 		}
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionInfoController.getCardForBattle(): something went wrong",
+			"api.controllers.CollectionInfoController.getCardForBattle: ERROR",
 			err
 		);
 		return;

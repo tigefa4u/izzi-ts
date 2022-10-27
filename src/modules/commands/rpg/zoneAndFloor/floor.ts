@@ -218,7 +218,7 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.zoneAndFloor.floor(): something went wrong",
+			"modules.commands.rpg.zoneAndFloor.floor: ERROR",
 			err
 		);
 		return;

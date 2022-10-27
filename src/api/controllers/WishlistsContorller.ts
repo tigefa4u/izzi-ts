@@ -25,7 +25,7 @@ export const getWishlist = async (
 			metadata: pagination
 		};
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.getWishlist(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.getWishlist: ERROR", err);
 		return;
 	}
 };
@@ -34,7 +34,7 @@ export const createWishlist = (data: WishlistCreateProps) => {
 	try {
 		return Wishlist.create(data);
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.createWishlist(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.createWishlist: ERROR", err);
 		return;
 	}
 };
@@ -43,7 +43,7 @@ export const updateWishlist = (params: WishlistUpdateParamProps, data: WishlistU
 	try {
 		return Wishlist.update(params, data);
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.updateWishlist(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.updateWishlist: ERROR", err);
 		return;
 	} 
 };
@@ -52,7 +52,7 @@ export const removeFromWishlist = (params: WishlistUpdateParamProps) => {
 	try {
 		return Wishlist.del(params);
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.removeFromWishlist(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.removeFromWishlist: ERROR", err);
 		return;
 	}  
 };
@@ -61,7 +61,7 @@ export const getWishlistBySkinId = (params: { user_tag: string; skin_id: number;
 	try {
 		return Wishlist.get(params);
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.getWishlistBySkinId(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.getWishlistBySkinId: ERROR", err);
 		return;
 	}
 };
@@ -70,7 +70,7 @@ export const getWishlistById = (params: { id: number; user_tag: string; }) => {
 	try {
 		return Wishlist.get(params);
 	} catch (err) {
-		loggers.error("api.controllers.WishlistsController.getWishlistById(): something went wrong", err);
+		loggers.error("api.controllers.WishlistsController.getWishlistById: ERROR", err);
 		return;
 	}
 };

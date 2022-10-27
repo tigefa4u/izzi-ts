@@ -72,7 +72,7 @@ export const viewMembers = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.information.members.viewMembers(): something went wrong",
+			"modules.commands.rpg.guild.information.members.viewMembers: ERROR",
 			err
 		);
 		return;

@@ -104,7 +104,7 @@ export const redirect = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardSpawn.redirect.redirect(): something went wrong",
+			"modules.commands.rpg.cardSpawn.redirect.redirect: ERROR",
 			err
 		);
 		return;

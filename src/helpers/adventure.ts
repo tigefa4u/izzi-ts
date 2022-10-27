@@ -169,7 +169,7 @@ export const addEffectiveness = async ({
 		}
 	} catch (err) {
 		loggers.error(
-			"helpers.adventure.addEffectiveness(): something went wrong",
+			"helpers.adventure.addEffectiveness: ERROR",
 			err
 		);
 	}

@@ -87,7 +87,7 @@ async function validateAndSellCard(
 			}
 		);
 	} catch (err) {
-		loggers.error("modules.commands.rpg.market.shop.sell.validateAndSellCard(): something went wrong", err);
+		loggers.error("modules.commands.rpg.market.shop.sell.validateAndSellCard: ERROR", err);
 		return;
 	}
 }
@@ -162,7 +162,7 @@ export const sellCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.market.sell.sellCard(): something went wrong",
+			"modules.commands.rpg.market.sell.sellCard: ERROR",
 			err
 		);
 		return;

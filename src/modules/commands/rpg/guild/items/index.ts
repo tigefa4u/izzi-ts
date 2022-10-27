@@ -72,7 +72,7 @@ export const guildItems = async ({ context, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.items.guildItems(): something went wrong",
+			"modules.commands.rpg.guild.items.guildItems: ERROR",
 			err
 		);
 		return;

@@ -88,7 +88,7 @@ export const show = async (params: {
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.skins.skinActions.show(): something went wrong",
+			"modules.commands.rpg.skins.skinActions.show: ERROR",
 			err
 		);
 		return;
@@ -109,7 +109,7 @@ export const reset = (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.skins.skinActions.reset(): something went wrong",
+			"modules.commands.rpg.skins.skinActions.reset: ERROR",
 			err
 		);
 		return;
@@ -199,7 +199,7 @@ export const choose = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.skins.skinActions.choose(): something went wrong",
+			"modules.commands.rpg.skins.skinActions.choose: ERROR",
 			err
 		);
 		return;
@@ -227,7 +227,7 @@ export const removeSkin = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.skins.skinActions.removeSkin(): something went wrong",
+			"modules.commands.rpg.skins.skinActions.removeSkin: ERROR",
 			err
 		);
 		return;

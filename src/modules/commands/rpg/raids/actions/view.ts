@@ -141,7 +141,7 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.viewRaid(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.viewRaid: ERROR", err);
 		return;
 	}
 };

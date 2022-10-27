@@ -147,7 +147,7 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 			sendBattleStatusEmbed(author, client, context.channel);
 		}
 	} catch (err) {
-		loggers.error("modules.commands.rpg.spbt(): something went wrong", err);
+		loggers.error("modules.commands.rpg.spbt: ERROR", err);
 		return;
 	}
 };

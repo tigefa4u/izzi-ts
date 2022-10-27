@@ -12,7 +12,7 @@ export const premium = ({ context, client, options }: BaseProps) => {
 		});
 		return;
 	} catch (err) {
-		loggers.error("module.commands.rpg.premium.premium(): something went wrong", err);
+		loggers.error("module.commands.rpg.premium.premium: ERROR", err);
 		return;
 	}
 };

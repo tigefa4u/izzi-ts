@@ -230,7 +230,7 @@ export const raidRecruit = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.guildEvents.recruit.raidRecruit(): something went wrong",
+			"commands.rpg.guildEvents.recruit.raidRecruit: ERROR",
 			err
 		);
 		return;

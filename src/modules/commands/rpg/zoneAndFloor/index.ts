@@ -46,7 +46,7 @@ export const attachButtonToFloorEmbed = ({ embed, channel }: P) => {
 			embed.setButtons(buttons);
 		}
 	} catch (err) {
-		loggers.error("zoneAndFloor.index.attachButtonToFloorEmbed(): something went wrong", err);
+		loggers.error("zoneAndFloor.index.attachButtonToFloorEmbed: ERROR", err);
 	}
 	return embed;
 };

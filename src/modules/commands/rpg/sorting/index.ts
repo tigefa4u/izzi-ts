@@ -71,7 +71,7 @@ export const sort = async ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.sorting.sort(): something went wrong",
+			"modules.commands.rpg.sorting.sort: ERROR",
 			err
 		);
 		return;

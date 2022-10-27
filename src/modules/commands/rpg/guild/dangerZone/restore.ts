@@ -166,7 +166,7 @@ export const restoreGuild = async ({ context, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.dangerZone.restoreGuild(): something went wrong",
+			"modules.commands.rpg.guild.dangerZone.restoreGuild: ERROR",
 			err
 		);
 		return;

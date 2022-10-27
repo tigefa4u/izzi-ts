@@ -57,7 +57,7 @@ export const status = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.basic.botStatus.status(): something went wrong",
+			"modules.commands.basic.botStatus.status: ERROR",
 			err
 		);
 		return;

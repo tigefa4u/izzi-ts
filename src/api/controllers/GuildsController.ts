@@ -9,7 +9,7 @@ export const getGuild = async (params: GuildParams) => {
 		const result = await Guilds.get(params);
 		return result[0];
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.getGuild(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.getGuild: ERROR", err);
 		return;
 	}
 };
@@ -18,7 +18,7 @@ export const updateGuild = async (params: GuildParams, data: GuildUpdateProps) =
 	try {
 		return await Guilds.update(params, data);
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.updateGuild(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.updateGuild: ERROR", err);
 		return;
 	}
 };
@@ -27,7 +27,7 @@ export const deleGuild = async (params: { id: number }) => {
 	try {
 		return await Guilds.del(params);
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.delGuild(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.delGuild: ERROR", err);
 		return;
 	}
 };
@@ -37,7 +37,7 @@ export const createGuild = async (data: GuildCreateProps) => {
 		loggers.info("Creating new Guild with: " + JSON.stringify(data));
 		return await Guilds.create(data);
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.createGuild(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.createGuild: ERROR", err);
 		return;
 	}
 };
@@ -46,7 +46,7 @@ export const getGuildDetails = async (params: { id: number }) => {
 	try {
 		return await Guilds.getDetails(params);
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.getGuildDetails(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.getGuildDetails: ERROR", err);
 		return;
 	}
 };
@@ -55,7 +55,7 @@ export const getTotalMemberAndItemCount = async (params: { id: number }) => {
 	try {
 		return await Guilds.getMemberAndItemCount(params);
 	} catch (err) {
-		loggers.error("api.controllers.GuildsController.getTotalMemberAndItemCount(): something went wrong", err);
+		loggers.error("api.controllers.GuildsController.getTotalMemberAndItemCount: ERROR", err);
 		return;
 	}
 };
@@ -88,7 +88,7 @@ export const disbandAndBackupGuild = async ({ guild }: { guild: GuildProps; }) =
 				}
 			) ]);
 	} catch (err) {
-		loggers.error("controllers.GuildsController.disbandGuild(): Unable to delete guild", err);
+		loggers.error("controllers.GuildsController.disbandGuild: Unable to delete guild", err);
 		return;
 	}
 };

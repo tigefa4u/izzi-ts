@@ -56,7 +56,7 @@ export const cards = ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.consumableCards.cards(): something went wrong",
+			"modules.commands.rpg.consumableCards.cards: ERROR",
 			err
 		);
 		return;

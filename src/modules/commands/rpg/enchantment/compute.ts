@@ -173,7 +173,7 @@ export const preComputeRequiredCards = async ({
 		};
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.enchantment.compute.computeRequiredCards(): ",
+			"modules.commands.rpg.enchantment.compute.computeRequiredCards: ",
 			err
 		);
 		return;

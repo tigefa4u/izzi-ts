@@ -52,7 +52,7 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.collections.nickname(): something went wrong", err);
+		loggers.error("modules.commands.rpg.collections.nickname: ERROR", err);
 		return;
 	}
 };

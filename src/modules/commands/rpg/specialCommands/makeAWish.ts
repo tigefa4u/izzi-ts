@@ -42,7 +42,7 @@ export const makeAWish = async (params: BaseProps) => {
 		specialWish(params);
 		return;
 	} catch (err) {
-		loggers.error("specialCommands.makeAWish(): something went wrong", err);
+		loggers.error("specialCommands.makeAWish: ERROR", err);
 		return;
 	}
 };

@@ -178,7 +178,7 @@ async function validateAndPurchaseCard(
 		}
 		const dealer = await getRPGUser({ user_tag: OWNER_DISCORDID });
 		if (!dealer) {
-			params.channel?.sendMessage("Something went wrong!");
+			params.channel?.sendMessage("ERROR!");
 			return;
 		}
 		const seller = await getUser({
@@ -300,7 +300,7 @@ export const purchaseCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.market.shop.buy.purchaseCard(): something went wrong",
+			"modules.commands.rpg.market.shop.buy.purchaseCard: ERROR",
 			err
 		);
 		return;

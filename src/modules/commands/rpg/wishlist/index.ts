@@ -16,7 +16,7 @@ export const wishlist = (params: BaseProps) => {
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.wishlist.index(): something went wrong", err);
+		loggers.error("modules.commands.rpg.wishlist.index: ERROR", err);
 		return;
 	}
 };

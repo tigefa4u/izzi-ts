@@ -118,7 +118,7 @@ export const donateToGuild = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.donations.donateToGuild(): something went wrong",
+			"modules.commands.rpg.guild.donations.donateToGuild: ERROR",
 			err
 		);
 		return;

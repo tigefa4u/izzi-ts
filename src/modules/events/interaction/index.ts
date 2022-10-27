@@ -35,7 +35,7 @@ const handleCommandInteraction = async (client: Client, context: CommandInteract
 			options: { author: context.user }
 		});
 	} catch (err) {
-		loggers.error("events.interaction.handleCommandInteraction(): something went wrong", err);
+		loggers.error("events.interaction.handleCommandInteraction: ERROR", err);
 	}
 	return;
 };

@@ -221,7 +221,7 @@ export const battleRaidBoss = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.battleRaidBoss(): something went wrong",
+			"modules.commands.rpg.raids.actions.battleRaidBoss: ERROR",
 			err
 		);
 		return;

@@ -34,12 +34,13 @@ export const selectionInteraction = async <P>(
 		collector?.on("collect", async (interaction) => {
 			if (!interaction.isSelectMenu()) return;
 			await interaction.deferUpdate();
+			loggers.info(`Select Menu interacted by user -> ${interaction.user.id} value: ${interaction.values[0]}`);
 			callback(params, interaction.values[0]);
 			return;
 		});
 		return selectMenu;
 	} catch (err) {
-		loggers.error("utility.SelectMenuInteractions.selectionInteraction(): something went wrong", err);
+		loggers.error("utility.SelectMenuInteractions.selectionInteraction: ERROR", err);
 		return;
 	}
 };

@@ -343,7 +343,7 @@ export const spawnRaid = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.spawnRaid(): something went wrong",
+			"modules.commands.rpg.raids.actions.spawnRaid: ERROR",
 			err
 		);
 		return;

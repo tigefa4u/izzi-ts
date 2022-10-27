@@ -32,7 +32,7 @@ export async function prepareRankAndFetchCards({
 	let uniqueCards = [ ...new Set(accumulator) ];
 	if (forceExit || reqExp <= 0) {
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line: 33 -> data " + JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line: 33 -> data " + JSON.stringify(uniqueCards)
 		);
 		return {
 			accumulator: uniqueCards,
@@ -69,7 +69,7 @@ export async function prepareRankAndFetchCards({
 	if (!result) {
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line 76 -> data " +
+			"enchantment.process.prepareRankAndFetchCards: line 76 -> data " +
 		JSON.stringify(uniqueCards)
 		);
 		return {
@@ -78,7 +78,7 @@ export async function prepareRankAndFetchCards({
 		};
 	}
 	loggers.info(
-		`enchantment.proess.prepareRankAndFetchCards(): Result: ${result.length} ${initialRequestPayload.rank}, ` +
+		`enchantment.proess.prepareRankAndFetchCards: Result: ${result.length} ${initialRequestPayload.rank}, ` +
 		`Stash: ${stash?.length} ${stashRequestPaload?.rank}`
 	);
 	accumulator = accumulator.concat(result);
@@ -89,7 +89,7 @@ export async function prepareRankAndFetchCards({
 		totalXpGain = reqExp;
 		reqExp = 0;
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line: 93 -> data " + JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line: 93 -> data " + JSON.stringify(uniqueCards)
 		);
 		return {
 			accumulator: uniqueCards,
@@ -166,7 +166,7 @@ export async function prepareRankAndFetchCards({
 					);
 				}
 
-				loggers.info("re-iterating function prepareRankAndFetchCards():");
+				loggers.info("re-iterating function prepareRankAndFetchCards:");
 				return await prepareRankAndFetchCards({
 					card,
 					reqExp,
@@ -195,7 +195,7 @@ export async function prepareRankAndFetchCards({
 				totalXpGain = totalXpGain - Math.abs(reqExp);
 				uniqueCards = [ ...new Set(accumulator) ];
 				loggers.info(
-					"enchantment.process.prepareRankAndFetchCards(): line: 193 -> data " +
+					"enchantment.process.prepareRankAndFetchCards: line: 193 -> data " +
 					JSON.stringify(uniqueCards)
 				);
 				return {
@@ -218,7 +218,7 @@ export async function prepareRankAndFetchCards({
 		}
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards(): line: 203 -> data " +
+			"enchantment.process.prepareRankAndFetchCards: line: 203 -> data " +
         JSON.stringify(uniqueCards)
 		);
 		return {

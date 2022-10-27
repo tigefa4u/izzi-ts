@@ -165,7 +165,7 @@ export const help = async ({
 		context.channel?.sendMessage(embed);
 		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {
-		loggers.error("modules.commands.basic.help(): something went wrong", err);
+		loggers.error("modules.commands.basic.help: ERROR", err);
 	}
 	return;
 };
@@ -214,7 +214,7 @@ async function followUp(
 		channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error(
-			"modules.commands.basic.followUp(): something went wrong",
+			"modules.commands.basic.followUp: ERROR",
 			err
 		);
 	}

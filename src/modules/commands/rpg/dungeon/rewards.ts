@@ -75,7 +75,7 @@ export const handleDungeonBattleOutcome = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.dungeon.rewards.handleDungeonBattleOutcome(): something went wrong",
+			"modules.commands.rpg.dungeon.rewards.handleDungeonBattleOutcome: ERROR",
 			err
 		);
 		return;

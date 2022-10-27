@@ -133,7 +133,7 @@ export const cardCollection = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.collections.cardCollection(): sommething went wrong",
+			"modules.commands.rpg.collections.cardCollection: sommething went wrong",
 			err
 		);
 		return;

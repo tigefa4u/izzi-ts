@@ -167,7 +167,7 @@ export const purchaseItem = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.items.shop.purchaseItem(): something went wrong",
+			"modules.commands.items.shop.purchaseItem: ERROR",
 			err
 		);
 		return;

@@ -66,7 +66,7 @@ export const getItems: (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.ItemsController.getItems(): something went wrong",
+			"api.controllers.ItemsController.getItems: ERROR",
 			err
 		);
 		return;
@@ -83,7 +83,7 @@ export const getItemById = async (params: { id: number }) => {
 
 		return result;
 	} catch (err) {
-		loggers.error("api.controllers.ItemsController.getItemById(): something went wrong", err);
+		loggers.error("api.controllers.ItemsController.getItemById: ERROR", err);
 		return;
 	}
 };

@@ -280,7 +280,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.trade(): something went wrong",
+			"modules.commands.rpg.trades.trade: ERROR",
 			err
 		);
 		return;

@@ -289,7 +289,7 @@ export const upgradeCard = async ({
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.upgrades.upgradeCard(): something went wrong",
+			"modules.commands.rpg.guild.upgrades.upgradeCard: ERROR",
 			err
 		);
 		return;

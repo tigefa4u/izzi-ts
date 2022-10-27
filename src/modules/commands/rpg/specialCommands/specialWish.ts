@@ -117,7 +117,7 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 		}
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.specialCommands.specialWish(): something went wrong", err);
+		loggers.error("commands.rpg.specialCommands.specialWish: ERROR", err);
 		return;
 	}
 };

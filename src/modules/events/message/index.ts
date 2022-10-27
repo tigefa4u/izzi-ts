@@ -19,6 +19,7 @@ import {
 	getTTL,
 	incrCooldown,
 } from "modules/cooldowns/channels";
+import { logCommand } from "./logCommand";
 
 const ratelimitMap = new Map();
 
@@ -73,6 +74,7 @@ const handleMessage = async (client: Client, context: Message) => {
 		}
 		const command = await getCommand(args[1]);
 		if (!command) return;
+		logCommand(context.author, command, args);
 		setCooldown(context.author.id, "command-cd", 1);
 		args.shift();
 		if (
@@ -100,7 +102,7 @@ const handleMessage = async (client: Client, context: Message) => {
 			options: { author: context.author },
 		});
 	} catch (err) {
-		loggers.error("events.message.handleMessage(): something went wrong", err);
+		loggers.error("events.message.handleMessage: ERROR", err);
 	}
 	return;
 };

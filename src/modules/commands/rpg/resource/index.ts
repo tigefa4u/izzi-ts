@@ -50,7 +50,7 @@ export const hourly = async ({ context, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.resource.hourly(): something went wrong",
+			"modules.commands.rpg.resource.hourly: ERROR",
 			err
 		);
 		return;
@@ -116,7 +116,7 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.resource.give(): something went wrong",
+			"modules.commands.rpg.resource.give: ERROR",
 			err
 		);
 		return;

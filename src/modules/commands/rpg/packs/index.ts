@@ -79,7 +79,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.packs.packs(): something went wrong", err);
+		loggers.error("modules.commands.packs.packs: ERROR", err);
 		return;
 	}
 };

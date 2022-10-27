@@ -242,7 +242,7 @@ export const enchantCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.enchantment.enchantCard(): something went wrong",
+			"modules.commands.rpg.enchantment.enchantCard: ERROR",
 			err
 		);
 		return;

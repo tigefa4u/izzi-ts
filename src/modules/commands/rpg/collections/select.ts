@@ -58,7 +58,7 @@ export const selectCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.collections.select.selectCard(): something went wrong",
+			"modules.commands.rpg.collections.select.selectCard: ERROR",
 			err
 		);
 		return;

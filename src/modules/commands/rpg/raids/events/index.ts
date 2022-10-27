@@ -89,7 +89,7 @@ export const eventActions = async ({
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.events.eventActions(): something went wrong",
+			"modules.commands.rpg.raids.events.eventActions: ERROR",
 			err
 		);
 		return;

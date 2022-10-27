@@ -131,7 +131,7 @@ export const viewTrade = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.view.viewTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.view.viewTrade: ERROR",
 			err
 		);
 		return;

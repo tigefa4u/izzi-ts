@@ -141,7 +141,7 @@ export const dropCollectables = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.collectables.index.dropCollectables(): something went wrong",
+			"modules.collectables.index.dropCollectables: ERROR",
 			err
 		);
 		return;

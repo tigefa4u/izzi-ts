@@ -144,7 +144,7 @@ export const processBattleResult = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.battleResult.processBattleResult(): something went wrong",
+			"modules.commands.rpg.adventure.battleResult.processBattleResult: ERROR",
 			err
 		);
 		return;

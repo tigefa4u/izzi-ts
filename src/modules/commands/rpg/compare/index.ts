@@ -97,7 +97,7 @@ export const compareCards = async ({
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.compare.compare(): something went wrong",
+			"modules.commands.rpg.compare.compare: ERROR",
 			err
 		);
 		return;

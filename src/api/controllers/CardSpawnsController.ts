@@ -8,7 +8,7 @@ export const getCardDropChannels = async (params: { guild_id: string }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CardSpawnsController.getCardDropChannels(): something went wrong",
+			"api.controllers.CardSpawnsController.getCardDropChannels: ERROR",
 			err
 		);
 		return;
@@ -22,7 +22,7 @@ export const createDropChannels = async (
 		return CardSpawns.create(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CardSpawnsController.createDropChannels(): something went wrong",
+			"api.controllers.CardSpawnsController.createDropChannels: ERROR",
 			err
 		);
 		return;
@@ -34,7 +34,7 @@ export const updateDropChannels = async (params: { id?: number; guild_id?: strin
 		return CardSpawns.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CardSpawnsController.updateDropChannels(): something went wrong",
+			"api.controllers.CardSpawnsController.updateDropChannels: ERROR",
 			err
 		);
 		return;
@@ -46,7 +46,7 @@ export const delDropChannels = async (params: { id: number }) => {
 		return CardSpawns.del(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CardSpawnsController.delDropChannels(): something went wrong",
+			"api.controllers.CardSpawnsController.delDropChannels: ERROR",
 			err
 		);
 		return;

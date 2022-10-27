@@ -309,7 +309,7 @@ export const prepareConsoleButton = (channel: CProps) => {
 		);
 	} catch (err) {
 		loggers.error(
-			"implementations.consoleButtons.prepareConsoleButton(): ERROR",
+			"implementations.consoleButtons.prepareConsoleButton: ERROR",
 			err
 		);
 		return;

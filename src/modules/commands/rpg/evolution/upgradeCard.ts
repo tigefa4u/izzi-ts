@@ -68,7 +68,7 @@ const validateAndUpgradeCard = async (
 	const powerLevel = await getPowerLevelByRankId({ rank_id: card.rank_id });
 	if (!powerLevel) {
 		loggers.error(
-			"evolution.upgradeCard.validateAndUpgradeCard(): Power Level not found -> ",
+			"evolution.upgradeCard.validateAndUpgradeCard: Power Level not found -> ",
 			{
 				rank: card.rank,
 				id: card.id,
@@ -234,7 +234,7 @@ export const upgradeCard = async ({
 		}
 		return;
 	} catch (err) {
-		loggers.error("evolution.upgradeCard.upgradeCard(): something went wrong", err);
+		loggers.error("evolution.upgradeCard.upgradeCard: ERROR", err);
 		return;
 	}
 };

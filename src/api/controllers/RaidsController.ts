@@ -11,7 +11,7 @@ export const createRaid = async (data: RaidCreateProps) => {
 		return await Raids.create(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.createRaid(): something went wrong",
+			"api.controllers.RaidsController.createRaid: ERROR",
 			err
 		);
 		return;
@@ -24,7 +24,7 @@ export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps)
 		return await Raids.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.updateRaid(): something went wrong",
+			"api.controllers.RaidsController.updateRaid: ERROR",
 			err
 		);
 		return;
@@ -40,7 +40,7 @@ export const updateRaidEnergy = async (params: { id: number; }, data: RaidLobbyP
 		});
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.updateRaidEnergy(): something went wrong",
+			"api.controllers.RaidsController.updateRaidEnergy: ERROR",
 			err
 		);
 		return;
@@ -61,7 +61,7 @@ export const updateLobby = async ({ raid_id, user_id, data }: {
 		});
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.updateLobby(): something went wrong",
+			"api.controllers.RaidsController.updateLobby: ERROR",
 			err
 		);
 		return;
@@ -74,7 +74,7 @@ export const getRaid = async (params: { id: number }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.getRaid(): something went wrong",
+			"api.controllers.RaidsController.getRaid: ERROR",
 			err
 		);
 		return;
@@ -87,7 +87,7 @@ export const deleteRaid = async (params: { id: number }) => {
 		return await Raids.destroy(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.deleteRaid(): something went wrong",
+			"api.controllers.RaidsController.deleteRaid: ERROR",
 			err
 		);
 		return;
@@ -112,7 +112,7 @@ export const getRaidLobbies = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.getAllRaids(): something went wrong",
+			"api.controllers.RaidsController.getAllRaids: ERROR",
 			err
 		);
 		return;
@@ -125,7 +125,7 @@ export const getUserRaidLobby = async (params: { user_id: number }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.getUserRaidLobby(): something went wrong",
+			"api.controllers.RaidsController.getUserRaidLobby: ERROR",
 			err
 		);
 		return;
@@ -138,7 +138,7 @@ export const getAllRaids = async (params?: Partial<RaidProps>) => {
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.RaidsController.getAllRaids(): something went wrong",
+			"api.controllers.RaidsController.getAllRaids: ERROR",
 			err
 		);
 		return;
