@@ -89,7 +89,7 @@ export const toxicScreen = ({
 			opponentStats.totalStats.health = processedHpBar.health;
 			opponentStats.totalStats.strength = processedHpBar.strength;
             
-			desc = `**__${opponentStats.name}__** is effected by **Poison** taking __${abilityDamage}__ damage`;
+			desc = `**__${opponentStats.name}__** is affected by **Poison** taking __${abilityDamage}__ damage`;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
 				enemyStats: opponentStats,

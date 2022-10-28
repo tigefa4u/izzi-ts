@@ -85,7 +85,7 @@ export const electrocute = ({
       `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
       `damage as well as Inflicting a stack of **Paralysis**, ${
       	opponentStats.totalStats.isStunned
-      		? `${opponentStats.name} is effected by Paralysis!`
+      		? `${opponentStats.name} is affected by Paralysis!`
       		: "but it resisted!"
       }`;
 		prepSendAbilityOrItemProcDescription({
