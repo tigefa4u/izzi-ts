@@ -372,13 +372,13 @@ export const eclipse = ({
 			playerStats.totalStats.abilitiesToResist.misdirection = {
 				percent: round2Decimal(
 					(playerStats.totalStats.abilitiesToResist.misdirection.percent || 0) +
-            resistPercent / 100
+            resistPercent
 				),
 			};
 		} else {
 			playerStats.totalStats.abilitiesToResist = {
 				...playerStats.totalStats.abilitiesToResist,
-				"misdirection": { percent: resistPercent / 100 }
+				"misdirection": { percent: resistPercent }
 			};
 		}
 		const desc =

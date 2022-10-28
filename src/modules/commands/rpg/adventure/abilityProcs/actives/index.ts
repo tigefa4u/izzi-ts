@@ -330,13 +330,12 @@ export const futureSight = ({
 					[item.key]: {
 						percent: round2Decimal(
 							(playerStats.totalStats.abilityToResist[item.key]
-								?.percent || 0) +
-              resistPercent / 100
+								?.percent || 0) + resistPercent
 						),
 					},
 				};
 			} else {
-				playerStats.totalStats.abilityToResist = { [item.key]: { percent: (resistPercent / 100) } };
+				playerStats.totalStats.abilityToResist = { [item.key]: { percent: (resistPercent) } };
 			}
 		});
 
