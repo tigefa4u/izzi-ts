@@ -17,7 +17,7 @@ import {
 	recreateBattleEmbed,
 	simulateBattleDescription,
 } from "helpers/battle";
-import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, ELEMENTAL_ADVANTAGES } from "helpers/constants";
+import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, CONSOLE_BUTTONS, ELEMENTAL_ADVANTAGES } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
@@ -28,6 +28,7 @@ import { CollectionCardInfoProps } from "@customTypes/collections";
 import { createBattleCanvas } from "helpers/canvas";
 import { Message } from "discord.js";
 import { customButtonInteraction } from "utility/ButtonInteractions";
+import { viewBattleLogs } from "./viewBattleLogs";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -329,20 +330,35 @@ async function visualizeSimulation({
 		[
 			{
 				style: "PRIMARY",
-				label: "Finish Battle",
-				params: {},
+				label: CONSOLE_BUTTONS.FINISH_BATTLE.label,
+				params: { id: CONSOLE_BUTTONS.FINISH_BATTLE.id },
 			},
 			{
 				style: "DANGER",
-				label: "Forfeit",
-				params: { isForfeit: true },
+				label: CONSOLE_BUTTONS.FORFEIT.label,
+				params: {
+					isForfeit: true,
+					id: CONSOLE_BUTTONS.FORFEIT.id 
+				},
 			},
+			{
+				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+				params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id }
+			}
 		],
 		authorId,
-		({ isForfeit }) => {
+		({ isForfeit, id }) => {
 			canEndBattle = true;
 			if (isForfeit) {
 				if (roundStats) roundStats.isForfeit = true;
+			}
+			if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id) {
+				viewBattleLogs({
+					simulation,
+					authorId,
+					attachments,
+					channel: context.channel
+				});
 			}
 		},
 		() => {
@@ -351,7 +367,8 @@ async function visualizeSimulation({
 	);
 
 	if (!buttons) return;
-	embed.setButtons(buttons);
+	embed.setButtons(buttons)
+		.setHideConsoleButtons(true);
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {

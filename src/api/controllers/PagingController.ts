@@ -17,7 +17,7 @@ type P = {
 type T<G> = {
   array: G[];
 };
-async function paginatorFunc<G>(
+export async function paginatorFunc<G>(
 	params: T<G>,
 	filter: PageProps,
 	options?: P

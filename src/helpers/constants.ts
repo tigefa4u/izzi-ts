@@ -394,6 +394,18 @@ export const CONSOLE_BUTTONS = {
 	CHANGE_LOGS: {
 		id: "change_log",
 		label: "Change Logs"
+	},
+	FORFEIT: {
+		id: "forfeit",
+		label: "Forfeit"
+	},
+	FINISH_BATTLE: {
+		id: "finish_battle",
+		label: "Finish Battle"
+	},
+	VIEW_BATTLE_LOGS: {
+		id: "finish_view_battle_logs",
+		label: "Finish & View Battle Logs"
 	}
 };
 

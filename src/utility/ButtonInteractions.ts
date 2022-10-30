@@ -13,10 +13,29 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
   authorId: string,
   params: P,
   filter: PageProps,
-  fetch: (params: P, filter: PageProps, options?: O) => Promise<ResponseWithPagination<T> | undefined>,
-  callback: (pageResult?: ResponseWithPagination<T> | null, options?: { isDelete?: boolean, isEdit?: boolean }) => void,
-  options?: O
-) => Promise<MessageActionRow | undefined> = async (channel, authorId, params, filter, fetch, callback, options) => {
+  fetch: (
+    params: P,
+    filter: PageProps,
+    options?: O
+  ) => Promise<ResponseWithPagination<T> | undefined>,
+  callback: (
+    pageResult?: ResponseWithPagination<T> | null,
+    options?: { isDelete?: boolean; isEdit?: boolean }
+  ) => void,
+  options?: O,
+  extras?: {
+    maxClicks?: number;
+  }
+) => Promise<MessageActionRow | undefined> = async (
+	channel,
+	authorId,
+	params,
+	filter,
+	fetch,
+	callback,
+	options,
+	extras
+) => {
 	try {
 		const pageFilter = clone(filter);
 		const prevLabel = REACTIONS.previous.label + "_" + generateUUID(4);
@@ -33,13 +52,14 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		const collectorFilter = interactionFilter(authorId, verifyFilter, {
 			prevLabel,
 			nextLabel,
-			binLabel
+			binLabel,
 		});
 
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
-			maxComponents: 10, // Max number of clicks
-			time: 600_000
+			maxComponents: extras?.maxClicks || 11, // Max number of clicks
+			time: 1200_000,
+			max: extras?.maxClicks || 11,
 		});
 		let result = await fetch(params, pageFilter, options);
 		callback(result);
@@ -48,7 +68,9 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		collector?.on("collect", async (buttonInteraction) => {
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
-			loggers.info(`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
+			loggers.info(
+				`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+			);
 			switch (id) {
 				case binLabel: {
 					callback(null, { isDelete: true });
@@ -86,10 +108,13 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		// 	});
 		// 	return;
 		// });
-	
+
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.paginatorInteraction: ERROR", err);
+		loggers.error(
+			"utility.ButtonInteractions.paginatorInteraction: ERROR",
+			err
+		);
 		return;
 	}
 };
@@ -98,7 +123,10 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 	channel: ChannelProp,
 	authorId: string,
 	params: P,
-	fetch: (params: P, options?: O & { isConfirm: boolean }) => Promise<T | undefined>,
+	fetch: (
+    params: P,
+    options?: O & { isConfirm: boolean }
+  ) => Promise<T | undefined>,
 	callback: (data?: T | null, opts?: { isDelete: boolean }) => void,
 	options?: O & { isConfirm: boolean }
 ): Promise<MessageActionRow | undefined> => {
@@ -108,22 +136,22 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		const buttons = new MessageActionRow().addComponents(
 			createButton(confirmLabel, {
 				emoji: REACTIONS.confirm.emoji,
-				style: REACTIONS.confirm.style 
+				style: REACTIONS.confirm.style,
 			}),
 			createButton(cancelLabel, {
 				emoji: REACTIONS.cancel.emoji,
-				style: REACTIONS.cancel.style 
+				style: REACTIONS.cancel.style,
 			})
 		);
 		const collectorFilter = interactionFilter(authorId, verifyFilter, {
 			cancelLabel,
-			confirmLabel
+			confirmLabel,
 		});
-		
+
 		const collector = channel?.createMessageComponentCollector({
 			filter: collectorFilter,
 			maxComponents: 1,
-			time: 600_000
+			time: 600_000,
 		});
 		const isValid = await fetch(params, options);
 		if (!isValid) return;
@@ -131,7 +159,9 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 
 		collector?.on("collect", async (buttonInteraction) => {
 			const id = buttonInteraction.customId;
-			loggers.info(`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
+			loggers.info(
+				`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+			);
 			switch (id) {
 				case cancelLabel: {
 					buttonInteraction.deferUpdate();
@@ -165,10 +195,13 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		// 	});
 		// 	return;
 		// });
-	
+
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.confirmationInteraction: ERROR", err);
+		loggers.error(
+			"utility.ButtonInteractions.confirmationInteraction: ERROR",
+			err
+		);
 		return;
 	}
 };
@@ -176,15 +209,20 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 export const collectableInteraction = async <P>(
 	channel: ChannelProp,
 	params: P,
-	fetch: (params: P & { user_tag: string; channel: ChannelProp; }) => void,
+	fetch: (params: P & { user_tag: string; channel: ChannelProp }) => void,
 	callback: () => void
 ) => {
 	try {
-		const label = REACTIONS.confirm.label + "_" + (channel?.id || "") + "_" + generateUUID(4);
+		const label =
+      REACTIONS.confirm.label +
+      "_" +
+      (channel?.id || "") +
+      "_" +
+      generateUUID(4);
 		const buttons = new MessageActionRow().addComponents(
 			createButton(label, {
 				style: "PRIMARY",
-				label: "Claim"
+				label: "Claim",
 			})
 		);
 		const collector = channel?.createMessageComponentCollector({
@@ -192,18 +230,20 @@ export const collectableInteraction = async <P>(
 			max: 1,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 600_000
+			time: 600_000,
 		});
 		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
-			loggers.info(`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
+			loggers.info(
+				`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+			);
 			switch (id) {
 				case label: {
 					buttonInteraction.deferUpdate();
 					fetch({
 						...params,
 						user_tag: buttonInteraction.user.id,
-						channel
+						channel,
 					});
 					callback();
 					break;
@@ -227,10 +267,13 @@ export const collectableInteraction = async <P>(
 		// 	});
 		// 	return;
 		// });
-	
+
 		return buttons;
 	} catch (err) {
-		loggers.error("utility.ButtonInteractions.collectableInteraction: ERROR", err);
+		loggers.error(
+			"utility.ButtonInteractions.collectableInteraction: ERROR",
+			err
+		);
 		return;
 	}
 };
@@ -239,13 +282,25 @@ export const customButtonInteraction = <P>(
 	channel: ChannelProp,
 	options: (ButtonOptions & { params: P })[],
 	authorId: string,
-	fetch: (params: P & { user_tag: string; channel: ChannelProp; client: Client; message: Message; }) => void,
+	fetch: (
+    params: P & {
+      user_tag: string;
+      channel: ChannelProp;
+      client: Client;
+      message: Message;
+    }
+  ) => void,
 	callback: () => void,
 	bypassFilter?: boolean,
 	maxClicks = 1
 ) => {
 	try {
-		const label = REACTIONS.confirm.label + "_" + (channel?.id || "") + "_" + generateUUID(4);
+		const label =
+      REACTIONS.confirm.label +
+      "_" +
+      (channel?.id || "") +
+      "_" +
+      generateUUID(4);
 		const verifyObject = {};
 		const buttons = new MessageActionRow().addComponents(
 			options.map((option, i) => {
@@ -255,25 +310,29 @@ export const customButtonInteraction = <P>(
 			})
 		);
 		const collector = channel?.createMessageComponentCollector({
-			filter: bypassFilter ? () => true : interactionFilter(authorId, verifyFilter, verifyObject),
+			filter: bypassFilter
+				? () => true
+				: interactionFilter(authorId, verifyFilter, verifyObject),
 			max: maxClicks,
 			componentType: "BUTTON",
 			dispose: true,
-			time: 600_000
+			time: 600_000,
 		});
 		// To disabled buttons on end - edit the message, setting the new buttons
 		collector?.on("collect", (buttonInteraction) => {
 			const id = buttonInteraction.customId;
-			loggers.info(`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`);
+			loggers.info(
+				`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+			);
 			options.map((option, i) => {
-				if (id === (label + "_" + i)) {
+				if (id === label + "_" + i) {
 					buttonInteraction.deferUpdate();
 					fetch({
 						...option.params,
 						user_tag: buttonInteraction.user.id,
 						channel,
 						client: buttonInteraction.client,
-						message: buttonInteraction.message as Message
+						message: buttonInteraction.message as Message,
 					});
 					callback();
 				}
