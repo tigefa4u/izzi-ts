@@ -380,10 +380,10 @@ async function visualizeSimulation({
 	for (const round of roundKeys) {
 		if (canEndBattle && !roundStats?.isForfeit) {
 			await delay(1200);
-			const lastIndex = roundKeys.length;
+			const lastKey = roundKeys[roundKeys.length - 1];
 			const lastDesc =
-        rounds[lastIndex].descriptions[
-        	rounds[lastIndex].descriptions.length - 1
+        rounds[lastKey].descriptions[
+        	rounds[lastKey].descriptions.length - 1
         ].description;
 			const newEmbed = recreateBattleEmbed(embed.title || "", lastDesc);
 			await message.editMessage(newEmbed, { reattachOnEdit: true });
