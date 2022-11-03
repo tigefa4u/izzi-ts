@@ -107,7 +107,7 @@ export const createRaidBoss = async ({
 						rank,
 						is_event: isEvent,
 						// is_random: true,
-						character_id: i === 0 ? 573 : i === 1 ? 969 : 740
+						// character_id: i === 0 ? 573 : i === 1 ? 969 : 740
 					},
 					1
 				);
