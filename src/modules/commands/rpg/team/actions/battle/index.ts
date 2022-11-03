@@ -19,11 +19,15 @@ import { simulateBattle } from "../../../adventure/battle/battle";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { addTeamEffectiveness } from "helpers/adventure";
-import { confirmationInteraction } from "utility/ButtonInteractions";
+import { confirmationInteraction, customButtonInteraction } from "utility/ButtonInteractions";
 import { UserProps } from "@customTypes/users";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import Cache from "cache";
+import { Simulation } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
+import { CONSOLE_BUTTONS } from "helpers/constants";
+import { viewBattleLogs } from "modules/commands/rpg/adventure/battle/viewBattleLogs";
 
 async function confirmAndBattle(
 	params: ConfirmationInteractionParams<{
@@ -125,6 +129,7 @@ async function confirmAndBattle(
 			isVictory: battleStatus?.isVictory || false,
 			opponentTeamName: opponentStats.name,
 			playerTeamName: playerStats.name,
+			authorId: params.author.id
 		});
 		return;
 	}
@@ -224,6 +229,9 @@ function sendResultMessage({
 	isVictory,
 	playerTeamName,
 	opponentTeamName,
+	simulation,
+	attachments,
+	authorId
 }: {
   channel: ChannelProp;
   username: string;
@@ -231,13 +239,46 @@ function sendResultMessage({
   isVictory: boolean;
   playerTeamName: string;
   opponentTeamName: string;
+  simulation?: Simulation;
+  attachments?: (CollectionCardInfoProps | undefined)[];
+  authorId: string;
 }) {
-	channel?.sendMessage(
-		`Congratulations ${emoji.welldone} **${
-			isVictory ? username : mentionUsername
-		}!** You have defeated ${isVictory ? mentionUsername : username}'s __Team ${
-			isVictory ? opponentTeamName : playerTeamName
-		}__ in battle!`
+	let button;
+	if (simulation && attachments) {
+		button = customButtonInteraction(
+			channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+					params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id, }
+				}
+			],
+			authorId,
+			() => {
+				viewBattleLogs({
+					simulation,
+					attachments,
+					authorId,
+					channel
+				});
+				return;
+			},
+			() => {
+				return;
+			},
+			false,
+			5
+		);
+	}
+	channel?.send(
+		{
+			content: `Congratulations ${emoji.welldone} **${
+				isVictory ? username : mentionUsername
+			}!** You have defeated ${isVictory ? mentionUsername : username}'s __Team ${
+				isVictory ? opponentTeamName : playerTeamName
+			}__ in battle!`,
+			components: button ? [ button ] : []
+		}
 	);
 
 	return;

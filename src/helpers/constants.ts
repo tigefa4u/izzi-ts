@@ -404,8 +404,8 @@ export const CONSOLE_BUTTONS = {
 		label: "Finish Battle"
 	},
 	VIEW_BATTLE_LOGS: {
-		id: "finish_view_battle_logs",
-		label: "Finish & View Battle Logs"
+		id: "view_battle_logs",
+		label: "View Battle Logs"
 	}
 };
 

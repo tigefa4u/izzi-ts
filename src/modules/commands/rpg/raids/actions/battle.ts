@@ -8,7 +8,7 @@ import * as battleInChannel from "../../adventure/battle/battlesPerChannelState"
 import { validateAndPrepareTeam } from "helpers/teams";
 import { simulateBattle } from "../../adventure/battle/battle";
 import { clone } from "utility";
-import { BattleStats } from "@customTypes/adventure";
+import { BattleStats, Simulation } from "@customTypes/adventure";
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
@@ -36,6 +36,8 @@ import Cache from "cache";
 import { eventActions } from "../events";
 import { raidActions } from "..";
 import { BaseProps } from "@customTypes/command";
+import { CollectionCardInfoProps } from "@customTypes/collections";
+import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 
 export const battleRaidBoss = async ({
 	context,
@@ -229,8 +231,11 @@ export const battleRaidBoss = async ({
 };
 
 const handleButtonClick = async ({
-	id, channel, client, user_tag, message 
-}: CustomButtonInteractionParams) => {
+	id, channel, client, user_tag, message, simulation, attachments
+}: CustomButtonInteractionParams & {
+	simulation?: Simulation;
+	attachments?: (CollectionCardInfoProps | undefined)[];
+}) => {
 	const [ author, disableRaids ] = await Promise.all([
 		client.users.fetch(user_tag),
 		Cache.get("disable-raids")
@@ -250,6 +255,14 @@ const handleButtonClick = async ({
 		} else {
 			raidActions(options);
 		}
+	}
+	if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id && simulation && attachments) {
+		viewBattleLogs({
+			simulation,
+			authorId: author.id,
+			attachments,
+			channel
+		});
 	}
 	return;
 };
@@ -322,6 +335,14 @@ async function processRaidResult({
 			{
 				label: CONSOLE_BUTTONS.RAID_BATTLE.label,
 				params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id }
+			},
+			{
+				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+				params: {
+					id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id,
+					simulation: result.simulation,
+					attachments: result.attachments 
+				}
 			}
 		],
 		author.id,

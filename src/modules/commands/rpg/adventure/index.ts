@@ -261,7 +261,11 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		}
 		if (result.isForfeit) return;
 		processBattleResult({
-			result: { isVictory: result.isVictory || false },
+			result: {
+				isVictory: result.isVictory || false,
+				simulation: result.simulation,
+				attachments: result.attachments
+			},
 			card: battleCardDetails,
 			enemyCard,
 			author,

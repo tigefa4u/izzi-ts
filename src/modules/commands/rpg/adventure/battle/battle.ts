@@ -168,6 +168,8 @@ export const simulateBattle = async ({
 		}
 		if (roundStats) {
 			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
+			roundStats.simulation = simulation;
+			roundStats.attachments = attachmentCards;
 		}
 		return roundStats;
 	} catch (err) {
@@ -340,10 +342,6 @@ async function visualizeSimulation({
 					isForfeit: true,
 					id: CONSOLE_BUTTONS.FORFEIT.id 
 				},
-			},
-			{
-				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
-				params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id }
 			}
 		],
 		authorId,
@@ -351,14 +349,6 @@ async function visualizeSimulation({
 			canEndBattle = true;
 			if (isForfeit) {
 				if (roundStats) roundStats.isForfeit = true;
-			}
-			if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id) {
-				viewBattleLogs({
-					simulation,
-					authorId,
-					attachments,
-					channel: context.channel
-				});
 			}
 		},
 		() => {

@@ -1,5 +1,5 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
-import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
+import { BattleStats, RPGBattleCardDetailProps, Simulation } from "@customTypes/adventure";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import {
 	CollectionCardInfoProps,
@@ -36,8 +36,14 @@ import { customButtonInteraction } from "utility/ButtonInteractions";
 import { battle } from "..";
 import { floor } from "../../zoneAndFloor/floor";
 import { zone } from "../../zoneAndFloor/zone";
+import { viewBattleLogs } from "./viewBattleLogs";
 
-const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
+const handleButtonActions = async ({
+	user_tag, client, channel, id, simulation, attachments
+}: CustomButtonInteractionParams & {
+	simulation?: Simulation;
+	attachments?: (CollectionCardInfoProps | undefined)[];
+}) => {
 	const author = await client.users.fetch(user_tag);
 	const options = {
 		context: { channel } as BaseProps["context"],
@@ -60,12 +66,23 @@ const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButt
 			zone(options);
 			return;
 		}
+		case CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id: {
+			if (simulation && attachments) {
+				viewBattleLogs({
+					simulation,
+					authorId: author.id,
+					channel,
+					attachments
+				});
+			}
+			return;
+		}
 	}
 	return;
 };
 
 type P = {
-  result: { isVictory: boolean };
+  result: { isVictory: boolean; simulation?: Simulation; attachments?: (CollectionCardInfoProps | undefined)[]; };
   card: RPGBattleCardDetailProps;
   enemyCard: CollectionCardInfoProps;
   author: AuthorProps;
@@ -92,7 +109,14 @@ export const processBattleResult = async ({
 			.setTitle(`Defeated ${emoji.cry}`)
 			.setDescription("Better luck next time.");
 
-		let button;
+		const menu = [ {
+			label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+			params: {
+				id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id,
+				simulation: result.simulation,
+				attachments: result.attachments
+			}
+		} ];
 		if (result.isVictory) {
 			const resp = await processFloorWin({
 				enemyCard,
@@ -121,21 +145,27 @@ export const processBattleResult = async ({
 				);
 
 		} else {
-			button = customButtonInteraction(
-				channel,
-				[ {
-					label: CONSOLE_BUTTONS.FLOOR_BT.label,
-					params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
-				} ],
-				author.id,
-				handleButtonActions,
-				() => {
-					return;
-				},
-				false,
-				10
-			);
+			menu.push({
+				label: CONSOLE_BUTTONS.FLOOR_BT.label,
+				params: {
+					id: CONSOLE_BUTTONS.FLOOR_BT.id,
+					simulation: undefined,
+					attachments: undefined 
+				}
+			});
 		}
+
+		const button = customButtonInteraction(
+			channel,
+			menu,
+			author.id,
+			handleButtonActions,
+			() => {
+				return;
+			},
+			false,
+			10
+		);
 
 		if (button) {
 			embed.setButtons(button);
