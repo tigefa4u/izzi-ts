@@ -6,7 +6,11 @@ import {
 } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { getIdFromMentionedString, randomElementFromArray } from "helpers";
+import {
+	getIdFromMentionedString,
+	numericWithComma,
+	randomElementFromArray,
+} from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
 	GOLD_LIMIT,
@@ -49,10 +53,7 @@ export const hourly = async ({ context, options }: BaseProps) => {
 		);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.resource.hourly: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.resource.hourly: ERROR", err);
 		return;
 	}
 };
@@ -79,8 +80,10 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (user.level < REQUIRED_TRADE_LEVEL) {
-			embed.setDescription(`Summoner **${author.username}**, ` +
-			`You must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`);
+			embed.setDescription(
+				`Summoner **${author.username}**, ` +
+          `You must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`
+			);
 			context.channel?.sendMessage(embed);
 			return;
 		}
@@ -95,10 +98,12 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		});
 		if (!mentionedUser) return;
 		if (mentionedUser.level < REQUIRED_TRADE_LEVEL) {
-			embed.setDescription(`Summoner **${mentionedUser.username}**, ` +
-			`must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`);
+			embed.setDescription(
+				`Summoner **${mentionedUser.username}**, ` +
+          `must be atleast __level ${REQUIRED_TRADE_LEVEL}__ to be able to transfer/receive gold.`
+			);
 			context.channel?.sendMessage(embed);
-			return;	
+			return;
 		}
 		if (user.id === mentionedUser.id) return;
 		user.gold = user.gold - transferAmount;
@@ -111,14 +116,13 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 			),
 		]);
 		context.channel?.sendMessage(
-			`Successfully transfered __${transferAmount}__ Gold ${emoji.gold} to **${mentionedUser.username}**`
+			`Successfully transfered __${numericWithComma(transferAmount)}__ Gold ${
+				emoji.gold
+			} to **${mentionedUser.username}**`
 		);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.resource.give: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.resource.give: ERROR", err);
 		return;
 	}
 };
