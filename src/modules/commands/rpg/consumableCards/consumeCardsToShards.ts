@@ -79,7 +79,7 @@ async function validateAndProcessShards(
 	const groupKeys = Object.keys(groupedCollections);
 	let totalShards = 0;
 	groupKeys.forEach((key) => {
-		totalShards = totalShards + groupedCollections[key].length * SHARDS_PER_CARD[key];
+		totalShards = totalShards + (groupedCollections[key].length * SHARDS_PER_CARD[key]);
 	});
 
 	if (options?.isConfirm) {
