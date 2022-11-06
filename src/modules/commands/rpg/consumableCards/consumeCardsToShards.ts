@@ -6,7 +6,10 @@ import {
 import { BaseProps } from "@customTypes/command";
 import { getCharacters } from "api/controllers/CharactersController";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
-import { deleteCollection, getCollection } from "api/controllers/CollectionsController";
+import {
+	deleteCollection,
+	getCollection,
+} from "api/controllers/CollectionsController";
 import { delFromMarket } from "api/controllers/MarketsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -51,7 +54,7 @@ async function validateAndProcessShards(
 			rank: filterParams.rank,
 			limit: (filterParams.limit as number) || 10,
 			is_favorite: false,
-			name: filterParams.name
+			name: filterParams.name,
 		};
 		if (params.extras?.idsToExclude) {
 			Object.assign(collectionParams, { exclude_character_ids: params.extras.idsToExclude, });
@@ -66,7 +69,8 @@ async function validateAndProcessShards(
 	);
 	if (!collections || collections.length <= 0) {
 		embed.setDescription(
-			"We could not find the cards you were looking for in your inventory."
+			"We could not find the cards you were looking for in your inventory. " +
+            "**Note: You can only use Legend and Divine ranked cards**"
 		);
 		params.channel?.sendMessage(embed);
 		return;
@@ -106,15 +110,18 @@ async function validateAndProcessShards(
 								k
 							)}__** ${groupedCollections[k]
 								.slice(0, 10)
-								.map((c) => `**${titleCase(c.name || "No Name")}**`).join(", ")}`
+								.map((c) => `**${titleCase(c.name || "No Name")}**`)
+								.join(", ")}`
 					)
 					.join("\n")} card(s) and received __${totalShards}__ Shards ${
 					emoji.shard
 				}`
-			).setFooter({
+			)
+			.setFooter({
 				iconURL: params.author.displayAvatarURL(),
-				text: "The maximum amount of card names listed is 10, if you consume more than 10 different cards, " +
-            "the names will not be fully listed"
+				text:
+          "The maximum amount of card names listed is 10, if you consume more than 10 different cards, " +
+          "the names will not be fully listed",
 			});
 
 		params.channel?.sendMessage(embed);
@@ -205,7 +212,8 @@ export const consumeCardsToShards = async ({
 										k
 									)}__** ${data.groupedCollections[k]
 										.slice(0, 10)
-										.map((c) => `**${titleCase(c.name || "No Name")}**`).join(", ")}`
+										.map((c) => `**${titleCase(c.name || "No Name")}**`)
+										.join(", ")}`
 							)
 							.join("\n")} card(s) and receive __${data.totalShards}__ Shards ${
 							emoji.shard
@@ -220,12 +228,14 @@ export const consumeCardsToShards = async ({
 		);
 		if (!buttons) return;
 
-		embed.setHideConsoleButtons(true)
+		embed
+			.setHideConsoleButtons(true)
 			.setButtons(buttons)
 			.setFooter({
 				iconURL: author.displayAvatarURL(),
-				text: "The maximum amount of card names listed is 10, if you consume more than 10 different cards, " +
-            "the names will not be fully listed"
+				text:
+          "The maximum amount of card names listed is 10, if you consume more than 10 different cards, " +
+          "the names will not be fully listed",
 			});
 		setCooldown(author.id, cooldownCommand, 60);
 		const msg = await context.channel?.sendMessage(embed);
