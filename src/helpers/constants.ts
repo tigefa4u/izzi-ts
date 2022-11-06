@@ -427,3 +427,10 @@ export const ELEMENTAL_ADVANTAGES = {
 		p2: 1
 	}
 };
+
+export const ALLOWED_CONSUME_CARDS_TO_SHARDS = [ ranksMeta["legend"].rank_id, ranksMeta["divine"].rank_id ];
+
+export const SHARDS_PER_CARD: { [key: string]: number; } = {
+	legend: 1,
+	divine: 2
+};

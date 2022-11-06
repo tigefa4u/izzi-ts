@@ -62,13 +62,16 @@ const safeParseCharacterParams = (params = {} as CT) => {
 	return obj;
 };
 export const getCollection: (
-  params: CollectionParams & { limit?: number; } & CT
-) => Promise<CollectionProps[] | undefined> = async function (params) {
+  params: CollectionParams & { limit?: number; isForTrade?: boolean; } & CT,
+  cb?: (characters: CharactersReturnType, result: CollectionProps[]) => void
+) => Promise<CollectionProps[] | undefined> = async function (params, cb) {
 	try {
 		let characters = [] as CharactersReturnType;
 		if (params.name || params.type) {
 			const resp = await getCharacters(safeParseCharacterParams(params));
-			if (resp && resp.length > 0) {
+			if (params.isForTrade && resp.length <= 0) {
+				Object.assign(params, { character_ids: [] });
+			} else if (resp && resp.length > 0) {
 				characters = resp;
 				Object.assign(params, { character_ids: resp.map((c) => c.id) });
 			}
@@ -86,6 +89,9 @@ export const getCollection: (
 			}
 			return r;
 		}));
+		if (cb && params.isForTrade) {
+			cb(characters, result);
+		}
 		return result;
 	} catch (err) {
 		loggers.error(

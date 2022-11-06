@@ -11,6 +11,7 @@ import { MAX_ENERGY_PER_RAID } from "helpers/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { groupByKey } from "utility";
 import { battleRaidBoss } from "./actions/battle";
 import { showEnergy } from "./actions/energy";
 import { inviteToRaid } from "./actions/invite";
@@ -95,10 +96,7 @@ export const raidActions = async ({
 			makeLeader(params);
 		}
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.raids.raidActions: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.raids.raidActions: ERROR", err);
 		return;
 	}
 };
@@ -117,9 +115,11 @@ export function prepareRaidBossEmbedDesc(raid: RaidProps, isEvent = false) {
 
 	const desc = `**Level ${stats.battle_stats.boss_level} ${
 		isEvent ? "Event" : "Raid"
-	} Boss**\n**${numericWithComma(stats.remaining_strength)} / ${(numericWithComma(stats.original_strength))} ${
-		emoji.hp
-	}**\n${fakeHp.map((i) => i).join("")}\n\n**Element Type:** ${boss
+	} Boss [${raid.is_private ? "Private" : "Public"}]**\n**${numericWithComma(
+		stats.remaining_strength
+	)} / ${numericWithComma(stats.original_strength)} ${emoji.hp}**\n${fakeHp
+		.map((i) => i)
+		.join("")}\n\n**Element Type:** ${boss
 		.map((c) => emojiMap(c.type))
 		.join("")}\n**Boss Ability:** ${boss
 		.map((c) => emojiMap(c.abilityname))
@@ -150,46 +150,42 @@ function prepareLoot(
 	loot: RaidLootProps,
 	isEvent = false
 ) {
-	const desc = `**__${isEvent ? "Event" : "Raid"} Rewards [For Everyone]__**\n${
-		numericWithComma(loot.gold)
-	} Gold ${emoji.gold}\n${boss
-		.map((b) => {
-			let desc = "";
+	let eventDesc = "";
 
-			if (isEvent) {
-				desc =
-          `__${loot.drop.event?.shard}__ Shards ${emoji.shard}` +
-          `${loot.drop.event?.orbs ? `\n__${loot.drop.event.orbs}__ Orbs ${emoji.blueorb}` : ""}`;
-			} else {
-				desc =
-          loot.drop.default
-          	?.map(
-          		(d) =>
-          			`__${d.number}x__ ${titleCase(d.rank)} of **${titleCase(
-          				b.name
-          			)}**`
-          	)
-          	.join("\n") || "";
-			}
-
-			return desc;
-		})
+	if (isEvent) {
+		eventDesc =
+      `__${loot.drop.event?.shard}__ Shards ${emoji.shard}` +
+      `${
+      	loot.drop.event?.orbs
+      		? `\n__${loot.drop.event.orbs}__ Orbs ${emoji.blueorb}`
+      		: ""
+      }`;
+	}
+	const desc = `**__${
+		isEvent ? "Event" : "Raid"
+	} Rewards [For Everyone]__**\n__${numericWithComma(loot.gold)}__ Gold ${
+		emoji.gold
+	}\n${eventDesc}${loot.drop.default
+		?.map(
+			(d) =>
+				`__${d.number}x__ ${titleCase(d.rank)} of ${boss
+					.map((b) => `**${titleCase(b.name)}**`)
+					.join(", ")}`
+		)
 		.join(
 			"\n"
-		)}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${
-		numericWithComma(loot.extraGold || 0)
-	}__ Gold ${emoji.gold}\n${
-		loot.rare
-			? boss.map((b) =>
-				loot.rare?.map(
-					(r) =>
-						`__${r.number}x__ ${titleCase(r.rank)} of **${titleCase(
-							b.name
-						)}** (At ${r.rate}% drop rate per card)${r.isStaticDropRate ? " (Fixed %)" : ""}`
-				).join("\n")
-			).join("\n")
-			: ""
-	}`;
+		)}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
+		loot.extraGold || 0
+	)}__ Gold ${emoji.gold}\n${loot.rare
+		?.map(
+			(d) =>
+				`__${d.number}x__ ${titleCase(d.rank)} of ${boss
+					.map((b) => `**${titleCase(b.name)}**`)
+					.join(", ")} (At ${d.rate}% per card)${
+					d.isStaticDropRate ? " (Fixed %)" : ""
+				}`
+		)
+		.join("\n")}`;
 
 	return desc;
 }
@@ -223,11 +219,9 @@ export function prepareRaidTimer(currentRaid: RaidProps) {
 	const remainingTime = (timer.valueOf() - new Date().valueOf()) / 1000 / 60;
 	const remainingHours = Math.floor(remainingTime / 60);
 	const remainingMinutes = Math.floor(remainingTime % 60);
-	const title = `Timer [${
-		remainingHours > 0 ? `${remainingHours}h` : ""
-	} ${remainingMinutes > 0 ? `${remainingMinutes}m` : ""} | ID: ${
-		currentRaid.id
-	}]`;
+	const title = `Timer [${remainingHours > 0 ? `${remainingHours}h` : ""} ${
+		remainingMinutes > 0 ? `${remainingMinutes}m` : ""
+	} | ID: ${currentRaid.id}]`;
 
 	return title;
 }

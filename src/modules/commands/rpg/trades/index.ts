@@ -88,7 +88,7 @@ async function validateAndConfirmTrade(
 		mentionId
 	);
 	if (userTradeId) {
-		return await clearTrade(
+		return clearTrade(
 			author.id,
 			userTradeId,
 			author.username,
@@ -97,7 +97,7 @@ async function validateAndConfirmTrade(
 		);
 	}
 	if (mentionedUserTradeId) {
-		return await clearTrade(
+		return clearTrade(
 			mentionId,
 			mentionedUserTradeId,
 			params.extras?.mentionUsername || "",

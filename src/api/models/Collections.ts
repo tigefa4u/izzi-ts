@@ -176,7 +176,8 @@ export const getAll = async function (
 		.select(
 			db.raw(
 				`${tableName}.*, row_number() over(order by rank_id desc, id 
-					${sort ? sort.sortOrder : "desc"})`
+					asc)`
+				// ${sort ? sort.sortOrder : "desc"}
 			)
 		)
 		.from(tableName)
@@ -251,7 +252,8 @@ export const getByRowNumber = async (params: {
 	const alias = "collectionalias";
 	let query = db
 		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, 
-			id ${sort ? sort.sortOrder : "desc"})`))
+			id asc)`))
+	// ${sort ? sort.sortOrder : "desc"}
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.as(alias);
