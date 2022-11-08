@@ -13,25 +13,25 @@ const raids: { [key: string]: string } = {
 };
 export const console = async ({ client, context, options, args }: BaseProps) => {
 	try {
-		const cmd = args.shift();
-		const key = "rconfig::" + options.author.id;
-		if (cmd === "rconfig") {
-			const difficulty = args.shift() || "e";
-			if (![ "i", "e", "m", "h" ].includes(difficulty)) {
-				context.channel?.sendMessage(
-					"Please provide any one of these values ``[e, m, h, i]``"
-				);
-				return;
-			}
-			Cache.set(key, JSON.stringify({ difficulty: raids[difficulty] }));
-			context.channel?.sendMessage("Successfully set raid spawn " +
-            `configuration to __${titleCase(raids[difficulty])}__ difficulty.`);
-			return;
-		} else if (cmd === "reset") {
-			Cache.del(key);
-			context.channel?.sendMessage("Successfully reset raid configuration");
-			return;
-		}
+		// const cmd = args.shift();
+		// const key = "rconfig::" + options.author.id;
+		// if (cmd === "rconfig") {
+		// 	const difficulty = args.shift() || "e";
+		// 	if (![ "i", "e", "m", "h" ].includes(difficulty)) {
+		// 		context.channel?.sendMessage(
+		// 			"Please provide any one of these values ``[e, m, h, i]``"
+		// 		);
+		// 		return;
+		// 	}
+		// 	Cache.set(key, JSON.stringify({ difficulty: raids[difficulty] }));
+		// 	context.channel?.sendMessage("Successfully set raid spawn " +
+		//     `configuration to __${titleCase(raids[difficulty])}__ difficulty.`);
+		// 	return;
+		// } else if (cmd === "reset") {
+		// 	Cache.del(key);
+		// 	context.channel?.sendMessage("Successfully reset raid configuration");
+		// 	return;
+		// }
 		prepareAndSendConsoleMenu({
 			channel: context.channel,
 			user_tag: options.author.id,

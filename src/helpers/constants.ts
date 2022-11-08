@@ -434,3 +434,10 @@ export const SHARDS_PER_CARD: { [key: string]: number; } = {
 	legend: 1,
 	divine: 2
 };
+
+export const MAX_REFERRAL_REWARD_POINTS = 20;
+
+export const MAX_MANA_GAIN = 420;
+// max level for this mana is 187
+
+export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpg";

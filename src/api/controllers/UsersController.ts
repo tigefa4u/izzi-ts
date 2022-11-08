@@ -5,7 +5,7 @@ import {
 	UserUpdateProps,
 } from "@customTypes/users";
 import Cache from "cache";
-import { LEVEL_UP_EXP_MULTIPLIER } from "helpers/constants";
+import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants";
 import loggers from "loggers";
 import { clone } from "utility";
 import * as Users from "../models/Users";
@@ -168,9 +168,11 @@ export const levelUpUser = async (user: UserProps): Promise<UserProps> => {
 	clonedUser.exp = clonedUser.exp - clonedUser.r_exp;
 	clonedUser.level = clonedUser.level + 1;
 	clonedUser.r_exp = clonedUser.level * LEVEL_UP_EXP_MULTIPLIER;
-	clonedUser.max_mana = clonedUser.max_mana + 2;
-	if (clonedUser.mana < clonedUser.max_mana) {
-		clonedUser.mana = clonedUser.max_mana;
+	if (clonedUser.max_mana < MAX_MANA_GAIN) {
+		clonedUser.max_mana = clonedUser.max_mana + 2;
+		if (clonedUser.mana < clonedUser.max_mana) {
+			clonedUser.mana = clonedUser.max_mana;
+		}
 	}
 	await updateRPGUser(
 		{ user_tag: clonedUser.user_tag },

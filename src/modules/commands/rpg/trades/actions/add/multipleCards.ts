@@ -177,7 +177,19 @@ export const addMultipleCards = async ({
 			Object.assign(options, { exclude_ids });
 		}
 		await getCollection(options, async (characters, collections) => {
-			collections = collections?.filter((c) => !c.is_on_cooldown);
+			const hasNonTradableCard = collections?.find((c) => !c.is_tradable);
+			if (hasNonTradableCard) {
+				const newEmbed = createEmbed(author, client)	
+					.setTitle(":warning: Non Tradable Card detected")
+					.setDescription(
+						`One or more card(s) you are trying to trade is non tradable **(${titleCase(
+							hasNonTradableCard.name || "No Name"
+						)})** and will not be added to the trade queue.`
+					).setHideConsoleButtons(true);
+				channel?.sendMessage(newEmbed);
+			}
+			embed.setTitle(DEFAULT_ERROR_TITLE);
+			collections = collections?.filter((c) => !c.is_on_cooldown && c.is_tradable);
 			if (!collections || collections.length <= 0) {
 				embed.setDescription("You do not have sufficient cards to trade.");
 				channel?.sendMessage(embed);

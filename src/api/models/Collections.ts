@@ -84,6 +84,10 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+	isTradable: {
+		type: "boolean",
+		columnName: "is_tradable"
+	}
 };
 
 export const get = async (
@@ -135,6 +139,9 @@ export const get = async (
 	if (typeof queryParams.is_on_market === "boolean") {
 		query = query.where(`${tableName}.is_on_market`, queryParams.is_on_market);
 	}
+	if (typeof queryParams.is_tradable === "boolean") {
+		query = query.where(`${tableName}.is_tradable`, queryParams.is_tradable);
+	}
 	if (limit) {
 		query = query.limit(limit);
 	}
@@ -162,6 +169,8 @@ export const getAll = async function (
 	delete queryParams.is_favorite;
 	const isOnMarket = queryParams.is_on_market;
 	delete queryParams.is_on_market;
+	const isTradable = queryParams.is_tradable;
+	delete queryParams.is_tradable;
 	const isOnCooldown = queryParams.is_on_cooldown;
 	delete queryParams.is_on_cooldown;
 
@@ -206,6 +215,9 @@ export const getAll = async function (
 	if (isOnCooldown === true || isOnCooldown === false) {
 		query = query.where(`${alias}.is_on_cooldown`, isOnCooldown);
 	}
+	if (isTradable === true || isTradable === false) {
+		query = query.where(`${alias}.isTradable`, isOnMarket);
+	}
 	query = query.limit(pagination.limit).offset(pagination.offset);
 	return query;
 };
@@ -243,6 +255,7 @@ export const getByRowNumber = async (params: {
   is_on_cooldown?: boolean;
   sort?: SortProps;
   is_on_market?: boolean;
+  is_tradable?: boolean;
 }): Promise<CollectionProps[]> => {
 	const sort = params.sort || {
 		sortBy: "id",
@@ -277,6 +290,9 @@ export const getByRowNumber = async (params: {
 	}
 	if (typeof params.is_on_market === "boolean") {
 		query = query.where(`${alias}.is_on_market`, params.is_on_market);
+	}
+	if (typeof params.is_tradable === "boolean") {
+		query = query.where(`${alias}.is_tradable`, params.is_tradable);
 	}
 
 	return query;

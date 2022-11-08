@@ -93,7 +93,8 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 			r_exp: 0,
 			rank_id: 0,
 			souls: 0,
-			is_on_cooldown: false
+			is_on_cooldown: false,
+			is_tradable: true
 		} as CollectionCardInfoProps;
 
 		const enemyStats = await preparePlayerStats({
@@ -188,7 +189,8 @@ async function processVictoryAndSendEmbed(
 		rank_id: powerLevel.rank_id,
 		user_id,
 		is_item: false,
-		is_on_cooldown: false
+		is_on_cooldown: false,
+		is_tradable: true
 	});
 	const desc = `Congratulations **${
 		author.username

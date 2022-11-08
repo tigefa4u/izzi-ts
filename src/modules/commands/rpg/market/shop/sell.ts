@@ -16,7 +16,11 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_SUCCESS_TITLE, MARKET_COMMISSION, MARKET_PRICE_CAP } from "helpers/constants";
+import {
+	DEFAULT_SUCCESS_TITLE,
+	MARKET_COMMISSION,
+	MARKET_PRICE_CAP,
+} from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -28,14 +32,17 @@ async function validateAndSellCard(
 	options?: ConfirmationInteractionOptions
 ) {
 	try {
-		const user = await getRPGUser({ user_tag: params.author.id }, { cached: true });
+		const user = await getRPGUser(
+			{ user_tag: params.author.id },
+			{ cached: true }
+		);
 		if (!user || !params.extras?.id) return;
 		const collection = await getCollection({
 			is_item: false,
 			is_on_market: false,
 			id: params.extras.id,
 			user_id: user.id,
-			is_on_cooldown: false
+			is_on_cooldown: false,
 		});
 		if (!collection || collection.length <= 0) {
 			params.channel?.sendMessage(
@@ -44,12 +51,20 @@ async function validateAndSellCard(
 			return;
 		}
 		const cardToBeSold = collection[0];
+		if (!cardToBeSold.is_tradable) {
+			params.channel?.sendMessage(
+				`The card you are trying to sell cannot be sold on the Global Market, or traded **(${titleCase(
+					cardToBeSold.name || "No Name"
+				)})**`
+			);
+			return;
+		}
 		const marketCard = await validateMarketCard(
 			cardToBeSold.id,
 			params.channel,
 			params.client,
 			user.id,
-			{ duplicateError: true, }
+			{ duplicateError: true }
 		);
 		if (marketCard) return;
 		const charaInfo = await getCharacterInfo({
@@ -73,7 +88,10 @@ async function validateAndSellCard(
 				characterInfo.name || ""
 			)}** for sale on the Global Market.`;
 			const embed = createEmbed()
-				.setThumbnail(characterInfo.metadata?.assets?.small.filepath || characterInfo.filepath)
+				.setThumbnail(
+					characterInfo.metadata?.assets?.small.filepath ||
+            characterInfo.filepath
+				)
 				.setTitle(DEFAULT_SUCCESS_TITLE)
 				.setDescription(desc);
 			params.channel?.sendMessage(embed);
@@ -87,7 +105,10 @@ async function validateAndSellCard(
 			}
 		);
 	} catch (err) {
-		loggers.error("modules.commands.rpg.market.shop.sell.validateAndSellCard: ERROR", err);
+		loggers.error(
+			"modules.commands.rpg.market.shop.sell.validateAndSellCard: ERROR",
+			err
+		);
 		return;
 	}
 }
@@ -102,7 +123,9 @@ export const sellCard = async ({
 		const cooldownCommand = "sell-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -137,12 +160,16 @@ export const sellCard = async ({
 						data.rank || ""
 					)}__ **Level ${data.character_level} ${titleCase(
 						data.name || ""
-					)}** on the Global Market? You will receive __${numericWithComma(totalCost)}__ ${
-						emoji.gold
-					}`;
+					)}** on the Global Market? You will receive __${numericWithComma(
+						totalCost
+					)}__ ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
-						.setThumbnail(data.metadata?.assets?.small.filepath || client.user?.displayAvatarURL() || "");
+						.setThumbnail(
+							data.metadata?.assets?.small.filepath ||
+                client.user?.displayAvatarURL() ||
+                ""
+						);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);
@@ -161,10 +188,7 @@ export const sellCard = async ({
 		}
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.market.sell.sellCard: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.market.sell.sellCard: ERROR", err);
 		return;
 	}
 };

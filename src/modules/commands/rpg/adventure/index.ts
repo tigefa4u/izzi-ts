@@ -131,6 +131,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			updated_at: "",
 			souls: 0,
 			is_on_cooldown: false,
+			is_tradable: true
 		} as CollectionCardInfoProps;
 		if (zone.metadata?.assets) {
 			enemyCard.filepath = zone.metadata.assets.small.filepath;

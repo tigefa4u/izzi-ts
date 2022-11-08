@@ -52,7 +52,8 @@ async function claimCard(
 		r_exp: STARTER_CARD_R_EXP,
 		rank: params.rank,
 		rank_id: PL.rank_id,
-		is_on_cooldown: false
+		is_on_cooldown: false,
+		is_tradable: true
 	});
 
 	params.channel?.sendMessage(

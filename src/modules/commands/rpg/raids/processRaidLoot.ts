@@ -271,7 +271,8 @@ async function initDrops(
 								rank_id: item.rank_id,
 								user_id: user.id,
 								name: boss.name,
-								is_on_cooldown: false
+								is_on_cooldown: false,
+								is_tradable: true
 							} as CollectionCreateProps & { name?: string })
 					)
 			)

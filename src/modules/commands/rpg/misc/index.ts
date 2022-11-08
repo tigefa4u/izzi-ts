@@ -8,7 +8,11 @@ import {
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
-import { DEFAULT_ERROR_TITLE, LOTTERY_PRICE } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE,
+	LOTTERY_PRICE,
+	MAX_MANA_GAIN,
+} from "helpers/constants";
 import loggers from "loggers";
 import {
 	getCooldown,
@@ -31,8 +35,7 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
-		const embed = createEmbed(author, client)
-			.setTitle(DEFAULT_ERROR_TITLE);
+		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 
 		if (user.gold < LOTTERY_PRICE) {
 			embed.setDescription("You do not have enough gold to play the Lottery!");
@@ -74,8 +77,13 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 			const updatedUser = await levelUpUser(user);
 			desc =
         desc +
-        `\nYou have leveled up! You are now level __${updatedUser.level}__. ` +
-        `We have also refilled your mana __${user.max_mana}__ -> __${user.max_mana + 2}__`;
+          `\nYou have leveled up! You are now level __${updatedUser.level}__. ` +
+          `${user.max_mana >=
+			MAX_MANA_GAIN
+          	? "You have already gained the maximum obtainable mana"
+          	: `We have also refilled your mana __${user.max_mana}__ -> __${
+          		user.max_mana + 2
+          	}__`}`;
 		}
 		const updateObj = { gold: user.gold };
 		if (randomReward.key === "exp") {
@@ -92,10 +100,7 @@ export const lottery = async ({ context, client, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.misc.lottery: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.misc.lottery: ERROR", err);
 		return;
 	}
 };

@@ -50,12 +50,26 @@ export const addCardByIds = async ({
 		// }
 		const sort = await getSortCache(author.id);
 		let collections = await getCardInfoByRowNumber(options, sort);
-		collections = collections?.filter((c) => !c.is_on_cooldown);
+		const hasNonTradableCard = collections?.find((c) => !c.is_tradable);
+		if (hasNonTradableCard) {
+			const newEmbed = createEmbed(author, client)
+				.setTitle(":warning: Non Tradable Card detected")
+				.setDescription(
+					`One or more card(s) you are trying to trade is non tradable **(${titleCase(
+						hasNonTradableCard.name
+					)})** and will not be added to the trade queue.`
+				).setHideConsoleButtons(true);
+			channel?.sendMessage(newEmbed);
+		}
+		embed.setTitle(DEFAULT_ERROR_TITLE);
+		collections = collections?.filter(
+			(c) => !c.is_on_cooldown && c.is_tradable
+		);
 		if (!collections || collections.length <= 0) {
 			embed
 				.setDescription(
 					"The card(s) you are looking for is either not available or on cooldown " +
-            "or is on sale on the Global Market,"
+            "or is on sale on the Global Market."
 				)
 				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
@@ -86,8 +100,9 @@ export const addCardByIds = async ({
 								key
 							]
 								.slice(0, 50)
-								.map((r) => `**${titleCase(r.name)} (${r.id})**`).join(", ")}${
-								rankGroup[key].length > 50 ?  "(and more...)" : ""
+								.map((r) => `**${titleCase(r.name)} (${r.id})**`)
+								.join(", ")}${
+								rankGroup[key].length > 50 ? "(and more...)" : ""
 							}`
 					)
 					.join(" ")

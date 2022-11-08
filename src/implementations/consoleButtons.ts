@@ -48,11 +48,11 @@ const prepareConsoleDescription = async (user: UserProps) => {
 	if (remainingMins <= 0) {
 		isRaidSpawnReady = true;
 	}
-	let raidSpawnDifficulty = "Use ``console rconfig <difficulty>(e/m/h/i)``";
-	if (rconfig) {
-		const { difficulty } = JSON.parse(rconfig);
-		raidSpawnDifficulty = titleCase(difficulty);
-	}
+	// let raidSpawnDifficulty = "Use ``console rconfig <difficulty>(e/m/h/i)``";
+	// if (rconfig) {
+	// 	const { difficulty } = JSON.parse(rconfig);
+	// 	raidSpawnDifficulty = titleCase(difficulty);
+	// }
 	const votedAt = user.voted_at;
 	let isVoteReady = false;
 	let remainingVotingHours = 0,
@@ -87,7 +87,7 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	emoji.blueorb
     } Orbs:** ${numericWithComma(user.orbs)}\n**${emoji.soul} Card Souls:** ${
     	user.souls
-    }\n\n**:ticket: Raid Difficulty Configuration:** ${raidSpawnDifficulty}\n**:ticket: Raid Spawn:** ${
+    }\n\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins`

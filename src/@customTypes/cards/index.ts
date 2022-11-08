@@ -31,6 +31,7 @@ export type CardProps = {
 	metadata?: CardMetadataProps;
 	created_at: string;
 	updated_at: string;
+	is_referral_card: boolean;
 }
 
 export type CardParams = Omit<Partial<CardProps>, IgnoreProps | "copies" | "filepath">

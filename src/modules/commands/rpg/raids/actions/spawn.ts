@@ -125,7 +125,8 @@ export const createRaidBoss = async ({
 					r_exp: 1,
 					souls: 1,
 					rank_id: 0,
-					is_on_cooldown: false
+					is_on_cooldown: false,
+					is_tradable: true
 				};
 			})
 	)) as CollectionCardInfoProps[];
