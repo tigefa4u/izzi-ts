@@ -14,6 +14,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MAX_REFERRAL_REWARD_POINTS,
+	MIN_LEVEL_FOR_REFERRAL,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
@@ -49,12 +50,15 @@ export const useReferrals = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const [ mentionedUser, referralUsed, referrals ] = await Promise.all([
+		const [ user, mentionedUser, referralUsed, referrals ] = await Promise.all([
+			getRPGUser({ user_tag: author.id }),
 			getRPGUser({ user_tag: mentionId }),
 			getReferral({ user_tag: author.id }),
 			getReferrals({ referred_to: mentionId }),
 		]);
-		if (!mentionedUser) {
+		if (!user || (user.level < MIN_LEVEL_FOR_REFERRAL)) {
+			errorMessage = `You must be atleast **Level __${MIN_LEVEL_FOR_REFERRAL}__** to refer a player.`;
+		} else if (!mentionedUser) {
 			errorMessage =
         "The summoner you are trying to refer has not started their journey in the Xenverse. " +
         "Use ``@izzi start`` to start your journey in the Xenverse.";
