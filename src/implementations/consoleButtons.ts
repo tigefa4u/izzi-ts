@@ -7,7 +7,11 @@ import { DMChannel, TextChannel, ThreadChannel } from "discord.js";
 import emoji from "emojis/emoji";
 import { BOT_VOTE_LINK } from "environment";
 import { numericWithComma } from "helpers";
-import { CONSOLE_BUTTONS, DUNGEON_MAX_MANA } from "helpers/constants";
+import {
+	CONSOLE_BUTTONS,
+	DUNGEON_MAX_MANA,
+	MAX_CHOSEN_SKINS_ALLOWED,
+} from "helpers/constants";
 import loggers from "loggers";
 import { battle } from "modules/commands/rpg/adventure";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
@@ -20,6 +24,7 @@ import { lottery } from "modules/commands/rpg/misc";
 import { hourly } from "modules/commands/rpg/resource";
 import { help } from "modules/commands/basic";
 import { titleCase } from "title-case";
+import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 
 const prepareConsoleDescription = async (user: UserProps) => {
 	const [ hourlyTTl, lotteryTTl, rconfig, disableRaids ] = await Promise.all([
@@ -48,6 +53,7 @@ const prepareConsoleDescription = async (user: UserProps) => {
 	if (remainingMins <= 0) {
 		isRaidSpawnReady = true;
 	}
+	const selectedSkins = await getSkinArr(user.user_tag);
 	// let raidSpawnDifficulty = "Use ``console rconfig <difficulty>(e/m/h/i)``";
 	// if (rconfig) {
 	// 	const { difficulty } = JSON.parse(rconfig);
@@ -87,11 +93,13 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	emoji.blueorb
     } Orbs:** ${numericWithComma(user.orbs)}\n**${emoji.soul} Card Souls:** ${
     	user.souls
-    }\n\n**:ticket: Raid Spawn:** ${
+    }\n**:crossed_swords: Selected Skins** ${
+    	selectedSkins?.length || 0
+    } / ${MAX_CHOSEN_SKINS_ALLOWED}\n\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins`
-    }\n\n**:watch: Hourly**: ${
+    }\n**:watch: Hourly**: ${
     	hourlyTTlToMin > 0 ? `${hourlyTTlToMin} mins` : "Ready"
     }\n**:tickets: Lottery:** ${
     	lotteryTTlToMin > 0 ? `${lotteryTTlToMin} mins` : "Ready"
@@ -182,11 +190,11 @@ export const prepareAndSendConsoleMenu = async ({
 			},
 			{
 				label: CONSOLE_BUTTONS.HOURLY.label,
-				params: { id: CONSOLE_BUTTONS.HOURLY.id }
+				params: { id: CONSOLE_BUTTONS.HOURLY.id },
 			},
 			{
 				label: CONSOLE_BUTTONS.LOTTERY.label,
-				params: { id: CONSOLE_BUTTONS.LOTTERY.id }
+				params: { id: CONSOLE_BUTTONS.LOTTERY.id },
 			},
 			{
 				label: CONSOLE_BUTTONS.FLOOR_BT.label,
@@ -202,8 +210,8 @@ export const prepareAndSendConsoleMenu = async ({
 			},
 			{
 				label: CONSOLE_BUTTONS.HELP.label,
-				params: { id: CONSOLE_BUTTONS.HELP.id }
-			}
+				params: { id: CONSOLE_BUTTONS.HELP.id },
+			},
 		],
 		author.id,
 		handleConsoleButtonInteractions,
@@ -221,7 +229,9 @@ export const prepareAndSendConsoleMenu = async ({
 	return;
 };
 
-const showRaidCommandsWrapper = async (params: CustomButtonInteractionParams) => {
+const showRaidCommandsWrapper = async (
+	params: CustomButtonInteractionParams
+) => {
 	const author = await params.client.users.fetch(params.user_tag);
 	const embed = createEmbed(author, params.client)
 		.setTitle("Raid Commands")

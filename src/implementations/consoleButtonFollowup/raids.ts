@@ -210,6 +210,15 @@ const handleRaidButtons = async ({
 			}
 			return;
 		}
+		case CONSOLE_BUTTONS.RAID_PARTY.id: {
+			options.args = [ "party" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}
+			return;	
+		}
 	}
 };
 
@@ -252,6 +261,10 @@ export const showRaidCommands = async ({
 				{
 					label: CONSOLE_BUTTONS.RAID_LEAVE.label,
 					params: { id: CONSOLE_BUTTONS.RAID_LEAVE.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.RAID_PARTY.label,
+					params: { id: CONSOLE_BUTTONS.RAID_PARTY.id }
 				},
 				{
 					label: CONSOLE_BUTTONS.CONSOLE.label,

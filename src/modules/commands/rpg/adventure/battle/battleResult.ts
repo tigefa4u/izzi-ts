@@ -370,10 +370,10 @@ async function upgradeUser(
 			} if married).` +
         `\nWe've restored your mana. ${
         	user.max_mana < MAX_MANA_GAIN
-        		? "You have already gained the maximum obtainable mana"
-        		: `Your Mana is now __${user.max_mana}__ -> __${
+        		? `Your Mana is now __${user.max_mana}__ -> __${
         			user.max_mana + 2
         		}__.`
+        		: "You have already gained the maximum obtainable mana"
         }`
 		);
 		if (user.max_mana < MAX_MANA_GAIN) {

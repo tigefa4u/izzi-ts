@@ -6,6 +6,7 @@ import {
 	BOT_INVITE_LINK,
 	GUIDE_DOCS,
 	IZZI_WEBSITE,
+	OFFICIAL_SERVER_LINK,
 	PRIVACY_POLICY_URL,
 	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
 } from "../../../environment";
@@ -137,6 +138,12 @@ export const help = async ({
 					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
 					style: "LINK",
 					url: `${GUIDE_DOCS}/change-logs`
+				},
+				{
+					label: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.label,
+					params: { id: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.id },
+					style: "LINK",
+					url: OFFICIAL_SERVER_LINK
 				}
 			],
 			options.author.id,

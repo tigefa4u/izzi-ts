@@ -406,6 +406,10 @@ export const CONSOLE_BUTTONS = {
 	VIEW_BATTLE_LOGS: {
 		id: "view_battle_logs",
 		label: "View Battle Logs"
+	},
+	JOIN_SUPPORT_SERVER: {
+		id: "join_support_server",
+		label: "Join Support Server"
 	}
 };
 
