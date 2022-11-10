@@ -91,6 +91,7 @@ export const viewReferrals = async ({
 				is_event: false,
 				is_referral_card: true,
 				is_random: true,
+				rank: "immortal"
 			},
 			1
 		);
