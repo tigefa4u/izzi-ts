@@ -410,6 +410,14 @@ export const CONSOLE_BUTTONS = {
 	JOIN_SUPPORT_SERVER: {
 		id: "join_support_server",
 		label: "Join Support Server"
+	},
+	START_JOURNEY: {
+		id: "start_journey",
+		label: "Start Journey"
+	},
+	REFERRAL: {
+		id: "referral",
+		label: "Refer your friends and get a free card!"
 	}
 };
 

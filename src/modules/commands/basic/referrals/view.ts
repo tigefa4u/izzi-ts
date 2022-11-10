@@ -1,4 +1,5 @@
 import { BaseProps } from "@customTypes/command";
+import { getRandomCard } from "api/controllers/CardsController";
 import {
 	getAllReferrals,
 	getReferral,
@@ -11,6 +12,7 @@ import { PAGE_FILTER, REFERRAL_BG_IMG_URL } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createReferralsList } from "helpers/embedLists/referrals";
 import loggers from "loggers";
+import { titleCase } from "title-case";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 
 export const viewReferralsWithPagination = async ({
@@ -84,6 +86,15 @@ export const viewReferrals = async ({
 			mentionedUser = await getRPGUser({ user_tag: referredBy.referred_to });
 		}
 
+		const referralCard = await getRandomCard(
+			{
+				is_event: false,
+				is_referral_card: true,
+				is_random: true,
+			},
+			1
+		);
+		const card = (referralCard || [])[0];
 		const embed = createEmbed(author, client)
 			.setTitle("Referrals")
 			.setDescription(
@@ -91,6 +102,12 @@ export const viewReferrals = async ({
 					referredBy
 						? `You have been referred to Izzi by: **${mentionedUser?.username}**`
 						: "Use ``refer use <referral code>`` to refer a friend"
+				}${
+					card
+						? `\nFor every 5 referral points up to 20, you receive 1x **Level 20** __${titleCase(
+							card.rank
+						)}__ **${titleCase(card.name)}**`
+						: ""
 				}\n\nYour referral code: ${author.id}
 				\n\n**You have referred __${referrals?.length}__ players to Izzi!**`
 			)
