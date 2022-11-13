@@ -1,4 +1,5 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import { AbilityProcMapProps } from "@customTypes/battle";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, round2Decimal } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
@@ -329,7 +330,7 @@ export const futureSight = ({
 					...playerStats.totalStats.abilityToResist,
 					[item.key]: {
 						percent: round2Decimal(
-							(playerStats.totalStats.abilityToResist[item.key]
+							(playerStats.totalStats.abilityToResist[item.key as keyof AbilityProcMapProps]
 								?.percent || 0) + resistPercent
 						),
 					},

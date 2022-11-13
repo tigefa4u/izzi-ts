@@ -88,13 +88,13 @@ export const battleRaidBoss = async ({
 			context.channel?.sendMessage("Unable to attack, please report");
 			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
 		}
-		if (attacker.energy < ENERGY_PER_ATTACK) {
-			context.channel?.sendMessage(
-				`Summoner **${attacker.username}**, ` +
-          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
-			);
-			return;
-		}
+		// if (attacker.energy < ENERGY_PER_ATTACK) {
+		// 	context.channel?.sendMessage(
+		// 		`Summoner **${attacker.username}**, ` +
+		//   `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+		// 	);
+		// 	return;
+		// }
 
 		const playerStats = await validateAndPrepareTeam(
 			user.id,

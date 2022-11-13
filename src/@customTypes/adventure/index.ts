@@ -1,4 +1,6 @@
 import { OverallStatsProps } from "@customTypes";
+import { AbilityProcMapProps } from "@customTypes/battle";
+import { CharacterStatProps } from "@customTypes/characters";
 import {
 	AbilityStatStackProps,
 	CollectionCardInfoProps,
@@ -103,10 +105,17 @@ export type AbilityStackProps = StatStateProps &
     bleedResetOnRound?: number;
     resistByFutureSightPercent?: number;
     abilityToResist?: {
-      [name: string]: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number;
       };
     };
+    abilityCapMap?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        [stat in keyof Partial<CharacterStatProps>]: {
+          percent: number;
+        }
+      }
+    }
   };
 
 export type BattleStats = {
