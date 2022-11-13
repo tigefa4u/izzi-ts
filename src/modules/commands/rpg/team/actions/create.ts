@@ -45,7 +45,7 @@ export const createTeam = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.createTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.createTeam: ERROR",
 			err
 		);
 		return;

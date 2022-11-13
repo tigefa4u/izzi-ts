@@ -40,7 +40,7 @@ export const createCollection: (
 		return await Collections.create(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.createCollection(): something went wrong",
+			"api.controllers.CollectionsController.createCollection: ERROR",
 			err
 		);
 		return;
@@ -62,13 +62,16 @@ const safeParseCharacterParams = (params = {} as CT) => {
 	return obj;
 };
 export const getCollection: (
-  params: CollectionParams & { limit?: number; } & CT
-) => Promise<CollectionProps[] | undefined> = async function (params) {
+  params: CollectionParams & { limit?: number; isForTrade?: boolean; } & CT,
+  cb?: (characters: CharactersReturnType, result: CollectionProps[]) => void
+) => Promise<CollectionProps[] | undefined> = async function (params, cb) {
 	try {
 		let characters = [] as CharactersReturnType;
 		if (params.name || params.type) {
 			const resp = await getCharacters(safeParseCharacterParams(params));
-			if (resp && resp.length > 0) {
+			if (params.isForTrade && resp.length <= 0) {
+				Object.assign(params, { character_ids: [] });
+			} else if (resp && resp.length > 0) {
 				characters = resp;
 				Object.assign(params, { character_ids: resp.map((c) => c.id) });
 			}
@@ -86,10 +89,13 @@ export const getCollection: (
 			}
 			return r;
 		}));
+		if (cb && params.isForTrade) {
+			cb(characters, result);
+		}
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getCollection(): something went wrong",
+			"api.controllers.CollectionsController.getCollection: ERROR",
 			err
 		);
 		return;
@@ -110,7 +116,7 @@ export const updateCollection = async (
 		return await Collections.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.updateCollection(): something went wrong",
+			"api.controllers.CollectionsController.updateCollection: ERROR",
 			err
 		);
 		return;
@@ -223,7 +229,7 @@ export const getAllCollections = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getAllCollections(): something went wrong",
+			"api.controllers.CollectionsController.getAllCollections: ERROR",
 			err
 		);
 		return;
@@ -238,7 +244,7 @@ export const deleteCollection = async (
 		return Collections.destroy(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.deleteCollection(): something went wrong",
+			"api.controllers.CollectionsController.deleteCollection: ERROR",
 			err
 		);
 		return;
@@ -251,7 +257,7 @@ export const verifyCollectionsById = async (params: { user_id: number; ids: numb
 		return Collections.verifyIds(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.verifyCollectionsById(): something went wrong",
+			"api.controllers.CollectionsController.verifyCollectionsById: ERROR",
 			err
 		);
 		return;
@@ -263,9 +269,21 @@ export const getCollectionsOnCooldown = async () => {
 		return Collections.get({ is_on_cooldown: true });
 	} catch (err) {
 		loggers.error(
-			"api.controllers.CollectionsController.getCollectionsInCooldown(): something went wrong",
+			"api.controllers.CollectionsController.getCollectionsInCooldown: ERROR",
 			err
 		);
 		return;
 	}
+};
+
+export const resetAllNicknames = async (user_id: number) => {
+	try {
+		return Collections.resetAllNicknames(user_id);
+	} catch (err) {
+		loggers.error(
+			"api.controllers.CollectionsController.resetAllNicknames: ERROR",
+			err
+		);
+		return;
+	}	
 };

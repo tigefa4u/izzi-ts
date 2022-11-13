@@ -1,5 +1,9 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
-import { BattleStats, RPGBattleCardDetailProps } from "@customTypes/adventure";
+import {
+	BattleStats,
+	RPGBattleCardDetailProps,
+	Simulation,
+} from "@customTypes/adventure";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import {
 	CollectionCardInfoProps,
@@ -24,6 +28,7 @@ import {
 	CONSOLE_BUTTONS,
 	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
+	MAX_MANA_GAIN,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
@@ -36,14 +41,25 @@ import { customButtonInteraction } from "utility/ButtonInteractions";
 import { battle } from "..";
 import { floor } from "../../zoneAndFloor/floor";
 import { zone } from "../../zoneAndFloor/zone";
+import { viewBattleLogs } from "./viewBattleLogs";
 
-const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButtonInteractionParams) => {
+const handleButtonActions = async ({
+	user_tag,
+	client,
+	channel,
+	id,
+	simulation,
+	attachments,
+}: CustomButtonInteractionParams & {
+  simulation?: Simulation;
+  attachments?: (CollectionCardInfoProps | undefined)[];
+}) => {
 	const author = await client.users.fetch(user_tag);
 	const options = {
 		context: { channel } as BaseProps["context"],
 		client,
 		options: { author },
-		args: [ "bt" ]
+		args: [ "bt" ],
 	};
 	switch (id) {
 		case CONSOLE_BUTTONS.NEXT_FLOOR.id: {
@@ -60,12 +76,27 @@ const handleButtonActions = async ({ user_tag, client, channel, id }: CustomButt
 			zone(options);
 			return;
 		}
+		case CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id: {
+			if (simulation && attachments) {
+				viewBattleLogs({
+					simulation,
+					authorId: author.id,
+					channel,
+					attachments,
+				});
+			}
+			return;
+		}
 	}
 	return;
 };
 
 type P = {
-  result: { isVictory: boolean };
+  result: {
+    isVictory: boolean;
+    simulation?: Simulation;
+    attachments?: (CollectionCardInfoProps | undefined)[];
+  };
   card: RPGBattleCardDetailProps;
   enemyCard: CollectionCardInfoProps;
   author: AuthorProps;
@@ -92,7 +123,16 @@ export const processBattleResult = async ({
 			.setTitle(`Defeated ${emoji.cry}`)
 			.setDescription("Better luck next time.");
 
-		let button;
+		const menu = [
+			{
+				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+				params: {
+					id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id,
+					simulation: result.simulation,
+					attachments: result.attachments,
+				},
+			},
+		];
 		if (result.isVictory) {
 			const resp = await processFloorWin({
 				enemyCard,
@@ -113,29 +153,34 @@ export const processBattleResult = async ({
 					`Rewards ${emoji.moneybag}`,
 					`• You have gained __${resp.userXpGain}__xp and received __${
 						resp.goldReward
-					}__ gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(resp.rankReward)} copy of ${titleCase(
-						enemyCard.name
-					)}\n**${titleCase(card.name)}** has also gained __${
-						resp.cardXpGain
-					}xp__ through this battle!`
+					}__ gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(
+						resp.rankReward
+					)} copy of ${titleCase(enemyCard.name)}\n**${titleCase(
+						card.name
+					)}** has also gained __${resp.cardXpGain}xp__ through this battle!`
 				);
-
 		} else {
-			button = customButtonInteraction(
-				channel,
-				[ {
-					label: CONSOLE_BUTTONS.FLOOR_BT.label,
-					params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
-				} ],
-				author.id,
-				handleButtonActions,
-				() => {
-					return;
+			menu.push({
+				label: CONSOLE_BUTTONS.FLOOR_BT.label,
+				params: {
+					id: CONSOLE_BUTTONS.FLOOR_BT.id,
+					simulation: undefined,
+					attachments: undefined,
 				},
-				false,
-				10
-			);
+			});
 		}
+
+		const button = customButtonInteraction(
+			channel,
+			menu,
+			author.id,
+			handleButtonActions,
+			() => {
+				return;
+			},
+			false,
+			10
+		);
 
 		if (button) {
 			embed.setButtons(button);
@@ -144,7 +189,7 @@ export const processBattleResult = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.battleResult.processBattleResult(): something went wrong",
+			"modules.commands.rpg.adventure.battleResult.processBattleResult: ERROR",
 			err
 		);
 		return;
@@ -198,7 +243,8 @@ async function processFloorWin({
 		is_on_market: false,
 		exp: STARTER_CARD_EXP,
 		r_exp: STARTER_CARD_R_EXP,
-		is_on_cooldown: false
+		is_on_cooldown: false,
+		is_tradable: true,
 	};
 	const bodyParams: CollectionCreateProps[] = Array(multiplier)
 		.fill(options)
@@ -212,7 +258,9 @@ async function processFloorWin({
 			card,
 			user,
 			goldReward,
-			(user.level < DUNGEON_MIN_LEVEL ? USER_XP_GAIN_PER_BATTLE : USER_XP_GAIN_PER_BATTLE - 2) * multiplier,
+			(user.level < DUNGEON_MIN_LEVEL
+				? USER_XP_GAIN_PER_BATTLE
+				: USER_XP_GAIN_PER_BATTLE - 2) * multiplier,
 			author,
 			channel
 		),
@@ -256,13 +304,13 @@ async function upgradeUser(
 			});
 			menu.push({
 				label: CONSOLE_BUTTONS.NEXT_ZONE.label,
-				params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id }
+				params: { id: CONSOLE_BUTTONS.NEXT_ZONE.id },
 			});
 			user.reached_max_ruin_at = new Date();
 			Object.assign(upgradeObject, {
 				max_ruin: user.max_ruin,
 				max_ruin_floor: user.max_ruin_floor,
-				reached_max_ruin_at: user.reached_max_ruin_at
+				reached_max_ruin_at: user.reached_max_ruin_at,
 			});
 		} else {
 			desc =
@@ -272,18 +320,18 @@ async function upgradeUser(
 			user.max_ruin_floor = card.max_floor + 1;
 			if (user.ruin == card.ruin) {
 				user.max_floor = user.max_ruin_floor;
-				Object.assign(upgradeObject, { max_floor: user.max_floor, });
+				Object.assign(upgradeObject, { max_floor: user.max_floor });
 			}
 			menu.push({
 				label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
-				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+				params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id },
 			});
 			Object.assign(upgradeObject, { max_ruin_floor: user.max_ruin_floor });
 			user.gold = user.gold + 500;
 			await createOrUpdateZoneBackup({
 				max_ruin: user.ruin,
 				max_floor: user.max_ruin_floor,
-				user_tag: user.user_tag 
+				user_tag: user.user_tag,
 			});
 		}
 		const msg = await channel?.sendMessage(desc);
@@ -320,17 +368,23 @@ async function upgradeUser(
 			}__ ${emoji.gold} (Hint: You receive __2000__ ${
 				emoji.gold
 			} if married).` +
-          `\nWe've restored your mana. Your Mana is now __${
-          	user.max_mana
-          }__ -> __${user.max_mana + 2}__.`
+        `\nWe've restored your mana. ${
+        	user.max_mana < MAX_MANA_GAIN
+        		? `Your Mana is now __${user.max_mana}__ -> __${
+        			user.max_mana + 2
+        		}__.`
+        		: "You have already gained the maximum obtainable mana"
+        }`
 		);
-		user.max_mana = user.max_mana + 2;
+		if (user.max_mana < MAX_MANA_GAIN) {
+			user.max_mana = user.max_mana + 2;
+		}
 		user.mana = user.max_mana;
 		Object.assign(upgradeObject, {
 			mana: user.mana,
 			max_mana: user.max_mana,
 			r_exp: user.r_exp,
-			level: user.level 
+			level: user.level,
 		});
 	} else {
 		user.exp = currentExp;
@@ -339,7 +393,7 @@ async function upgradeUser(
 	const updateObject = {
 		...upgradeObject,
 		gold: user.gold,
-		exp: user.exp
+		exp: user.exp,
 	};
 	await updateRPGUser({ user_tag: user.user_tag }, updateObject);
 	return {

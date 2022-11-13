@@ -16,7 +16,7 @@ async function getDMChannelID(recipient_id: string) {
 			headers: { "Authorization": `Bot ${DISCORD_BOT_TOKEN}` }
 		}).then((res) => res.id)
 			.catch((err) => {
-				loggers.error("pipes.directMessage.getDMChannelID(): Unable to create DM Channel: ", err);
+				loggers.error("pipes.directMessage.getDMChannelID: Unable to create DM Channel: ", err);
 				return;
 			});
 		return result;

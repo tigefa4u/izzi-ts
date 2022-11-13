@@ -8,9 +8,11 @@ import { Client } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
-import { DUNGEON_DEFAULTS } from "helpers/constants";
+import { CONSOLE_BUTTONS, DUNGEON_DEFAULTS } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { viewBattleLogs } from "../adventure/battle/viewBattleLogs";
 import { reducedComputedLevels } from "./computeLevel";
 
 type P = {
@@ -71,11 +73,42 @@ export const handleDungeonBattleOutcome = async ({
           }]__${result?.soulGainText ? `\n${result.soulGainText}` : ""}`
 			);
 
+		const buttons = customButtonInteraction(
+			channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+					params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id }
+				}
+			],
+			author.id,
+			({ id }) => {
+				if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id && result?.attachments && result?.simulation) {
+					viewBattleLogs({
+						simulation: result.simulation,
+						authorId: author.id,
+						attachments: result.attachments,
+						channel
+					});
+				}
+				return;
+			},
+			() => {
+				return;
+			},
+			false,
+			5
+		);
+
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
+
 		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.dungeon.rewards.handleDungeonBattleOutcome(): something went wrong",
+			"modules.commands.rpg.dungeon.rewards.handleDungeonBattleOutcome: ERROR",
 			err
 		);
 		return;

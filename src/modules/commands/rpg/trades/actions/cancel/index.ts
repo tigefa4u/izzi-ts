@@ -9,7 +9,7 @@ export const cancelTrade = async ({ tradeQueue, tradeId, channel }: TradeActionP
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.view.cancelTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.view.cancelTrade: ERROR",
 			err
 		);
 		return;

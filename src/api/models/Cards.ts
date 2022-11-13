@@ -40,6 +40,10 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+	isReferralCard: {
+		type: "boolean",
+		columnName: "is_referral_card"
+	}
 };
 export const get: (params: CardParams) => Promise<CardProps[]> = async function (params) {
 	const db = connection;
@@ -66,6 +70,11 @@ export const getRandomCard: (
 		query = query.where(`${tableName}.has_event_ended`, "false");
 	} else {
 		query = query.where(`${tableName}.is_random`, "true");
+	}
+	if (params.is_referral_card) {
+		query = query.where(`${tableName}.is_referral_card`, true);
+	} else {
+		query = query.where(`${tableName}.is_referral_card`, false);
 	}
 	if (!params.series) {
 		query = query.whereNot(`${tableName}.series`, "=", "%xenex%");

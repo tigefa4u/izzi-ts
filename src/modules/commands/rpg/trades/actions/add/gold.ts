@@ -49,7 +49,7 @@ export const addGoldToTrade = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.add.addGoldToTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.add.addGoldToTrade: ERROR",
 			err
 		);
 		return;

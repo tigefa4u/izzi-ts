@@ -51,7 +51,7 @@ export const removeCardFromMarket = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.market.shop.remove.removeCardFromMarket(): something went wrong",
+			"modules.commands.rpg.market.shop.remove.removeCardFromMarket: ERROR",
 			err
 		);
 		return;

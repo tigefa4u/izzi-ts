@@ -126,6 +126,8 @@ export type BattleStats = {
   isVictory?: boolean;
   isForfeit?: boolean;
   soulGainText?: string;
+  simulation?: Simulation;
+  attachments?: (CollectionCardInfoProps | undefined)[];
 };
 
 export type PrepareBattleDescriptionProps = {

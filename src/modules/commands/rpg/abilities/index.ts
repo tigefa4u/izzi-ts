@@ -68,7 +68,7 @@ export const ability = async ({ context, client, args, options }: BaseProps) => 
 			sentMessage = msg;
 		}
 	} catch (err) {
-		loggers.error("modules.commands.rpg.abilities.ability(): something went wrong", err);
+		loggers.error("modules.commands.rpg.abilities.ability: ERROR", err);
 		return;
 	}
 };

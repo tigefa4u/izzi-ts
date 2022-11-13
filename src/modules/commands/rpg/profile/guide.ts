@@ -2,8 +2,10 @@ import { BaseProps } from "@customTypes/command";
 import { getRPGUser, updateUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
+import { GUIDE_DOCS, IZZI_WEBSITE } from "environment";
+import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
 import loggers from "loggers";
+import { customButtonInteraction } from "utility/ButtonInteractions";
 
 export const starterGuide = async ({
 	context,
@@ -46,6 +48,29 @@ export const starterGuide = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					url: GUIDE_DOCS,
+					style: "LINK"
+				}
+			],
+			author.id,
+			() => {
+				return;
+			},
+			() => {
+				return;
+			},
+			true,
+			11
+		);
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
 		embed
 			.setDescription(`Welcome Summoner **${author.username}**!\n\nThis is a starter guide to ` +
             "help new players familiarize with the gameplay.\nYou have been moved to challenging " +
@@ -74,7 +99,7 @@ export const starterGuide = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.profile.guide.starterGuide(): something went wrong", err);
+		loggers.error("commands.rpg.profile.guide.starterGuide: ERROR", err);
 		return;
 	}
 };

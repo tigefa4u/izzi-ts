@@ -106,7 +106,7 @@ export const itemCollection = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.items.itemCollection(): something went wrong",
+			"modules.commands.rpg.items.itemCollection: ERROR",
 			err
 		);
 		return;
@@ -146,7 +146,7 @@ export const itemInfo = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.items.itemInfo(): something went wrong",
+			"modules.commands.rpg.items.itemInfo: ERROR",
 			err
 		);
 		return;

@@ -210,6 +210,15 @@ const handleRaidButtons = async ({
 			}
 			return;
 		}
+		case CONSOLE_BUTTONS.RAID_PARTY.id: {
+			options.args = [ "party" ];
+			if (isEvent) {
+				eventActions(options);
+			} else {
+				raidActions(options);
+			}
+			return;	
+		}
 	}
 };
 
@@ -254,6 +263,10 @@ export const showRaidCommands = async ({
 					params: { id: CONSOLE_BUTTONS.RAID_LEAVE.id }
 				},
 				{
+					label: CONSOLE_BUTTONS.RAID_PARTY.label,
+					params: { id: CONSOLE_BUTTONS.RAID_PARTY.id }
+				},
+				{
 					label: CONSOLE_BUTTONS.CONSOLE.label,
 					params: { id: CONSOLE_BUTTONS.CONSOLE.id },
 					style: "SECONDARY"
@@ -272,7 +285,7 @@ export const showRaidCommands = async ({
 		message.editButton(buttons);
 	} catch (err) {
 		loggers.error(
-			"consoleButtonFollowup.showRaidCommands(): something went wrong",
+			"consoleButtonFollowup.showRaidCommands: ERROR",
 			err
 		);
 	}

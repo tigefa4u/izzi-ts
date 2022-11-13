@@ -131,6 +131,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 			updated_at: "",
 			souls: 0,
 			is_on_cooldown: false,
+			is_tradable: true
 		} as CollectionCardInfoProps;
 		if (zone.metadata?.assets) {
 			enemyCard.filepath = zone.metadata.assets.small.filepath;
@@ -261,7 +262,11 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		}
 		if (result.isForfeit) return;
 		processBattleResult({
-			result: { isVictory: result.isVictory || false },
+			result: {
+				isVictory: result.isVictory || false,
+				simulation: result.simulation,
+				attachments: result.attachments
+			},
 			card: battleCardDetails,
 			enemyCard,
 			author,
@@ -290,7 +295,7 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.index.battle(): something went wrong",
+			"modules.commands.rpg.adventure.index.battle: ERROR",
 			err
 		);
 		return;

@@ -8,7 +8,7 @@ export const getUserRank = async (params: { user_tag: string }) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UserRanksController.getUserRank(): something went wrong",
+			"api.controllers.UserRanksController.getUserRank: ERROR",
 			err
 		);
 		return;
@@ -21,7 +21,7 @@ export const createUserRank = async (data: Omit<UserRankProps, "id">) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UserRanksController.createUserRank(): something went wrong",
+			"api.controllers.UserRanksController.createUserRank: ERROR",
 			err
 		);
 		return;
@@ -37,7 +37,7 @@ export const updateUserRank = async (
 		return await UserRanks.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UserRanksController.updateUserRank(): something went wrong",
+			"api.controllers.UserRanksController.updateUserRank: ERROR",
 			err
 		);
 		return;

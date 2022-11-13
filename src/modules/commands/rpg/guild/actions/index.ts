@@ -132,7 +132,7 @@ export const addGuild = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.actions.createGuild(): something went wrong",
+			"modules.commands.rpg.guild.actions.createGuild: ERROR",
 			err
 		);
 		return;
@@ -173,7 +173,7 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.actions.renameGuild(): something went wrong",
+			"modules.commands.rpg.guild.actions.renameGuild: ERROR",
 			err
 		);
 		return;
@@ -218,7 +218,7 @@ export const setBanner = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.actions.setBanner(): something went wrong",
+			"modules.commands.rpg.guild.actions.setBanner: ERROR",
 			err
 		);
 		return;
@@ -256,7 +256,7 @@ export const setGuildStatus = async ({ client, context, options, args }: BasePro
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.actions.setGuildStatus(): something went wrong",
+			"modules.commands.rpg.guild.actions.setGuildStatus: ERROR",
 			err
 		);
 		return;

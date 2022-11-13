@@ -11,7 +11,7 @@ export const addGuildEvent = async ({ context, options, client }: BaseProps) => 
 		context.channel?.sendMessage("Coming soon...");
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.guildEvents.create.addGuildEvent(): something went wrong", err);
+		loggers.error("commands.rpg.guildEvents.create.addGuildEvent: ERROR", err);
 		return;
 	}
 };
@@ -50,7 +50,7 @@ export const toggleTourneyMode = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.guildEvents.actions.toggleTourneyMode(): something went wrong",
+		loggers.error("modules.commands.rpg.guildEvents.actions.toggleTourneyMode: ERROR",
 			err);
 		return;
 	}

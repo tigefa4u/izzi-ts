@@ -4,7 +4,7 @@ import { normalizeFloors } from "helpers";
 import loggers from "loggers";
 import * as Stages from "../models/Stages";
 import { getCharacterCardByRank } from "./CardsController";
-import { getCharacterById, getCharacterInfo } from "./CharactersController";
+import { getCharacterById } from "./CharactersController";
 
 type IProps = { character_id: number }
 type SProps = { location_id: number; floor: number; }
@@ -22,7 +22,7 @@ export const getFloorsByCharacterId: (params: IProps) => Promise<NormalizeFloorP
 			return normalizedFloors;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.StagesController.getFloorsByCharacterId(): something went wrong", err);
+		loggers.error("api.controllers.StagesController.getFloorsByCharacterId: ERROR", err);
 		return;
 	}
 };
@@ -51,7 +51,7 @@ export const getStageForBattle = async (params: SProps): Promise<BattleCardProps
 
 		return result;
 	} catch (err) {
-		loggers.error("api.controllers.StagesController.getStageForBattle(): something went wrong", err);
+		loggers.error("api.controllers.StagesController.getStageForBattle: ERROR", err);
 		return;
 	}
 };

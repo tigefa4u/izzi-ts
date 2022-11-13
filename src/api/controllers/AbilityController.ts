@@ -21,7 +21,7 @@ export const getAbilities = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.AbilityController.getAbilities(): something went wrong",
+			"api.controllers.AbilityController.getAbilities: ERROR",
 			err
 		);
 		return;

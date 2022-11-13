@@ -36,7 +36,7 @@ export const resetGuildEvents = async ({ client, options, context, args }: BaseP
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.guildEvents.dangerZone.resetGuildEvents(): something went wrong", err);
+		loggers.error("commands.rpg.guildEvents.dangerZone.resetGuildEvents: ERROR", err);
 		return;
 	}
 };

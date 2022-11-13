@@ -232,7 +232,7 @@ export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
 
 export const MARKET_PURCHASE_LIMIT = 5;
 
-export const MAX_CHOSEN_SKINS_ALLOWED = 30;
+export const MAX_CHOSEN_SKINS_ALLOWED = 50;
 
 export const MIN_RAID_USER_LEVEL = 5;
 export const MIN_LEVEL_FOR_HIGH_RAIDS = 22;
@@ -388,5 +388,71 @@ export const CONSOLE_BUTTONS = {
 	SELECT_CARD: {
 		id: "select_card",
 		label: "Select Card"
+	},
+	GUIDE: {
+		id: "guide",
+		label: "Guide"
+	},
+	CHANGE_LOGS: {
+		id: "change_log",
+		label: "Change Logs"
+	},
+	FORFEIT: {
+		id: "forfeit",
+		label: "Forfeit"
+	},
+	FINISH_BATTLE: {
+		id: "finish_battle",
+		label: "Finish Battle"
+	},
+	VIEW_BATTLE_LOGS: {
+		id: "view_battle_logs",
+		label: "View Battle Logs"
+	},
+	JOIN_SUPPORT_SERVER: {
+		id: "join_support_server",
+		label: "Join Support Server"
+	},
+	START_JOURNEY: {
+		id: "start_journey",
+		label: "Start Journey"
+	},
+	REFERRAL: {
+		id: "referral",
+		label: "Refer your friends and get a free card!"
 	}
 };
+
+export const ELEMENTAL_ADVANTAGES = {
+	DEFAULT: {
+		p1: 1.4,
+		p2: 0.8
+	},
+	EFFECTIVE: {
+		p1: 1.6,
+		p2: 0.6
+	},
+	SUPER_EFFECTIVE: {
+		p1: 1.8,
+		p2: 0.4
+	},
+	NEUTRAL: {
+		p1: 1,
+		p2: 1
+	}
+};
+
+export const ALLOWED_CONSUME_CARDS_TO_SHARDS = [ ranksMeta["legend"].rank_id, ranksMeta["divine"].rank_id ];
+
+export const SHARDS_PER_CARD: { [key: string]: number; } = {
+	legend: 1,
+	divine: 2
+};
+
+export const MAX_REFERRAL_REWARD_POINTS = 20;
+
+export const MAX_MANA_GAIN = 420;
+// max level for this mana is 187
+
+export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpg";
+export const MIN_LEVEL_FOR_REFERRAL = 6;

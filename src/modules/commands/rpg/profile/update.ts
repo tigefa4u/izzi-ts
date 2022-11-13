@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { updateRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import { parsePremiumUsername } from "helpers";
 import { MAX_USER_STATUS_LENGTH } from "helpers/constants";
@@ -9,6 +9,8 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 	try {
 		const cmd = args.shift();
 		const author = options.author;
+		const user = await getRPGUser({ user_tag: author.id });
+		if (!user) return;
 		if (cmd && cmd === "status") {
 			const status = args.join(" ").trim();
 			if (status.length > MAX_USER_STATUS_LENGTH) {
@@ -18,7 +20,12 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 			}
 			await updateRPGUser(
 				{ user_tag: author.id },
-				{ metadata: { status } }
+				{
+					metadata: {
+						...user.metadata,
+						status
+					} 
+				}
 			);
 			context.channel?.sendMessage(`Successfully updated your user status! ${emoji.welldone}`);
 			return;
@@ -34,7 +41,7 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.profile.updateIzziProfile(): something went wrong",
+			"modules.commands.rpg.profile.updateIzziProfile: ERROR",
 			err
 		);
 		return;

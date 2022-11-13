@@ -45,7 +45,7 @@ export const viewGuilldEvents = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.guildEvents.view.viewGuildEvents(): something went wrong",
+			"commands.rpg.guildEvents.view.viewGuildEvents: ERROR",
 			err
 		);
 		return;

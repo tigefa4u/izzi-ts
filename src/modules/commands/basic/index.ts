@@ -4,7 +4,9 @@ import { getAllCommands } from "api/controllers/CommandsController";
 import { createEmbed } from "commons/embeds";
 import {
 	BOT_INVITE_LINK,
+	GUIDE_DOCS,
 	IZZI_WEBSITE,
+	OFFICIAL_SERVER_LINK,
 	PRIVACY_POLICY_URL,
 	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
 } from "../../../environment";
@@ -17,6 +19,8 @@ import {
 	SelectMenuOptions,
 } from "@customTypes/selectMenu";
 import loggers from "loggers";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 
 function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
 	const embed = createEmbed(undefined, client)
@@ -120,6 +124,37 @@ export const help = async ({
 			)
 			.setFooter({ text: "Filters include -n (name) -r (rank) -t (element type) -a (ability)", });
 
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					style: "LINK",
+					url: GUIDE_DOCS
+				},
+				{
+					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
+					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
+					style: "LINK",
+					url: `${GUIDE_DOCS}/change-logs`
+				},
+				{
+					label: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.label,
+					params: { id: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.id },
+					style: "LINK",
+					url: OFFICIAL_SERVER_LINK
+				}
+			],
+			options.author.id,
+			() => {
+				return;
+			},
+			() => {
+				return;
+			},
+			true
+		);
 		const rulesEmbed = createEmbed(options.author, client)
 			.setTitle("IzzI Rules")
 			.setDescription("**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
@@ -130,10 +165,14 @@ export const help = async ({
 				"• Supporting someone who is doing these.\n" + 
 				"**Note: Exchanging izzi assets for any other assets, real money or server roles " +
 				"is considered Cross Trading**");
+			
+		if (buttons) {
+			rulesEmbed.setButtons(buttons);
+		}
 		context.channel?.sendMessage(embed);
 		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {
-		loggers.error("modules.commands.basic.help(): something went wrong", err);
+		loggers.error("modules.commands.basic.help: ERROR", err);
 	}
 	return;
 };
@@ -182,7 +221,7 @@ async function followUp(
 		channel?.sendMessage(embed);
 	} catch (err) {
 		loggers.error(
-			"modules.commands.basic.followUp(): something went wrong",
+			"modules.commands.basic.followUp: ERROR",
 			err
 		);
 	}

@@ -22,7 +22,7 @@ export const server = ({ context }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.basic.info.server(): something went wrong",
+			"modules.commands.basic.info.server: ERROR",
 			err
 		);
 		return;
@@ -73,7 +73,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"module.commands.basic.info.daily(): something went wrong",
+			"module.commands.basic.info.daily: ERROR",
 			err
 		);
 		return;
@@ -113,7 +113,7 @@ export const donate = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"module.commands.basic.info.donate(): something went wrong",
+			"module.commands.basic.info.donate: ERROR",
 			err
 		);
 		return;

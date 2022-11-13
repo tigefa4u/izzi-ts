@@ -12,7 +12,7 @@ export const redeemEventCard = async ({ options, context, client }: RaidActionPr
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.events.redeemEventCard(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.events.redeemEventCard: ERROR", err);
 		return;
 	}
 };

@@ -16,7 +16,7 @@ export const createCollectionList = (array: CollectionReturnType[]) => {
 				c.itemname ? emojiMap(c.itemname) + " " : ""
 			}${c.is_on_market ? emoji.shoppingcart : ""} ${
 				c.is_on_cooldown ? `${emoji.cooldown} [${c.remainingHours} hours ${c.remainingMinutes} minutes]` : ""
-			}`,
+			}${c.is_tradable ? "" : " (Non Tradable/Sellable)"}`,
 			value: `${titleCase(c.rank)} | Souls: ${c.souls}${
 				c.reqSouls && c.reqSouls > 0 ? ` / ${c.reqSouls}` : ""
 			} | ID: ${c.id}`,

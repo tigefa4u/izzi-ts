@@ -67,7 +67,7 @@ export const toggleLobbyType = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.toggleLobbyType(): something went wrong",
+			"modules.commands.rpg.raids.actions.toggleLobbyType: ERROR",
 			err
 		);
 		return;

@@ -17,7 +17,7 @@ import {
 	recreateBattleEmbed,
 	simulateBattleDescription,
 } from "helpers/battle";
-import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT } from "helpers/constants";
+import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, CONSOLE_BUTTONS, ELEMENTAL_ADVANTAGES } from "helpers/constants";
 import loggers from "loggers";
 import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
@@ -28,6 +28,7 @@ import { CollectionCardInfoProps } from "@customTypes/collections";
 import { createBattleCanvas } from "helpers/canvas";
 import { Message } from "discord.js";
 import { customButtonInteraction } from "utility/ButtonInteractions";
+import { viewBattleLogs } from "./viewBattleLogs";
 
 const timerify = performance.timerify(createBattleCanvas);
 
@@ -167,13 +168,15 @@ export const simulateBattle = async ({
 		}
 		if (roundStats) {
 			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
+			roundStats.simulation = simulation;
+			roundStats.attachments = attachmentCards;
 		}
 		return roundStats;
 	} catch (err) {
 		simulation.hasCrashed = true;
 		battlesPerChannel.set(context.channel.id, 0);
 		loggers.error(
-			"modules.commands.rpg.adventure.battle.simulateBattle(): something went wrong",
+			"modules.commands.rpg.adventure.battle.simulateBattle: ERROR",
 			err
 		);
 		return;
@@ -221,7 +224,7 @@ async function sendBattleDescription({
 		);
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+			"modules.commands.rpg.adventure.battle.visualizeSimulation: ERROR",
 			err
 		);
 		return;
@@ -329,17 +332,20 @@ async function visualizeSimulation({
 		[
 			{
 				style: "PRIMARY",
-				label: "Finish Battle",
-				params: {},
+				label: CONSOLE_BUTTONS.FINISH_BATTLE.label,
+				params: { id: CONSOLE_BUTTONS.FINISH_BATTLE.id },
 			},
 			{
 				style: "DANGER",
-				label: "Forfeit",
-				params: { isForfeit: true },
-			},
+				label: CONSOLE_BUTTONS.FORFEIT.label,
+				params: {
+					isForfeit: true,
+					id: CONSOLE_BUTTONS.FORFEIT.id 
+				},
+			}
 		],
 		authorId,
-		({ isForfeit }) => {
+		({ isForfeit, id }) => {
 			canEndBattle = true;
 			if (isForfeit) {
 				if (roundStats) roundStats.isForfeit = true;
@@ -351,11 +357,12 @@ async function visualizeSimulation({
 	);
 
 	if (!buttons) return;
-	embed.setButtons(buttons);
+	embed.setButtons(buttons)
+		.setHideConsoleButtons(true);
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {
-		context.channel?.sendMessage("Something went wrong with your battle");
+		context.channel?.sendMessage("ERROR with your battle");
 		throw new Error("Message Object not found to edit battle");
 	}
 
@@ -363,10 +370,10 @@ async function visualizeSimulation({
 	for (const round of roundKeys) {
 		if (canEndBattle && !roundStats?.isForfeit) {
 			await delay(1200);
-			const lastIndex = roundKeys.length;
+			const lastKey = roundKeys[roundKeys.length - 1];
 			const lastDesc =
-        rounds[lastIndex].descriptions[
-        	rounds[lastIndex].descriptions.length - 1
+        rounds[lastKey].descriptions[
+        	rounds[lastKey].descriptions.length - 1
         ].description;
 			const newEmbed = recreateBattleEmbed(embed.title || "", lastDesc);
 			await message.editMessage(newEmbed, { reattachOnEdit: true });
@@ -396,7 +403,7 @@ async function visualizeSimulation({
 				await message.editMessage(newEmbed, { reattachOnEdit: true });
 			} catch (err) {
 				loggers.error(
-					"modules.commands.rpg.adventure.battle.visualizeSimulation(): something went wrong",
+					"modules.commands.rpg.adventure.battle.visualizeSimulation: ERROR",
 					err
 				);
 				if (roundStats) roundStats.isForfeit = true;
@@ -614,6 +621,18 @@ async function simulatePlayerTurns({
 	};
 }
 
+export function getElementalEffectiveStatus(num: number, isBattle?: boolean) {
+	switch (num) {
+		case ELEMENTAL_ADVANTAGES.DEFAULT.p2:
+			return "**Slightly Effective**" + (isBattle ? " :star:" : "");
+		case ELEMENTAL_ADVANTAGES.EFFECTIVE.p2:
+			return "**Effective**" + (isBattle ? " :star::star:" : "");
+		case ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2:
+			return "**Super Effective!**" + (isBattle ? " :star::star::star:" : "");
+		default:
+			return "";
+	}
+}
 function updateBattleDesc({
 	isPlayerFirst,
 	turn,
@@ -665,7 +684,7 @@ function updateBattleDesc({
 			isCriticalHit
 				? "**CRITICAL HIT**"
 				: opponentStats.totalStats.effective < 1
-					? "it was **Super Effective!**"
+					? "it was " + getElementalEffectiveStatus(opponentStats.totalStats.effective)
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
 						: ""

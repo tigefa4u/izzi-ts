@@ -39,7 +39,7 @@ export const simulateBattleDescription = async ({
 	// 	try {
 	// 		await message.editMessage(newEmbed, { reattachOnEdit: true });
 	// 	} catch (err) {
-	// 		loggers.error("helpers.battle.simulateBattleDescription(): Battle embed update failed: ", err);
+	// 		loggers.error("helpers.battle.simulateBattleDescription: Battle embed update failed: ", err);
 	// 		return;
 	// 	}
 

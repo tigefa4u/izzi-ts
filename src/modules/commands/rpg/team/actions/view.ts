@@ -101,7 +101,7 @@ export const viewTeam = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.viewTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.viewTeam: ERROR",
 			err
 		);
 		return;

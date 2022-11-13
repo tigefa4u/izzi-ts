@@ -65,7 +65,7 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.team(): something went wrong", err);
+		loggers.error("modules.commands.rpg.team: ERROR", err);
 		return;
 	}
 };

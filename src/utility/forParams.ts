@@ -98,8 +98,8 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 			value = value.split(",");
 			args = args.slice(args.length);
 		}
-		if (value.length > 25) {
-			value.splice(0, 25);
+		if (value.length > 100) {
+			value.splice(0, 100);
 		}
 		if (index >= 0) {
 			const key = argMap[index].name;

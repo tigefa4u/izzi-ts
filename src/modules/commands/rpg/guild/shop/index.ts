@@ -67,7 +67,7 @@ export const itemMarket = async ({ context, client, args, options }: BaseProps) 
 		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.guild.shop.itemMarket(): something went wrong", err);
+		loggers.error("modules.commands.rpg.guild.shop.itemMarket: ERROR", err);
 		return;
 	}
 };

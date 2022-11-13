@@ -86,7 +86,7 @@ export const selectTeam = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.selectTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.selectTeam: ERROR",
 			err
 		);
 		return;

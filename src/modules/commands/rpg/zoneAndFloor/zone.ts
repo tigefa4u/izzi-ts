@@ -163,7 +163,7 @@ export const zone = async ({ context, client, options, args }: BaseProps) => {
 		});
 		context.channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error("modules.commands.rpg.zoneAndFloor.zone(): something went wrong", err);
+		loggers.error("modules.commands.rpg.zoneAndFloor.zone: ERROR", err);
 		return;
 	}
 };

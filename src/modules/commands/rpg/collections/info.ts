@@ -165,7 +165,7 @@ export const getCardInfo = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.collection.info.getCardInfo(): something went wrong",
+			"modules.commands.rpg.collection.info.getCardInfo: ERROR",
 			err
 		);
 		return;

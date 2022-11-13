@@ -215,7 +215,7 @@ export const evolveCard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.evolution.index.evolveCard(): something went wrong",
+			"modules.commands.rpg.evolution.index.evolveCard: ERROR",
 			err
 		);
 		return;

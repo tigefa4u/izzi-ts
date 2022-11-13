@@ -52,7 +52,7 @@ export const favorite = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.collections.favorite.favorite(): something went wrong",
+			"modules.commands.rpg.collections.favorite.favorite: ERROR",
 			err
 		);
 		return;

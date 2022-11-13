@@ -84,7 +84,7 @@ export const itemshop = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.items.shop.itemshop(): something went wrong",
+			"modules.commands.rpg.items.shop.itemshop: ERROR",
 			err
 		);
 		return;

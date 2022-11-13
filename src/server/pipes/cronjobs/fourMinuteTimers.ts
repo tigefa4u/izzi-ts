@@ -35,7 +35,7 @@ async function refillRaidEnergy() {
 			})
 		);
 	} catch (err) {
-		loggers.error("cronjobs.fourMinuteTimers.refillRaidEnergy(): something went wrong", err);
+		loggers.error("cronjobs.fourMinuteTimers.refillRaidEnergy: ERROR", err);
 		return;
 	}
 }

@@ -17,7 +17,7 @@ type P = {
 type T<G> = {
   array: G[];
 };
-async function paginatorFunc<G>(
+export async function paginatorFunc<G>(
 	params: T<G>,
 	filter: PageProps,
 	options?: P
@@ -108,7 +108,7 @@ export const pageFunc = async <T>(
 			sentMessage = msg;
 		}
 	} catch (err) {
-		loggers.error("api.controllers.PagingController.pageFunc(): something went wrong", err);
+		loggers.error("api.controllers.PagingController.pageFunc: ERROR", err);
 		throw err;
 	}
 };

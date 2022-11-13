@@ -52,7 +52,8 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 					exp: 0,
 					r_exp: BASE_XP + 5,
 					is_item: false,
-					is_on_cooldown: false
+					is_on_cooldown: false,
+					is_tradable: true
 				});
 			});
 
@@ -79,7 +80,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.packs.packs(): something went wrong", err);
+		loggers.error("modules.commands.packs.packs: ERROR", err);
 		return;
 	}
 };

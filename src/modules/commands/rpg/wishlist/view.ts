@@ -86,7 +86,7 @@ export const viewWishlist = async ({ context, client, args, options }: BaseProps
 		}
 		return;
 	} catch (err) {
-		loggers.error("rpg.commands.wishlist.view.viewWishlist(): something went wrong", err);
+		loggers.error("rpg.commands.wishlist.view.viewWishlist: ERROR", err);
 		return;
 	}
 };

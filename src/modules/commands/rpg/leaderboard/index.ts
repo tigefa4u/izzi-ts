@@ -57,7 +57,7 @@ export const leaderboard = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.leaderboard.leaderboard(): something went wrong",
+			"modules.commands.rpg.leaderboard.leaderboard: ERROR",
 			err
 		);
 		return;
@@ -102,7 +102,7 @@ async function getLB(
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.leaderboard.getLB(): something went wrong", err);
+		loggers.error("modules.commands.rpg.leaderboard.getLB: ERROR", err);
 		return;
 	}
 }

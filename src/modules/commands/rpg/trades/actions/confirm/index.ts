@@ -126,7 +126,7 @@ export const confirmTrade = async ({
 			participantOne.gold = participantOne.gold + trader_2.gold;
 		}
 		loggers.info(
-			`trades.actions.confirm.confirmTrade(): Completing Trade for user ${
+			`trades.actions.confirm.confirmTrade: Completing Trade for user ${
 				trader_1.username
 			} queue: ${JSON.stringify(trader_1.queue)} gold: ${trader_1.gold} & user: ${
 				trader_2.user_tag
@@ -203,7 +203,7 @@ export const confirmTrade = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.view.confirmTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.view.confirmTrade: ERROR",
 			err
 		);
 		return;

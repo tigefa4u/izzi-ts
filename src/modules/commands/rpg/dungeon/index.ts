@@ -143,7 +143,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 		});
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.dungeon(): something went wrong", err);
+		loggers.error("modules.commands.rpg.dungeon: ERROR", err);
 		return;
 	}
 };
@@ -194,7 +194,8 @@ async function prepareDungeonBoss(userRank?: UserRankProps) {
 					itemname: item?.name,
 					itemStats: item?.stats,
 					itemdescription: item?.description,
-					is_on_cooldown: false
+					is_on_cooldown: false,
+					is_tradable: true
 				} as CollectionCardInfoProps;
 			})
 	);

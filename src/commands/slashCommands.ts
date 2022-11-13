@@ -22,6 +22,7 @@ export const registerSlashCommands = async (client: Client) => {
 			],
 		});
 		console.log("registered slash command");
+		loggers.info("Registered slash commands");
 		// const allCommands = await getAllCommands();
 		// if (!allCommands) return;
 		// // Not working
@@ -55,7 +56,7 @@ export const registerSlashCommands = async (client: Client) => {
 		// console.log(`registered ${allCommands.length} slash commands`);
 		return;
 	} catch (err) {
-		loggers.error("commands.slashCommands.registerSlashCommands(): ERROR", err);
+		loggers.error("commands.slashCommands.registerSlashCommands: ERROR", err);
 		return;
 	}
 };

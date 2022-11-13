@@ -119,7 +119,7 @@ export const consume = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.consumeOrbsToShards(): something went wrong",
+			"modules.commands.rpg.consumeOrbsToShards: ERROR",
 			err
 		);
 		return;

@@ -12,8 +12,9 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { overallStats } from "helpers";
 import loggers from "loggers";
+import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
-import { ranksMeta } from "./constants";
+import { ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];
@@ -111,17 +112,20 @@ export const addTeamEffectiveness = async ({
 		)
 	);
 
-	const isValueNegative = (effective < 0);
-	let playerEffective = 1.4, opponentEffective = 0.8;
+	const isValueNegative = effective < 0;
+	let playerEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p1,
+		opponentEffective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
 	effective = Math.abs(effective);
 
 	if (effective === 0) {
-		playerEffective = 1;
-		opponentEffective = 1;
-	} else if (effective > 1 && effective <= 5) {
-		playerEffective = 1.6;
-	} else if (effective > 5) {
-		playerEffective = 1.8;
+		playerEffective = ELEMENTAL_ADVANTAGES.NEUTRAL.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.NEUTRAL.p2;
+	} else if (effective === 2) {
+		playerEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.EFFECTIVE.p2;
+	} else if (effective >= 3) {
+		playerEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p1;
+		opponentEffective = ELEMENTAL_ADVANTAGES.SUPER_EFFECTIVE.p2;
 	}
 	if (isValueNegative) {
 		playerStats.effective = opponentEffective;
@@ -151,21 +155,21 @@ export const addEffectiveness = async ({
         playerType as keyof EffectivenessProps
 			].affects.findIndex((i) => i === enemyType);
 			if (index >= 0) {
-				playerStats.effective = 1.4;
+				playerStats.effective = ELEMENTAL_ADVANTAGES.DEFAULT.p1;
 			} else {
 				Object.keys(effectiveness).forEach((type) => {
 					const tempIndex = effectiveness[
             type as keyof EffectivenessProps
 					].affects.findIndex((i) => i === playerType);
 					if (tempIndex >= 0 && type === enemyType) {
-						playerStats.effective = 0.8;
+						playerStats.effective = ELEMENTAL_ADVANTAGES.DEFAULT.p2;
 					}
 				});
 			}
 		}
 	} catch (err) {
 		loggers.error(
-			"helpers.adventure.addEffectiveness(): something went wrong",
+			"helpers.adventure.addEffectiveness: ERROR",
 			err
 		);
 	}
@@ -185,7 +189,14 @@ export const prepareBattleDesc = ({
 	) as CollectionCardInfoProps[];
 	const desc = `**${playerStats.name}**\nElement Type: ${filterPlayerCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		enemyStats.totalStats.effective < 1
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
+				enemyStats.totalStats.effective,
+				true
+			)}`
+			: ""
+	}\n${
 		filterPlayerCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank].size)
 				.fill(":star:")
@@ -200,7 +211,14 @@ export const prepareBattleDesc = ({
 		enemyStats.name
 	}**\nElement Type: ${filterEnemyCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}\n${
+		.join(" ")}${
+		playerStats.totalStats.effective < 1
+			? `\nEffectiveness: ${getElementalEffectiveStatus(
+				playerStats.totalStats.effective,
+				true
+			)}`
+			: ""
+	}\n${
 		filterEnemyCards.length === 1
 			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank].size)
 				.fill(":star:")

@@ -59,6 +59,8 @@ import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { makeAWish } from "modules/commands/rpg/specialCommands/makeAWish";
 import { starterGuide } from "modules/commands/rpg/profile/guide";
 import { console } from "modules/commands/rpg/console";
+import { viewChangeLogs } from "modules/commands/basic/changelogs";
+import { userReferrals } from "modules/commands/basic/referrals";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -151,6 +153,8 @@ const commandMap: CommandMapProps = {
 	"make a wish": makeAWish,
 	guide: starterGuide,
 	console: console,
+	changelogs: viewChangeLogs,
+	referral: userReferrals,
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

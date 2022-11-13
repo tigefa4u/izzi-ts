@@ -63,7 +63,7 @@ export const raidParty = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.raidParty(): something went wrong",
+			"modules.commands.rpg.raids.actions.raidParty: ERROR",
 			err
 		);
 		return;

@@ -21,9 +21,16 @@ const processViewCardsInTrade = (
 	const keys = Object.keys(queue);
 	let desc = "";
 	keys.forEach((key, i) => {
-		desc = `${desc}\n${i === 0 ? "" : "\n"}**${queue[key].username}'s Queue**\n${queue[key].queue
+		desc = `${desc}\n${i === 0 ? "" : "\n"}**${
+			queue[key].username
+		}'s Queue**\n${queue[key].queue
 			.slice(0, 10)
-			.map((item) => `**${titleCase(item.name || "No Name")}** ${titleCase(item.rank)} [${item.id}]`)
+			.map(
+				(item) =>
+					`**${titleCase(item.name || "No Name")}** ${titleCase(item.rank)} [${
+						item.id
+					}]`
+			)
 			.join("\n")}`;
 
 		if (queue[key].queue.length > 10) {
@@ -64,7 +71,8 @@ const viewCardsInTrade = async ({
 
 	const embed = createEmbed()
 		.setTitle("View Trade Cards")
-		.setDescription("View all the cards in trade.").setHideConsoleButtons(true);
+		.setDescription("View all the cards in trade.")
+		.setHideConsoleButtons(true);
 	const params = {
 		author,
 		channel,
@@ -110,9 +118,18 @@ export const viewTrade = async ({
 								? `\n${keys
 									.map(
 										(k) =>
-											`__${rankGroup[k].length}x__ ${titleCase(k)} card(s)`
+											`__${rankGroup[k].length}x__ ${titleCase(
+												k
+											)} ${rankGroup[k]
+												.slice(0, 10)
+												.map((r) => `**${titleCase(r.name || "No Name")} (${r.id})**`)
+												.join(", ")}${
+												rankGroup[k].length > 10
+													? ` (__${rankGroup[k].length - 10}__ more)`
+													: ""
+											} card(s)`
 									)
-									.join(", ")}`
+									.join("\n")}`
 								: ""
 						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 					})
@@ -120,18 +137,18 @@ export const viewTrade = async ({
 			)
 			.setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
-		await viewCardsInTrade({
-			client,
-			author,
-			channel,
-			tradeQueue,
-			tradeId,
-			args: [],
-		});
+		// await viewCardsInTrade({
+		// 	client,
+		// 	author,
+		// 	channel,
+		// 	tradeQueue,
+		// 	tradeId,
+		// 	args: [],
+		// });
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.view.viewTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.view.viewTrade: ERROR",
 			err
 		);
 		return;

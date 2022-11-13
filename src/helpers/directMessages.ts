@@ -15,7 +15,7 @@ export const DMUser = async (
 		DM.sendMessage(content);
 	} catch (err) {
 		loggers.error(
-			"helpers.directMessages.DMUser(): Unable to DM User: " +
+			"helpers.directMessages.DMUser: Unable to DM User: " +
         authorId +
         " Content: " +
         JSON.stringify(content),

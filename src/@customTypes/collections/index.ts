@@ -22,6 +22,7 @@ export type CollectionProps = {
   updated_at: string;
   total_count?: number;
   is_on_cooldown: boolean;
+  is_tradable: boolean;
   name?: string;
   metadata?: {
     nickname?: string;
@@ -47,6 +48,7 @@ export type CollectionParams = {
   exclude_ids?: number[];
   exclude_character_ids?: number[];
   is_on_cooldown?: boolean;
+  is_tradable?: boolean;
 };
 
 export type ItemCollectionCreateProps = Pick<

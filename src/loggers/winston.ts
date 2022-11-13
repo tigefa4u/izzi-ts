@@ -1,6 +1,12 @@
 import { createLogger, transports, format } from "winston";
 import "winston-daily-rotate-file";
+import { LoggingWinston } from "@google-cloud/logging-winston";
+import { GCP_PROJECT_ID } from "environment";
 
+const cloudLogger = new LoggingWinston({
+	projectId: GCP_PROJECT_ID,
+	keyFilename: "izzi-cloud-logging.json"
+});
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
@@ -11,7 +17,7 @@ const infoTransporter = new transports.DailyRotateFile({
 		format.errors({ stack: true }),
 		format.timestamp(),
 		format.json()
-	)
+	),
 });
 
 const debugTransporter = new transports.DailyRotateFile({
@@ -66,11 +72,12 @@ const apiRequestResponseTransporter = new transports.DailyRotateFile({
 	)
 });
 
-const winstonDebugLogger = createLogger({ transports: [ debugTransporter ] });
+const winstonDebugLogger = createLogger({ transports: [ debugTransporter, cloudLogger ] });
 
 const winstonErrorLogger = createLogger({
 	transports: [
-		errorTransporter
+		errorTransporter,
+		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
 		// 	level: "error",
@@ -95,7 +102,8 @@ const winstonErrorLogger = createLogger({
 
 const winstonAPILogger = createLogger({
 	transports: [
-		apiRequestResponseTransporter
+		apiRequestResponseTransporter,
+		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
 		// 	level: "error",
@@ -120,7 +128,8 @@ const winstonAPILogger = createLogger({
 
 const winstonInfoLogger = createLogger({
 	transports: [
-		infoTransporter
+		infoTransporter,
+		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",
@@ -131,7 +140,8 @@ const winstonInfoLogger = createLogger({
 
 const winstonTimerLogger = createLogger({
 	transports: [
-		timerTransporter
+		timerTransporter,
+		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",

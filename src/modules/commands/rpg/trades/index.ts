@@ -88,7 +88,7 @@ async function validateAndConfirmTrade(
 		mentionId
 	);
 	if (userTradeId) {
-		return await clearTrade(
+		return clearTrade(
 			author.id,
 			userTradeId,
 			author.username,
@@ -97,7 +97,7 @@ async function validateAndConfirmTrade(
 		);
 	}
 	if (mentionedUserTradeId) {
-		return await clearTrade(
+		return clearTrade(
 			mentionId,
 			mentionedUserTradeId,
 			params.extras?.mentionUsername || "",
@@ -280,7 +280,7 @@ export const trade = async ({ context, args, options, client }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.trade(): something went wrong",
+			"modules.commands.rpg.trades.trade: ERROR",
 			err
 		);
 		return;

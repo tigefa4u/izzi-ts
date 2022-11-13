@@ -17,7 +17,7 @@ export const addToTrade = async (params: TradeActionProps) => {
 		}
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.trades.actions.addToTrade(): something went wrong",
+			"modules.commands.rpg.trades.actions.addToTrade: ERROR",
 			err
 		);
 		return;

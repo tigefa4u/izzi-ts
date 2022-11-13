@@ -41,7 +41,7 @@ async function findItemInTeamAndRemove({
 			}
 		}
 	} catch (err) {
-		loggers.error("useItems.findItemInTeamAndRemove(): ERROR ", err);
+		loggers.error("useItems.findItemInTeamAndRemove: ERROR ", err);
 		return;
 	}
 }
@@ -116,7 +116,7 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.items.useItems.equip(): something went wrong",
+			"modules.commands.rpg.items.useItems.equip: ERROR",
 			err
 		);
 		return;
@@ -161,7 +161,7 @@ export const unEquip = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.items.useItems.unEquip(): something went wrong",
+			"modules.commands.rpg.items.useItems.unEquip: ERROR",
 			err
 		);
 		return;

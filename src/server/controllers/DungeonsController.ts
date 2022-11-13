@@ -126,7 +126,7 @@ const processDGRewards = async () => {
 				)
 			).catch((err) => {
 				loggers.error(
-					"server.controllers.DungeonController.processDGRewards(): something horrible happened:",
+					"server.controllers.DungeonController.processDGRewards: something horrible happened:",
 					err
 				);
 				return;

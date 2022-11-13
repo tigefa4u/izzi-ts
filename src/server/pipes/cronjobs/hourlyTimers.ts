@@ -49,7 +49,7 @@ const spawnRaids = async () => {
 			});
 		}));
 	} catch (err) {
-		loggers.error("cronjobs.hourlyTimers.spawnRaids(): something went wrong", err);
+		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
 		return;
 	}
 };

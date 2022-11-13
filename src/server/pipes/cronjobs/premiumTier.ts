@@ -30,7 +30,7 @@ async function premiumTimer() {
 		);
 		return;
 	} catch (err) {
-		loggers.error("cronjobs.premiumTier.premiumTimer(): something went wrong", err);
+		loggers.error("cronjobs.premiumTier.premiumTimer: ERROR", err);
 		return;
 	}
 }
@@ -63,7 +63,7 @@ async function miniPremiumTimer() {
 		);
 		return;
 	} catch (err) {
-		loggers.error("cronjobs.premiumTier.miniPremiumTimer(): something went wrong", err);
+		loggers.error("cronjobs.premiumTier.miniPremiumTimer: ERROR", err);
 		return;
 	}
 }
@@ -83,7 +83,7 @@ async function resetVoteTimers() {
 		);
 		return;
 	} catch (err) {
-		loggers.error("cronjobs.premiumTier.resetVoteTimers(): something went wrong", err);
+		loggers.error("cronjobs.premiumTier.resetVoteTimers: ERROR", err);
 		return;
 	}
 }
@@ -106,7 +106,7 @@ async function resetUserActive() {
 		);
 		return;
 	} catch (err) {
-		loggers.error("cronjobs.premiumTier.resetUserActive(): something went wrong", err);
+		loggers.error("cronjobs.premiumTier.resetUserActive: ERROR", err);
 		return;
 	}
 }

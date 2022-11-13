@@ -46,7 +46,7 @@ export default async function () {
 			})
 		);
 	} catch (err) {
-		loggers.error("pipes.autoKick(): something went wrong", err);
+		loggers.error("pipes.autoKick: ERROR", err);
 		return;
 	}
 }

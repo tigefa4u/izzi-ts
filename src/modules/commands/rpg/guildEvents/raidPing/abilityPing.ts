@@ -72,7 +72,7 @@ export const abilityPing = async ({ options, args, client, context }: BaseProps)
 		context.channel?.sendMessage(`Summoner **${author.username}**, please provide validate abilities`);
 		return;
 	} catch (err) {
-		loggers.error("guildEvents.raidPing.abilityPing(): something went wrong", err);
+		loggers.error("guildEvents.raidPing.abilityPing: ERROR", err);
 		return;
 	}
 };

@@ -95,7 +95,7 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.market.market(): something went wrong",
+			"modules.commands.rpg.market.market: ERROR",
 			err
 		);
 		return;

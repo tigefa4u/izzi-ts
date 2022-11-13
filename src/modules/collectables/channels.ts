@@ -30,7 +30,7 @@ export const verifyDropChannels = async ({ client, guild, channel }: T) => {
 		}
 		return dropChannel;
 	} catch (err) {
-		loggers.error("modules.collectables.channels.verifyDropChannels(): something went wrong", err);
+		loggers.error("modules.collectables.channels.verifyDropChannels: ERROR", err);
 		return;
 	}
 };

@@ -18,7 +18,7 @@ export const getZoneByLocationId = async (params: { location_id: number }) => {
 		return result;
 	} catch (err) {
 		loggers.error(
-			"api.controllers.ZonesController.getZoneByLocationId(): something went wrong",
+			"api.controllers.ZonesController.getZoneByLocationId: ERROR",
 			err
 		);
 		return;
@@ -41,7 +41,7 @@ export const getAllZones = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.ZonesController.getAllZones(): something went wrong",
+			"api.controllers.ZonesController.getAllZones: ERROR",
 			err
 		);
 		return;
@@ -54,7 +54,7 @@ export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_rui
 		return await ZoneBackup.createOrUpdate(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.ZonesController.createOrUpdateZoneBackup(): something went wrong",
+			"api.controllers.ZonesController.createOrUpdateZoneBackup: ERROR",
 			err
 		);
 		return;
@@ -69,7 +69,7 @@ export const getMaxLocation = async () => {
 		});
 	} catch (err) {
 		loggers.error(
-			"api.controllers.ZonesController.createOrUpdateZoneBackup(): something went wrong",
+			"api.controllers.ZonesController.createOrUpdateZoneBackup: ERROR",
 			err
 		);
 		return;

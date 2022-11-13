@@ -36,7 +36,7 @@ async function raidTimers() {
 		);
 		return;
 	} catch (err) {
-		loggers.error("cronjobs.oneMinuteTimers.raidTimers(): something went wrong", err);
+		loggers.error("cronjobs.oneMinuteTimers.raidTimers: ERROR", err);
 		return;
 	}
 }

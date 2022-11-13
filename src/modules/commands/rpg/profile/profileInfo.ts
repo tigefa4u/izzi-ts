@@ -60,7 +60,7 @@ export const mana = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.mana(): something went wrong",
+			"commands.rpg.profile.profileInfo.mana: ERROR",
 			err
 		);
 		return;
@@ -80,7 +80,7 @@ export const exp = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.exp(): something went wrong",
+			"commands.rpg.profile.profileInfo.exp: ERROR",
 			err
 		);
 		return;
@@ -100,7 +100,7 @@ export const level = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.level(): something went wrong",
+			"commands.rpg.profile.profileInfo.level: ERROR",
 			err
 		);
 		return;
@@ -145,7 +145,7 @@ export const permits = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.permits(): something went wrong",
+			"commands.rpg.profile.profileInfo.permits: ERROR",
 			err
 		);
 		return;
@@ -167,7 +167,7 @@ export const shards = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.shards(): something went wrong",
+			"commands.rpg.profile.profileInfo.shards: ERROR",
 			err
 		);
 		return;
@@ -189,7 +189,7 @@ export const orbs = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.orbs(): something went wrong",
+			"commands.rpg.profile.profileInfo.orbs: ERROR",
 			err
 		);
 		return;
@@ -211,7 +211,7 @@ export const points = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.points(): something went wrong",
+			"commands.rpg.profile.profileInfo.points: ERROR",
 			err
 		);
 		return;
@@ -233,7 +233,7 @@ export const gold = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.gold(): something went wrong",
+			"commands.rpg.profile.profileInfo.gold: ERROR",
 			err
 		);
 		return;
@@ -254,7 +254,7 @@ export const deleteAccount = async function ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.profile.profileInfo.deleteAccount(): something went wrong",
+			"commands.rpg.profile.profileInfo.deleteAccount: ERROR",
 			err
 		);
 		return;

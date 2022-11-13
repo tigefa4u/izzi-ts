@@ -107,6 +107,7 @@ export const createRaidBoss = async ({
 						rank,
 						is_event: isEvent,
 						// is_random: true,
+						// character_id: i === 0 ? 573 : i === 1 ? 969 : 740
 					},
 					1
 				);
@@ -124,7 +125,8 @@ export const createRaidBoss = async ({
 					r_exp: 1,
 					souls: 1,
 					rank_id: 0,
-					is_on_cooldown: false
+					is_on_cooldown: false,
+					is_tradable: true
 				};
 			})
 	)) as CollectionCardInfoProps[];
@@ -343,7 +345,7 @@ export const spawnRaid = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.raids.actions.spawnRaid(): something went wrong",
+			"modules.commands.rpg.raids.actions.spawnRaid: ERROR",
 			err
 		);
 		return;

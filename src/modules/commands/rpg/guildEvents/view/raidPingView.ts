@@ -42,7 +42,7 @@ export const raidPingView = async ({ context, client, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("guildEvents.view.raidPingView(): something went wrong", err);
+		loggers.error("guildEvents.view.raidPingView: ERROR", err);
 		return;
 	}
 };

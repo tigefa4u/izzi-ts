@@ -18,7 +18,7 @@ export const delGuildItems = async (params: {
 		return await GuildItems.del(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildItemsController.delGuildItems(): something went wrong",
+			"api.controllers.GuildItemsController.delGuildItems: ERROR",
 			err
 		);
 		return;
@@ -30,7 +30,7 @@ export const createGuildItem = async (data: GuildItemCreateProps) => {
 		return await GuildItems.create(data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildItemsController.createGuildItem(): something went wrong",
+			"api.controllers.GuildItemsController.createGuildItem: ERROR",
 			err
 		);
 		return;
@@ -45,7 +45,7 @@ export const updateGuildItem = async (
 		return await GuildItems.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildItemsController.updateGuildItem(): something went wrong",
+			"api.controllers.GuildItemsController.updateGuildItem: ERROR",
 			err
 		);
 		return;
@@ -71,7 +71,7 @@ export const getAllGuildItems = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildItemsController.getAllGuildItems(): something went wrong",
+			"api.controllers.GuildItemsController.getAllGuildItems: ERROR",
 			err
 		);
 		return;
@@ -84,7 +84,7 @@ export const getGuildItem = async (params: GuildItemParams) => {
 		return result[0];
 	} catch (err) {
 		loggers.error(
-			"api.controllers.GuildItemsController.getGuildItem(): something went wrong",
+			"api.controllers.GuildItemsController.getGuildItem: ERROR",
 			err
 		);
 		return;

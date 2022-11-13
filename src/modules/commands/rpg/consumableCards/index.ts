@@ -4,10 +4,25 @@ import { createEmbed } from "commons/embeds";
 import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 import { getReqExpBetweenLevels } from "../enchantment/compute";
+import { consumeCardsToShards } from "./consumeCardsToShards";
 
-export const cards = ({ context, client, args, options }: BaseProps) => {
+export const cards = ({
+	context, client, args, options, command 
+}: BaseProps) => {
 	try {
 		const author = options.author;
+		const consumeCommand = args[0];
+		if (consumeCommand === "consume" || consumeCommand === "cons") {
+			args.shift();
+			consumeCardsToShards({
+				context,
+				options,
+				args,
+				client,
+				command
+			});
+			return;
+		}
 		const baseLevel = parseInt(args.shift() || "0");
 		const maxLevel = parseInt(args.shift() || "0");
 		if (!baseLevel || !maxLevel || isNaN(baseLevel) || isNaN(maxLevel)) {
@@ -56,7 +71,7 @@ export const cards = ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.consumableCards.cards(): something went wrong",
+			"modules.commands.rpg.consumableCards.cards: ERROR",
 			err
 		);
 		return;

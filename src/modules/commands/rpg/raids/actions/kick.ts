@@ -41,7 +41,7 @@ export const kickmember = async ({
 		DMUser(client, `You have ${desc}`, kickedUserTag);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.kickmember(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.kickmember: ERROR", err);
 		return;
 	}
 };

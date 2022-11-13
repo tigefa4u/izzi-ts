@@ -138,7 +138,7 @@ export const viewGuild = async ({ context, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.information.viewGuild(): something went wrong",
+			"modules.commands.rpg.guild.information.viewGuild: ERROR",
 			err
 		);
 		return;

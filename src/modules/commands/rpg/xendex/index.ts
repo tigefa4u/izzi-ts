@@ -70,7 +70,7 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"module.commands.rpg.xendex.dex(): something went wrong",
+			"module.commands.rpg.xendex.dex: ERROR",
 			err
 		);
 		return;

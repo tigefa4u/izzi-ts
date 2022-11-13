@@ -51,7 +51,7 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.guild.dangerZone.kick.kickFromGuild(): something went wrong", err);
+		loggers.error("modules.commands.rpg.guild.dangerZone.kick.kickFromGuild: ERROR", err);
 		return;
 	}
 };

@@ -95,7 +95,7 @@ export const disbandGuild = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.dangerZone.disbandGuild(): something went wrong",
+			"modules.commands.rpg.guild.dangerZone.disbandGuild: ERROR",
 			err
 		);
 		return;
@@ -192,7 +192,7 @@ export const leaveGuild = async ({ context, client, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.guild.dangerZone.leaveGuild(): something went wrong",
+			"modules.commands.rpg.guild.dangerZone.leaveGuild: ERROR",
 			err
 		);
 		return;

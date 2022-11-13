@@ -29,15 +29,20 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "rdmg") {
 				addRaidDamage(params);
+				return;
 			} else if (subcommand === "chr") {
 				setCharacterRank(params);
+				return;
+			} else if (subcommand === "re") {
+				params.args = [ "raid-energy" ];
+				specialWish(params);
 				return;
 			}
 		}
 		specialWish(params);
 		return;
 	} catch (err) {
-		loggers.error("specialCommands.makeAWish(): something went wrong", err);
+		loggers.error("specialCommands.makeAWish: ERROR", err);
 		return;
 	}
 };

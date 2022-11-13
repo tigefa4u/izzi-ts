@@ -43,7 +43,7 @@ export const removeChannel = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardSpwan.actions.removeChannel(): something went wrong",
+			"modules.commands.rpg.cardSpwan.actions.removeChannel: ERROR",
 			err
 		);
 		return;
@@ -70,7 +70,7 @@ export const resetChannels = async (params: {
 		  return;
 	  } catch (err) {
 		  loggers.error(
-			  "modules.commands.rpg.cardSpwan.actions.resetChannels(): something went wrong",
+			  "modules.commands.rpg.cardSpwan.actions.resetChannels: ERROR",
 			  err
 		  );
 		  return;
@@ -103,7 +103,7 @@ export const viewChannels = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardSpwan.actions.viewChannels(): something went wrong",
+			"modules.commands.rpg.cardSpwan.actions.viewChannels: ERROR",
 			err
 		);
 		return;

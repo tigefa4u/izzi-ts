@@ -10,7 +10,7 @@ export const filterSubCommands = (str: string, commandArray: C[]): C["name"] | u
 		const command = commandArray.filter((x) => x.alias.includes(str) || x.name === str);
 		return command[0]?.name;
 	} catch (err) {
-		loggers.error("helpers.subcommands.filterSubCommands(): something went wrong", err);
+		loggers.error("helpers.subcommands.filterSubCommands: ERROR", err);
 		return;
 	}
 };

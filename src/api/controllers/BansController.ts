@@ -6,7 +6,7 @@ export const getUserBan = async (params: { user_tag: string }) => {
 		const result = await Bans.get(params);
 		return result && result[0];
 	} catch (err) {
-		loggers.error("api.controllers.BansController.getUserBan(): something went wrong", err);
+		loggers.error("api.controllers.BansController.getUserBan: ERROR", err);
 		return;
 	}
 };

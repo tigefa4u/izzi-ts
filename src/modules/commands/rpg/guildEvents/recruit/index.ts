@@ -7,12 +7,15 @@ import {
 	updateRaid,
 } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Message, MessageEmbed } from "discord.js";
 import { validateChannelPermissions } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
+	IMMORTAL_RAIDS,
 	MAX_RAID_LOBBY_MEMBERS,
+	MIN_LEVEL_FOR_HIGH_RAIDS,
 	PERMIT_PER_RAID,
 	RAID_PING_NAME,
 } from "helpers/constants";
@@ -34,7 +37,10 @@ type T = {
   slotsLeft: number;
 };
 const validateAndJoinRaid = async ({ user_tag, raidId, slotsLeft }: T) => {
-	const currentRaid = await getRaid({ id: raidId });
+	const [ currentRaid, disableRaids ] = await Promise.all([
+		getRaid({ id: raidId }),
+		Cache.get("disable-raids")
+	]);
 	const currentLobbyLength = Object.keys(currentRaid?.lobby || {}).length;
 	const isLobbyFull = currentLobbyLength >= MAX_RAID_LOBBY_MEMBERS;
 	if (!currentRaid || isLobbyFull || currentRaid.is_start) return;
@@ -42,6 +48,15 @@ const validateAndJoinRaid = async ({ user_tag, raidId, slotsLeft }: T) => {
 	if (!user || user.raid_pass < PERMIT_PER_RAID) return;
 	const member = await getUserRaidLobby({ user_id: user.id });
 	if (member) return;
+	let isEvent = false;
+	if (disableRaids) isEvent = true;
+	if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS && IMMORTAL_RAIDS.includes(currentRaid.stats.rawDifficulty) && !isEvent) {
+		DMUserViaApi(user_tag, {
+			content: `You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
+		"to be able to spawn or join __Immortal__ Raids" 
+		});
+		return;
+	}
 	const lobbyMember = prepareInitialLobbyMember(
 		user.id,
 		user_tag,
@@ -215,7 +230,7 @@ export const raidRecruit = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"commands.rpg.guildEvents.recruit.raidRecruit(): something went wrong",
+			"commands.rpg.guildEvents.recruit.raidRecruit: ERROR",
 			err
 		);
 		return;

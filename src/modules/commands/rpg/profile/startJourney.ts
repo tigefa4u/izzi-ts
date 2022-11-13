@@ -2,12 +2,13 @@ import { titleCase } from "title-case";
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createCollection } from "api/controllers/CollectionsController";
-import { createUser } from "api/controllers/UsersController";
+import { createUser, getRPGUser } from "api/controllers/UsersController";
 
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { checkExistingAccount, validateAccountCreatedAt } from "helpers";
 import {
+	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
@@ -22,6 +23,7 @@ import { createSingleCanvas } from "helpers/canvas";
 import { getRandomCard } from "api/controllers/CardsController";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { starterGuide } from "./guide";
+import { help } from "modules/commands/basic";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -52,7 +54,8 @@ async function startUserJourney(author: AuthorProps) {
 		character_level: STARTER_CARD_LEVEL,
 		character_id: cardDetails.character_id,
 		is_item: false,
-		is_on_cooldown: false
+		is_on_cooldown: false,
+		is_tradable: true
 	};
 	loggers.info(
 		"modules.commands.rpg.profile.startJourney: New User created: " +
@@ -128,11 +131,38 @@ export const start: (params: BaseProps) => void = async ({
 						client,
 						args: [],
 						options,
+						id: "start-guide"
 					}
+				},
+				{
+					label: CONSOLE_BUTTONS.REFERRAL.label,
+					params: { id: CONSOLE_BUTTONS.REFERRAL.id }
 				}
 			],
 			author.id,
-			starterGuide,
+			async ({ id, user_tag, client, args }) => {
+				const [ user, authorData ] = await Promise.all([
+					getRPGUser({ user_tag }, { cached: true }),
+					client.users.fetch(user_tag)
+				]);
+				if (!user) return;
+				if (id === "start-guide") {
+					starterGuide({
+						context,
+						args,
+						options: { author: authorData },
+						client
+					});
+				} else if (id === CONSOLE_BUTTONS.REFERRAL.id) {
+					help({
+						context,
+						client,
+						args: [ "referral" ],
+						options: { author: authorData }
+					});
+				}
+				return;
+			},
 			() => {
 				return;
 			},
@@ -148,7 +178,7 @@ export const start: (params: BaseProps) => void = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.startJourney.start(): something went wrong",
+			"modules.commands.rpg.startJourney.start: ERROR",
 			err
 		);
 		return;

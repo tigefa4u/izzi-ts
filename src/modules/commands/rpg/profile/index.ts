@@ -124,7 +124,7 @@ export const profile = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.profile.profile(): something went wrong",
+			"modules.commands.rpg.profile.profile: ERROR",
 			err
 		);
 		return;

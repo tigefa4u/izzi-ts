@@ -76,7 +76,7 @@ export const showCardSkins = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.cardinfo.skinInfo.showCardSkins(): Something went wrong",
+			"modules.commands.rpg.cardinfo.skinInfo.showCardSkins: ERROR",
 			err
 		);
 		return;
@@ -182,7 +182,7 @@ const handleAddToWishlist = async ({
 		"Use ``iz wishlist`` to view all the items in your wishlist.");
 		channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error("cardinfo.skinInfo.handleAddToWishlist(): something went wrong", err);
+		loggers.error("cardinfo.skinInfo.handleAddToWishlist: ERROR", err);
 	}
 	return;
 };
@@ -282,7 +282,7 @@ const fetchCharacterSkins = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"cardinfo.skinInfo.fetchCharacterSkins(): something went wrong",
+			"cardinfo.skinInfo.fetchCharacterSkins: ERROR",
 			err
 		);
 		return;
@@ -340,7 +340,7 @@ const handlePurchaseSkin = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"cardinfo.skinInfo.handlePurchaseSkin(): something went wrong",
+			"cardinfo.skinInfo.handlePurchaseSkin: ERROR",
 			err
 		);
 		return;

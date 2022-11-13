@@ -18,7 +18,7 @@ export const showEnergy = async ({ context, options, client, isEvent }: RaidActi
 		context.channel?.sendMessage(`${author.username} currently has __${member?.energy || 0}__ energy`);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.showEnergy(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.showEnergy: ERROR", err);
 		return;
 	}
 };

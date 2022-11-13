@@ -70,7 +70,8 @@ async function openCrate({ context, client, args, options }: BaseProps) {
 					r_exp: BASE_XP * XP_GAIN_EXPONENT,
 					user_id: user.id,
 					is_item: false,
-					is_on_cooldown: false
+					is_on_cooldown: false,
+					is_tradable: true
 				});
 				cardsReceived.push({
 					rank: card.rank,
@@ -94,7 +95,7 @@ async function openCrate({ context, client, args, options }: BaseProps) {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.crates.openCrate(): something went wrong",
+			"modules.commands.rpg.crates.openCrate: ERROR",
 			err
 		);
 		return;
@@ -176,7 +177,7 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.crates.crate(): something went wrong",
+			"modules.commands.rpg.crates.crate: ERROR",
 			err
 		);
 		return;

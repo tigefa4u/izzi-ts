@@ -14,7 +14,7 @@ export const getPowerLevelByRank = async (params: { rank: string }): Promise<PLP
 
 		return result;
 	} catch (err) {
-		loggers.error("api.controllers.PowerLevelController.getPowerLevelByRank(): something went wrong", err);
+		loggers.error("api.controllers.PowerLevelController.getPowerLevelByRank: ERROR", err);
 		return;
 	}
 };
@@ -25,7 +25,7 @@ export const getPowerLevelByRankId = async (params: { rank_id: number }): Promis
 		res = res[0];
 		return res;
 	} catch (err) {
-		loggers.error("api.controllers.PowerLevelController.getPowerLevelByRank(): something went wrong", err);
+		loggers.error("api.controllers.PowerLevelController.getPowerLevelByRank: ERROR", err);
 		return;
 	}
 };

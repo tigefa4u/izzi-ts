@@ -20,14 +20,9 @@ import { eventActions } from "../events";
 import { validateCurrentRaid } from "./validateRaid";
 
 const handleRaidViewButtons = async ({
-	user_tag, client, channel, id, raidId, message
-}: CustomButtonInteractionParams & { raidId?: number; }) => {
+	user_tag, client, channel, id, raidId, message, isEvent
+}: CustomButtonInteractionParams & { raidId?: number; isEvent: boolean; }) => {
 	const author = await client.users.fetch(user_tag);
-	const disableRaids = await Cache.get("disable-raids");
-	let isEvent = false;
-	if (disableRaids) {
-		isEvent = true;
-	}
 	const options = {
 		context: {
 			channel,
@@ -99,49 +94,10 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 		});
 		if (!embed) return;
 
-		const buttons = customButtonInteraction(
-			context.channel,
-			[
-				{
-					label: CONSOLE_BUTTONS.RAID_JOIN.label,
-					params: {
-						id: CONSOLE_BUTTONS.RAID_JOIN.id,
-						raidId: currentRaid.id 
-					}
-				},
-				{
-					label: CONSOLE_BUTTONS.RAID_LEAVE.label,
-					params: { id: CONSOLE_BUTTONS.RAID_LEAVE.id }
-				},
-				{
-					label: CONSOLE_BUTTONS.RAID_RECRUIT.label,
-					params: { id: CONSOLE_BUTTONS.RAID_RECRUIT.id }
-				},
-				{
-					label: CONSOLE_BUTTONS.RAID_START.label,
-					params: { id: CONSOLE_BUTTONS.RAID_START.id }
-				},
-				{
-					label: CONSOLE_BUTTONS.RAID_PARTY.label,
-					params: { id: CONSOLE_BUTTONS.RAID_PARTY.id }
-				}
-			],
-			author.id,
-			handleRaidViewButtons,
-			() => {
-				return;
-			},
-			true,
-			10
-		);
-
-		if (buttons) {
-			embed.setButtons(buttons);
-		}
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.rpg.raids.actions.viewRaid(): something went wrong", err);
+		loggers.error("modules.commands.rpg.raids.actions.viewRaid: ERROR", err);
 		return;
 	}
 };
@@ -180,6 +136,59 @@ export const prepareRaidViewEmbed = async ({
 			text: `Lobby code: ${currentRaid.id}`,
 			iconURL: author.displayAvatarURL()
 		});
+
+	const buttons = customButtonInteraction(
+		channel,
+		[
+			{
+				label: CONSOLE_BUTTONS.RAID_JOIN.label,
+				params: {
+					id: CONSOLE_BUTTONS.RAID_JOIN.id,
+					raidId: currentRaid.id,
+					isEvent
+				}
+			},
+			{
+				label: CONSOLE_BUTTONS.RAID_LEAVE.label,
+				params: {
+					id: CONSOLE_BUTTONS.RAID_LEAVE.id,
+					isEvent 
+				}
+			},
+			{
+				label: CONSOLE_BUTTONS.RAID_RECRUIT.label,
+				params: {
+					id: CONSOLE_BUTTONS.RAID_RECRUIT.id,
+					isEvent 
+				}
+			},
+			{
+				label: CONSOLE_BUTTONS.RAID_START.label,
+				params: {
+					id: CONSOLE_BUTTONS.RAID_START.id,
+					isEvent 
+				}
+			},
+			{
+				label: CONSOLE_BUTTONS.RAID_PARTY.label,
+				params: {
+					id: CONSOLE_BUTTONS.RAID_PARTY.id,
+					isEvent 
+				}
+			}
+		],
+		author.id,
+		handleRaidViewButtons,
+		() => {
+			return;
+		},
+		true,
+		10
+	);
+
+	if (buttons) {
+		embed.setButtons(buttons);
+	}
 
 	return embed;
 };

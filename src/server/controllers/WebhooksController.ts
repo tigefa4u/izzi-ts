@@ -67,7 +67,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 		return res.sendStatus(200);
 	} catch (err: any) {
 		loggers.error(
-			"server.controllers.WebhookController.processUpvote(): something went wrong",
+			"server.controllers.WebhookController.processUpvote: ERROR",
 			err
 		);
 		return res.status(500).send({
@@ -128,7 +128,7 @@ export const processServerUpvote = async (req: Request, res: Response) => {
 		DMUserViaApi(user_tag, { content: desc });
 		return res.sendStatus(200);
 	} catch (err: any) {
-		loggers.error("server.controllers.WebhookController.processServerUpvote(): something went wrong", err);
+		loggers.error("server.controllers.WebhookController.processServerUpvote: ERROR", err);
 		return res.status(500).send({
 			error: true,
 			message: err.message

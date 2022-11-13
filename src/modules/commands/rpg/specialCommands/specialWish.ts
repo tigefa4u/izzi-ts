@@ -21,7 +21,10 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 	try {
 		const author = options.author;
 		const wishes = Object.values(WISHES);
-		const wish = randomElementFromArray(wishes);
+		let wish = args.shift();
+		if (!wish) {
+			wish = randomElementFromArray(wishes);
+		}
 		const embed = createEmbed(author, client).setTitle("Izzi Loves Mia Mommy :heart:");
 
 		switch (wish) {
@@ -114,7 +117,7 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 		}
 		return;
 	} catch (err) {
-		loggers.error("commands.rpg.specialCommands.specialWish(): something went wrong", err);
+		loggers.error("commands.rpg.specialCommands.specialWish: ERROR", err);
 		return;
 	}
 };

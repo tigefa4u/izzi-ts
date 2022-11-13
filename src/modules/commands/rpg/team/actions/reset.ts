@@ -88,7 +88,7 @@ export const resetTeam = async ({
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.team.actions.resetTeam(): something went wrong",
+			"modules.commands.rpg.team.actions.resetTeam: ERROR",
 			err
 		);
 		return;

@@ -138,7 +138,7 @@ export const resolveSkin = async (params: {
 		return;
 	} catch (err) {
 		loggers.error(
-			"modules.commands.rpg.skins.skinAction.resolve(): something went wrong",
+			"modules.commands.rpg.skins.skinAction.resolve: ERROR",
 			err
 		);
 		return;

@@ -1,6 +1,6 @@
 import { ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
-import { CreateSkinCollectionProps, ISkinCollection, SkinCollectionProps } from "@customTypes/skins";
+import { CreateSkinCollectionProps, ISkinCollection } from "@customTypes/skins";
 import { UserProps } from "@customTypes/users";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
@@ -24,7 +24,7 @@ export const getSkinCollection = async (
 		};
 	} catch (err) {
 		loggers.error(
-			"api.controllers.SkinCollectionController.getSkinCollection(): somethig went wrong",
+			"api.controllers.SkinCollectionController.getSkinCollection: somethig went wrong",
 			err
 		);
 		return;
@@ -39,7 +39,7 @@ export const getSkinCollectionById = async (params: {
 		const result = await SkinCollections.get(params);
 		return result[0];
 	} catch (err) {
-		loggers.error("api.controllers.SkinCollectionController.getSkinCollectionById(): something went wrong", err);
+		loggers.error("api.controllers.SkinCollectionController.getSkinCollectionById: ERROR", err);
 		return;
 	}
 };
@@ -49,7 +49,7 @@ export const delSkinCollection = async (params: { id: number }) => {
 		loggers.info("Deleting skin collection for ID: " + params.id);
 		return await SkinCollections.del(params);
 	} catch (err) {
-		loggers.error("api.controllers.SkinCollectionController.delSkinCollection(): something went wrong", err);
+		loggers.error("api.controllers.SkinCollectionController.delSkinCollection: ERROR", err);
 		return;
 	}
 };

@@ -85,7 +85,7 @@ export const createSingleCanvas: (
 		// });
 	} catch (err) {
 		loggers.error(
-			"helpers.canvas.createSingleCanvas(): something went wrong",
+			"helpers.canvas.createSingleCanvas: ERROR",
 			err
 		);
 		return;
@@ -134,23 +134,23 @@ export const createBattleCanvas = async (
 		// 	CANVAS_DEFAULTS.iconWidth,
 		// 	CANVAS_DEFAULTS.iconHeight
 		// );
-		const startTimer = loggers.startTimer("Battle canvas: ");
+		// const startTimer = loggers.startTimer("Battle canvas: ");
 		const images = await Promise.all(
 			cards.map(async (card) => {
 				if (card) {
-					const startImageTimer = loggers.startTimer("[Image] Path: ");
+					// const startImageTimer = loggers.startTimer("[Image] Path: ");
 					// load precomputed images with border and stars
 					let filepath = card?.filepath;
 					const version = extras?.version || (extras?.isSingleRow ? "medium" : "small");
 					if (card.metadata?.assets && card.metadata.assets[version]) {
 						filepath = card.metadata.assets[version].filepath;
 					}
-					startImageTimer.message = startImageTimer.message + " -> " + filepath;
+					// startImageTimer.message = startImageTimer.message + " -> " + filepath;
 					const image = await loadImage(filepath).catch((err) => {
-						loggers.error("canvas.createBattleCanvas(): ERROR Unable to load filepath -> " + filepath, err);
+						loggers.error("canvas.createBattleCanvas: ERROR Unable to load filepath -> " + filepath, err);
 						throw err;
 					});
-					loggers.endTimer(startImageTimer);
+					// loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
 						image,
@@ -221,12 +221,12 @@ export const createBattleCanvas = async (
 				// 		}
 				// 	}
 			}
-			loggers.endTimer(startTimer);
+			// loggers.endTimer(startTimer);
 			resolve(canvas);
 		});
 	} catch (err) {
 		loggers.error(
-			"helpers.adventure.createBattleCanvas(): something went wrong",
+			"helpers.adventure.createBattleCanvas: ERROR",
 			err
 		);
 		return;

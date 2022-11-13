@@ -29,3 +29,5 @@ export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 export const BOT_PREFIX = "iz";
 // export const BOT_PREFIX = "tt";
 export const SLASH_COMMANDS_KEYBOARD_SHORTCUTS = process.env.SLASH_COMMANDS_KEYBOARD_SHORTCUTS;
+export const GUIDE_DOCS = process.env.GUIDE_DOCS;
+export const GCP_PROJECT_ID = "izzi-295412";

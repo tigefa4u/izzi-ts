@@ -86,7 +86,7 @@ const prepareConsoleButtonWrapper = (
 		}
 	} catch (err) {
 		loggers.error(
-			"implementations.messageContext.getResponseObj(): Unable to set console button",
+			"implementations.messageContext.getResponseObj: Unable to set console button",
 			err
 		);
 	}
@@ -104,7 +104,7 @@ const sendMessage: (
 		return channel.send(responseObj);
 	} catch (err) {
 		loggers.error(
-			"implementations.messageContext.sendMessage(): something went wrong",
+			"implementations.messageContext.sendMessage: ERROR",
 			err
 		);
 		return;
@@ -124,7 +124,7 @@ export const editMessage: (
 		return context.edit(responseObj);
 	} catch (err) {
 		loggers.error(
-			"implementations.messageContext.editMessage(): something went wrong",
+			"implementations.messageContext.editMessage: ERROR",
 			err
 		);
 		throw err;
@@ -141,7 +141,7 @@ export const deleteMessage: (
 		return context.delete();
 	} catch (err) {
 		loggers.error(
-			"implementations.messageContext.deleteMessage(): something went wrong",
+			"implementations.messageContext.deleteMessage: ERROR",
 			err
 		);
 		throw err;
@@ -170,7 +170,7 @@ export const editButton: (
 		return context.edit({ components: componentsArr });
 	} catch (err) {
 		loggers.error(
-			"implementations.messageContext.editButton(): something went wrong",
+			"implementations.messageContext.editButton: ERROR",
 			err
 		);
 		throw err;
