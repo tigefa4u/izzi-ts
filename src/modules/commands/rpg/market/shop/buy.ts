@@ -97,6 +97,8 @@ async function notifySeller(
       	collectionId: marketCard.collection_id
       })
 	);
+	const key = "anonymous-market-purchase::" + buyer.user_tag;
+	const anonymousMarketPurchase = await Cache.get(key);
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
 		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
@@ -107,7 +109,7 @@ async function notifySeller(
 				marketCard.name
 			)}** on the Global Market and received __${numericWithComma(totalCost)}__ Gold ${
 				emoji.gold
-			}!\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`
+			}!${anonymousMarketPurchase ? "" : `\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`}`
 		);
 	DMUser(client, embed, seller.user_tag);
 }

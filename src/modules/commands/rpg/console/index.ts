@@ -13,7 +13,19 @@ const raids: { [key: string]: string } = {
 };
 export const console = async ({ client, context, options, args }: BaseProps) => {
 	try {
-		// const cmd = args.shift();
+		const cmd = args.shift();
+		const key = "anonymous-market-purchase::" + options.author.id;
+		if (cmd === "toggle") {
+			Cache.set(key, JSON.stringify({ anonymousMarketPurchase: true }));
+			context.channel?.sendMessage(`Summoner **${options.author.username}**, Your username ` +
+			"will no longer be visible to the seller on the Global Market.");
+			return;
+		} else if (cmd === "reset") {
+			Cache.del(key);
+			context.channel?.sendMessage(`Summoner **${options.author.username}**, Your username ` +
+			"will now be visible to the seller on the Global Market.");
+			return;
+		}
 		// const key = "rconfig::" + options.author.id;
 		// if (cmd === "rconfig") {
 		// 	const difficulty = args.shift() || "e";
