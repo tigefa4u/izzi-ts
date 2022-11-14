@@ -13,6 +13,7 @@ import {
 } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
 	GOLD_LIMIT,
 	HOURLY_MANA_REGEN,
 	REQUIRED_TRADE_LEVEL,
@@ -24,7 +25,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 
-export const hourly = async ({ context, options }: BaseProps) => {
+export const hourly = async ({ context, options, client }: BaseProps) => {
 	try {
 		const author = options.author;
 		const cooldown = await getCooldown(author.id, "hourly");
@@ -46,11 +47,10 @@ export const hourly = async ({ context, options }: BaseProps) => {
 			updateRPGUser({ user_tag: author.id }, { mana: user.mana }),
 			setCooldown(author.id, "hourly", hourInSec),
 		]);
-		context.channel?.sendMessage(
-			`Congratulations ${emoji.celebration}!` +
-        " " +
-        `You have received __${randomManaRegen}__ Mana for your hourly bonus`
-		);
+		const embed = createEmbed(author, client).setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(`Congratulations Summoner **${author.username}** ${emoji.celebration}! ` +
+			`You have received __${randomManaRegen}__ Mana for your hourly bonus`);
+		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.resource.hourly: ERROR", err);

@@ -27,12 +27,15 @@ import { titleCase } from "title-case";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 
 const prepareConsoleDescription = async (user: UserProps) => {
-	const [ hourlyTTl, lotteryTTl, rconfig, disableRaids ] = await Promise.all([
-		Cache.ttl("cooldown::hourly-" + user.user_tag),
-		Cache.ttl("cooldown::lottery-" + user.user_tag),
-		Cache.get("rconfig::" + user.user_tag),
-		Cache.get("disable-raids"),
-	]);
+	const anonymousMarketPurchaseKey =
+    "anonymous-market-purchase::" + user.user_tag;
+	const [ hourlyTTl, lotteryTTl, disableRaids, anonymousMarketPurchase ] =
+    await Promise.all([
+    	Cache.ttl("cooldown::hourly-" + user.user_tag),
+    	Cache.ttl("cooldown::lottery-" + user.user_tag),
+    	Cache.get("disable-raids"),
+    	Cache.get(anonymousMarketPurchaseKey),
+    ]);
 
 	let isEvent = false;
 	if (disableRaids) {
@@ -95,7 +98,9 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	user.souls
     }\n**:crossed_swords: Selected Skins** ${
     	selectedSkins?.length || 0
-    } / ${MAX_CHOSEN_SKINS_ALLOWED}\n\n**:ticket: Raid Spawn:** ${
+    } / ${MAX_CHOSEN_SKINS_ALLOWED}\n**:ninja: Username on Market Purchase: ${
+    	anonymousMarketPurchase ? "Anonymous" : user.username
+    }**\n\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins`
