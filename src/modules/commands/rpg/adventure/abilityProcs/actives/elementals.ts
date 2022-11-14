@@ -57,11 +57,14 @@ export const elementalStrike = ({
 	}
 	if (round % 2 === 0) {
 		const percent = calcPercentRatio(45, card.rank);
-		const relDiff = getRelationalDiff(
+		damageDealt = getRelationalDiff(
 			playerStats.totalStats.intelligence,
 			percent
 		);
-		damageDealt = relDiff;
+		const abilityDamageCap = Math.floor((playerStats.totalStats.originalHp) * ((playerStats.isBot ? 1 : 30) / 100));
+		if (damageDealt > abilityDamageCap) {
+			damageDealt = abilityDamageCap;
+		}
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
 		if (opponentStats.totalStats.strength < 0)
@@ -168,6 +171,12 @@ export const spellBook = ({
 			abilityDamage = Math.floor(
 				Math.abs(tempDamage - playerStats.totalStats.vitality)
 			);
+			const abilityDamageCap = Math.floor(
+				playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 30) / 100)
+			);
+			if (abilityDamage > abilityDamageCap) {
+				abilityDamage = abilityDamageCap;
+			}
 			opponentStats.totalStats.strength = Math.floor(
 				opponentStats.totalStats.strength - abilityDamage
 			);
@@ -238,7 +247,12 @@ export const tornado = ({
 	card,
 	simulation,
 }: BattleProcessProps) => {
-	if (!card || !opponentStats.totalStats.originalHp) return;
+	if (
+		!card ||
+    !opponentStats.totalStats.originalHp ||
+    !playerStats.totalStats.originalHp
+	)
+		return;
 	// deal bonus __20%__ **Wind** damage based on attack (damage buff 3x)
 	if (opponentStats.totalStats.abilityToResist?.tornado) {
 		const canResist = [ true, false ][
@@ -280,6 +294,12 @@ export const tornado = ({
 		);
 		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = ratio * 3;
+		const abilityDamageCap = Math.floor(
+			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 30) / 100)
+		);
+		if (abilityDamage > abilityDamageCap) {
+			abilityDamage = abilityDamageCap;
+		}
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength < 0)
@@ -378,7 +398,7 @@ export const eclipse = ({
 		} else {
 			playerStats.totalStats.abilitiesToResist = {
 				...playerStats.totalStats.abilitiesToResist,
-				"misdirection": { percent: resistPercent }
+				misdirection: { percent: resistPercent },
 			};
 		}
 		const desc =

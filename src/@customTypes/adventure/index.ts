@@ -137,6 +137,7 @@ export type BattleStats = {
   soulGainText?: string;
   simulation?: Simulation;
   attachments?: (CollectionCardInfoProps | undefined)[];
+  isBot?: boolean;
 };
 
 export type PrepareBattleDescriptionProps = {

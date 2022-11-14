@@ -117,6 +117,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 
 		playerTeamStats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
+		enemyStats.isBot = true;
 		inBattle = await getCooldown(author.id, "dungeon-battle");
 		if (inBattle) return;
 		setCooldown(author.id, "dungeon-battle", 60 * 5);

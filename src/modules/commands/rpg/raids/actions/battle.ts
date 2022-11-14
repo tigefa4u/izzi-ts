@@ -118,6 +118,7 @@ export const battleRaidBoss = async ({
 		});
 		playerStats.stats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
+		enemyStats.isBot = true;
 
 		inBattle = await getCooldown(
 			author.id,
