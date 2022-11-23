@@ -7,13 +7,13 @@ const cache: Map<string, {
 }> = new Map();
 setInterval(() => {
 	for (const [ key, val ] of cache.entries()) {
-		if (val.time < Date.now() - (1000 * 60 * 60 * 5)) { // last used more than 5 hour ago
+		if (val.time < Date.now() - (1000 * 60 * 60)) { // last used more than 1 hour ago
 			cache.delete(key);
 		}
 	}
 }, 1000 * 60 * 10);
 
-export const getImage = (id: number) => {
+export const getImage = (id: string) => {
 	try {
 		return cache.get("image-cache::" + id);
 	} catch (err) {
@@ -22,7 +22,7 @@ export const getImage = (id: number) => {
 	}
 };
 
-export const setImage = (id: number, image: Image) => {
+export const setImage = (id: string, image: Image) => {
 	try {
 		return cache.set("image-cache::" + id, {
 			image,

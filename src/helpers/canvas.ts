@@ -113,10 +113,18 @@ export const createBattleCanvas = async (
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	// if (!extras?.isSingleRow) {
-	// 	const bgPath = await loadImage("./assets/images/background.jpg");
-	// 	ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
-	// }
+	if (!extras?.isSingleRow) {
+		const cachedBg = ImageCache.getImage("battle-bg") || {} as {
+			image: Image;
+			time: number;
+		};
+		let bgPath = cachedBg.image;
+		if (!bgPath) {
+			bgPath = await loadImage("./assets/images/background.jpg");
+		}
+		ImageCache.setImage("battle-bg", bgPath);
+		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
+	}
 	try {
 		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
 		// const border = await loadImage("./assets/images/border.png");
@@ -146,7 +154,7 @@ export const createBattleCanvas = async (
 						filepath = card.metadata.assets[version].filepath;
 					}
 					startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const cachedImage = ImageCache.getImage(card.id) || {} as {
+					const cachedImage = ImageCache.getImage(filepath) || {} as {
 						image: Image;
 						time: number;
 					};
@@ -161,8 +169,10 @@ export const createBattleCanvas = async (
 							);
 							throw err;
 						});
+					} else {
+						startImageTimer.message = startImageTimer.message + " -> loading from cache";
 					}
-					ImageCache.setImage(card.id, image);
+					ImageCache.setImage(filepath, image);
 					loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
