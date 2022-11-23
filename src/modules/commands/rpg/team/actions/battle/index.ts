@@ -98,7 +98,7 @@ async function confirmAndBattle(
 		const {
 			playerStats: effectiveStats,
 			opponentStats: opponentEffectiveStats,
-		} = await addTeamEffectiveness({
+		} = addTeamEffectiveness({
 			cards: playerStats.stats.cards,
 			enemyCards: opponentStats.stats.cards,
 			playerStats: playerStats.stats.totalStats,

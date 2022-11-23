@@ -80,7 +80,7 @@ const effectiveness: EffectivenessProps = {
 	light: { affects: [ "dark" ] },
 };
 
-export const addTeamEffectiveness = async ({
+export const addTeamEffectiveness = ({
 	cards,
 	enemyCards,
 	playerStats,
@@ -94,22 +94,20 @@ export const addTeamEffectiveness = async ({
 	const types = cards.map((c) => String(c?.type)).filter(Boolean);
 	const enemyTypes = enemyCards.map((c) => String(c?.type)).filter(Boolean);
 	let effective = 0; // range (-9, 9)
-	await Promise.all(
-		types.map((t) =>
-			enemyTypes.map(async (e) => {
-				const result = await addEffectiveness({
-					playerStats: clone(playerStats),
-					playerType: t,
-					enemyType: e,
-				});
-				if (result.effective > 1) {
-					effective = effective + 1;
-				} else if (result.effective < 1) {
-					effective = effective - 1;
-				}
-				return;
-			})
-		)
+	types.map((t) =>
+		enemyTypes.map((e) => {
+			const result = addEffectiveness({
+				playerStats: clone(playerStats),
+				playerType: t,
+				enemyType: e,
+			});
+			if (result.effective > 1) {
+				effective = effective + 1;
+			} else if (result.effective < 1) {
+				effective = effective - 1;
+			}
+			return;
+		})
 	);
 
 	const isValueNegative = effective < 0;
@@ -140,7 +138,7 @@ export const addTeamEffectiveness = async ({
 	};
 };
 
-export const addEffectiveness = async ({
+export const addEffectiveness = ({
 	playerType,
 	enemyType,
 	playerStats,

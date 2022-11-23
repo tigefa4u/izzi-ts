@@ -108,7 +108,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			id: "Dungeon Boss",
 			name: "XeneX's Dungeon Boss"
 		});
-		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = addTeamEffectiveness({
 			cards: playerTeamStats.cards,
 			enemyCards: enemyStats.cards,
 			playerStats: playerTeamStats.totalStats,

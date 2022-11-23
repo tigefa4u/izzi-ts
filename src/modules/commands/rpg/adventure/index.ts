@@ -213,20 +213,16 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 		];
 
 		const [ player, opponent ] = await Promise.all(promises);
-		const [ _playerStats, _enemyStats ] = await Promise.all([
-			addEffectiveness({
-				playerType: card.type,
-				enemyType: enemyCard.type,
-				playerStats: player.playerStats,
-			}),
-			addEffectiveness({
-				playerType: enemyCard.type,
-				enemyType: card.type,
-				playerStats: opponent.playerStats,
-			}),
-		]);
-		const playerStats = _playerStats;
-		const enemyStats = _enemyStats;
+		const enemyStats = addEffectiveness({
+			playerType: enemyCard.type,
+			enemyType: card.type,
+			playerStats: opponent.playerStats,
+		});
+		const playerStats = addEffectiveness({
+			playerType: card.type,
+			enemyType: enemyCard.type,
+			playerStats: player.playerStats,
+		});
 		card.stats = player.baseStats;
 		const playerBase = preparePlayerBase({
 			id: user.user_tag,

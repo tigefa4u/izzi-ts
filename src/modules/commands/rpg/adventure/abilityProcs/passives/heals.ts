@@ -86,7 +86,7 @@ export const surge = ({
 			percent
 		);
 		abilityDamage = bleedDamage + defenseDiff;
-		const abilityDamageCap = Math.floor((playerStats.totalStats.originalHp) * ((playerStats.isBot ? 1 : 30) / 100));
+		const abilityDamageCap = Math.floor((playerStats.totalStats.originalHp) * ((playerStats.isBot ? 1 : 50) / 100));
 		if (abilityDamage > abilityDamageCap) abilityDamage = abilityDamageCap;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
