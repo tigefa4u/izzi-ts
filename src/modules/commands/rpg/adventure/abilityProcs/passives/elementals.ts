@@ -1,6 +1,6 @@
 import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import emoji from "emojis/emoji";
+import { emojiMap } from "emojis";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { addTeamEffectiveness } from "helpers/adventure";
@@ -10,6 +10,7 @@ import {
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
+import { titleCase } from "title-case";
 import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const balancingStrike = ({
@@ -52,7 +53,7 @@ export const balancingStrike = ({
 		);
 
 		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "dark" } ] as (CollectionCardInfoProps | undefined)[],
+			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
 			enemyCards: opponentStats.cards,
 			playerStats: { effective: 1 } as BattleStats["totalStats"],
 			opponentStats: { effective: 1 } as BattleStats["totalStats"],
@@ -94,9 +95,8 @@ export const balancingStrike = ({
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 
 		if (opponentDamageDiff <= 0) damageDiff = 0;
-		console.log({ effective });
 		const desc =
-      `Dealing __${damageDealt}__ **Dark ${emoji.dark}** damage to ` +
+      `Dealing __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(card.type)}** damage to ` +
       `**__${opponentStats.name}__**${
       	effective > 1 ? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}` : ""
       } and also takes __${reflect}__ ` +

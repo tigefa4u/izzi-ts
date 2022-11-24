@@ -69,14 +69,6 @@ export const electrocute = ({
 		const percent = calcPercentRatio(20, card.rank);
 		perDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
 		if (isNaN(perDamage)) perDamage = 0;
-		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "electric" } ] as (CollectionCardInfoProps | undefined)[],
-			enemyCards: opponentStats.cards,
-			playerStats: { effective: 1 } as BattleStats["totalStats"],
-			opponentStats: { effective: 1 } as BattleStats["totalStats"],
-		});
-		const effective = elementalEffectiveness.playerStats.effective;
-		perDamage = Math.floor(perDamage * effective);
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - perDamage;
 		if (
@@ -97,11 +89,7 @@ export const electrocute = ({
 		// dealing __${perDamage}__ damage
 		const desc =
       `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
-      `**Electric** damage,${
-      	effective > 1
-      		? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-      		: ""
-      } as well as Inflicting a stack of **Paralysis**, ${
+      `**Electric** damage, as well as Inflicting a stack of **Paralysis**, ${
       	opponentStats.totalStats.isStunned
       		? `${opponentStats.name} is affected by Paralysis!`
       		: "but it resisted!"

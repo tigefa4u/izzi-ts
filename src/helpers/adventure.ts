@@ -67,7 +67,7 @@ export const preparePlayerStats = async ({
 	};
 };
 
-const effectiveness: EffectivenessProps = {
+export const effectiveness: EffectivenessProps = {
 	water: { affects: [ "fire" ] },
 	fire: { affects: [ "grass", "crystal" ] },
 	grass: { affects: [ "ground", "water" ] },

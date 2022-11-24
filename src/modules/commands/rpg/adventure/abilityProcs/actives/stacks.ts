@@ -86,14 +86,6 @@ export const toxicScreen = ({
 				playerStats.totalStats.intelligence,
 				damagePercent
 			);
-			const elementalEffectiveness = addTeamEffectiveness({
-				cards: [ { type: "poison" } ] as (CollectionCardInfoProps | undefined)[],
-				enemyCards: opponentStats.cards,
-				playerStats: { effective: 1 } as BattleStats["totalStats"],
-				opponentStats: { effective: 1 } as BattleStats["totalStats"],
-			});
-			const effective = elementalEffectiveness.playerStats.effective;
-			abilityDamage = abilityDamage * effective;
 
 			opponentStats.totalStats.strength =
         opponentStats.totalStats.strength - abilityDamage;
@@ -111,13 +103,7 @@ export const toxicScreen = ({
 
 			desc = `**__${
 				opponentStats.name
-			}__** is affected by **Poison** taking __${abilityDamage}__ damage${
-				effective > 1
-					? ` it was ${getElementalEffectiveStatus(
-						elementalEffectiveness.opponentStats.effective
-					)}!`
-					: ""
-			}`;
+			}__** is affected by **Poison** taking __${abilityDamage}__ damage`;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
 				enemyStats: opponentStats,
@@ -304,14 +290,6 @@ export const blizzard = ({
 			playerStats.totalStats.vitality,
 			incPercent
 		);
-		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "crystal" } ] as (CollectionCardInfoProps | undefined)[],
-			enemyCards: opponentStats.cards,
-			playerStats: { effective: 1 } as BattleStats["totalStats"],
-			opponentStats: { effective: 1 } as BattleStats["totalStats"],
-		});
-		const effective = elementalEffectiveness.playerStats.effective;
-		abilityDamage = abilityDamage * effective;
 
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
@@ -329,13 +307,7 @@ export const blizzard = ({
 
 		const desc = `**__${
 			opponentStats.name
-		}__** is affected by **Snow Shards** and takes ${abilityDamage} **Crystal** damage${
-			effective > 1
-				? ` it was ${getElementalEffectiveStatus(
-					elementalEffectiveness.opponentStats.effective
-				)}`
-				: ""
-		}`;
+		}__** is affected by **Snow Shards** and takes ${abilityDamage} damage`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -430,15 +402,6 @@ export const frost = ({
 		const percent = calcPercentRatio(15, card.rank);
 		abilityDamage = getRelationalDiff(damageDealt, percent);
 
-		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "crystal" } ] as (CollectionCardInfoProps | undefined)[],
-			enemyCards: opponentStats.cards,
-			playerStats: { effective: 1 } as BattleStats["totalStats"],
-			opponentStats: { effective: 1 } as BattleStats["totalStats"],
-		});
-		const effective = elementalEffectiveness.playerStats.effective;
-		abilityDamage = abilityDamage * effective;
-
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength <= 0)
@@ -458,13 +421,7 @@ export const frost = ({
 
 		desc = `**__${
 			opponentStats.name
-		}__** is affected by **Frost**, taking additional __${abilityDamage}__ **Crystal** damage${
-			effective > 1
-				? ` it was ${getElementalEffectiveStatus(
-					elementalEffectiveness.opponentStats.effective
-				)}`
-				: ""
-		}`;
+		}__** is affected by **Frost**, taking additional __${abilityDamage}__ damage`;
 
 		if (isFrostBite[probability(frostBiteChances)]) {
 			playerStats.totalStats.previousRound = round;

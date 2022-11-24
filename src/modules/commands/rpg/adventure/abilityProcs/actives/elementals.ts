@@ -1,16 +1,18 @@
 import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { probability, randomElementFromArray, round2Decimal } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { addTeamEffectiveness } from "helpers/adventure";
+import { addTeamEffectiveness, effectiveness } from "helpers/adventure";
 import {
 	getPlayerDamageDealt,
 	getRelationalDiff,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
+import { titleCase } from "title-case";
 import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const elementalStrike = ({
@@ -65,7 +67,7 @@ export const elementalStrike = ({
 			percent
 		);
 		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "fire" } ] as (CollectionCardInfoProps | undefined)[],
+			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
 			enemyCards: opponentStats.cards,
 			playerStats: { effective: 1 } as BattleStats["totalStats"],
 			opponentStats: { effective: 1 } as BattleStats["totalStats"],
@@ -109,8 +111,8 @@ export const elementalStrike = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `Deals __${damageDealt}__ **Fire ${
-			emoji.fire
+		const desc = `Deals __${damageDealt}__ **${titleCase(card.type)} ${
+			emojiMap(card.type)
 		}** damage,${
 			effective > 1
 				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
@@ -190,8 +192,11 @@ export const spellBook = ({
 			abilityDamage = Math.floor(
 				Math.abs(tempDamage - playerStats.totalStats.vitality)
 			);
+
+			const elements = Object.keys(effectiveness);
+			const randomElement = randomElementFromArray(elements);
 			const elementalEffectiveness = addTeamEffectiveness({
-				cards: [ { type: "poison" } ] as (CollectionCardInfoProps | undefined)[],
+				cards: [ { type: randomElement } ] as (CollectionCardInfoProps | undefined)[],
 				enemyCards: opponentStats.cards,
 				playerStats: { effective: 1 } as BattleStats["totalStats"],
 				opponentStats: { effective: 1 } as BattleStats["totalStats"],
@@ -210,7 +215,7 @@ export const spellBook = ({
 			if (opponentStats.totalStats.strength < 0)
 				opponentStats.totalStats.strength = 0;
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality - ratio;
-			desc = `dealing __${abilityDamage}__ **Poison ${emoji.poison}** damage ${
+			desc = `dealing __${abilityDamage}__ **${titleCase(randomElement)} ${emojiMap(randomElement)}** damage ${
 				emoji.elementalstrike
 			} to **__${opponentStats.name}__**${
 				effective > 1
@@ -325,15 +330,7 @@ export const tornado = ({
 			playerStats.totalStats,
 			opponentStats.totalStats
 		);
-		let ratio = getRelationalDiff(playerDamage, percent);
-		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: "wind" } ] as (CollectionCardInfoProps | undefined)[],
-			enemyCards: opponentStats.cards,
-			playerStats: { effective: 1 } as BattleStats["totalStats"],
-			opponentStats: { effective: 1 } as BattleStats["totalStats"],
-		});
-		const effective = elementalEffectiveness.playerStats.effective;
-		ratio = Math.floor(ratio * effective);
+		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = ratio * 3;
 		const abilityDamageCap = Math.floor(
 			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
@@ -353,11 +350,7 @@ export const tornado = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `deals __${abilityDamage}__ **Wind ${emoji.wind}** Damage${
-			effective > 1
-				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-				: ""
-		}.`;
+		const desc = `deals __${abilityDamage}__ True Damage`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
