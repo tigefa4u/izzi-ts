@@ -41,6 +41,7 @@ const spawnRaids = async () => {
 		return Promise.all([ "e", "m", "h", "i" ].map(async (difficulty) => {
 			const computedBoss = computeRank(difficulty, isEvent);
 			if (!computedBoss) return;
+			loggers.info("cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " + difficulty);
 			await createRaidBoss({
 				isPrivate: false,
 				isEvent,
@@ -55,8 +56,14 @@ const spawnRaids = async () => {
 };
 
 async function boot() {
-	await spawnRaids();
-	process.exit(1);
+	try {
+		await spawnRaids();
+		loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");
+	} catch (err) {
+		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
+	} finally {
+		process.exit(1);
+	}
 }
 
 boot();
