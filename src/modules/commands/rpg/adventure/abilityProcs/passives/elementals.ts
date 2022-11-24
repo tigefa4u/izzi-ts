@@ -97,8 +97,8 @@ export const balancingStrike = ({
 		console.log({ effective });
 		const desc =
       `Dealing __${damageDealt}__ **Dark ${emoji.dark}** damage to ` +
-      `**__${opponentStats.name}__** it was ${
-      	effective > 1 ? getElementalEffectiveStatus(effective) : "not very effective..."
+      `**__${opponentStats.name}__**${
+      	effective > 1 ? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}` : ""
       } and also takes __${reflect}__ ` +
       "damage on itself.";
 

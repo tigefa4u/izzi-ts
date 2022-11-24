@@ -97,10 +97,10 @@ export const electrocute = ({
 		// dealing __${perDamage}__ damage
 		const desc =
       `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
-      `**Electric** damage, it was ${
+      `**Electric** damage,${
       	effective > 1
-      		? getElementalEffectiveStatus(effective)
-      		: "not very effective..."
+      		? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
+      		: ""
       } as well as Inflicting a stack of **Paralysis**, ${
       	opponentStats.totalStats.isStunned
       		? `${opponentStats.name} is affected by Paralysis!`

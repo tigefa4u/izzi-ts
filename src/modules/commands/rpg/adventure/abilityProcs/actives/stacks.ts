@@ -1,9 +1,17 @@
-import { BattleProcessProps } from "@customTypes/adventure";
+import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { probability, randomNumber } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getPlayerDamageDealt, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import { addTeamEffectiveness } from "helpers/adventure";
+import {
+	getPlayerDamageDealt,
+	getRelationalDiff,
+	processHpBar,
+	relativeDiff,
+} from "helpers/battle";
+import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const toxicScreen = ({
 	playerStats,
@@ -13,7 +21,7 @@ export const toxicScreen = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict a stack of poison on all enemies decreasing their defense by __20__%
@@ -68,13 +76,25 @@ export const toxicScreen = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
 		if (round % 3 != 0) {
 			const damagePercent = calcPercentRatio(15, card.rank);
-			abilityDamage = getRelationalDiff(playerStats.totalStats.intelligence, damagePercent);
+			abilityDamage = getRelationalDiff(
+				playerStats.totalStats.intelligence,
+				damagePercent
+			);
+			const elementalEffectiveness = addTeamEffectiveness({
+				cards: [ { type: "poison" } ] as (CollectionCardInfoProps | undefined)[],
+				enemyCards: opponentStats.cards,
+				playerStats: { effective: 1 } as BattleStats["totalStats"],
+				opponentStats: { effective: 1 } as BattleStats["totalStats"],
+			});
+			const effective = elementalEffectiveness.playerStats.effective;
+			abilityDamage = abilityDamage * effective;
+
 			opponentStats.totalStats.strength =
         opponentStats.totalStats.strength - abilityDamage;
 			if (opponentStats.totalStats.strength < 0)
@@ -88,8 +108,16 @@ export const toxicScreen = ({
 			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 			opponentStats.totalStats.health = processedHpBar.health;
 			opponentStats.totalStats.strength = processedHpBar.strength;
-            
-			desc = `**__${opponentStats.name}__** is affected by **Poison** taking __${abilityDamage}__ damage`;
+
+			desc = `**__${
+				opponentStats.name
+			}__** is affected by **Poison** taking __${abilityDamage}__ damage${
+				effective > 1
+					? ` it was ${getElementalEffectiveStatus(
+						elementalEffectiveness.opponentStats.effective
+					)}!`
+					: ""
+			}`;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
 				enemyStats: opponentStats,
@@ -102,7 +130,7 @@ export const toxicScreen = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-				simulation
+				simulation,
 			});
 		}
 	}
@@ -126,7 +154,7 @@ export const timeBomb = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
@@ -151,7 +179,7 @@ export const timeBomb = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isTB)
@@ -183,8 +211,9 @@ export const timeBomb = ({
 			opponentStats.totalStats.health = processedHpBar.health;
 			opponentStats.totalStats.strength = processedHpBar.strength;
 
-			const desc = `Time bomb ${emoji.timebomb} has **Exploded** ${emoji.explode}, ` +
-            `**__${opponentStats.name}__** takes __${abilityDamage}__ damage.`;
+			const desc =
+        `Time bomb ${emoji.timebomb} has **Exploded** ${emoji.explode}, ` +
+        `**__${opponentStats.name}__** takes __${abilityDamage}__ damage.`;
 			prepSendAbilityOrItemProcDescription({
 				playerStats,
 				enemyStats: opponentStats,
@@ -197,7 +226,7 @@ export const timeBomb = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-				simulation
+				simulation,
 			});
 		}
 	}
@@ -217,29 +246,36 @@ export const blizzard = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
-	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	playerStats.totalStats.previousRound
+		? playerStats.totalStats.previousRound++
+		: null;
 	let abilityDamage;
 	if (
 		round == playerStats.totalStats.previousRound &&
-  !playerStats.totalStats.isUseBlizzardPassive
+    !playerStats.totalStats.isUseBlizzardPassive
 	) {
 		playerStats.totalStats.isUseBlizzardPassive = true;
 	}
 	if (round % 2 === 0 && !playerStats.totalStats.isBlizzard) {
 		playerStats.totalStats.isBlizzard = true;
 		const percent = calcPercentRatio(20, card.rank);
-		const dexDiff = getRelationalDiff(opponentStats.totalStats.dexterity, percent);
-		opponentStats.totalStats.dexterity = opponentStats.totalStats.dexterity - dexDiff;
-        
+		const dexDiff = getRelationalDiff(
+			opponentStats.totalStats.dexterity,
+			percent
+		);
+		opponentStats.totalStats.dexterity =
+      opponentStats.totalStats.dexterity - dexDiff;
+
 		playerStats.totalStats.previousRound = round;
 
-		const desc = `Decreasing the **SPD** of all enemies by __${percent}%__ ` +
-        "as well as Inflicting a stack of **Snow Shards**.\n" +
-        "The shards will deal __(13% - 25%)__ true damage for 3 rounds.";
+		const desc =
+      `Decreasing the **SPD** of all enemies by __${percent}%__ ` +
+      "as well as Inflicting a stack of **Snow Shards**.\n" +
+      "The shards will deal __(13% - 25%)__ true damage for 3 rounds.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -252,30 +288,54 @@ export const blizzard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	let damageDiff;
-	if (playerStats.totalStats.isUseBlizzardPassive && playerStats.totalStats.isBlizzard) {
+	if (
+		playerStats.totalStats.isUseBlizzardPassive &&
+    playerStats.totalStats.isBlizzard
+	) {
 		if (round % 2 === 1 && playerStats.totalStats.isBlizzard)
 			playerStats.totalStats.isBlizzard = false;
 		if (round === 5) playerStats.totalStats.isUseBlizzardPassive = false;
 		const incPercent = calcPercentRatio(randomNumber(14, 25), card.rank);
-		const relDiff = getRelationalDiff(playerStats.totalStats.vitality, incPercent);
-		abilityDamage = relDiff;
-		opponentStats.totalStats.strength = opponentStats.totalStats.strength - relDiff;
-		if (opponentStats.totalStats.strength < 0) opponentStats.totalStats.strength = 0;
+		abilityDamage = getRelationalDiff(
+			playerStats.totalStats.vitality,
+			incPercent
+		);
+		const elementalEffectiveness = addTeamEffectiveness({
+			cards: [ { type: "crystal" } ] as (CollectionCardInfoProps | undefined)[],
+			enemyCards: opponentStats.cards,
+			playerStats: { effective: 1 } as BattleStats["totalStats"],
+			opponentStats: { effective: 1 } as BattleStats["totalStats"],
+		});
+		const effective = elementalEffectiveness.playerStats.effective;
+		abilityDamage = abilityDamage * effective;
+
+		opponentStats.totalStats.strength =
+      opponentStats.totalStats.strength - abilityDamage;
+		if (opponentStats.totalStats.strength < 0)
+			opponentStats.totalStats.strength = 0;
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
 		);
 		if (damageDiff < 0) damageDiff = 0;
-       
+
 		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `**__${opponentStats.name}__** is affected by **Snow Shards** and takes ${relDiff} damage`;
+		const desc = `**__${
+			opponentStats.name
+		}__** is affected by **Snow Shards** and takes ${abilityDamage} **Crystal** damage${
+			effective > 1
+				? ` it was ${getElementalEffectiveStatus(
+					elementalEffectiveness.opponentStats.effective
+				)}`
+				: ""
+		}`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -288,14 +348,14 @@ export const blizzard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
 		playerStats,
 		opponentStats,
 		damageDiff,
-		abilityDamage 
+		abilityDamage,
 	};
 };
 
@@ -308,15 +368,17 @@ export const frost = ({
 	isPlayerFirst,
 	card,
 	baseEnemyStats,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Inflict all enemies with a stack of frost causing your next attack to deal __15%__ 
+	// Inflict all enemies with a stack of frost causing your next attack to deal __15%__
 	// bonus damage based on your **INT** as well as decreasing the **INT** of all enemies by __8%__
 	// gain a 5% chance of inflicting frost bite
 	let desc, damageDiff, abilityDamage;
 
-	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound++ : null;
+	playerStats.totalStats.previousRound
+		? playerStats.totalStats.previousRound++
+		: null;
 	if (round == playerStats.totalStats.previousRound) {
 		if (opponentStats.totalStats.isStunned) {
 			opponentStats.totalStats.isStunned = false;
@@ -331,14 +393,17 @@ export const frost = ({
 			baseEnemyStats.totalStats.intelligence,
 			decPercent
 		);
-		opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - relDiff;
-	
+		opponentStats.totalStats.intelligence =
+      opponentStats.totalStats.intelligence - relDiff;
+
 		if (opponentStats.totalStats.intelligence < 0) {
-			opponentStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+			opponentStats.totalStats.intelligence =
+        baseEnemyStats.totalStats.intelligence;
 		}
 
-		desc = `Inflicting a stack of **Frost** on **__${opponentStats.name}__** as well as decreasing ` +
-        `its **INT** by __${decPercent}%__`;
+		desc =
+      `Inflicting a stack of **Frost** on **__${opponentStats.name}__** as well as decreasing ` +
+      `its **INT** by __${decPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -351,25 +416,39 @@ export const frost = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
-		}); 
+			simulation,
+		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isFrost)
 		playerStats.totalStats.isFrost = false;
 	if (playerStats.totalStats.isUseFrostPassive && round % 2 !== 0) {
 		playerStats.totalStats.isUseFrostPassive = false;
-		const damageDealt = getPlayerDamageDealt(playerStats.totalStats, opponentStats.totalStats);
+		const damageDealt = getPlayerDamageDealt(
+			playerStats.totalStats,
+			opponentStats.totalStats
+		);
 		const percent = calcPercentRatio(15, card.rank);
-		const relDiff = getRelationalDiff(damageDealt, percent);
-		abilityDamage = relDiff;
-		opponentStats.totalStats.strength = opponentStats.totalStats.strength - relDiff;
-		if (opponentStats.totalStats.strength <= 0) opponentStats.totalStats.strength = 0;
+		abilityDamage = getRelationalDiff(damageDealt, percent);
+
+		const elementalEffectiveness = addTeamEffectiveness({
+			cards: [ { type: "crystal" } ] as (CollectionCardInfoProps | undefined)[],
+			enemyCards: opponentStats.cards,
+			playerStats: { effective: 1 } as BattleStats["totalStats"],
+			opponentStats: { effective: 1 } as BattleStats["totalStats"],
+		});
+		const effective = elementalEffectiveness.playerStats.effective;
+		abilityDamage = abilityDamage * effective;
+
+		opponentStats.totalStats.strength =
+      opponentStats.totalStats.strength - abilityDamage;
+		if (opponentStats.totalStats.strength <= 0)
+			opponentStats.totalStats.strength = 0;
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
 		);
 		if (damageDiff <= 0) damageDiff = 0;
-        
+
 		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
@@ -377,7 +456,15 @@ export const frost = ({
 		const frostBiteChances = [ 5, 95 ];
 		const isFrostBite = [ true, false ];
 
-		desc = `**__${opponentStats.name}__** is affected by **Frost**, taking additional __${relDiff}__ damage`;
+		desc = `**__${
+			opponentStats.name
+		}__** is affected by **Frost**, taking additional __${abilityDamage}__ **Crystal** damage${
+			effective > 1
+				? ` it was ${getElementalEffectiveStatus(
+					elementalEffectiveness.opponentStats.effective
+				)}`
+				: ""
+		}`;
 
 		if (isFrostBite[probability(frostBiteChances)]) {
 			playerStats.totalStats.previousRound = round;
@@ -398,13 +485,13 @@ export const frost = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
-		}); 
+			simulation,
+		});
 	}
 	return {
 		playerStats,
 		opponentStats,
 		damageDiff,
-		abilityDamage 
+		abilityDamage,
 	};
 };

@@ -111,10 +111,10 @@ export const elementalStrike = ({
 
 		const desc = `Deals __${damageDealt}__ **Fire ${
 			emoji.fire
-		}** damage, it was ${
+		}** damage,${
 			effective > 1
-				? getElementalEffectiveStatus(effective)
-				: "not very effective..."
+				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
+				: ""
 		} as well as increasing its **INT** by __${incPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -212,10 +212,10 @@ export const spellBook = ({
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality - ratio;
 			desc = `dealing __${abilityDamage}__ **Poison ${emoji.poison}** damage ${
 				emoji.elementalstrike
-			} to **__${opponentStats.name}__** it was ${
+			} to **__${opponentStats.name}__**${
 				effective > 1
-					? getElementalEffectiveStatus(effective)
-					: "not very effective..."
+					? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
+					: ""
 			}`;
 		}
 		let opponentDamageDiff = relativeDiff(
@@ -353,10 +353,10 @@ export const tornado = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `deals __${abilityDamage}__ **Wind ${emoji.wind}** Damage it was ${
+		const desc = `deals __${abilityDamage}__ **Wind ${emoji.wind}** Damage${
 			effective > 1
-				? getElementalEffectiveStatus(effective)
-				: "not very effective..."
+				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
+				: ""
 		}.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
