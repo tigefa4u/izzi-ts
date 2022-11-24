@@ -4,6 +4,8 @@ import {
 } from "@customTypes/canvas";
 import { CardMetadataProps } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import Cache from "cache";
+import * as ImageCache from "cache/imageCache";
 import { createCanvas, loadImage, Canvas, Image } from "canvas";
 import loggers from "loggers";
 import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
@@ -84,10 +86,7 @@ export const createSingleCanvas: (
 		// 	resolve(canvas);
 		// });
 	} catch (err) {
-		loggers.error(
-			"helpers.canvas.createSingleCanvas: ERROR",
-			err
-		);
+		loggers.error("helpers.canvas.createSingleCanvas: ERROR", err);
 		return;
 	}
 };
@@ -115,7 +114,15 @@ export const createBattleCanvas = async (
 	ctx.fillStyle = "#000000";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	if (!extras?.isSingleRow) {
-		const bgPath = await loadImage("./assets/images/background.jpg");
+		const cachedBg = ImageCache.getImage("battle-bg") || {} as {
+			image: Image;
+			time: number;
+		};
+		let bgPath = cachedBg.image;
+		if (!bgPath) {
+			bgPath = await loadImage("./assets/images/background.jpg");
+		}
+		ImageCache.setImage("battle-bg", bgPath);
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
 	}
 	try {
@@ -134,23 +141,39 @@ export const createBattleCanvas = async (
 		// 	CANVAS_DEFAULTS.iconWidth,
 		// 	CANVAS_DEFAULTS.iconHeight
 		// );
-		// const startTimer = loggers.startTimer("Battle canvas: ");
+		const startTimer = loggers.startTimer("Battle canvas: ");
 		const images = await Promise.all(
 			cards.map(async (card) => {
 				if (card) {
-					// const startImageTimer = loggers.startTimer("[Image] Path: ");
+					const startImageTimer = loggers.startTimer("[Image] Path: ");
 					// load precomputed images with border and stars
 					let filepath = card?.filepath;
-					const version = extras?.version || (extras?.isSingleRow ? "medium" : "small");
+					const version =
+            extras?.version || (extras?.isSingleRow ? "medium" : "small");
 					if (card.metadata?.assets && card.metadata.assets[version]) {
 						filepath = card.metadata.assets[version].filepath;
 					}
-					// startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const image = await loadImage(filepath).catch((err) => {
-						loggers.error("canvas.createBattleCanvas: ERROR Unable to load filepath -> " + filepath, err);
-						throw err;
-					});
-					// loggers.endTimer(startImageTimer);
+					startImageTimer.message = startImageTimer.message + " -> " + filepath;
+					const cachedImage = ImageCache.getImage(filepath) || {} as {
+						image: Image;
+						time: number;
+					};
+					let image = cachedImage?.image;
+					if (!image) {
+						startImageTimer.message = startImageTimer.message + " -> loading image from url";
+						image = await loadImage(filepath).catch((err) => {
+							loggers.error(
+								"canvas.createBattleCanvas: ERROR Unable to load filepath -> " +
+                  				filepath,
+								err
+							);
+							throw err;
+						});
+					} else {
+						startImageTimer.message = startImageTimer.message + " -> loading from cache";
+					}
+					ImageCache.setImage(filepath, image);
+					loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
 						image,
@@ -221,14 +244,11 @@ export const createBattleCanvas = async (
 				// 		}
 				// 	}
 			}
-			// loggers.endTimer(startTimer);
+			loggers.endTimer(startTimer);
 			resolve(canvas);
 		});
 	} catch (err) {
-		loggers.error(
-			"helpers.adventure.createBattleCanvas: ERROR",
-			err
-		);
+		loggers.error("helpers.adventure.createBattleCanvas: ERROR", err);
 		return;
 	}
 };
