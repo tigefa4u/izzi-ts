@@ -35,7 +35,7 @@ export const balancingStrike = ({
 	let damageDiff;
 	let abilityDamage;
 	let playerDamageDiff;
-	if (round % 1 === 0 && !playerStats.totalStats.isBstrike) {
+	if (round % 2 === 0 && !playerStats.totalStats.isBstrike) {
 		playerStats.totalStats.isBstrike = true;
 		let num = 25;
 		const hasMoreSpeed = compare(
