@@ -116,7 +116,7 @@ export const elementalStrike = ({
 		}** damage,${
 			effective > 1
 				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-				: ""
+				: effective < 1 ? " it was not very effective..." : ""
 		} as well as increasing its **INT** by __${incPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -220,7 +220,7 @@ export const spellBook = ({
 			} to **__${opponentStats.name}__**${
 				effective > 1
 					? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-					: ""
+					: effective < 1 ? " it was not very effective..." : ""
 			}`;
 		}
 		let opponentDamageDiff = relativeDiff(

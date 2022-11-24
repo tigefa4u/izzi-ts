@@ -96,9 +96,17 @@ export const balancingStrike = ({
 
 		if (opponentDamageDiff <= 0) damageDiff = 0;
 		const desc =
-      `Dealing __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(card.type)}** damage to ` +
+      `Dealing __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(
+      	card.type
+      )}** damage to ` +
       `**__${opponentStats.name}__**${
-      	effective > 1 ? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}` : ""
+      	effective > 1
+      		? ` it was ${getElementalEffectiveStatus(
+      			elementalEffectiveness.opponentStats.effective
+      		)}`
+      		: effective < 1
+      			? " it was not very effective..."
+      			: ""
       } and also takes __${reflect}__ ` +
       "damage on itself.";
 
