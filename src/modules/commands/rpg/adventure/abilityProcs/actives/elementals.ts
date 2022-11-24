@@ -111,12 +111,16 @@ export const elementalStrike = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `Deals __${damageDealt}__ **${titleCase(card.type)} ${
-			emojiMap(card.type)
-		}** damage,${
+		const desc = `Deals __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(
+			card.type
+		)}** damage,${
 			effective > 1
-				? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-				: effective < 1 ? " it was not very effective..." : ""
+				? ` it was ${getElementalEffectiveStatus(
+					elementalEffectiveness.opponentStats.effective
+				)}`
+				: effective < 1
+					? " it was not very effective..."
+					: ""
 		} as well as increasing its **INT** by __${incPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -196,7 +200,10 @@ export const spellBook = ({
 			const elements = Object.keys(effectiveness);
 			const randomElement = randomElementFromArray(elements);
 			const elementalEffectiveness = addTeamEffectiveness({
-				cards: [ { type: randomElement } ] as (CollectionCardInfoProps | undefined)[],
+				cards: [ { type: randomElement } ] as (
+          | CollectionCardInfoProps
+          | undefined
+        )[],
 				enemyCards: opponentStats.cards,
 				playerStats: { effective: 1 } as BattleStats["totalStats"],
 				opponentStats: { effective: 1 } as BattleStats["totalStats"],
@@ -215,12 +222,16 @@ export const spellBook = ({
 			if (opponentStats.totalStats.strength < 0)
 				opponentStats.totalStats.strength = 0;
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality - ratio;
-			desc = `dealing __${abilityDamage}__ **${titleCase(randomElement)} ${emojiMap(randomElement)}** damage ${
-				emoji.elementalstrike
-			} to **__${opponentStats.name}__**${
+			desc = `dealing __${abilityDamage}__ **${titleCase(
+				randomElement
+			)} ${emojiMap(randomElement)}** damage to **__${opponentStats.name}__**${
 				effective > 1
-					? ` it was ${getElementalEffectiveStatus(elementalEffectiveness.opponentStats.effective)}`
-					: effective < 1 ? " it was not very effective..." : ""
+					? ` it was ${getElementalEffectiveStatus(
+						elementalEffectiveness.opponentStats.effective
+					)}`
+					: effective < 1
+						? " it was not very effective..."
+						: ""
 			}`;
 		}
 		let opponentDamageDiff = relativeDiff(
