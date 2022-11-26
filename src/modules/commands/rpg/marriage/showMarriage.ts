@@ -22,26 +22,26 @@ export const showMarriageProfile = async ({
 			);
 			return;
 		}
-		const marriedToUser = await client.users.fetch(
-			marriages.married_to
-		);
+		const marriedToUser = await client.users.fetch(marriages.married_to);
 		const dt = new Date();
 		const createdAt = new Date(marriages.created_at);
 
-		const marriedYears = dt.getFullYear() - createdAt.getFullYear();
 		let marriedDays = Math.ceil(
-			Math.abs(
-				createdAt.getTime() - dt.getTime()
-			) /
-        (1000 * 60 * 60 * 24)
+			Math.abs(createdAt.getTime() - dt.getTime()) / (1000 * 60 * 60 * 24)
 		);
-		if (marriedDays > 365) marriedDays = 365;
+		marriedDays = 365;
+		const marriedYears = Math.floor(marriedDays / 365);
+		marriedDays = Math.floor(marriedDays % 365 % 30);
 
 		const embed = createEmbed(author, client)
 			.setTitle("Marriage :two_hearts:")
 			.setDescription(
-				`**${author.username}** and **${marriedToUser.username || marriages.married_to_username}** ` +
-        `are happily married for **__${marriedYears > 0 ? ` ${marriedYears} Years ` : ""}${marriedDays} Days__**`
+				`**${author.username}** and **${
+					marriedToUser.username || marriages.married_to_username
+				}** ` +
+          `are happily married for **__${
+          	marriedYears > 0 ? ` ${marriedYears} Year(s) ` : ""
+          }${marriedDays > 0 ? ` ${marriedDays} Day(s)` : ""}__**`
 			);
 
 		if (marriedToUser) {
