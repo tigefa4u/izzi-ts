@@ -24,6 +24,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_ITEM_PROPERTIES,
 	GUILD_MARKET_IDS,
+	MAX_ABSORBABLE_SOULS,
 	SEAL_ID,
 	SOUL_ID,
 } from "helpers/constants";
@@ -256,7 +257,7 @@ export const upgradeCard = async ({
 		const collectionId = Number(args.shift());
 		if (!collectionId || isNaN(collectionId)) return;
 		let numOfSouls = Number(args.shift());
-		if (isNaN(numOfSouls) || numOfSouls <= 0 || numOfSouls > 20) numOfSouls = 1;
+		if (isNaN(numOfSouls) || numOfSouls <= 0 || numOfSouls > MAX_ABSORBABLE_SOULS) numOfSouls = 1;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		let embed = createEmbed(author, client);
