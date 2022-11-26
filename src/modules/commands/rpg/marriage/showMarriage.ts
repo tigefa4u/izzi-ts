@@ -30,7 +30,7 @@ export const showMarriageProfile = async ({
 			Math.abs(createdAt.getTime() - dt.getTime()) / (1000 * 60 * 60 * 24)
 		);
 		const marriedYears = Math.floor(marriedDays / 365);
-		marriedDays = Math.floor(marriedDays % 365 % 30);
+		marriedDays = Math.floor(marriedDays % 365);
 
 		const embed = createEmbed(author, client)
 			.setTitle("Marriage :two_hearts:")
