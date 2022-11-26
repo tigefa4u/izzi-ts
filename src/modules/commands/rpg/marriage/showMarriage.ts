@@ -29,7 +29,6 @@ export const showMarriageProfile = async ({
 		let marriedDays = Math.ceil(
 			Math.abs(createdAt.getTime() - dt.getTime()) / (1000 * 60 * 60 * 24)
 		);
-		marriedDays = 365;
 		const marriedYears = Math.floor(marriedDays / 365);
 		marriedDays = Math.floor(marriedDays % 365 % 30);
 
