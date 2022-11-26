@@ -117,8 +117,8 @@ export const REACTIONS_DEFAULT_STYLE = "PRIMARY";
 export const LOTTERY_PRICE = 1000;
 export const LEVEL_UP_MANA_GAIN = 2;
 export const LEVEL_UP_EXP_MULTIPLIER = 47;
-export const GOLD_LIMIT = 5000000;
-export const BET_LIMIT = 50000;
+export const GOLD_LIMIT = 100000000;
+export const BET_LIMIT = 500000;
 export const DEFAULT_PACK = {
 	num: 50,
 	cost: 1350,
@@ -163,7 +163,7 @@ export const GUILD_BASE_STATS = {
 export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
 export const GUILD_MARKET_IDS = [ 2, 5 ];
-export const GUILD_MAX_DONATION = 10000000;
+export const GUILD_MAX_DONATION = 100000000;
 export const GUILD_MAX_LEVEL = 150;
 export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
 export const SOUL_ID = 2;
@@ -223,7 +223,7 @@ export const BATTLE_FORFEIT_RETRIES = 1;
 
 export const USER_XP_GAIN_PER_BATTLE = 8;
 
-export const MAX_GOLD_IN_TRADE = 10000000;
+export const MAX_GOLD_IN_TRADE = 100000000;
 export const MAX_CARDS_IN_TRADE = 1000;
 
 export const SACRIFICE_GOLD_COST = 1350;
@@ -418,6 +418,10 @@ export const CONSOLE_BUTTONS = {
 	REFERRAL: {
 		id: "referral",
 		label: "Refer your friends and get a free card!"
+	},
+	UPGRADE_GUILD: {
+		id: "upgrade_guild",
+		label: "Upgrade Guild"
 	}
 };
 

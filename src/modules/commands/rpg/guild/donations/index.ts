@@ -29,7 +29,7 @@ export const donateToGuild = async ({
 		if (!donation || isNaN(donation) || donation > GUILD_MAX_DONATION) {
 			embed.setDescription(
 				"Invalid Donation Amount. Donation amount must be less than " +
-          GUILD_MAX_DONATION
+          numericWithComma(GUILD_MAX_DONATION)
 			);
 			context.channel?.sendMessage(embed);
 			return;

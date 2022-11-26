@@ -9,9 +9,12 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 import loggers from "loggers";
 import { isEmptyValue } from "utility";
+import { customButtonInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
+import { upgradeGuild } from "../upgrades";
 
 type P = {
   username: string;
@@ -68,7 +71,7 @@ function prepareGuildDesc(
 	return desc;
 }
 
-export const viewGuild = async ({ context, options, args }: BaseProps) => {
+export const viewGuild = async ({ context, options, args, client }: BaseProps) => {
 	try {
 		const author = options.author;
 		const mentionedId = getIdFromMentionedString(args.shift() || "");
@@ -134,6 +137,36 @@ export const viewGuild = async ({ context, options, args }: BaseProps) => {
 			embed.setImage(validGuild.guild.banner);
 		}
 
+		const buttons = customButtonInteraction(
+			context.channel,
+			[
+				{
+					label: CONSOLE_BUTTONS.UPGRADE_GUILD.label,
+					params: { id: CONSOLE_BUTTONS.UPGRADE_GUILD.id }
+				}
+			],
+			author.id,
+			({ id }) => {
+				if (id === CONSOLE_BUTTONS.UPGRADE_GUILD.id) {
+					upgradeGuild({
+						context,
+						client,
+						options,
+						args
+					});
+				}
+				return;
+			},
+			() => {
+				return;
+			},
+			false,
+			5
+		);
+
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

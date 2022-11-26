@@ -24,6 +24,7 @@ import { MARRIAGE_BONUS } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
+import { showMarriageProfile } from "./showMarriage";
 
 export const divorce = async ({ context, options }: BaseProps) => {
 	try {
@@ -164,7 +165,15 @@ export const propose = async ({
 			return;
 		}
 		const id = getIdFromMentionedString(args.shift() || "");
-		if (!id) return;
+		if (!id) {
+			showMarriageProfile({
+				args,
+				context,
+				options,
+				client
+			});
+			return;
+		}
 		if (author.id === id) return;
 		const params = {
 			author,

@@ -70,7 +70,7 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		if (isNaN(transferAmount) || transferAmount > GOLD_LIMIT) {
 			embed.setDescription(
 				"Invalid Amount. You can transfer up to __" +
-          GOLD_LIMIT +
+          numericWithComma(GOLD_LIMIT) +
           "__ Gold " +
           emoji.gold
 			);

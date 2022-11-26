@@ -2,6 +2,7 @@ import { MarriageCreateProps, MarriageProps } from "@customTypes/marriages";
 import connection from "db";
 
 const tableName = "marriages";
+const users = "users";
 export const transformation = {
 	id: {
 		type: "number",
@@ -28,16 +29,20 @@ export const transformation = {
 export const get = async (params: {
   user_tag: string;
 }): Promise<MarriageProps[]> => {
-	return await connection(tableName).where(params);
+	const db = connection;
+	return db.select(db.raw(`${tableName}.*, ${users}.username as married_to_username`))
+		.from(tableName)
+		.innerJoin(users, `${tableName}.married_to`, `${users}.user_tag`)
+		.where(`${tableName}.user_tag`, params.user_tag);
 };
 
 export const del = async (params: { user_tag: string }) => {
-	return await connection(tableName)
+	return connection(tableName)
 		.where(params)
 		.orWhere({ married_to: params.user_tag })
 		.del();
 };
 
 export const create = async (data: MarriageCreateProps) => {
-	return await connection(tableName).insert(data);
+	return connection(tableName).insert(data);
 };
