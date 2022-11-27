@@ -151,10 +151,10 @@ export const BattleProcess = async ({
 		opponentStats.totalStats.isEvadeHit = false;
 	}
 	playerStats.totalStats = processStack(playerStats.totalStats);
-	playerStats.totalStats = processStatBuffCap(
-		playerStats.totalStats,
-		isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
-	);
+	// playerStats.totalStats = processStatBuffCap(
+	// 	playerStats.totalStats,
+	// 	isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
+	// );
 	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
