@@ -269,6 +269,7 @@ export const getByRowNumber = async (params: {
 	// ${sort ? sort.sortOrder : "desc"}
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
+		.where(`${tableName}.is_item`, false)
 		.as(alias);
 	
 	if (params.exclude_ids) {
