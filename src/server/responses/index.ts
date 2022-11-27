@@ -1,14 +1,16 @@
+import { ERROR_CONSTANTS } from "server/helpers/errorConstants";
+
 export const notFound = (res: any, message: string) => {
 	return res.status(404).send({
-		code: 404,
+		code: ERROR_CONSTANTS.NOT_FOUND,
 		error: true,
 		message: message || "Not found"
 	});
 };
 
-export const error = (res: any, code: number, message: string) => {
-	return res.status(code || 400).send({
-		code: code || 400,
+export const error = (res: any, status: number, message: string, code?: string) => {
+	return res.status(status || 400).send({
+		code: code || ERROR_CONSTANTS.BAD_REQUEST,
 		error: true,
 		message: message || "Bad request"
 	});
