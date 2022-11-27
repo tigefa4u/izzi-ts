@@ -35,6 +35,7 @@ export const surge = ({
 	) {
 		playerStats.totalStats.isSurge = true;
 		opponentStats.totalStats.isBleeding = true;
+		playerStats.totalStats.bleedResetOnRound = round + 2;
 		const percent = calcPercentRatio(65, card.rank);
 		playerStats.totalStats.surgePercent = percent;
 
@@ -63,6 +64,9 @@ export const surge = ({
 			isItem: false,
 			simulation,
 		});
+	} else if (playerStats.totalStats.strength > perStr && playerStats.totalStats.isSurge) {
+		playerStats.totalStats.isSurge = false;
+		opponentStats.totalStats.isBleeding = false;
 	}
 	// if (
 	// 	playerStats.totalStats.isSurge &&
@@ -82,6 +86,8 @@ export const surge = ({
 			percent
 		);
 		abilityDamage = bleedDamage + defenseDiff;
+		const abilityDamageCap = Math.floor((playerStats.totalStats.originalHp) * ((playerStats.isBot ? 1 : 50) / 100));
+		if (abilityDamage > abilityDamageCap) abilityDamage = abilityDamageCap;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength < 0)

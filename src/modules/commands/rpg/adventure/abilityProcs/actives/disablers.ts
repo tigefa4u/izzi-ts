@@ -1,10 +1,13 @@
-import { BattleProcessProps } from "@customTypes/adventure";
+import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { addTeamEffectiveness } from "helpers/adventure";
 import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 import { titleCase } from "title-case";
+import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const electrocute = ({
 	playerStats,
@@ -15,12 +18,15 @@ export const electrocute = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.electrocute) {
 		const canResist = [ true, false ][
-			probability([ opponentStats.totalStats.abilityToResist.electrocute.percent, 100 ])
+			probability([
+				opponentStats.totalStats.abilityToResist.electrocute.percent,
+				100,
+			])
 		];
 
 		if (canResist) {
@@ -37,11 +43,11 @@ export const electrocute = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-				simulation
+				simulation,
 			});
 			return {
 				playerStats,
-				opponentStats
+				opponentStats,
 			};
 		}
 	}
@@ -83,7 +89,7 @@ export const electrocute = ({
 		// dealing __${perDamage}__ damage
 		const desc =
       `Electrocuting **__${opponentStats.name}__** dealing __${perDamage}__ ` +
-      `damage as well as Inflicting a stack of **Paralysis**, ${
+      `**Electric** damage, as well as Inflicting a stack of **Paralysis**, ${
       	opponentStats.totalStats.isStunned
       		? `${opponentStats.name} is affected by Paralysis!`
       		: "but it resisted!"
@@ -100,7 +106,7 @@ export const electrocute = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -120,7 +126,7 @@ export const sleep = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	let desc,
 		isResist = false;
@@ -142,7 +148,7 @@ export const sleep = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-				simulation
+				simulation,
 			});
 		}
 	}
@@ -171,7 +177,7 @@ export const sleep = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -189,12 +195,15 @@ export const misdirection = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.misdirection) {
 		const canResist = [ true, false ][
-			probability([ opponentStats.totalStats.abilityToResist.misdirection.percent, 100 ])
+			probability([
+				opponentStats.totalStats.abilityToResist.misdirection.percent,
+				100,
+			])
 		];
 
 		if (canResist) {
@@ -211,11 +220,11 @@ export const misdirection = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: false,
-				simulation
+				simulation,
 			});
 			return {
 				playerStats,
-				opponentStats
+				opponentStats,
 			};
 		}
 	}
@@ -271,7 +280,7 @@ export const misdirection = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {
@@ -291,7 +300,7 @@ export const restriction = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	let desc,
@@ -321,7 +330,7 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 4 === 0 && opponentStats.totalStats.isRestrictResisted) {
@@ -341,7 +350,7 @@ export const restriction = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {

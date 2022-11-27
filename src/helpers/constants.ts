@@ -287,6 +287,7 @@ export const DEFAULT_STARTER_GUIDE_TITLE = "Starter Guide";
 export const MAX_CONSUMABLE_SOULS = 700;
 
 export const MAX_ABSORBABLE_SOULS = 100;
+export const ABILITY_BUFF_MAX_PERCENT = 195;
 
 export const CONSOLE_BUTTONS = {
 	VOTE: {
@@ -460,3 +461,6 @@ export const MAX_MANA_GAIN = 420;
 
 export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpg";
 export const MIN_LEVEL_FOR_REFERRAL = 6;
+
+// Ability cap in %
+export const ABILITY_CAP = { fightingSpirit: { vitality: 150 } };

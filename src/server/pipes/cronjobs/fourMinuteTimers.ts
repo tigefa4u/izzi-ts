@@ -6,6 +6,7 @@ import loggers from "loggers";
 import "../../../module";
 
 async function refillMana() {
+	loggers.info("cronjobs.fourMinuteTimers.refillMana: refilling mana");
 	await Promise.all([
 		connection.raw(
 			"update users set mana = mana + 3, mana_refilled_at = now() " +
@@ -22,6 +23,7 @@ async function refillMana() {
 			`where is_banned = false and dungeon_mana < ${DUNGEON_MAX_MANA}`
 		)
 	]);
+	loggers.info("cronjobs.fourMinuteTimers.refillMana: completed...");
 }
 
 // need to reset is_event after the event
@@ -29,11 +31,14 @@ async function refillRaidEnergy() {
 	try {
 		const raids = await getAllRaids();
 		if (!raids) return;
-		return await Promise.all(
+		await Promise.all(
 			raids.map((raid) => {
+				loggers.info("cronjobs.fourMinuteTimers.refillRaidEnergy: refilling energy for raid: " + raid.id);
 				return refillEnergy(raid.id, raid.lobby);
 			})
 		);
+		loggers.info("cronjobs.fourMinuteTimers.refillRaidEnergy: completed...");
+		return;
 	} catch (err) {
 		loggers.error("cronjobs.fourMinuteTimers.refillRaidEnergy: ERROR", err);
 		return;
@@ -41,8 +46,13 @@ async function refillRaidEnergy() {
 }
 
 async function boot() {
-	await Promise.all([ refillMana(), refillRaidEnergy() ]);
-	process.exit(1);
+	try {
+		await Promise.all([ refillMana(), refillRaidEnergy() ]);
+	} catch (err) {
+		loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
+	} finally {
+		process.exit(1);
+	}
 }
 
 boot();

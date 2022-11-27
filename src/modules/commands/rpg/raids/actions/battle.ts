@@ -91,7 +91,7 @@ export const battleRaidBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
 		}
@@ -110,7 +110,7 @@ export const battleRaidBoss = async ({
 		const {
 			playerStats: effectiveStats,
 			opponentStats: opponentEffectiveStats,
-		} = await addTeamEffectiveness({
+		} = addTeamEffectiveness({
 			cards: playerStats.stats.cards,
 			enemyCards: enemyStats.cards,
 			playerStats: playerStats.stats.totalStats,
@@ -118,6 +118,7 @@ export const battleRaidBoss = async ({
 		});
 		playerStats.stats.totalStats = effectiveStats;
 		enemyStats.totalStats = opponentEffectiveStats;
+		enemyStats.isBot = true;
 
 		inBattle = await getCooldown(
 			author.id,

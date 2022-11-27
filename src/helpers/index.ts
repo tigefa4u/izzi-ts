@@ -388,7 +388,7 @@ export const preparePlayerBase = ({
 export const validateChannelPermissions = (context: BaseProps["context"], ch?: string) => {
 	let hasPermission = true;
 	if (!context.channel?.id) return false;
-	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id).serialize();
+	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id)?.serialize();
 	for (const permission of BOT_GLOBAL_PERMISSIONS) {
 		if (!permissionsMap || !permissionsMap[permission]) {
 			hasPermission = false;

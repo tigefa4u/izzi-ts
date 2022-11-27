@@ -111,7 +111,7 @@ export const spbt = async ({ options, context, client }: BaseProps) => {
 		});
 		_inBattle = await getCooldown(author.id, "mana-battle");
 		if (_inBattle) return;
-		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = await addTeamEffectiveness({
+		const { playerStats: effectiveStats, opponentStats: opponentEffectiveStats } = addTeamEffectiveness({
 			cards: playerTeamStats.cards,
 			enemyCards: enemyBase.cards,
 			playerStats: playerTeamStats.totalStats,

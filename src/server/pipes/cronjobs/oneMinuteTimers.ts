@@ -5,10 +5,12 @@ import "../../../module";
 import autoKick from "../autoKick";
 import { delay } from "helpers";
 
+// connect to process - chrome dev tool - remote connection
 async function raidTimers() {
 	try {
 		const raids = await getAllRaids();
 		if (!raids) return;
+		loggers.info("cronjobs.oneMinuteTimers.raidTimers: cronjob invoked..");
 		await Promise.all(
 			raids.map(async (raid) => {
 				const remainingTime =
@@ -34,6 +36,7 @@ async function raidTimers() {
 				}
 			})
 		);
+		loggers.info("cronjobs.oneMinuteTimers.raidTimers: completed...");
 		return;
 	} catch (err) {
 		loggers.error("cronjobs.oneMinuteTimers.raidTimers: ERROR", err);
@@ -42,8 +45,13 @@ async function raidTimers() {
 }
 
 async function boot() {
-	await Promise.all([ autoKick(), raidTimers() ]);
-	process.exit(1);
+	try {
+		await Promise.all([ autoKick(), raidTimers() ]);
+	} catch (err) {
+		loggers.error("cronjobs.oneMinuteTimers.boot: ERROR", err);
+	} finally {
+		process.exit(1);
+	}
 }
 
 boot();

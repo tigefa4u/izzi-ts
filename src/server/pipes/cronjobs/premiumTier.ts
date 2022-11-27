@@ -6,6 +6,7 @@ async function premiumTimer() {
 	try {
 		const users = await getAllUsers({ is_premium: true });
 		if (!users) return;
+		loggers.info("cronjobs.premiumTier.premiumTimer: resetting user premium days: users - " + users.length);
 		await Promise.all(
 			users.map((user) => {
 				let params = {};
@@ -28,6 +29,7 @@ async function premiumTimer() {
 				return updateRPGUser({ user_tag: user.user_tag }, params);
 			})
 		);
+		loggers.info("cronjobs.premiumTier.premiumTimer: completed...");
 		return;
 	} catch (err) {
 		loggers.error("cronjobs.premiumTier.premiumTimer: ERROR", err);
@@ -39,6 +41,7 @@ async function miniPremiumTimer() {
 	try {
 		const users = await getAllUsers({ is_mini_premium: true });
 		if (!users) return;
+		loggers.info("cronjobs.premiumTier.miniPremiumTimer: resetting user mini premium: users - " + users.length);
 		await Promise.all(
 			users.map((user) => {
 				let params = {};
@@ -61,6 +64,7 @@ async function miniPremiumTimer() {
 				return updateRPGUser({ user_tag: user.user_tag }, params);
 			})
 		);
+		loggers.info("cronjobs.premiumTier.miniPremiumTimer: completed...");
 		return;
 	} catch (err) {
 		loggers.error("cronjobs.premiumTier.miniPremiumTimer: ERROR", err);
@@ -72,6 +76,7 @@ async function resetVoteTimers() {
 	try {
 		const users = await getAllUsers();
 		if (!users) return;
+		loggers.info("cronjobs.premiumTier.resetVoteTimers: resetting user vote timers: users - " + users.length);
 		await Promise.all(
 			users.map(async (user) => {
 				const oneDay = 1000 * 60 * 60 * 24;
@@ -81,6 +86,7 @@ async function resetVoteTimers() {
 				}
 			})
 		);
+		loggers.info("cronjobs.premiumTier.resetVoteTimers: completed...");
 		return;
 	} catch (err) {
 		loggers.error("cronjobs.premiumTier.resetVoteTimers: ERROR", err);
@@ -92,6 +98,7 @@ async function resetUserActive() {
 	try {
 		const users = await getAllUsers();
 		if (!users) return;
+		loggers.info("cronjobs.premiumTier.resetUserActive: resetting user active status: users - " + users.length);
 		await Promise.all(
 			users.map(async (user) => {
 				const dt = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
@@ -104,6 +111,7 @@ async function resetUserActive() {
 				return;
 			})
 		);
+		loggers.info("cronjobs.premiumTier.resetUserActive: completed...");
 		return;
 	} catch (err) {
 		loggers.error("cronjobs.premiumTier.resetUserActive: ERROR", err);

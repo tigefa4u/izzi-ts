@@ -1,7 +1,17 @@
-import { BattleProcessProps } from "@customTypes/adventure";
+import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
+import { emojiMap } from "emojis";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import { addTeamEffectiveness } from "helpers/adventure";
+import {
+	compare,
+	getRelationalDiff,
+	processHpBar,
+	relativeDiff,
+} from "helpers/battle";
+import { titleCase } from "title-case";
+import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const balancingStrike = ({
 	playerStats,
@@ -11,7 +21,7 @@ export const balancingStrike = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -19,7 +29,9 @@ export const balancingStrike = ({
     !opponentStats.totalStats.originalHp
 	)
 		return;
-	// Deal elemental damage equal to __25%__ of your ATK as true damage, and take 1/3 of 
+
+	// dark type damage
+	// Deal elemental damage equal to __25%__ of your ATK as true damage, and take 1/3 of
 	// the damage dealt to yourself. If your spd is more than you deal __25%__ more damage.
 	let damageDiff;
 	let abilityDamage;
@@ -27,13 +39,27 @@ export const balancingStrike = ({
 	if (round % 2 === 0 && !playerStats.totalStats.isBstrike) {
 		playerStats.totalStats.isBstrike = true;
 		let num = 25;
-		const hasMoreSpeed = compare(playerStats.totalStats.dexterity, opponentStats.totalStats.dexterity);
+		const hasMoreSpeed = compare(
+			playerStats.totalStats.dexterity,
+			opponentStats.totalStats.dexterity
+		);
 		if (hasMoreSpeed) {
 			num = 50;
 		}
 		const percent = calcPercentRatio(num, card.rank);
-		const relDiff = getRelationalDiff(playerStats.totalStats.vitality, percent);
-		const damageDealt = relDiff;
+		let damageDealt = getRelationalDiff(
+			playerStats.totalStats.vitality,
+			percent
+		);
+
+		const elementalEffectiveness = addTeamEffectiveness({
+			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
+			enemyCards: opponentStats.cards,
+			playerStats: { effective: 1 } as BattleStats["totalStats"],
+			opponentStats: { effective: 1 } as BattleStats["totalStats"],
+		});
+		const effective = elementalEffectiveness.playerStats.effective;
+		damageDealt = Math.floor(damageDealt * effective);
 		abilityDamage = damageDealt;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
@@ -54,17 +80,35 @@ export const balancingStrike = ({
 		if (opponentDamageDiff <= 0) opponentDamageDiff = 0;
 		if (playerDamageDiff <= 0) playerDamageDiff = 0;
 
-		const processedPlayerHpBar = processHpBar(playerStats.totalStats, playerDamageDiff);
+		const processedPlayerHpBar = processHpBar(
+			playerStats.totalStats,
+			playerDamageDiff
+		);
 		playerStats.totalStats.health = processedPlayerHpBar.health;
 		playerStats.totalStats.strength = processedPlayerHpBar.strength;
 
-		const processedOpponentHpBar = processHpBar(opponentStats.totalStats, opponentDamageDiff);
+		const processedOpponentHpBar = processHpBar(
+			opponentStats.totalStats,
+			opponentDamageDiff
+		);
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 
 		if (opponentDamageDiff <= 0) damageDiff = 0;
-		const desc = `Dealing __${damageDealt}__ damage to **__${opponentStats.name}__** and takes __${reflect}__ ` +
-        "damage on itself.";
+		const desc =
+      `Dealing __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(
+      	card.type
+      )}** damage to ` +
+      `**__${opponentStats.name}__**${
+      	effective > 1
+      		? ` it was ${getElementalEffectiveStatus(
+      			elementalEffectiveness.opponentStats.effective
+      		)}`
+      		: effective < 1
+      			? " it was not very effective..."
+      			: ""
+      } and also takes __${reflect}__ ` +
+      "damage on itself.";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -78,7 +122,7 @@ export const balancingStrike = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	return {

@@ -147,6 +147,7 @@ export const fightingSpirit = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
+	// cap at 150%
 	// boost atk & def, more like bulkup
 	// while your hp is low increase the **ATK** and **DEF** of all allies by __15%__
 	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (30 / 100));
@@ -157,13 +158,14 @@ export const fightingSpirit = ({
 		playerStats.totalStats.isSpirit = true;
 		const percent = calcPercentRatio(15, card.rank);
 		if (!basePlayerStats.totalStats.fs) basePlayerStats.totalStats.fs = 1;
+		const incPercent = basePlayerStats.totalStats.fs * percent;
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
-			basePlayerStats.totalStats.fs * percent
+			incPercent
 		);
 		const defIncRation = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
-			basePlayerStats.totalStats.fs * percent
+			incPercent
 		);
 		basePlayerStats.totalStats.fs++;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
