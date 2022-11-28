@@ -1,11 +1,19 @@
 import { createLogger, transports, format } from "winston";
 import "winston-daily-rotate-file";
 import { LoggingWinston } from "@google-cloud/logging-winston";
-import { GCP_PROJECT_ID } from "environment";
+import { GCP_PROJECT_ID, GCP_RESOURCE_PREFIX } from "environment";
 
 const cloudLogger = new LoggingWinston({
 	projectId: GCP_PROJECT_ID,
-	keyFilename: "izzi-cloud-logging.json"
+	keyFilename: "izzi-cloud-logging.json",
+	prefix: GCP_RESOURCE_PREFIX,
+	defaultCallback: (err, resp) => {
+		console.log({
+			err,
+			resp 
+		});
+	},
+	resource: { type: "service_account" }
 });
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",

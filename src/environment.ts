@@ -31,3 +31,4 @@ export const BOT_PREFIX = "iz";
 export const SLASH_COMMANDS_KEYBOARD_SHORTCUTS = process.env.SLASH_COMMANDS_KEYBOARD_SHORTCUTS;
 export const GUIDE_DOCS = process.env.GUIDE_DOCS;
 export const GCP_PROJECT_ID = "izzi-295412";
+export const GCP_RESOURCE_PREFIX = process.env.GCP_RESOURCE_PREFIX || "unknown";
