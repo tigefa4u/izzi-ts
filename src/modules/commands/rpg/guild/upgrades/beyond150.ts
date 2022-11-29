@@ -84,7 +84,7 @@ export const upgradeGuildBeyond150 = async ({
 			validGuild.guild.guild_level = nextLevel;
 			const incVal =
         validGuild.guild.guild_stats[statToUpgrade as keyof GuildStatProps] +
-        0.1;
+        0.5;
 
 			Object.assign(validGuild.guild.guild_stats, {
 				[statToUpgrade as any]:
