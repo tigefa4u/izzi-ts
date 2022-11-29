@@ -24,6 +24,7 @@ export type GuildProps = {
   ban_reason?: string;
   metadata?: string; // guild previous stats (on delete)
   banner?: string;
+  max_admin_slots: number;
 };
 
 export type GuildCreateProps = Omit<GuildProps, "id">;

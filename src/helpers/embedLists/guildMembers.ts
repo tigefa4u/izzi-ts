@@ -19,7 +19,7 @@ export const createGuildMemberList = (
 					: member.is_vice_leader
 						? "| Clan Vice Leader"
 						: member.is_admin
-							? "Clan Admin"
+							? "| Clan Admin"
 							: ""
 			}`,
 			value: `Total Donations: ${numericWithComma(member.max_donation)} ${

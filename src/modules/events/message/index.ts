@@ -20,6 +20,8 @@ import {
 	incrCooldown,
 } from "modules/cooldowns/channels";
 import { logCommand } from "./logCommand";
+import Cache from "cache";
+import { getGuild } from "api/controllers/GuildsController";
 
 const ratelimitMap = new Map();
 
@@ -28,7 +30,27 @@ const handleMessage = async (client: Client, context: Message) => {
 		const { content } = context;
 		let args = content.toLowerCase().split(/\s+/);
 		const botId = getIdFromMentionedString(args[0]);
-		if (!(botId === BOT_PREFIX || botId === DISCORD_CLIENT_ID) || !args[1]) {
+		if (!context.guild?.id) return;
+		const prefixKey = "prefix::" + context.guild.id;
+		let prefix = await Cache.get(prefixKey);
+		if (!prefix) {
+			const guildDetails = await getGuild({ guild_id: context.guild.id });
+			if (guildDetails) {
+				prefix = guildDetails.prefix;
+				Cache.set(prefixKey, guildDetails.prefix);
+				Cache.expire && Cache.expire(prefixKey, 60 * 60 * 24);
+			} else {
+				prefix = BOT_PREFIX;
+			}
+		}
+		if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id) {
+			context.channel?.sendMessage(
+				`The prefix on this server is \`\`${prefix}\`\`. ` +
+				"Use ``iz ge prefix <prefix>`` to change the server prefix."
+			);
+			return;
+		}
+		if (!(botId === prefix || botId === DISCORD_CLIENT_ID) || !args[1]) {
 			if (context.guild?.id) {
 				dropCollectables({
 					client,

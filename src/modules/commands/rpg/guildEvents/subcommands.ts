@@ -22,4 +22,7 @@ export const subcommands = [ {
 }, {
 	name: "raidpingview",
 	alias: [ "rpview" ]
+}, {
+	name: "prefix",
+	alias: []
 } ];

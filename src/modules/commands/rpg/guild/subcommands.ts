@@ -8,7 +8,7 @@ export const subcommands = [ {
 },
 {
 	name: "invite",
-	alias: []
+	alias: [ "inv" ]
 },
 {
 	name: "vpromote",

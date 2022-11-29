@@ -13,7 +13,7 @@ import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { BOT_PREFIX, OWNER_DISCORDID } from "environment";
-import { getMemberPermissions } from "helpers";
+import { getMemberPermissions, numericWithComma } from "helpers";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
@@ -58,6 +58,7 @@ export const addGuild = async ({
 				guild_level: 0,
 				is_banned: false,
 				is_deleted: false,
+				max_admin_slots: 1
 			});
 			return;
 		}
@@ -125,7 +126,7 @@ export const addGuild = async ({
 				"Congratulations! You have successfully created your guild, " +
           "you can now invite members into your guild using " +
           "``guild invite <@user>``. " +
-          `Your guild has also been awarded __${initialDonation}__ Gold ${emoji.gold}`
+          `Your guild has also been awarded __${numericWithComma(initialDonation)}__ Gold ${emoji.gold}`
 			);
 
 		context.channel?.sendMessage(embed);

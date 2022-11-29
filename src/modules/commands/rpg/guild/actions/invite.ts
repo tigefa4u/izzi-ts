@@ -19,7 +19,12 @@ import {
 	REACTIONS,
 } from "helpers/constants";
 import loggers from "loggers";
-import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	clearCooldown,
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
@@ -76,18 +81,21 @@ async function validateAndInviteMember(
 			is_leader: false,
 			is_vice_leader: false,
 			is_admin: false,
-			supporter_points: 0
+			supporter_points: 0,
 		});
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`Congratulations ${mentionedUser.username}! ` +
-                `You have successfully joined ${validGuild.guild.name}! You will now receive guild bonus stats!`
+          `You have successfully joined ${validGuild.guild.name}! You will now receive guild bonus stats!`
 			);
 		params.channel?.sendMessage(embed);
 		return;
 	}
-	return validGuild;
+	return {
+		validGuild,
+		mentionedUser 
+	};
 }
 
 export const inviteToGuild = async ({
@@ -101,7 +109,9 @@ export const inviteToGuild = async ({
 		const cooldownCommand = "invite-to-guild";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = getIdFromMentionedString(args.shift() || "");
@@ -125,7 +135,8 @@ export const inviteToGuild = async ({
 			(data, opts) => {
 				if (data) {
 					embed = createConfirmationEmbed(author, client).setDescription(
-						`Summoner ${author.username} has invited you to their guild! ` +
+						`Hey summoner **${data.mentionedUser.username}**, ${author.username} ` +
+						"has invited you to their guild! " +
               `React with ${REACTIONS.confirm.emoji} to accept or ${REACTIONS.cancel.emoji} to decline!`
 					);
 				}

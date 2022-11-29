@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { addGuildEvent, toggleTourneyMode } from "./actions";
+import { addGuildEvent, setPrefix, toggleTourneyMode } from "./actions";
 import { resetGuildEvents } from "./dangerZone";
 import { raidPing } from "./raidPing";
 import { abilityPing } from "./raidPing/abilityPing";
@@ -35,6 +35,8 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			abilityPing(params);
 		} else if (subcommand === "raidpingview") {
 			raidPingView(params);
+		} else if (subcommand === "prefix") {
+			setPrefix(params);
 		}
 		return;
 	} catch (err) {

@@ -2,6 +2,7 @@ import {
 	ConfirmationInteractionOptions,
 	ConfirmationInteractionParams,
 } from "@customTypes";
+import { CharacterStatProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
 import { GuildStatProps } from "@customTypes/guilds";
 import {
@@ -23,6 +24,7 @@ import {
 	GUILD_MIN_LEVEL_FOR_ITEM_BONUS,
 	SEAL_ID,
 	SOUL_ID,
+	UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -30,11 +32,21 @@ import { titleCase } from "title-case";
 import { isEmptyValue } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
+import { upgradeGuildBeyond150 } from "./beyond150";
+
+const statMap: any = {
+	atk: "vitality",
+	def: "defense",
+	hp: "strength",
+	spd: "dexterity",
+	int: "intelligence",
+};
 
 async function validateAndUpgradeGuild(
 	params: ConfirmationInteractionParams<{
     context: BaseProps["context"];
     user_id: number;
+    stat?: string;
   }>,
 	options?: ConfirmationInteractionOptions
 ) {
@@ -49,10 +61,16 @@ async function validateAndUpgradeGuild(
 		extras: { user_id: params.extras.user_id },
 	});
 	if (!validGuild) return;
-	if (validGuild.guild.guild_level >= GUILD_MAX_LEVEL) {
-		context.channel?.sendMessage(
-			"Your guild has already reached the maximum level in the Xenverse!"
+
+	const embed = createEmbed(params.author, params.client).setTitle(
+		DEFAULT_ERROR_TITLE
+	);
+	if (validGuild.guild.guild_level >= GUILD_MAX_LEVEL && !params.extras.stat) {
+		embed.setDescription(
+			"Please provide a valid stat to upgrade. One of **__(atk/hp/def/spd/int)__**\n" +
+			"**Hint:** Use command ``iz guild upgrade <atk/hp/def/spd/int>``"
 		);
+		params.channel?.sendMessage(embed);
 		return;
 	}
 	const guilditems = await getAllGuildItems(
@@ -62,9 +80,25 @@ async function validateAndUpgradeGuild(
 		},
 		{
 			currentPage: 1,
-			perPage: 2,
+			perPage: 3,
 		}
 	);
+	if (validGuild.guild.guild_level >= GUILD_MAX_LEVEL) {
+		if (!params.extras.stat) return;
+		return upgradeGuildBeyond150({
+			validGuild,
+			guilditems,
+			author: params.author,
+			isConfirm: options?.isConfirm,
+			client: params.client,
+			channel: params.channel,
+			statToUpgrade: statMap[params.extras.stat] as keyof CharacterStatProps,
+		});
+		// context.channel?.sendMessage(
+		// 	"Your guild has already reached the maximum level in the Xenverse!"
+		// );
+		// return;
+	}
 	const souls = guilditems?.data.filter((it) => it.item_id === SOUL_ID)[0];
 	const seals = guilditems?.data.filter((it) => it.item_id === SEAL_ID)[0];
 	const missingItems = guilditems?.data.reduce((acc: string[], r) => {
@@ -80,9 +114,6 @@ async function validateAndUpgradeGuild(
 		return acc;
 	}, []);
 
-	const embed = createEmbed(params.author, params.client).setTitle(
-		DEFAULT_ERROR_TITLE
-	);
 	if ((missingItems || []).length > 0) {
 		embed.setDescription(
 			`The following items are required to harvest souls!\n\n${missingItems
@@ -95,7 +126,7 @@ async function validateAndUpgradeGuild(
 	if (!souls || !seals) {
 		embed.setDescription(
 			"Your guild does not have enough **Souls** or **Dark Seals**. " +
-			"Use ``guild mk`` to purchase items from the Guild Market"
+        "Use ``guild mk`` to purchase items from the Guild Market"
 		);
 		params.channel?.sendMessage(embed);
 		return;
@@ -160,6 +191,13 @@ async function validateAndUpgradeGuild(
 			}
 		}
 
+		if (
+			validGuild.guild.guild_level <= 100 &&
+      validGuild.guild.guild_level % UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL === 0
+		) {
+			validGuild.guild.max_admin_slots = validGuild.guild.max_admin_slots + 1;
+			Object.assign(updateObj, { max_admin_slots: validGuild.guild.max_admin_slots });	
+		}
 		if (validGuild.guild.guild_level % 8 === 0) {
 			validGuild.guild.max_members = validGuild.guild.max_members + 1;
 			Object.assign(updateObj, { max_members: validGuild.guild.max_members });
@@ -167,7 +205,7 @@ async function validateAndUpgradeGuild(
 		const stats = validGuild.guild.guild_stats;
 		if (!stats) return;
 		Object.keys(stats).forEach((stat) => {
-			const incVal = stats[stat as keyof GuildStatProps] + 0.15;
+			const incVal = stats[stat as keyof GuildStatProps] + 0.1;
 			Object.assign(stats, { [stat]: Math.round((incVal + Number.EPSILON) * 100) / 100, });
 		});
 		Object.assign(updateObj, { guild_stats: stats });
@@ -190,7 +228,12 @@ async function validateAndUpgradeGuild(
 	};
 }
 
-export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
+export const upgradeGuild = async ({
+	context,
+	client,
+	options,
+	args,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		const cooldownCommand = "upgrade-guild";
@@ -212,6 +255,7 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 			extras: {
 				context,
 				user_id: user.id,
+				stat: args.shift(),
 			},
 		};
 		const buttons = await confirmationInteraction(
@@ -219,11 +263,22 @@ export const upgradeGuild = async ({ context, client, options }: BaseProps) => {
 			author.id,
 			params,
 			validateAndUpgradeGuild,
-			(data, opts) => {
+			(data: any, opts) => {
 				if (data) {
+					let embedDesc = "Are you sure you want to consume ";
+					if (data.shieldBows) {
+						embedDesc =
+              embedDesc + `__${data.shieldBows}x__ **Immortal Shieldbow(s)**`;
+					} else {
+						embedDesc =
+              embedDesc +
+              `__${data.reqSouls}x__ **Souls** ` +
+              `and __x${data.reqSeals}x__ **Dark Seals**`;
+					}
 					embed = createConfirmationEmbed(author, client).setDescription(
-						`Are you sure you want to consume __${data.reqSouls}__ Souls ` +
-              `and ${data.reqSeals} Dark Seals to evolve the bonus stats of your guild?`
+						`${embedDesc} to increase the bonus ${
+							data.statToUpgrade ? `**${data.statToUpgrade}** ` : ""
+						}stats of your guild?`
 					);
 				}
 				if (opts?.isDelete) {

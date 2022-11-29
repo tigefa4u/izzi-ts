@@ -9,7 +9,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS, MAX_ADMINS_PER_GUILD } from "helpers/constants";
 import loggers from "loggers";
 import { isEmptyValue } from "utility";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -33,7 +33,6 @@ function prepareItemBonusDesc(stats: GuildStatProps) {
 
 	return desc;
 }
-
 function prepareGuildDesc(
 	leader: P,
 	guild: GuildProps,
@@ -44,12 +43,18 @@ function prepareGuildDesc(
     "precision" | "accuracy" | "evasion" | "critical"
   >,
 	vice?: P,
-	admin?: P
+	admins?: P[]
 ) {
 	const desc = `All your clan stats are shown below!\n**Clan Leader:** ${
 		leader.username
 	}${vice ? `\n**Clan Vice Leader:** ${vice.username}` : ""}${
-		admin ? `\n**Clan Admin:** ${admin.username}` : ""
+		(admins || []).length > 0
+			? `\n**Clan Admin(s): [${
+				admins?.length || 0
+			} / ${MAX_ADMINS_PER_GUILD}]** ${admins
+				?.map((admin) => `${admin.username}`)
+				.join(", ")}`
+			: ""
 	}\n**Clan Name:** ${guild.name}\n**Clan Level:** ${
 		guild.guild_level
 	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${numericWithComma(
@@ -71,7 +76,12 @@ function prepareGuildDesc(
 	return desc;
 }
 
-export const viewGuild = async ({ context, options, args, client }: BaseProps) => {
+export const viewGuild = async ({
+	context,
+	options,
+	args,
+	client,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		const mentionedId = getIdFromMentionedString(args.shift() || "");
@@ -104,7 +114,7 @@ export const viewGuild = async ({ context, options, args, client }: BaseProps) =
 			return;
 		}
 		const vice = guildDetails.find((g) => g.role === "vice_leader");
-		const admin = guildDetails.find((g) => g.role === "admin");
+		const admins = guildDetails.filter((g) => g.role === "admin");
 		const totalCount = await getTotalMemberAndItemCount({ id: validGuild.guild.id, });
 		const memberCount = totalCount?.filter((t) => t.type === "members")[0];
 		const itemCount = totalCount?.filter((t) => t.type === "items")[0];
@@ -130,7 +140,7 @@ export const viewGuild = async ({ context, options, args, client }: BaseProps) =
 					itemCount?.count || 0,
 					stats,
 					vice,
-					admin
+					admins
 				)}`
 			);
 		if (validGuild.guild.banner) {
@@ -142,8 +152,8 @@ export const viewGuild = async ({ context, options, args, client }: BaseProps) =
 			[
 				{
 					label: CONSOLE_BUTTONS.UPGRADE_GUILD.label,
-					params: { id: CONSOLE_BUTTONS.UPGRADE_GUILD.id }
-				}
+					params: { id: CONSOLE_BUTTONS.UPGRADE_GUILD.id },
+				},
 			],
 			author.id,
 			({ id }) => {
@@ -152,7 +162,7 @@ export const viewGuild = async ({ context, options, args, client }: BaseProps) =
 						context,
 						client,
 						options,
-						args
+						args,
 					});
 				}
 				return;

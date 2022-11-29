@@ -49,11 +49,11 @@ export const subcommands = [
 	},
 	{
 		name: "makepublic",
-		alias: [ "public", "mpublic" ],
+		alias: [ "public", "mpublic", "mpub" ],
 	},
 	{
 		name: "makeprivate",
-		alias: [ "private", "mprivate" ],
+		alias: [ "private", "mprivate", "mpriv" ],
 	},
 	{
 		name: "ready",

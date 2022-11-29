@@ -196,7 +196,7 @@ export const addMultipleCards = async ({
 				return;
 			}
 			if (characters.length > 1 && params.name) {
-				if (characters.length > 5) characters.splice(0, 5);
+				if (characters.length > 20) characters.splice(0, 20);
 				const selectMenuOptions = {
 					menuOptions: characters.map((c) => ({
 						value: c.name,

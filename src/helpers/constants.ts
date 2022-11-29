@@ -151,26 +151,37 @@ export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
 export const GUILD_CREATION_COST = 200000;
 export const MARKET_PRICE_CAP = 100000000;
+// export const GUILD_BASE_STATS = {
+// vitality: 0.25,
+// defense: 0.31,
+// dexterity: 0.32,
+// intelligence: 0.25,
+// strength: 0.45,
+// itemstats: {}
+// };
+
 export const GUILD_BASE_STATS = {
-	vitality: 0.25,
-	defense: 0.31,
-	dexterity: 0.32,
-	intelligence: 0.25,
-	strength: 0.45,
+	vitality: 5,
+	defense: 5,
+	dexterity: 5,
+	intelligence: 5,
+	strength: 5,
 	// itemstats: {}
 };
 
 export const RDT_ADMIN_PERMISSION = "ADMINISTRATOR";
 
-export const GUILD_MARKET_IDS = [ 2, 5 ];
+export const GUILD_MARKET_IDS = [ 2, 5, 3 ];
 export const GUILD_MAX_DONATION = 100000000;
 export const GUILD_MAX_LEVEL = 150;
 export const GUILD_MIN_LEVEL_FOR_ITEM_BONUS = 100;
 export const SOUL_ID = 2;
 export const SEAL_ID = 5;
+export const IMMORTAL_SHIELDBOW_ID = 3;
 export const GUILD_ITEM_PROPERTIES = {
 	SOUL_ID: "souls",
 	SEAL_ID: "seals",
+	IMMORTAL_SHIELD_BOW_ID: "immortalshieldbow"
 };
 
 export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -464,3 +475,7 @@ export const MIN_LEVEL_FOR_REFERRAL = 6;
 
 // Ability cap in %
 export const ABILITY_CAP = { fightingSpirit: { vitality: 150 } };
+
+export const MAX_ADMINS_PER_GUILD = 6;
+
+export const UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL = 20;

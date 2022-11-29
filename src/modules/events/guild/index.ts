@@ -49,6 +49,7 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 				is_banned: false,
 				is_deleted: false,
 				points: 0,
+				max_admin_slots: 1
 			});
 		}
 		const me = guild.me;
@@ -73,18 +74,14 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
                 "**The Xenverse** with everything it needs!, " +
                 "\nTo get started on your journey click on the ``Start Journey`` button " +
 				"**(Ping the bot to start using commands)**. " +
-				"Use ``@izzi help or /iz help`` to get all available commands." +
+				"Use ``iz help or @izzi help or /iz help`` to get all available commands." +
                 `\nFor more assistance join our support server ${OFFICIAL_SERVER_LINK}. ` +
-                `You can also find more information/command tutorials on ${IZZI_WEBSITE}. ` +
-				"To comply with the slash command changes enforced by discord, izzi commands can be invoked " +
-				"by either pinging the bot or use ``/iz <commands>``. " +
-				"Check out our community guide for more tips " +
-				`${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}.`
+                `You can also find more information/command tutorials on ${IZZI_WEBSITE}. `
 			)
 			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")
 			.attachFiles([ attachment ])
-			.setFooter({ text: "If the button doesnt work use ``@izzi start`` to start your journey in the Xenverse" });
+			.setFooter({ text: "If the button doesnt work use ``iz start`` to start your journey in the Xenverse" });
 
 		const buttons = await customButtonInteraction(
 			defaultChannel,

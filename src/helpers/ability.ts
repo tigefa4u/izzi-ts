@@ -56,7 +56,7 @@ export const calcPercentRatio = (num: number, rank: string) => {
 	// return Math.floor(num);
 };
 
-export const statRelationMap = {
+export const statRelationMap: any = {
 	vitality: "ATK",
 	defense: "DEF",
 	dexterity: "SPD",
