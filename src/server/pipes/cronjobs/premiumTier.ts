@@ -120,13 +120,19 @@ async function resetUserActive() {
 }
 
 async function boot() {
-	await Promise.all([
-		resetVoteTimers(),
-		premiumTimer(),
-		miniPremiumTimer(),
-		resetUserActive()
-	]);
-	process.exit(1);
+	try {
+		await Promise.all([
+			resetVoteTimers(),
+			premiumTimer(),
+			miniPremiumTimer(),
+			resetUserActive()
+		]);
+		loggers.info("pipes.cronjobs.premiumTier.boot: completed...");
+	} catch (err) {
+		loggers.error("pipes.cronjobs.premiumTier.boot: ERROR", err);
+	} finally {
+		process.exit(1);
+	}
 }
 
 boot();
