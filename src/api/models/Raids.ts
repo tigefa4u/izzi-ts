@@ -104,8 +104,14 @@ export const refillEnergy = async (params: {
 	);
 };
 
-export const destroy = async (params: { id: number }) => {
-	return await connection(tableName).where({ id: params.id }).del();
+export const destroy = async (params: { id: number | number[]; }) => {
+	let query = connection(tableName).del();
+	if (typeof params.id === "number") {
+		query = query.where({ id: params.id });
+	} else {
+		query = query.whereIn("id", params.id);
+	}
+	return query;
 };
 
 export const getAll = async (

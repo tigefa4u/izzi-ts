@@ -81,7 +81,7 @@ export const getRaid = async (params: { id: number }) => {
 	}
 };
 
-export const deleteRaid = async (params: { id: number }) => {
+export const deleteRaid = async (params: { id: number | number[]; }) => {
 	try {
 		loggers.info("Deleting Raid: " + params.id);
 		return await Raids.destroy(params);
