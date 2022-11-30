@@ -46,7 +46,7 @@ const handleMessage = async (client: Client, context: Message) => {
 		if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id) {
 			context.channel?.sendMessage(
 				`The prefix on this server is \`\`${prefix}\`\`. ` +
-				"Use ``iz ge prefix <prefix>`` to change the server prefix."
+				`Use \`\`${prefix} ge prefix <prefix>\`\` to change the server prefix.`
 			);
 			return;
 		}

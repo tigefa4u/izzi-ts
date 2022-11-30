@@ -212,6 +212,7 @@ export const getAllUsers = async (params: { is_premium?: boolean; is_mini_premiu
 		const result = await Users.get({
 			is_banned: false,
 			is_deleted: false,
+			is_active: true,
 			...params
 		});
 		return result;

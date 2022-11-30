@@ -52,6 +52,7 @@ export type UserParams = {
     user_tag?: string;
     is_deleted?: boolean;
     is_banned?: boolean;
+	is_active?: boolean;
 }
 
 type IgnoreUserProps = IgnoreProps | "user_tag"
