@@ -12,7 +12,7 @@ async function premiumTimer() {
 				let params = {};
 				const oneDay = 1000 * 60 * 60 * 24;
 				const daysDiff = Math.abs(
-					new Date(user.premium_since).valueOf() - new Date().valueOf()
+					new Date(user.premium_since || Date.now()).valueOf() - new Date().valueOf()
 				);
 				const dayRatio = Math.round(daysDiff / oneDay);
 				let daysLeft = user.premium_days - dayRatio;
@@ -47,7 +47,7 @@ async function miniPremiumTimer() {
 				let params = {};
 				const oneDay = 1000 * 60 * 60 * 24;
 				const daysDiff = Math.abs(
-					new Date(user.mini_premium_since || "").valueOf() - new Date().valueOf()
+					new Date(user.mini_premium_since || Date.now()).valueOf() - new Date().valueOf()
 				);
 				const dayRatio = Math.round(daysDiff / oneDay);
 				let daysLeft = (user.mini_premium_days || 0) - dayRatio;
@@ -122,10 +122,10 @@ async function resetUserActive() {
 async function boot() {
 	try {
 		await Promise.all([
-			// resetVoteTimers(),
+			resetVoteTimers(),
 			premiumTimer(),
 			miniPremiumTimer(),
-			// resetUserActive()
+			resetUserActive()
 		]);
 		loggers.info("pipes.cronjobs.premiumTier.boot: completed...");
 	} catch (err) {
