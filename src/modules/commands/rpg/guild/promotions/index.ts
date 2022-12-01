@@ -226,11 +226,16 @@ export const apromote = async ({
 	}
 };
 
-export const ademote = async ({ context, client, options }: BaseProps) => {
+export const ademote = async ({ context, client, options, args }: BaseProps) => {
 	try {
+		const mentionId = getIdFromMentionedString(args.shift());
+		if (!mentionId) return;
 		const author = options.author;
-		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
-		if (!user) return;
+		const [ user, mentionedUser ] = await Promise.all([
+			getRPGUser({ user_tag: author.id }, { cached: true }),
+			getRPGUser({ user_tag: mentionId }, { cached: true })
+		]);
+		if (!user || !mentionedUser) return;
 		const validGuild = await verifyMemberPermissions({
 			context,
 			author,
@@ -241,21 +246,23 @@ export const ademote = async ({ context, client, options }: BaseProps) => {
 		});
 		if (!validGuild) return;
 		const guildDetails = await getGuildDetails({ id: validGuild.guild.id });
-		const vice = guildDetails?.filter((g) => g.role === "admin")[0];
+		const admin = guildDetails?.find((g) => g.user_tag === mentionId);
 		const embed = createEmbed(author);
-		if (!vice) {
+		if (!admin) {
 			embed.setDescription(
-				"Your guild does not have an admin! use ``guild vpromote <@user>`` to appoint a Guild Vice Leader."
+				"This summoner is not an admin in your guild! " +
+				"use ``guild vpromote <@user>`` to appoint a Guild Vice Leader."
 			);
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		await updateGuildMember({ user_id: vice.user_id }, { is_admin: false });
+
+		await updateGuildMember({ user_id: admin.user_id }, { is_admin: false });
 		const thumb = context.guild?.iconURL() || client.user?.displayAvatarURL();
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setThumbnail(thumb || "")
-			.setDescription("Your guild Admin has been demoted!");
+			.setDescription(`Summoner ${mentionedUser.username} has been demoted!`);
 
 		context.channel?.sendMessage(embed);
 		return;
