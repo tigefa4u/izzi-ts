@@ -68,10 +68,10 @@ export const getAll = async (
 		);
 	}
 	if (typeof params.type === "string") {
-		query = query.where(`${tableName}.type`, "ilike", `%${params.type}%`);
+		query = query.where(`${characters}.type`, "ilike", `%${params.type}%`);
 	} else if (typeof params.type === "object") {
 		query = query.where(
-			`${tableName}.type`,
+			`${characters}.type`,
 			"~*",
 			`(${params.type.join("|")}).*`
 		);

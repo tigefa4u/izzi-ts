@@ -56,6 +56,7 @@ declare module "discord.js" {
   }
   interface Interaction {
     isInteraction: boolean;
+    content: string;
   }
   interface MessageButton {
     isConsoleButton: boolean;

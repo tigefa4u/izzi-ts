@@ -18,6 +18,7 @@ const handleCommandInteraction = async (client: Client, context: CommandInteract
 		const command = await getCommand(commandName);
 		await context.editReply({ content: "replied" });
 		if (!command) return;
+		context.content = content || "";
 		if (
 			typeof commandCategory[command?.type as keyof CommandCategoryProps] !== "function"
 		)

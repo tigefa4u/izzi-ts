@@ -50,7 +50,7 @@ const handleMessage = async (client: Client, context: Message) => {
 			);
 			return;
 		}
-		if (!(botId === prefix || botId === DISCORD_CLIENT_ID) || !args[1]) {
+		if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
 			if (context.guild?.id) {
 				dropCollectables({
 					client,

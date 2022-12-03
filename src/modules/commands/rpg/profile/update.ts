@@ -12,7 +12,7 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		if (cmd && cmd === "status") {
-			const status = args.join(" ").trim();
+			const status = context.content.split("status")[1]?.trim() || "";
 			if (status.length > MAX_USER_STATUS_LENGTH) {
 				context.channel?.sendMessage(`Summoner **${author.username}**, your user status must not exceed ` +
 				`__${MAX_USER_STATUS_LENGTH}__ characters.`);

@@ -226,10 +226,10 @@ export const setBanner = async ({
 	}
 };
 
-export const setGuildStatus = async ({ client, context, options, args }: BaseProps) => {
+export const setGuildStatus = async ({ context, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		const status = args.join(" ");
+		const status = context.content.split("status")[1]?.trim() || "";
 		if (!status || status === "") return;
 		if (status.length > GUILD_STATUS_MAX_LENGTH) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, ` +

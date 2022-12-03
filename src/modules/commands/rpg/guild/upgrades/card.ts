@@ -86,11 +86,13 @@ async function validateAndUpgradeCard(
 		},
 		{
 			currentPage: 1,
-			perPage: 2,
+			perPage: 3,
 		}
 	);
-	const souls = guilditems?.data.filter((it) => it.item_id === SOUL_ID)[0];
-	const seals = guilditems?.data.filter((it) => it.item_id === SEAL_ID)[0];
+	const souls = guilditems?.data.find((it) => it.item_id === SOUL_ID);
+	const seals = guilditems?.data.find((it) => it.item_id === SEAL_ID);
+	loggers.info("guilds.upgrades.card.validateAndUpgradeCard: Guild Items - " +
+		JSON.stringify(guilditems) + " guild id: " + validGuild.guild.guild_id);
 	if (!souls || !seals) {
 		context.channel?.sendMessage(
 			"Your guild does not have sufficient **Souls** or **Seals**"
