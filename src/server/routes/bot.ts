@@ -9,5 +9,6 @@ router.post("/remove_zone_from_cache", controller.removeZoneAndCardFromCache);
 router.post("/remove_item_from_cache", controller.removeItemFromCache);
 router.post("/remove_stages_and_cards_from_cache", controller.removeAllStagesAndCardsFromCache);
 router.post("/remove_command_from_cache", controller.removeCommandsFromCache);
+router.post("/clear_image_cache", controller.clearImageCache);
 
 export default router;

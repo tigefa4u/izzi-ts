@@ -1,4 +1,5 @@
 import Cache from "cache";
+import { clear as resetImageCache } from "cache/imageCache";
 import flushBattleCooldowns from "server/autoClear";
 import { notFound, success } from "server/responses";
 
@@ -84,6 +85,15 @@ export const removeCommandsFromCache = async (req: any, res: any) => {
 		const { id } = req.body;
 		const key = `command::${id}`;
 		await Cache.del(key);
+		return success(res, {});
+	} catch (err) {
+		return notFound(res, "Route not found");
+	}
+};
+
+export const clearImageCache = (req: any, res: any) => {
+	try {
+		resetImageCache();
 		return success(res, {});
 	} catch (err) {
 		return notFound(res, "Route not found");

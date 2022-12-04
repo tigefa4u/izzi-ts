@@ -1,7 +1,7 @@
 import { Image } from "canvas";
 import loggers from "loggers";
 
-const cache: Map<string, {
+let cache: Map<string, {
     image: Image;
     time: number;
 }> = new Map();
@@ -41,4 +41,13 @@ export const delImage = (id:  number) => {
 		loggers.error("imageCache.delImage: FAILED for ID: " + id, err);
 		return;
 	}
+};
+
+export const clear = () => {
+	try {
+		return cache = new Map();
+	} catch (err) {
+		loggers.error("imageCache.clear: FAILED", err);
+		return;
+	} 
 };
