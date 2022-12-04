@@ -13,7 +13,8 @@ const cloudLogger = new LoggingWinston({
 			resp 
 		});
 	},
-	resource: { type: "service_account" }
+	resource: { type: "service_account" },
+	labels: { pid: process.pid.toString() }
 });
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
