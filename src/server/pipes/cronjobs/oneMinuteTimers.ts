@@ -54,6 +54,8 @@ async function boot() {
 	} catch (err) {
 		loggers.error("cronjobs.oneMinuteTimers.boot: ERROR", err);
 	} finally {
+		loggers.info("cronjobs.oneMinuteTimers.boot: Completed all jobs...");
+		await delay(1000);
 		process.exit(1);
 	}
 }

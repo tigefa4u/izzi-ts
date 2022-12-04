@@ -1,4 +1,5 @@
 import { getAllUsers, updateRPGUser } from "api/controllers/UsersController";
+import { delay } from "helpers";
 import loggers from "loggers";
 import "../../../module";
 
@@ -131,6 +132,8 @@ async function boot() {
 	} catch (err) {
 		loggers.error("pipes.cronjobs.premiumTier.boot: ERROR", err);
 	} finally {
+		loggers.info("pipes.cronjobs.premiumTier.boot: completed all jobs...");
+		await delay(1000);
 		process.exit(1);
 	}
 }

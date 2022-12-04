@@ -62,6 +62,7 @@ async function boot() {
 	} catch (err) {
 		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
 	} finally {
+		await delay(1000);
 		process.exit(1);
 	}
 }

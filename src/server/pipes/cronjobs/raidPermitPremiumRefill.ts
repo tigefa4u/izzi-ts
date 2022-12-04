@@ -1,6 +1,7 @@
 import "../../../module";
 import { init } from ".";
 import loggers from "loggers";
+import { delay } from "helpers";
 
 async function boot() {
 	try {
@@ -13,6 +14,8 @@ async function boot() {
 	} catch (err) {
 		loggers.error("cronjobs.raidPermitPremiumRefill.boot: ERROR", err);
 	} finally {
+		loggers.info("cronjobs.raidPermitPremiumRefill.boot: completed all jobs...");
+		await delay(1000);
 		process.exit(1);
 	}
 }

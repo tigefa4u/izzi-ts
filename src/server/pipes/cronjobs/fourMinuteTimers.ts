@@ -1,5 +1,6 @@
 import { getAllRaids } from "api/controllers/RaidsController";
 import connection from "db";
+import { delay } from "helpers";
 import { DUNGEON_MAX_MANA } from "helpers/constants";
 import { refillEnergy } from "helpers/raid";
 import loggers from "loggers";
@@ -30,10 +31,11 @@ async function refillMana() {
 async function refillRaidEnergy() {
 	try {
 		const raids = await getAllRaids();
+		loggers.info("cornjobs.fourMinuteTimers.refillRaidEnergy: started... raids: " + raids?.length);
 		if (!raids) return;
 		await Promise.all(
 			raids.map((raid) => {
-				loggers.info("cronjobs.fourMinuteTimers.refillRaidEnergy: refilling energy for raid: " + raid.id);
+				// loggers.info("cronjobs.fourMinuteTimers.refillRaidEnergy: refilling energy for raid: " + raid.id);
 				return refillEnergy(raid.id, raid.lobby);
 			})
 		);
@@ -51,6 +53,8 @@ async function boot() {
 	} catch (err) {
 		loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
 	} finally {
+		loggers.info("cronjobs.fourMinuteTimers: completed all jobs...");
+		await delay(1000);
 		process.exit(1);
 	}
 }
