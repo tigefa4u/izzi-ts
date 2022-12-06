@@ -49,7 +49,8 @@ async function refillRaidEnergy() {
 
 async function boot() {
 	try {
-		await Promise.all([ refillMana(), refillRaidEnergy() ]);
+		await refillRaidEnergy();
+		// await Promise.all([ refillMana(), refillRaidEnergy() ]);
 	} catch (err) {
 		loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
 	} finally {
