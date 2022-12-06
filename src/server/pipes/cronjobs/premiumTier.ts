@@ -28,7 +28,7 @@ async function premiumTimer(users: U) {
 				} else {
 					params = { premium_days_left: daysLeft };
 				}
-				return updateRPGUser({ user_tag: user.user_tag }, params);
+				return updateRPGUser({ user_tag: user.user_tag }, params, { hydrateCache: true });
 			})
 		);
 		loggers.info("cronjobs.premiumTier.premiumTimer: completed...");
@@ -62,7 +62,7 @@ async function miniPremiumTimer(users: U) {
 				} else {
 					params = { mini_premium_days_left: daysLeft };
 				}
-				return updateRPGUser({ user_tag: user.user_tag }, params);
+				return updateRPGUser({ user_tag: user.user_tag }, params, { hydrateCache: true });
 			})
 		);
 		loggers.info("cronjobs.premiumTier.miniPremiumTimer: completed...");
@@ -83,7 +83,7 @@ async function resetVoteTimers(users: U) {
 				const oneDay = 1000 * 60 * 60 * 24;
 				const diff = new Date().valueOf() - new Date(user.voted_at).valueOf();
 				if (diff >= oneDay) {
-					return updateRPGUser({ user_tag: user.user_tag }, { vote_streak: 0 });
+					return updateRPGUser({ user_tag: user.user_tag }, { vote_streak: 0 }, { hydrateCache: true });
 				}
 			})
 		);
@@ -106,7 +106,8 @@ async function resetUserActive(users: U) {
 				if (dt < new Date(user.updated_at).valueOf()) {
 					return updateRPGUser(
 						{ user_tag: user.user_tag },
-						{ is_active: false }
+						{ is_active: false },
+						{ hydrateCache: true }
 					);
 				}
 				return;
