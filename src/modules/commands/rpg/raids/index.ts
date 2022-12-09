@@ -147,7 +147,7 @@ function prepareFakeHp(stats: RaidStatsProps) {
 
 function prepareLoot(
 	boss: CollectionCardInfoProps[],
-	loot: RaidLootProps,
+	loot: any,
 	isEvent = false
 ) {
 	let eventDesc = "";
@@ -161,31 +161,43 @@ function prepareLoot(
       		: ""
       }`;
 	}
+
+	// ${loot.drop && loot.drop.default && loot.drop.default
+	// 	.map(
+	// 		(d: any) =>
+	// 			`__${d.number}x__ ${titleCase(d.rank)} of ${boss
+	// 				.map((b) => `**${titleCase(b.name)}**`)
+	// 				.join(", ")}`
+	// 	)
+	// 	.join(
+	// 		"\n"
+	// 	)}
+	console.log(loot);
 	const desc = `**__${
 		isEvent ? "Event" : "Raid"
 	} Rewards [For Everyone]__**\n__${numericWithComma(loot.gold)}__ Gold ${
 		emoji.gold
-	}\n${eventDesc}${loot.drop.default
-		?.map(
-			(d) =>
-				`__${d.number}x__ ${titleCase(d.rank)} of ${boss
-					.map((b) => `**${titleCase(b.name)}**`)
-					.join(", ")}`
-		)
-		.join(
-			"\n"
-		)}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
+	}\n${eventDesc}${
+		loot.drop.event
+			? `__${loot.drop.event.shard}__${emoji.shard} Shards\n${
+				loot.drop.event.orbs
+					? `__${loot.drop.event.orbs}__${emoji.blueorb} Blue Orbs`
+					: ""
+			}`
+			: ""
+	}
+		\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
 		loot.extraGold || 0
-	)}__ Gold ${emoji.gold}\n${loot.rare
-		?.map(
-			(d) =>
-				`__${d.number}x__ ${titleCase(d.rank)} of ${boss
-					.map((b) => `**${titleCase(b.name)}**`)
-					.join(", ")} (At ${d.rate}% per card)${
-					d.isStaticDropRate ? " (Fixed %)" : ""
-				}`
-		)
-		.join("\n")}`;
+	)}__ Gold ${emoji.gold}\n${loot.rare ? loot?.rare
+	?.map(
+		(d: any) =>
+			`__${d.number}x__ ${titleCase(d.rank)} of ${boss
+				.map((b) => `**${titleCase(b.name)}**`)
+				.join(", ")} (At ${d.rate}% per card)${
+				d.isStaticDropRate ? " (Fixed %)" : ""
+			}`
+	)
+	.join("\n") : ""}`;
 
 	return desc;
 }
