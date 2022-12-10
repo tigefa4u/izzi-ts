@@ -80,7 +80,7 @@ export const profile = async ({
 				const card = result[0];
 				user.itemname = card.itemname;
 				user.name = card.metadata?.nickname || card.name;
-				const canvas = await createSingleCanvas(card, false);
+				const canvas = createSingleCanvas(card, false);
 				if (canvas) {
 					user.attachment = createAttachment(
 						canvas.createJPEGStream(),

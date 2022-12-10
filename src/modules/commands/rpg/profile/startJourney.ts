@@ -98,7 +98,7 @@ export const start: (params: BaseProps) => void = async ({
 		}
 		const cardDetails = await startUserJourney(author);
 		if (!cardDetails) return;
-		const canvas = await createSingleCanvas(cardDetails, false);
+		const canvas = createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",
 			"card.jpg"

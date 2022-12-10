@@ -154,7 +154,7 @@ async function verifyAndProcessSacrifice(
 			)
 		);
 		await Promise.all(promises);
-		const canvas = await createSingleCanvas(cardCanvas, false);
+		const canvas = createSingleCanvas(cardCanvas, false);
 		if (!canvas) {
 			params.channel?.sendMessage(
 				"Your card has absorbed souls! " +
@@ -227,7 +227,7 @@ export const sacrificeCard = async ({
 			async (data, opts) => {
 				if (data) {
 					// takes too long
-					// const canvas = await createSingleCanvas(data.cardCanvas, false);
+					// const canvas = createSingleCanvas(data.cardCanvas, false);
 					// if (!canvas) {
 					// 	context.channel?.sendMessage(
 					// 		"Unable to evolve this card, try again later"

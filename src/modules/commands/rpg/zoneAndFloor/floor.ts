@@ -97,7 +97,7 @@ async function handleNextFloor(params: {
 	});
 	const passiveEmoji = emojiMap(stage.abilityname);
 	const classEmoji = emojiMap(stage.type);
-	const cardCanvas = await createSingleCanvas(stage, false);
+	const cardCanvas = createSingleCanvas(stage, false);
 	if (!cardCanvas) return;
 	const attachment = createAttachment(cardCanvas.createJPEGStream(), "img.jpg");
 	const zoneAttachment = createAttachment(stage.zone_filepath, "zone.jpg");

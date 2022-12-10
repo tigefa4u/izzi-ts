@@ -294,7 +294,7 @@ async function processRaidResult({
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 	if (isEvent) {
-		bossCanvas = await createSingleCanvas(updateObj.raid_boss[0], false);
+		bossCanvas = createSingleCanvas(updateObj.raid_boss[0], false);
 	} else {
 		bossCanvas = await createBattleCanvas(updateObj.raid_boss, {
 			isSingleRow: true,

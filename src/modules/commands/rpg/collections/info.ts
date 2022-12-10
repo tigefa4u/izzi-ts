@@ -107,7 +107,7 @@ export const getCardInfo = async ({
 			powerLevel,
 			guildStats: guild?.guild_stats
 		});
-		const canvas = await createSingleCanvas(infoData.characterInfo, false);
+		const canvas = createSingleCanvas(infoData.characterInfo, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",
 			"info.jpg"

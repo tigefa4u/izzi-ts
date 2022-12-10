@@ -121,6 +121,12 @@ async function confirmAndBattle(
 			clearCooldown(params.author.id, "in-battle"),
 			clearCooldown(mentionId, "in-battle"),
 		]);
+		if (!battleStatus) {
+			context.channel?.sendMessage(
+				"Unable to process battle, please try again later"
+			);
+			return;
+		}
 		if (battleStatus?.isForfeit) return;
 		sendResultMessage({
 			channel: params.channel,

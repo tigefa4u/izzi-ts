@@ -130,6 +130,12 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			isRaid: false,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false }
 		});
+		if (!result) {
+			context.channel?.sendMessage(
+				"Unable to process battle, please try again later"
+			);
+			return;
+		}
 		await refetchAndUpdateUserMana(author.id, MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
 		clearCooldown(author.id, "dungeon-battle");
 		if (result?.isForfeit) {

@@ -16,7 +16,7 @@ export const createSingleCanvas: (
     "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank" | "metadata"
   >,
   isNotStar: boolean
-) => Promise<SingleCanvasReturnType | undefined> = async function (
+) => SingleCanvasReturnType | undefined = function (
 	card,
 	isNotStar = false
 ) {
@@ -24,12 +24,16 @@ export const createSingleCanvas: (
 		// load precomputed images directly
 		let filepath = card.filepath;
 		if (card.metadata?.assets) {
-			filepath = card.metadata.assets.medium.filepath;
+			filepath = card.metadata.assets.default.filepath;
+		}
+		let image: any = ImageCache.getImage(filepath);
+		if (!image) {
+			image = filepath;
 		}
 		loggers.info(`[Path] loading filepath -> ${filepath}`);
 		return {
 			createJPEGStream() {
-				return filepath;
+				return image;
 			},
 		};
 		// const canvas = createCanvas(

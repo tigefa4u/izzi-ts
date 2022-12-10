@@ -117,26 +117,27 @@ export const prepareRaidViewEmbed = async ({
 }) => {
 	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 	if (isEvent) {
-		bossCanvas = await createSingleCanvas(currentRaid.raid_boss[0], false);
+		bossCanvas = createSingleCanvas(currentRaid.raid_boss[0], false);
 	} else {
-		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, { isSingleRow: true });
-	}
-	if (!bossCanvas) {
-	    channel?.sendMessage("Unable to view raid");
-		return;
+		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, {
+			isSingleRow: true,
+			version: "default" 
+		});
 	}
 
-	const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
 	const embed = createEmbed(author);
 	embed.setTitle(`Raid View [${titleCase(currentRaid.stats.difficulty)}] ${prepareRaidTimer(currentRaid)}`)
 		.setDescription(prepareRaidBossEmbedDesc(currentRaid, isEvent))
 		.setImage("attachment://boss.jpg")
-		.attachFiles([ attachment ])
 		.setFooter({
 			text: `Lobby code: ${currentRaid.id}`,
 			iconURL: author.displayAvatarURL()
 		});
 
+	if (bossCanvas) {
+		const attachment = createAttachment(bossCanvas.createJPEGStream(), "boss.jpg");
+		embed.attachFiles([ attachment ]);
+	}
 	const buttons = customButtonInteraction(
 		channel,
 		[

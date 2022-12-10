@@ -60,3 +60,8 @@ REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - if absolute imports don't work use ``export NODE_PATH=src/`` before ``npm run dev``
 - To start the compiled js app use ``export NODE_PATH=lib/`` before ``npm start``
 - The app requires ``-r dotenv/config path/to/file`` to run
+
+# CRONJOBS
+- Izzi server - premium job
+- izzi test server - mana, premium and normal raid permit refill
+- izzi dashboard - minute & raid energy refill
