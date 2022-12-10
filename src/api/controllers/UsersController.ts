@@ -109,6 +109,8 @@ export const getRPGUser: (
 		}
 		if (!options?.ignoreBannedUser && user.is_banned) {
 			return;
+		} else if (user.is_banned) {
+			Cache.del(key);
 		}
 		if (options?.cached) {
 			Cache.set(

@@ -14,7 +14,11 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData, MessageAttachment } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { getIdFromMentionedString, numericWithComma, parsePremiumUsername } from "helpers";
+import {
+	getIdFromMentionedString,
+	numericWithComma,
+	parsePremiumUsername,
+} from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { DATE_OPTIONS } from "helpers/constants";
 import loggers from "loggers";
@@ -50,7 +54,13 @@ export const profile = async ({
 			profileId = mentionedId;
 		}
 		const clientUser = await client.users.fetch(profileId);
-		const user: (UserProps & P) | undefined = await getRPGUser({ user_tag: profileId, });
+		const user: (UserProps & P) | undefined = await getRPGUser(
+			{ user_tag: profileId },
+			{
+				ignoreBannedUser: true,
+				cached: false 
+			}
+		);
 		if (!user) return;
 		user.username = clientUser.username;
 		if (user.is_married) {
@@ -60,7 +70,7 @@ export const profile = async ({
 					{ user_tag: marriage.married_to },
 					{
 						cached: true,
-						ignoreBannedUser: true 
+						ignoreBannedUser: true,
 					}
 				);
 				user.married_to = marriedUser?.username;
@@ -123,10 +133,7 @@ export const profile = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.profile.profile: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.profile.profile: ERROR", err);
 		return;
 	}
 };
@@ -135,8 +142,10 @@ function prepareProfileFields(user: UserProps & P) {
 	const fields: EmbedFieldData[] = [
 		{
 			name: `User Status ${emoji.chat}`,
-			value: user.metadata?.status || "Use ``iz update status <status>`` to set a user status",
-			inline: false
+			value:
+        user.metadata?.status ||
+        "Use ``iz update status <status>`` to set a user status",
+			inline: false,
 		},
 		{
 			name: `${user.is_premium ? emoji.premium : emoji.shield2} Profile`,
@@ -194,16 +203,19 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 		{
 			name: "Shards / Orbs",
-			value: `${emoji.shard} ${numericWithComma(user.shards)} / ${emoji.blueorb} ${numericWithComma(user.orbs)}`,
+			value: `${emoji.shard} ${numericWithComma(user.shards)} / ${
+				emoji.blueorb
+			} ${numericWithComma(user.orbs)}`,
 			inline: true,
 		},
 		{
 			name: ":clock1: Started Playing from",
-			value: `${new Date(
-				user.created_at
-			).toLocaleDateString("en-us", DATE_OPTIONS)}`,
-			inline: true
-		}
+			value: `${new Date(user.created_at).toLocaleDateString(
+				"en-us",
+				DATE_OPTIONS
+			)}`,
+			inline: true,
+		},
 	];
 
 	if (user.rank) {
