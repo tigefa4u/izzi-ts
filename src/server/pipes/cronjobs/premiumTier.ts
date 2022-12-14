@@ -126,8 +126,9 @@ async function boot() {
 		const users = await getAllUsers();
 		const premiumUsers = users?.filter((u) => u.is_premium);
 		const miniPremiumUsers = users?.filter((u) => u.is_mini_premium);
+		const voteStreakUsers = users?.filter((u) => u.vote_streak > 0);
 		await Promise.all([
-			resetVoteTimers(users),
+			resetVoteTimers(voteStreakUsers),
 			premiumTimer(premiumUsers),
 			miniPremiumTimer(miniPremiumUsers),
 			resetUserActive(users)
