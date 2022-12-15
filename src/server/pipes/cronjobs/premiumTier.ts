@@ -25,6 +25,13 @@ async function premiumTimer(users: U) {
 						is_premium: false,
 						premium_days: 0,
 					};
+					if (user.raid_pass < user.max_raid_pass) {
+						user.raid_pass = user.raid_pass + 1;
+						Object.assign(params, {
+							raid_pass: user.raid_pass,
+							raid_permit_refilled_at: new Date() 
+						});
+					}
 				} else {
 					params = { premium_days_left: daysLeft };
 				}
@@ -59,6 +66,13 @@ async function miniPremiumTimer(users: U) {
 						is_mini_premium: false,
 						mini_premium_days: 0,
 					};
+					if (user.raid_pass < user.max_raid_pass) {
+						user.raid_pass = user.raid_pass + 1;
+						Object.assign(params, {
+							raid_pass: user.raid_pass,
+							raid_permit_refilled_at: new Date() 
+						});
+					}
 				} else {
 					params = { mini_premium_days_left: daysLeft };
 				}
