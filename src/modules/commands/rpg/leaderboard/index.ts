@@ -52,6 +52,12 @@ export const leaderboard = async ({
 				orderName: "rank",
 				order: "rank"
 			});
+		} else if (subcommand === "game_points") {
+			Object.assign(params, {
+				lb: "gp",
+				orderName: "Game Points",
+				order: "game_points"
+			});
 		}
 		getLB(context, author, client, params.order, params.orderName, params.lb);
 		return;

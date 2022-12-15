@@ -13,4 +13,7 @@ export const subcommands =  [ {
 }, {
 	name: "rank",
 	alias: [ "ranks", "rk" ]
+}, {
+	name: "game_points",
+	alias: [ "gp" ]
 } ];

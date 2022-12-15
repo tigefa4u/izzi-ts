@@ -39,6 +39,7 @@ export type RaidLootDropProps = {
 export type RaidLootProps = {
     gold: number;
     extraGold?: number;
+    gamePoints?: number;
     drop: {
         default?: RaidLootDropProps[];
         event?: {

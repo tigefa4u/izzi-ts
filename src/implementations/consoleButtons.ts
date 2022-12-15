@@ -114,7 +114,7 @@ const prepareConsoleDescription = async (user: UserProps) => {
     		: `Vote in ${remainingVotingHours} hours ${remainingVotingMinutes} minutes`
     }\n**:droplet: Mana:** [ ${user.mana} / ${user.max_mana}]\n**${
     	emoji.crossedswords
-    } DG Mana:** [ ${user.dungeon_mana} / ${DUNGEON_MAX_MANA} ]`;
+    } DG Mana:** [ ${user.dungeon_mana} / ${DUNGEON_MAX_MANA} ]\n**:game_die: Game Points:** ${user.game_points}`;
 
 	return desc;
 };

@@ -55,7 +55,7 @@ export const processRaidLoot = async ({
 				const user = await getRPGUser({ user_tag: lobby[key].user_tag });
 				if (!user) return rewards;
 				const goldReward =
-				  raid.loot.gold + Math.floor((raid.loot.extraGold || 0) / keys.length);
+          raid.loot.gold + Math.floor((raid.loot.extraGold || 0) / keys.length);
 				rewards.gold = goldReward;
 				user.gold = user.gold + goldReward;
 				const updateObj = { gold: user.gold } as UserProps;
@@ -69,14 +69,16 @@ export const processRaidLoot = async ({
 					rewards.shards = raid.loot.drop.event.shard;
 					updateObj.shards = user.shards;
 				}
+				if (raid.loot.gamePoints && raid.loot.gamePoints > 0) {
+					user.game_points = user.game_points + raid.loot.gamePoints;
+					updateObj.game_points = user.game_points;
+				}
 
 				await updateRPGUser({ user_tag: user.user_tag }, updateObj);
 				if (!raid.loot.drop.default || isEmptyValue(raid.loot.drop.default)) {
 					return rewards;
 				}
-				const promises = [
-					initDrops(raid.loot.drop.default, raid, user, false),
-				];
+				const promises = [ initDrops(raid.loot.drop.default, raid, user, false) ];
 				if (raid.loot.rare) {
 					const mvpUserId = getLobbyMvp(lobby);
 					let mvp;
@@ -84,7 +86,13 @@ export const processRaidLoot = async ({
 						mvp = mvpUserId;
 					}
 					promises.push(
-						initDrops(raid.loot.rare, raid, user, true, mvp ? lobby[mvp] : undefined)
+						initDrops(
+							raid.loot.rare,
+							raid,
+							user,
+							true,
+							mvp ? lobby[mvp] : undefined
+						)
 					);
 				}
 				const [ defaultDrops, rareDrops ] = await Promise.all(promises);
@@ -94,40 +102,41 @@ export const processRaidLoot = async ({
 			})
 		);
 
-		const collections = allRewards.map((reward) => {
-			const resp = clone(reward);
-			resp.defaultDrops?.map((d) => delete d.name);
-			resp.rareDrops?.map((d) => delete d.name);
-			return [
-				...(resp.defaultDrops || []),
-				...(resp.rareDrops || []),
-			] as CollectionCreateProps[];
-		}).flat();
+		const collections = allRewards
+			.map((reward) => {
+				const resp = clone(reward);
+				resp.defaultDrops?.map((d) => delete d.name);
+				resp.rareDrops?.map((d) => delete d.name);
+				return [
+					...(resp.defaultDrops || []),
+					...(resp.rareDrops || []),
+				] as CollectionCreateProps[];
+			})
+			.flat();
 
 		await createCollection(collections);
 
-		loggers.info("raid.processRaidLoot: Distributing raid loot rewards: " + JSON.stringify(allRewards));
-        
-		allRewards.map(
-			(reward) =>
-				DMUser(
+		loggers.info(
+			"raid.processRaidLoot: Distributing raid loot rewards: " +
+        JSON.stringify(allRewards)
+		);
+
+		allRewards.map((reward) =>
+			DMUser(
+				client,
+				prepareRewardEmbed({
+					author,
+					raid,
+					isEvent,
 					client,
-					prepareRewardEmbed({
-						author,
-						raid,
-						isEvent,
-						client,
-						reward,
-					}),
-					reward.user_tag
-				)
+					reward,
+				}),
+				reward.user_tag
+			)
 		);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.raids.processRaidLoot: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.raids.processRaidLoot: ERROR", err);
 		return;
 	}
 };
@@ -158,10 +167,10 @@ function prepareRewardEmbed({
 	} Boss!\n\nFinal Stats**\n\n${prepareRaidParty(raid.lobby)}\n\n**Rewards ${
 		emoji.moneybag
 	}**\n__${reward.gold}__ Gold ${emoji.gold}${
-		reward.orbs ? `\n${reward.orbs} ${emoji.blueorb}` : ""
-	}${reward.shards ? `\n${reward.shards} ${emoji.shard}` : ""}${prepareDropDesc(
-		reward
-	)}`;
+		reward.orbs ? `\n__${reward.orbs}__ ${emoji.blueorb}` : ""
+	}${reward.shards ? `\n__${reward.shards}__ ${emoji.shard}` : ""}${
+		raid.loot.gamePoints && raid.loot.gamePoints > 0 ? `\n__${raid.loot.gamePoints}__ Game Point(s)` : ""
+	}${prepareDropDesc(reward)}`;
 
 	embed.setDescription(desc);
 	return embed;
@@ -184,13 +193,17 @@ function prepareDropDesc(reward: R) {
 		desc = `${desc}\n${groupAndPrepareLootDesc(reward.defaultDrops)}`;
 	}
 	if (reward.rareDrops && reward.rareDrops.length > 0) {
-		desc = `${desc}\n\n**Additional Drops**\n${groupAndPrepareLootDesc(reward.rareDrops)}`;
+		desc = `${desc}\n\n**Additional Drops**\n${groupAndPrepareLootDesc(
+			reward.rareDrops
+		)}`;
 	}
 
 	return desc;
 }
 
-function groupAndPrepareLootDesc(drop: (CollectionCreateProps & { name?: string; })[]) {
+function groupAndPrepareLootDesc(
+	drop: (CollectionCreateProps & { name?: string })[]
+) {
 	const groupByName = groupByKey(drop, "name");
 	const dropGroup = {} as G;
 	Object.keys(groupByName).map((k) => {
@@ -229,20 +242,18 @@ async function initDrops(
 		.filter(
 			(x) =>
 				raid.lobby[x].total_damage <=
-				  Math.floor(raid.stats.original_strength * 0.12)
+        Math.floor(raid.stats.original_strength * 0.12)
 		);
 	if (isRare) {
 		array = array.filter((item) => {
 			if (leechers.length > 0) {
-				const leecher = leechers.find(
-					(l) => raid.lobby[l].user_id === user.id
-				);
+				const leecher = leechers.find((l) => raid.lobby[l].user_id === user.id);
 				if (leecher) {
 					return false;
 				}
 			}
 			let rate = item.rate || 10;
-			if (mvp && (user.id === mvp.user_id) && !item.isStaticDropRate) {
+			if (mvp && user.id === mvp.user_id && !item.isStaticDropRate) {
 				rate = rate + 5;
 			}
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
@@ -272,7 +283,7 @@ async function initDrops(
 								user_id: user.id,
 								name: boss.name,
 								is_on_cooldown: false,
-								is_tradable: true
+								is_tradable: true,
 							} as CollectionCreateProps & { name?: string })
 					)
 			)

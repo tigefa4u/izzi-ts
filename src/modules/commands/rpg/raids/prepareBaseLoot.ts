@@ -1,4 +1,4 @@
-import { randomElementFromArray, randomNumber } from "helpers";
+import { randomNumber } from "helpers";
 
 const baseLoot = (): any => ({
 	e: {
@@ -8,6 +8,7 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(20000, 25000),
 				extraGold: randomNumber(16000, 18000),
+				gamePoints: 1,
 				drop: [
 					{
 						rank: "silver",
@@ -65,6 +66,7 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(25000, 30000),
 				extraGold: randomNumber(22000, 25000),
+				gamePoints: 2,
 				drop: [
 					{
 						rank: "silver",
@@ -124,6 +126,7 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(35000, 40000),
 				extraGold: randomNumber(25000, 32000),
+				gamePoints: 3,
 				drop: [
 					{
 						rank: "silver",
@@ -183,6 +186,7 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(40000, 50000),
 				extraGold: randomNumber(32000, 35000),
+				gamePoints: 4,
 				drop: [
 					{
 						rank: "platinum",

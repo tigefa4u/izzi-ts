@@ -57,6 +57,14 @@ export const createLBEmbedList = (
 						}__ Loss: ${array[obj.index]["loss"]}`,
 					}
 				);
+			} else if (lb === "gp") {
+				return Object.assign(
+					{},
+					{
+						name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
+						value: `__${array[obj.index][order]}__ Game Points`
+					}
+				);
 			}
 			// | Server **${obj.guild_name}**
 			return Object.assign(
