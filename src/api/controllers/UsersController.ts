@@ -68,16 +68,23 @@ export const updateUser: (
 ) => Promise<UserProps | undefined> = async (params, data, options) => {
 	try {
 		if (options?.hydrateCache && params.user_tag) {
-			const dataToHydrate = await prepareCacheHydrationData(
-				{ user_tag: params.user_tag },
-				data
-			);
-			if (dataToHydrate) hydrateUserCache(dataToHydrate);
+			try {
+				const dataToHydrate = await prepareCacheHydrationData(
+					{ user_tag: params.user_tag },
+					data
+				);
+				if (dataToHydrate) hydrateUserCache(dataToHydrate);
+			} catch (err) {
+				loggers.error(
+					"api.controllers.UsersController.updateUser: ERROR hydrating cache",
+					err
+				);
+			}
 		}
 		return await Users.update(params, data);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.UsersControler.updateUser: ERROR",
+			"api.controllers.UsersController.updateUser: ERROR",
 			err
 		);
 		return;
@@ -149,12 +156,12 @@ export const updateRPGUser: (
 			"api.controllers.UsersController.updateRPGUser: updating user " +
         JSON.stringify(params) + JSON.stringify(data)
 		);
-		if (options?.hydrateCache) {
-			const cacheHydrationData = await prepareCacheHydrationData(params, data);
-			if (cacheHydrationData) {
-				await hydrateUserCache(cacheHydrationData);
-			}
-		}
+		// if (options?.hydrateCache) {
+		// 	const cacheHydrationData = await prepareCacheHydrationData(params, data);
+		// 	if (cacheHydrationData) {
+		// 		await hydrateUserCache(cacheHydrationData);
+		// 	}
+		// }
 		return result;
 	} catch (err) {
 		loggers.error(
