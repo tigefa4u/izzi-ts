@@ -19,11 +19,10 @@ import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { showRaidCommands } from "./consoleButtonFollowup/raids";
 import { CustomButtonInteractionParams } from "@customTypes/button";
-import { getCooldown } from "modules/cooldowns";
+import { getCDRemainingTime, getCooldown } from "modules/cooldowns";
 import { lottery } from "modules/commands/rpg/misc";
 import { hourly } from "modules/commands/rpg/resource";
 import { help } from "modules/commands/basic";
-import { titleCase } from "title-case";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 
 const prepareConsoleDescription = async (user: UserProps) => {
@@ -44,16 +43,16 @@ const prepareConsoleDescription = async (user: UserProps) => {
 	const cdKey = `${isEvent ? "event" : "raid"}-spawn`;
 	const raidCD = await getCooldown(user.user_tag, cdKey);
 	let remainingMins = 0,
-		remainingHours = 0;
+		remainingHours = 0,
+		remainingSec = 0;
 	let isRaidSpawnReady = false;
 	if (raidCD) {
-		const remainingTime =
-      (new Date(raidCD.timestamp).valueOf() - new Date().valueOf()) / 1000;
-		const remainingMS = remainingTime / 60;
-		remainingHours = Math.floor(remainingMS / 60);
-		remainingMins = Math.floor(remainingMS % 60);
+		const raidCdTimer = getCDRemainingTime(raidCD, user.user_tag, cdKey);
+		remainingMins = raidCdTimer.remainingMinutes;
+		remainingHours = raidCdTimer.remainingHours;
+		remainingSec = raidCdTimer.remainingSec;
 	}
-	if (remainingMins <= 0) {
+	if (remainingSec <= 0 && remainingMins <= 0) {
 		isRaidSpawnReady = true;
 	}
 	const selectedSkins = await getSkinArr(user.user_tag);
@@ -79,9 +78,13 @@ const prepareConsoleDescription = async (user: UserProps) => {
 	}
 	let hourlyTTlToMin = Math.ceil((hourlyTTl || 0) / 60);
 	if (hourlyTTlToMin < 0) hourlyTTlToMin = 0;
+	let hourlyTTlToSec = Math.ceil((hourlyTTl || 0) % 60);
+	if (hourlyTTlToSec < 0) hourlyTTlToSec = 0;
 
 	let lotteryTTlToMin = Math.ceil((lotteryTTl || 0) / 60);
 	if (lotteryTTlToMin < 0) lotteryTTlToMin = 0;
+	let lotteryTTlToSec = Math.ceil((lotteryTTl || 0) % 60);
+	if (lotteryTTlToSec < 0) lotteryTTlToSec = 0;
 	const desc =
     `**${emoji.premium} Premium Type:** ${
     	user.is_premium
@@ -100,21 +103,27 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	selectedSkins?.length || 0
     } / ${MAX_CHOSEN_SKINS_ALLOWED}\n**:ninja: Username on Market Purchase: ${
     	anonymousMarketPurchase ? "Anonymous" : user.username
-    }**\n\n**:ticket: Raid Spawn:** ${
+    } \`(use iz cons toggle)\`**\n\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
-    		: `${remainingHours} hours ${remainingMins} mins`
+    		: `${remainingHours} hours ${remainingMins} mins ${remainingSec} secs`
     }\n**:watch: Hourly**: ${
-    	hourlyTTlToMin > 0 ? `${hourlyTTlToMin} mins` : "Ready"
+    	hourlyTTlToMin > 0 && hourlyTTlToSec >= 0
+    		? `${hourlyTTlToMin} mins ${hourlyTTlToSec} secs`
+    		: "Ready"
     }\n**:tickets: Lottery:** ${
-    	lotteryTTlToMin > 0 ? `${lotteryTTlToMin} mins` : "Ready"
+    	lotteryTTlToMin > 0 && lotteryTTlToSec >= 0
+    		? `${lotteryTTlToMin} mins ${lotteryTTlToSec} secs`
+    		: "Ready"
     }\n**:alarm_clock: Vote:** ${
     	isVoteReady
     		? "Vote now!"
     		: `Vote in ${remainingVotingHours} hours ${remainingVotingMinutes} minutes`
     }\n**:droplet: Mana:** [ ${user.mana} / ${user.max_mana}]\n**${
     	emoji.crossedswords
-    } DG Mana:** [ ${user.dungeon_mana} / ${DUNGEON_MAX_MANA} ]\n**:game_die: Game Points:** ${user.game_points}`;
+    } DG Mana:** [ ${
+    	user.dungeon_mana
+    } / ${DUNGEON_MAX_MANA} ]\n**:game_die: Game Points:** ${user.game_points}`;
 
 	return desc;
 };

@@ -45,6 +45,32 @@ export const clearCooldown = async (key: string, command: string) => {
 		return;
 	}
 };
+
+export const getCDRemainingTime = (data: T, key: string, command: string) => {
+	const remainingTime: number =
+      (new Date(data.timestamp).valueOf() - new Date().valueOf()) / 1000;
+	if (isNaN(remainingTime)) {
+		clearCooldown(key, command);
+		return {
+			remainingHours: 0,
+			remainingMinutes: 0,
+			remainingSec: 0
+		};
+	}
+	const remainingMS = remainingTime / 60;
+	const remainingSec = remainingTime % 60;
+	if (remainingTime < 0 || remainingSec < 0) {
+		clearCooldown(key, command);
+	}
+	const remainingHours = Math.floor(remainingMS / 60);
+	const remainingMinutes = Math.floor(remainingMS % 60);
+	return {
+		remainingHours,
+		remainingMinutes,
+		remainingSec: +remainingSec.toFixed(0)
+	};
+};
+
 export const sendCommandCDResponse = (
 	channel: ChannelProp,
 	data: T,
@@ -52,19 +78,11 @@ export const sendCommandCDResponse = (
 	command: string
 ) => {
 	try {
-		const remainingTime: number =
-      (new Date(data.timestamp).valueOf() - new Date().valueOf()) / 1000;
-		const remainingMS = remainingTime / 60;
-		const remainingSec = remainingTime % 60;
-		if (remainingTime < 0 || isNaN(remainingTime) || remainingSec < 0) {
-			clearCooldown(key, command);
-		}
-		const remainingHours = Math.floor(remainingMS / 60);
-		const remainingMinutes = Math.floor(remainingMS % 60);
+		const { remainingHours, remainingMinutes, remainingSec } = getCDRemainingTime(data, key, command);
 		channel?.sendMessage(
 			`This command is on cooldown, you can try again in ${
 				remainingHours ?? ""
-			} : ${remainingMinutes ?? ""} : ${remainingSec.toFixed(0)}`
+			} : ${remainingMinutes ?? ""} : ${remainingSec}`
 		);
 		return;
 	} catch (err) {

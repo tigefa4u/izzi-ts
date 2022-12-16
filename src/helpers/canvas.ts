@@ -26,14 +26,16 @@ export const createSingleCanvas: (
 		if (card.metadata?.assets) {
 			filepath = card.metadata.assets.default.filepath;
 		}
-		let image: any = ImageCache.getImage(filepath);
-		if (!image) {
-			image = filepath;
-		}
+		// let image: any = ImageCache.getImage(filepath);
+		// if (!image) {
+		// 	const res = await loadImage(filepath);
+		// 	image = { image: res };
+		// 	ImageCache.setImage(filepath, res);
+		// }
 		loggers.info(`[Path] loading filepath -> ${filepath}`);
 		return {
 			createJPEGStream() {
-				return image;
+				return filepath;
 			},
 		};
 		// const canvas = createCanvas(
