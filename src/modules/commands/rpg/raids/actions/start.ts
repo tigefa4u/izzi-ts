@@ -26,7 +26,7 @@ export const startRaid = async ({
 		if (currentRaid.is_start) {
 			context.channel?.sendMessage(
 				`The ${isEvent ? "Event" : "Raid"} Challenge has already started! ` +
-          `Use \`\`${isEvent ? "ev" : "rd"}\`\` bt to attck the boss!`
+          `Use \`\`${isEvent ? "ev" : "rd"}\`\` bt to attack the boss!`
 			);
 			return;
 		}
