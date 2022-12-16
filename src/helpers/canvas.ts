@@ -126,7 +126,7 @@ export const createBattleCanvas = async (
 		};
 		let bgPath = cachedBg.image;
 		if (!bgPath) {
-			bgPath = await loadImage("./assets/images/background.jpg");
+			bgPath = await loadImage("./assets/images/background.jpeg");
 		}
 		ImageCache.setImage("battle-bg", bgPath);
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
