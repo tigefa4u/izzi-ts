@@ -54,7 +54,7 @@ export const leaderboard = async ({
 			});
 		} else if (subcommand === "game_points") {
 			Object.assign(params, {
-				lb: "gp",
+				lb: "users",
 				orderName: "Game Points",
 				order: "game_points"
 			});

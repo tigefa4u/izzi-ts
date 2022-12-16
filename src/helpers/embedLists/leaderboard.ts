@@ -57,7 +57,7 @@ export const createLBEmbedList = (
 						}__ Loss: ${array[obj.index]["loss"]}`,
 					}
 				);
-			} else if (lb === "gp") {
+			} else if (order === "game_points") {
 				return Object.assign(
 					{},
 					{
