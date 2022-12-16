@@ -89,8 +89,10 @@ export const help = async ({
 }: BaseProps) => {
 	try {
 		const cmd = args.shift();
-		const allCommands = await getAllCommands();
+		if (cmd === "sex") return;
+		let allCommands = await getAllCommands();
 		if (!allCommands) return;
+		allCommands = allCommands.filter((c) => c.name !== "sex");
 		if (cmd) {
 			const index = allCommands.findIndex((c) => c.alias.includes(cmd)) ?? -1;
 			if (index >= 0) {
