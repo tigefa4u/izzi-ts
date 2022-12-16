@@ -92,7 +92,8 @@ async function getLB(
 			topResults,
 			client,
 			orderName,
-			lb
+			lb,
+			order
 		);
 		const embed = createEmbed(author, client);
 		embed

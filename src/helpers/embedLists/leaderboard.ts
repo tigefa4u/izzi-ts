@@ -8,7 +8,8 @@ export const createLBEmbedList = (
 	array: any[],
 	client: Client,
 	order: string,
-	lb: string
+	lb: string,
+	gpOrder: string
 ) => {
 	return Promise.all(
 		array.map((item, i) => {
@@ -57,12 +58,12 @@ export const createLBEmbedList = (
 						}__ Loss: ${array[obj.index]["loss"]}`,
 					}
 				);
-			} else if (order === "game_points") {
+			} else if (gpOrder === "game_points") {
 				return Object.assign(
 					{},
 					{
 						name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
-						value: `__${array[obj.index][order]}__ Game Points`
+						value: `__${array[obj.index][gpOrder]}__ Game Points`
 					}
 				);
 			}
