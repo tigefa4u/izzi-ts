@@ -479,3 +479,5 @@ export const ABILITY_CAP = { fightingSpirit: { vitality: 150 } };
 export const MAX_ADMINS_PER_GUILD = 6;
 
 export const UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL = 20;
+
+export const LOGGER_CONTEXT = "logger_context";

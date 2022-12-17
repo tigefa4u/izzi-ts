@@ -2,6 +2,7 @@ import { createLogger, transports, format } from "winston";
 import "winston-daily-rotate-file";
 import { LoggingWinston } from "@google-cloud/logging-winston";
 import { GCP_PROJECT_ID, GCP_RESOURCE_PREFIX } from "environment";
+import { getLoggerContext } from "./context";
 
 const cloudLogger = new LoggingWinston({
 	projectId: GCP_PROJECT_ID,
@@ -14,7 +15,7 @@ const cloudLogger = new LoggingWinston({
 		});
 	},
 	resource: { type: "service_account" },
-	labels: { pid: process.pid.toString() }
+	// labels: { pid: process.pid.toString() }
 });
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
@@ -160,23 +161,23 @@ const winstonTimerLogger = createLogger({
 });
 
 const error = (error: any) => {
-	winstonErrorLogger.error(error);
+	winstonErrorLogger.error(error, { labels: getLoggerContext() });
 };
 
 const info = (info: string) => {
-	winstonInfoLogger.info(info);
+	winstonInfoLogger.info(info, { labels: getLoggerContext() });
 };
 
 const logTime = (info: string) => {
-	winstonTimerLogger.info(info);
+	winstonTimerLogger.info(info, { labels: getLoggerContext() });
 };
 
 const logApi = (info: string) => {
-	winstonAPILogger.info(info);
+	winstonAPILogger.info(info, { labels: getLoggerContext() });
 };
 
 const debug = (debug: string) => {
-	winstonDebugLogger.info(debug);
+	winstonDebugLogger.info(debug, { labels: getLoggerContext() });
 };
 
 export default {

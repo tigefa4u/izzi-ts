@@ -101,7 +101,7 @@ async function getLB(
 				`Top 10 User ${titleCase(
 					orderName
 				)} on Izzi are shown below. Want to view more than Top 10 results? ` +
-            `[Click here](${IZZI_WEBSITE}/leaderboards?lb=${lb}${lb === "ranks" ? "" : `?order=${order}`})` +
+            `[Click here](${IZZI_WEBSITE}/leaderboards?lb=${lb}${lb === "ranks" ? "" : `&order=${order}`})` +
             "\n**The Leaderboard is updated every 15 minutes**"
 			)
 			.setTitle(`User ${titleCase(orderName)} Leaderboard`);

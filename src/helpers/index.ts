@@ -14,17 +14,19 @@ import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
+import { nanoid } from "nanoid";
 
 export const generateUUID = (n: number): string => {
-	const add = 1;
-	let max = 12 - add;
-	if (n > max) {
-		return generateUUID(max) + generateUUID(n - max);
-	}
-	max = Math.pow(10, n + add);
-	const min = max / 10; // Math.pow(10, n) basically
-	const number = Math.floor(Math.random() * (max - min + 1)) + min;
-	return ("" + number).substring(add);
+	return nanoid(n);
+	// const add = 1;
+	// let max = 12 - add;
+	// if (n > max) {
+	// 	return generateUUID(max) + generateUUID(n - max);
+	// }
+	// max = Math.pow(10, n + add);
+	// const min = max / 10; // Math.pow(10, n) basically
+	// const number = Math.floor(Math.random() * (max - min + 1)) + min;
+	// return ("" + number).substring(add);
 };
 
 export const prepareAbilityDescription = (desc = "", rank?: string) => {

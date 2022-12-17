@@ -1,7 +1,8 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
-import { validateChannelPermissions } from "helpers";
+import { generateUUID, validateChannelPermissions } from "helpers";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 import {
 	handleDiscordServerJoin,
 	handleDiscordServerLeave,
@@ -40,7 +41,13 @@ export const handleClientEvents = (client: Client) => {
 	  !hasPermissions;
 
 		if (cannotProcessContext) return;
-		handleMessage(client, context);
+		initLoggerContext(() => {
+			setLoggerContext({
+				trackingId: generateUUID(10),
+				userTag: context.author.id
+			});
+			handleMessage(client, context);
+		});
 	});
 
 	client.on("interactionCreate", (interaction) => {

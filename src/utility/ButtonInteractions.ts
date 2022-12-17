@@ -6,6 +6,7 @@ import { Client, Message, MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 import { clone } from "utility";
 
 export const paginatorInteraction: <P, T, O = Record<string, never>>(
@@ -66,6 +67,12 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		const totalPages = result?.metadata.totalPages || 0;
 
 		collector?.on("collect", async (buttonInteraction) => {
+			initLoggerContext(() => {
+				setLoggerContext({
+					trackingId: generateUUID(10),
+					userTag: buttonInteraction.user.id
+				});
+			});
 			buttonInteraction.deferUpdate();
 			const id = buttonInteraction.customId;
 			loggers.info(
@@ -158,6 +165,12 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		callback(isValid);
 
 		collector?.on("collect", async (buttonInteraction) => {
+			initLoggerContext(() => {
+				setLoggerContext({
+					trackingId: generateUUID(10),
+					userTag: buttonInteraction.user.id
+				});
+			});
 			const id = buttonInteraction.customId;
 			loggers.info(
 				`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
@@ -233,6 +246,12 @@ export const collectableInteraction = async <P>(
 			time: 600_000,
 		});
 		collector?.on("collect", (buttonInteraction) => {
+			initLoggerContext(() => {
+				setLoggerContext({
+					trackingId: generateUUID(10),
+					userTag: buttonInteraction.user.id
+				});
+			});
 			const id = buttonInteraction.customId;
 			loggers.info(
 				`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
@@ -320,6 +339,12 @@ export const customButtonInteraction = <P>(
 		});
 		// To disabled buttons on end - edit the message, setting the new buttons
 		collector?.on("collect", (buttonInteraction) => {
+			initLoggerContext(() => {
+				setLoggerContext({
+					trackingId: generateUUID(10),
+					userTag: buttonInteraction.user.id
+				});
+			});
 			const id = buttonInteraction.customId;
 			loggers.info(
 				`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`

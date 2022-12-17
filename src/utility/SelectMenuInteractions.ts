@@ -4,6 +4,7 @@ import { createSelectMenu } from "commons/selectMenu";
 import { MessageActionRow } from "discord.js";
 import { generateUUID, interactionFilter, verifyFilter } from "helpers";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 
 export const selectionInteraction = async <P>(
 	channel: ChannelProp,
@@ -33,6 +34,12 @@ export const selectionInteraction = async <P>(
 
 		collector?.on("collect", async (interaction) => {
 			if (!interaction.isSelectMenu()) return;
+			initLoggerContext(() => {
+				setLoggerContext({
+					trackingId: generateUUID(10),
+					userTag: interaction.user.id
+				});
+			});
 			await interaction.deferUpdate();
 			loggers.info(`Select Menu interacted by user -> ${interaction.user.id} value: ${interaction.values[0]}`);
 			callback(params, interaction.values[0]);
