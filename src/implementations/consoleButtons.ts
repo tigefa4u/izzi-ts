@@ -103,7 +103,9 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	selectedSkins?.length || 0
     } / ${MAX_CHOSEN_SKINS_ALLOWED}\n**:ninja: Username on Market Purchase: ${
     	anonymousMarketPurchase ? "Anonymous" : user.username
-    } \`(use iz cons toggle)\`**\n\n**:ticket: Raid Spawn:** ${
+    } \`(use iz cons toggle)\`**\n\n**:ticket: Raid Permits:** ${
+    	user.raid_pass
+    } / ${user.max_raid_pass}\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins ${remainingSec} secs`
@@ -119,11 +121,11 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	isVoteReady
     		? "Vote now!"
     		: `Vote in ${remainingVotingHours} hours ${remainingVotingMinutes} minutes`
-    }\n**:droplet: Mana:** [ ${user.mana} / ${user.max_mana}]\n**${
+    }\n**:droplet: Mana:** ${user.mana} / ${user.max_mana}\n**${
     	emoji.crossedswords
-    } DG Mana:** [ ${
+    } DG Mana:** ${
     	user.dungeon_mana
-    } / ${DUNGEON_MAX_MANA} ]\n**:game_die: Game Points:** ${user.game_points}`;
+    } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}`;
 
 	return desc;
 };

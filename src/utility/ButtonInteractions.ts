@@ -66,37 +66,37 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		callback(result);
 		const totalPages = result?.metadata.totalPages || 0;
 
-		collector?.on("collect", async (buttonInteraction) => {
-			initLoggerContext(() => {
+		collector?.on("collect", (buttonInteraction) => {
+			initLoggerContext(async () => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
 					userTag: buttonInteraction.user.id
 				});
+				buttonInteraction.deferUpdate();
+				const id = buttonInteraction.customId;
+				loggers.info(
+					`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				);
+				switch (id) {
+					case binLabel: {
+						callback(null, { isDelete: true });
+						return;
+					}
+					case nextLabel: {
+						pageFilter.currentPage < totalPages && (pageFilter.currentPage += 1);
+						break;
+					}
+					case prevLabel: {
+						pageFilter.currentPage > 1 && (pageFilter.currentPage -= 1);
+						break;
+					}
+				}
+				if (totalPages <= 1) return;
+				if (pageFilter.currentPage > totalPages) return;
+				if (pageFilter.currentPage < 1) return;
+				result = await fetch(params, pageFilter, options);
+				callback(result, { isEdit: true });
 			});
-			buttonInteraction.deferUpdate();
-			const id = buttonInteraction.customId;
-			loggers.info(
-				`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-			);
-			switch (id) {
-				case binLabel: {
-					callback(null, { isDelete: true });
-					return;
-				}
-				case nextLabel: {
-					pageFilter.currentPage < totalPages && (pageFilter.currentPage += 1);
-					break;
-				}
-				case prevLabel: {
-					pageFilter.currentPage > 1 && (pageFilter.currentPage -= 1);
-					break;
-				}
-			}
-			if (totalPages <= 1) return;
-			if (pageFilter.currentPage > totalPages) return;
-			if (pageFilter.currentPage < 1) return;
-			result = await fetch(params, pageFilter, options);
-			callback(result, { isEdit: true });
 			return;
 		});
 
@@ -164,32 +164,32 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		if (!isValid) return;
 		callback(isValid);
 
-		collector?.on("collect", async (buttonInteraction) => {
-			initLoggerContext(() => {
+		collector?.on("collect", (buttonInteraction) => {
+			initLoggerContext(async () => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
 					userTag: buttonInteraction.user.id
 				});
+				const id = buttonInteraction.customId;
+				loggers.info(
+					`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				);
+				switch (id) {
+					case cancelLabel: {
+						buttonInteraction.deferUpdate();
+						callback(null, { isDelete: true });
+						break;
+					}
+					case confirmLabel: {
+						buttonInteraction.deferUpdate();
+						options = Object.assign({}, options);
+						options.isConfirm = true;
+						await fetch(params, options);
+						callback(null, { isDelete: true });
+						break;
+					}
+				}
 			});
-			const id = buttonInteraction.customId;
-			loggers.info(
-				`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-			);
-			switch (id) {
-				case cancelLabel: {
-					buttonInteraction.deferUpdate();
-					callback(null, { isDelete: true });
-					break;
-				}
-				case confirmLabel: {
-					buttonInteraction.deferUpdate();
-					options = Object.assign({}, options);
-					options.isConfirm = true;
-					await fetch(params, options);
-					callback(null, { isDelete: true });
-					break;
-				}
-			}
 			return;
 		});
 
@@ -251,23 +251,23 @@ export const collectableInteraction = async <P>(
 					trackingId: generateUUID(10),
 					userTag: buttonInteraction.user.id
 				});
-			});
-			const id = buttonInteraction.customId;
-			loggers.info(
-				`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-			);
-			switch (id) {
-				case label: {
-					buttonInteraction.deferUpdate();
-					fetch({
-						...params,
-						user_tag: buttonInteraction.user.id,
-						channel,
-					});
-					callback();
-					break;
+				const id = buttonInteraction.customId;
+				loggers.info(
+					`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				);
+				switch (id) {
+					case label: {
+						buttonInteraction.deferUpdate();
+						fetch({
+							...params,
+							user_tag: buttonInteraction.user.id,
+							channel,
+						});
+						callback();
+						break;
+					}
 				}
-			}
+			});
 			return;
 		});
 
@@ -344,23 +344,23 @@ export const customButtonInteraction = <P>(
 					trackingId: generateUUID(10),
 					userTag: buttonInteraction.user.id
 				});
-			});
-			const id = buttonInteraction.customId;
-			loggers.info(
-				`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-			);
-			options.map((option, i) => {
-				if (id === label + "_" + i) {
-					buttonInteraction.deferUpdate();
-					fetch({
-						...option.params,
-						user_tag: buttonInteraction.user.id,
-						channel,
-						client: buttonInteraction.client,
-						message: buttonInteraction.message as Message,
-					});
-					callback();
-				}
+				const id = buttonInteraction.customId;
+				loggers.info(
+					`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				);
+				options.map((option, i) => {
+					if (id === label + "_" + i) {
+						buttonInteraction.deferUpdate();
+						fetch({
+							...option.params,
+							user_tag: buttonInteraction.user.id,
+							channel,
+							client: buttonInteraction.client,
+							message: buttonInteraction.message as Message,
+						});
+						callback();
+					}
+				});
 			});
 			return;
 		});
