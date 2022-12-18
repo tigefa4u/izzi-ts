@@ -82,11 +82,15 @@ const apiRequestResponseTransporter = new transports.DailyRotateFile({
 	)
 });
 
-const winstonDebugLogger = createLogger({ transports: [ debugTransporter, cloudLogger ] });
+const winstonDebugLogger = createLogger({
+	transports: [ 
+	// debugTransporter, 
+		cloudLogger ] 
+});
 
 const winstonErrorLogger = createLogger({
 	transports: [
-		errorTransporter,
+		// errorTransporter,
 		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
@@ -112,7 +116,7 @@ const winstonErrorLogger = createLogger({
 
 const winstonAPILogger = createLogger({
 	transports: [
-		apiRequestResponseTransporter,
+		// apiRequestResponseTransporter,
 		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
@@ -138,7 +142,7 @@ const winstonAPILogger = createLogger({
 
 const winstonInfoLogger = createLogger({
 	transports: [
-		infoTransporter,
+		// infoTransporter,
 		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
@@ -150,7 +154,7 @@ const winstonInfoLogger = createLogger({
 
 const winstonTimerLogger = createLogger({
 	transports: [
-		timerTransporter,
+		// timerTransporter,
 		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
