@@ -106,6 +106,8 @@ async function verifyAndProcessEvolution(
 		const prevRank = cardToEvolve.rank;
 		cardToEvolve.rank = newRankPL.rank;
 		user.gold = user.gold - cost;
+		cardToEvolve.souls = cardToEvolve.souls - reqSouls;
+		loggers.info("Evolving card: after data update -> " + JSON.stringify(cardToEvolve));
 		await Promise.all([
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			updateCollection(
@@ -113,7 +115,7 @@ async function verifyAndProcessEvolution(
 				{
 					rank: cardToEvolve.rank,
 					rank_id: cardToEvolve.rank_id,
-					souls: 1,
+					souls: cardToEvolve.souls,
 					character_level: 1,
 					exp: STARTER_CARD_EXP,
 					r_exp: STARTER_CARD_R_EXP
