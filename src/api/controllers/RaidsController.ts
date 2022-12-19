@@ -8,7 +8,7 @@ import * as Raids from "../models/Raids";
 export const createRaid = async (data: RaidCreateProps) => {
 	try {
 		loggers.info("Creating Raid boss: " + JSON.stringify(data));
-		return await Raids.create(data);
+		return Raids.create(data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.RaidsController.createRaid: ERROR",

@@ -177,6 +177,7 @@ export const createRaidBoss = async ({
 		raid_boss: JSON.stringify(raidBosses),
 		loot: computedLoot,
 	});
+	loggers.info("Created Raid with data -> " + JSON.stringify(raid));
 	return {
 		raid,
 		raidBosses,
