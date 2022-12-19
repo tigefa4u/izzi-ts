@@ -170,7 +170,7 @@ function prepareLoot(
 		isEvent ? "Event" : "Raid"
 	} Rewards [For Everyone]__**\n__${numericWithComma(loot.gold)}__ Gold ${
 		emoji.gold
-	}${loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points` : ""}\n${eventDesc}${
+	}${loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points :game_die:` : ""}\n${eventDesc}${
 		loot.drop && loot.drop.default && !isEmptyValue(loot.drop.default)
 			? loot.drop.default
 				.map(
