@@ -3,7 +3,8 @@ import loggers from "loggers";
 import { DMUserViaApi } from "../directMessage";
 import "../../../module";
 import autoKick from "../autoKick";
-import { delay } from "helpers";
+import { delay, generateUUID } from "helpers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 
 // connect to process - chrome dev tool - remote connection
 async function raidTimers() {
@@ -48,16 +49,22 @@ async function raidTimers() {
 	}
 }
 
-async function boot() {
-	try {
-		await Promise.all([ autoKick(), raidTimers() ]);
-	} catch (err) {
-		loggers.error("cronjobs.oneMinuteTimers.boot: ERROR", err);
-	} finally {
-		loggers.info("cronjobs.oneMinuteTimers.boot: Completed all jobs...");
-		await delay(1000);
-		process.exit(1);
-	}
+function boot() {
+	initLoggerContext(async () => {
+		try {
+			setLoggerContext({
+				trackingId: generateUUID(10),
+				userTag: "cronjob"
+			});
+			await Promise.all([ autoKick(), raidTimers() ]);
+		} catch (err) {
+			loggers.error("cronjobs.oneMinuteTimers.boot: ERROR", err);
+		} finally {
+			loggers.info("cronjobs.oneMinuteTimers.boot: Completed all jobs...");
+			await delay(1000);
+			process.exit(1);
+		}
+	});
 }
 
 boot();

@@ -1,6 +1,7 @@
 import Cache from "cache";
-import { delay } from "helpers";
+import { delay, generateUUID } from "helpers";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 import { createRaidBoss } from "modules/commands/rpg/raids/actions/spawn";
 import { computeRank } from "modules/commands/rpg/raids/computeBoss";
 import "../../../module";
@@ -55,16 +56,22 @@ const spawnRaids = async () => {
 	}
 };
 
-async function boot() {
-	try {
-		await spawnRaids();
-		loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");
-	} catch (err) {
-		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
-	} finally {
-		await delay(1000);
-		process.exit(1);
-	}
+function boot() {
+	initLoggerContext(async () => {
+		try {
+			setLoggerContext({
+				trackingId: generateUUID(10),
+				userTag: "cronjob"
+			});
+			await spawnRaids();
+			loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");
+		} catch (err) {
+			loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
+		} finally {
+			await delay(1000);
+			process.exit(1);
+		}
+	});
 }
 
 boot();

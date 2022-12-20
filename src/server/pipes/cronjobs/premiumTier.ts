@@ -1,7 +1,8 @@
 import { UserProps } from "@customTypes/users";
 import { getAllUsers, updateRPGUser } from "api/controllers/UsersController";
-import { delay } from "helpers";
+import { delay, generateUUID } from "helpers";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 import "../../../module";
 
 type U = UserProps[] | undefined;
@@ -35,7 +36,9 @@ async function premiumTimer(users: U) {
 				} else {
 					params = { premium_days_left: daysLeft };
 				}
-				return updateRPGUser({ user_tag: user.user_tag }, params, { hydrateCache: true });
+				return updateRPGUser({ user_tag: user.user_tag }, params, 
+					// { hydrateCache: true }
+				);
 			})
 		);
 		loggers.info("cronjobs.premiumTier.premiumTimer: completed...");
@@ -76,7 +79,9 @@ async function miniPremiumTimer(users: U) {
 				} else {
 					params = { mini_premium_days_left: daysLeft };
 				}
-				return updateRPGUser({ user_tag: user.user_tag }, params, { hydrateCache: true });
+				return updateRPGUser({ user_tag: user.user_tag }, params, 
+					// { hydrateCache: true }
+				);
 			})
 		);
 		loggers.info("cronjobs.premiumTier.miniPremiumTimer: completed...");
@@ -97,7 +102,9 @@ async function resetVoteTimers(users: U) {
 				const oneDay = 1000 * 60 * 60 * 24;
 				const diff = new Date().valueOf() - new Date(user.voted_at).valueOf();
 				if (diff >= oneDay) {
-					return updateRPGUser({ user_tag: user.user_tag }, { vote_streak: 0 }, { hydrateCache: true });
+					return updateRPGUser({ user_tag: user.user_tag }, { vote_streak: 0 }, 
+						// { hydrateCache: true }
+					);
 				}
 			})
 		);
@@ -121,7 +128,7 @@ async function resetUserActive(users: U) {
 					return updateRPGUser(
 						{ user_tag: user.user_tag },
 						{ is_active: false },
-						{ hydrateCache: true }
+						// { hydrateCache: true }
 					);
 				}
 				return;
@@ -135,26 +142,32 @@ async function resetUserActive(users: U) {
 	}
 }
 
-async function boot() {
-	try {
-		const users = await getAllUsers();
-		const premiumUsers = users?.filter((u) => u.is_premium);
-		const miniPremiumUsers = users?.filter((u) => u.is_mini_premium);
-		const voteStreakUsers = users?.filter((u) => u.vote_streak > 0);
-		await Promise.all([
-			resetVoteTimers(voteStreakUsers),
-			premiumTimer(premiumUsers),
-			miniPremiumTimer(miniPremiumUsers),
-			resetUserActive(users)
-		]);
-		loggers.info("pipes.cronjobs.premiumTier.boot: completed...");
-	} catch (err) {
-		loggers.error("pipes.cronjobs.premiumTier.boot: ERROR", err);
-	} finally {
-		loggers.info("pipes.cronjobs.premiumTier.boot: completed all jobs...");
-		await delay(1000);
-		process.exit(1);
-	}
+function boot() {
+	initLoggerContext(async () => {
+		try {
+			setLoggerContext({
+				trackingId: generateUUID(10),
+				userTag: "cronjob"
+			});
+			const users = await getAllUsers();
+			const premiumUsers = users?.filter((u) => u.is_premium);
+			const miniPremiumUsers = users?.filter((u) => u.is_mini_premium);
+			const voteStreakUsers = users?.filter((u) => u.vote_streak > 0);
+			await Promise.all([
+				resetVoteTimers(voteStreakUsers),
+				premiumTimer(premiumUsers),
+				miniPremiumTimer(miniPremiumUsers),
+				resetUserActive(users)
+			]);
+			loggers.info("pipes.cronjobs.premiumTier.boot: completed...");
+		} catch (err) {
+			loggers.error("pipes.cronjobs.premiumTier.boot: ERROR", err);
+		} finally {
+			loggers.info("pipes.cronjobs.premiumTier.boot: completed all jobs...");
+			await delay(5000);
+			process.exit(1);
+		}
+	});
 }
 
 boot();

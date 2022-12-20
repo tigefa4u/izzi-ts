@@ -1,9 +1,10 @@
 import { getAllRaids } from "api/controllers/RaidsController";
 import connection from "db";
-import { delay } from "helpers";
+import { delay, generateUUID } from "helpers";
 import { DUNGEON_MAX_MANA } from "helpers/constants";
 import { refillEnergy } from "helpers/raid";
 import loggers from "loggers";
+import { initLoggerContext, setLoggerContext } from "loggers/context";
 import "../../../module";
 
 async function refillMana() {
@@ -47,17 +48,23 @@ async function refillRaidEnergy() {
 	}
 }
 
-async function boot() {
-	try {
-		await refillRaidEnergy();
-		// await Promise.all([ refillMana(), refillRaidEnergy() ]);
-	} catch (err) {
-		loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
-	} finally {
-		loggers.info("cronjobs.fourMinuteTimers: completed all jobs...");
-		await delay(1000);
-		process.exit(1);
-	}
+function boot() {
+	initLoggerContext(async () => {
+		try {
+			setLoggerContext({
+				trackingId: generateUUID(10),
+				userTag: "cronjob"
+			});
+			await refillRaidEnergy();
+			// await Promise.all([ refillMana(), refillRaidEnergy() ]);
+		} catch (err) {
+			loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
+		} finally {
+			loggers.info("cronjobs.fourMinuteTimers: completed all jobs...");
+			await delay(1000);
+			process.exit(1);
+		}
+	});
 }
 
 boot();
