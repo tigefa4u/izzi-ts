@@ -5,7 +5,7 @@ export const subcommands = [
 	},
 	{
 		name: "set",
-		alias: []
+		alias: [ "add" ]
 	},
 	{
 		name: "remove",
