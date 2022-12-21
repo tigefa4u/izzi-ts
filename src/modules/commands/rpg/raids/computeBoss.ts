@@ -65,7 +65,7 @@ function prepareLoot(
 		result.loot.gold = baseLoot[difficulty].default.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].default.loot.extraGold;
 		// result.loot.gamePoints = 0;
-		result.loot.gamePoints = baseLoot[difficulty].default.loot.gamePoints;
+		// result.loot.gamePoints = baseLoot[difficulty].default.loot.gamePoints;
 	}
 
 	return result;
