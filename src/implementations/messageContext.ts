@@ -101,6 +101,7 @@ const sendMessage: (
 		await delay(100);
 		content = prepareConsoleButtonWrapper(channel, content);
 		const responseObj = getResponseObj(content);
+		loggers.info("implementations.messageContext.sendMessage: response -> " + JSON.stringify(responseObj));
 		return channel.send(responseObj);
 	} catch (err) {
 		loggers.error(
