@@ -98,13 +98,14 @@ export type CommandMapProps = {
 	nickname: (params: BaseProps) => void;
 	wishlist: (params: BaseProps) => void;
 	"guild event": (params: BaseProps) => void;
-	"upgrade card": (params: BaseProps) => void;
+	"upgrade-card": (params: BaseProps) => void;
 	"make a wish": (params: BaseProps) => void;
 	guide: (params: BaseProps) => void;
 	sex: (params: BaseProps) => void;
 	console: (params: BaseProps) => void;
 	changelogs: (params: BaseProps) => void;
 	referral: (params: BaseProps) => void;
+	customcard: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

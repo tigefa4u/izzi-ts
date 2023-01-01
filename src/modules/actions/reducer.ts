@@ -61,6 +61,7 @@ import { starterGuide } from "modules/commands/rpg/profile/guide";
 import { console } from "modules/commands/rpg/console";
 import { viewChangeLogs } from "modules/commands/basic/changelogs";
 import { userReferrals } from "modules/commands/basic/referrals";
+import { customCard } from "modules/commands/rpg/profile/customCard";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -148,13 +149,14 @@ const commandMap: CommandMapProps = {
 	delete: deleteAccount,
 	nickname: nickname,
 	"guild event": guildEvents,
-	"upgrade card": upgradeCard,
+	"upgrade-card": upgradeCard,
 	wishlist: wishlist,
 	"make a wish": makeAWish,
 	guide: starterGuide,
 	console: console,
 	changelogs: viewChangeLogs,
 	referral: userReferrals,
+	customcard: customCard
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };

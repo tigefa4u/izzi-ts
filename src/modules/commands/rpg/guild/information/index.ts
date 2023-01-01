@@ -51,7 +51,7 @@ function prepareGuildDesc(
 		(admins || []).length > 0
 			? `\n**Clan Admin(s): [${
 				admins?.length || 0
-			} / ${MAX_ADMINS_PER_GUILD}]** ${admins
+			} / ${guild.max_admin_slots}]** ${admins
 				?.map((admin) => `${admin.username}`)
 				.join(", ")}`
 			: ""
