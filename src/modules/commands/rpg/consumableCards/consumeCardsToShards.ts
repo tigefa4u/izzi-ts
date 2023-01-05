@@ -226,6 +226,7 @@ export const consumeCardsToShards = async ({
 				}
 			}
 		);
+		setCooldown(author.id, cooldownCommand, 300);
 		if (!buttons) return;
 
 		embed
@@ -237,7 +238,6 @@ export const consumeCardsToShards = async ({
           "The maximum amount of card names listed is 10, if you consume more than 10 different cards, " +
           "the names will not be fully listed",
 			});
-		setCooldown(author.id, cooldownCommand, 60);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

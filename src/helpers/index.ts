@@ -275,7 +275,7 @@ export const prepareStatsDesc = <T extends OverallStatsProps>(
 		stats.intelligenceBonus ? ` (+${stats.intelligenceBonus})` : ""
 	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
 		stats.abilityname || ""
-	)} ${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
+	)}${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
 		stats.abilitydescription,
 		rank
 	)}${

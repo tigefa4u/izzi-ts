@@ -1,35 +1,4 @@
 import { IgnoreProps } from "@customTypes";
-import { CardMetadataAssetProps } from "@customTypes/cards";
-import { CharacterStatProps } from "@customTypes/characters";
-import { RanksMetaProps } from "helpers/helperTypes";
-
-export type CustomCardProps = {
-	stats: Omit<CharacterStatProps, "evasion" | "critical" | "accuracy" | "precision">;
-	assets: {
-		[key in keyof RanksMetaProps]: CardMetadataAssetProps
-	};
-	name: string;
-	// rank: string;
-	type: string;
-	series: string;
-	selected: boolean;
-	id: number;
-	abilityname: string;
-	abilitydescription: string;
-	status?: string;
-}
-export type FakeProfileProps = {
-	cards: CustomCardProps[];
-	info: {
-		gold: number;
-		level: number;
-		raid_pass: number;
-		izzi_points: number;
-		shards: number;
-		orbs: number;
-		status?: string;
-	};
-}
 
 export type UserProps = {
     id: number;
@@ -71,7 +40,6 @@ export type UserProps = {
 	souls: number;
 	metadata: {
 		status?: string;
-		fakeprofile?: FakeProfileProps;
 	};
 	is_mini_premium?: boolean;
 	mini_premium_days_left?: number;
