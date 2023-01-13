@@ -107,3 +107,5 @@ export type CollectionCardInfoByRowNumberParams = {
   user_tag?: string;
   exclude_ids?: number[];
 };
+
+export type CT = { name?: string | string[]; type?: string | string[]; isExactMatch?: boolean; }

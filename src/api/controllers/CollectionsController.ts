@@ -5,6 +5,7 @@ import {
 	CollectionProps,
 	CollectionReturnType,
 	CollectionUpdateProps,
+	CT,
 	ICollectionCreateProps,
 } from "@customTypes/collections";
 import { ItemProps } from "@customTypes/items";
@@ -47,7 +48,6 @@ export const createCollection: (
 	}
 };
 
-type CT = { name?: string | string[]; type?: string | string[]; isExactMatch?: boolean; }
 const safeParseCharacterParams = (params = {} as CT) => {
 	const obj = {};
 	if (params.name) {

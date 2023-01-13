@@ -115,7 +115,12 @@ export const dungeonBattle = async ({ context, options, client }: BaseProps) => 
 		});
 		if (!playerStats) {
 			embed.setDescription("You do not have a valid DG Team, Please reset your team using ``iz dg reset``");
-
+			await updateDGTeam(author.id, {
+				metadata: {
+					...dgTeam.metadata,
+					isValid: false
+				}
+			});
 			context.channel?.sendMessage(embed);
 			return;
 		}

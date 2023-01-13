@@ -1,6 +1,6 @@
 import { AuthorProps, ChannelProp, FilterProps } from "@customTypes";
 import { CharactersReturnType } from "@customTypes/characters";
-import { CollectionProps } from "@customTypes/collections";
+import { CollectionParams, CollectionProps, CT } from "@customTypes/collections";
 import {
 	SelectMenuCallbackParams,
 	SelectMenuOptions,
@@ -93,41 +93,51 @@ const addCardsToTrade = async ({
 	return;
 };
 
-const handleCharacterSelect = (
+const handleCharacterSelect = async (
 	options: SelectMenuCallbackParams<{
-    collections: CollectionProps[];
     characters: CharactersReturnType;
     tradeId: string;
 	args: string[];
+	options: CollectionParams & CT;
   }>,
 	value: string
 ) => {
-	const characters = options.extras?.characters;
-	let collections = options.extras?.collections;
-	const tradeId = options.extras?.tradeId;
-	const args = options.extras?.args;
-	if (!characters || !collections || !tradeId) return;
-	const character = characters.find((c) => c.name === value);
-	if (!character) return;
-	collections = collections?.filter((c) => c.character_id === character.id);
-	const embed = createEmbed(options.author, options.client).setTitle(
-		DEFAULT_ERROR_TITLE
-	);
-	if (!collections || collections.length <= 0) {
-		embed.setDescription("You do not have sufficient cards to trade.");
-		options.channel?.sendMessage(embed);
+	try {
+		const characters = options.extras?.characters;
+		const tradeId = options.extras?.tradeId;
+		const args = options.extras?.args;
+		const queryOptions = options.extras?.options;
+		if (!characters || !tradeId || !queryOptions) return;
+		const character = characters.find((c) => c.name === value);
+		if (!character) return;
+		queryOptions.name = character.name;
+		queryOptions.isExactMatch = true;
+		loggers.info("trades.actions.add.multipleCards.handleCharacterSelect: " +
+		"fetching collections with query params: " +
+		JSON.stringify(queryOptions));
+		const collections = await getCollection(queryOptions);
+		const embed = createEmbed(options.author, options.client).setTitle(
+			DEFAULT_ERROR_TITLE
+		);
+		if (!collections || collections.length <= 0) {
+			embed.setDescription("You do not have sufficient cards to trade.");
+			options.channel?.sendMessage(embed);
+			return;
+		}
+		addCardsToTrade({
+			collections,
+			embed,
+			channel: options.channel,
+			tradeId,
+			client: options.client,
+			args: args || [],
+			author: options.author
+		});
+		return;
+	} catch (err) {
+		loggers.error("trades.actions.add.multipleCards.handleCharacterSelect: ERROR", err);
 		return;
 	}
-	addCardsToTrade({
-		collections,
-		embed,
-		channel: options.channel,
-		tradeId,
-		client: options.client,
-		args: args || [],
-		author: options.author
-	});
-	return;
 };
 
 export const addMultipleCards = async ({
@@ -201,6 +211,8 @@ export const addMultipleCards = async ({
 				return;
 			}
 			if (characters.length > 1 && params.name) {
+				loggers.info("addMultipleCards: multiple characters found for query params: " + JSON.stringify(params));
+				loggers.info("addMultipleCards: multiple characters found " + JSON.stringify(characters));
 				if (characters.length > 20) characters.splice(0, 20);
 				const selectMenuOptions = {
 					menuOptions: characters.map((c) => ({
@@ -217,10 +229,10 @@ export const addMultipleCards = async ({
 						client,
 						author: author,
 						extras: {
-							collections,
 							characters,
 							tradeId,
-							args
+							args,
+							options
 						},
 					},
 					handleCharacterSelect,
