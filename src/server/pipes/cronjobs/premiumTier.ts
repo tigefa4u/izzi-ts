@@ -123,7 +123,7 @@ async function resetUserActive(users: U) {
 		loggers.info("cronjobs.premiumTier.resetUserActive: resetting user active status: users - " + users.length);
 		await Promise.all(
 			users.map(async (user) => {
-				const dt = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
+				const dt = new Date().getTime() + 10 * 24 * 60 * 60 * 1000;
 				if (dt < new Date(user.updated_at).valueOf()) {
 					return updateRPGUser(
 						{ user_tag: user.user_tag },
