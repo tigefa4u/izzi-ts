@@ -50,7 +50,6 @@ type O = {
   result: BattleStats;
   author: AuthorProps;
   client: Client;
-  userRank?: UserRankProps;
   channel: ChannelProp;
   opponentId: string;
   opponentUsername: string;
@@ -60,11 +59,11 @@ export const processBattleOutcome = async ({
 	opponentId,
 	client,
 	author,
-	userRank,
 	channel,
 	opponentUsername,
 }: O) => {
 	try {
+		const userRank = await getUserRank({ user_tag: author.id });
 		if (!userRank) {
 			channel?.sendMessage("Unable to process DG, please try again later");
 			return;
@@ -97,6 +96,8 @@ export const processBattleOutcome = async ({
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
+				const userWonPoints = userRank.division * 4;
+				const opponentLosePoints = opponentUserRank.division * 2;
 				promises.push(
 					processDGLose(opponentUserRank, opponentId),
 					fetchAndUpdateDgLog(
@@ -107,6 +108,7 @@ export const processBattleOutcome = async ({
 								username: opponentUsername,
 								outcome: "win",
 								rank: opponentUserRank.rank,
+								points: userWonPoints
 							},
 						},
 						channel,
@@ -120,6 +122,7 @@ export const processBattleOutcome = async ({
 								username: author.username,
 								outcome: "lose",
 								rank: userRank.rank,
+								points: opponentLosePoints
 							},
 						},
 						channel,
@@ -137,6 +140,8 @@ export const processBattleOutcome = async ({
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
+				const userLosePoints = userRank.division * 2;
+				const opponentWonPoints = opponentUserRank.division * 4;
 				promises.push(
 					processDGWin(opponentUserRank, opponentId),
 					fetchAndUpdateDgLog(
@@ -147,6 +152,7 @@ export const processBattleOutcome = async ({
 								username: opponentUsername,
 								outcome: "lose",
 								rank: opponentUserRank.rank,
+								points: userLosePoints
 							},
 						},
 						channel,
@@ -160,6 +166,7 @@ export const processBattleOutcome = async ({
 								username: author.username,
 								outcome: "win",
 								rank: userRank.rank,
+								points: opponentWonPoints
 							},
 						},
 						channel,

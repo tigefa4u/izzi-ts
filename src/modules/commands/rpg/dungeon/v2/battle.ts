@@ -203,7 +203,6 @@ export const dungeonBattle = async ({ context, options, client }: BaseProps) => 
 		processBattleOutcome({
 			result,
 			author,
-			userRank,
 			client,
 			channel: context.channel,
 			opponentId: opponent.id,

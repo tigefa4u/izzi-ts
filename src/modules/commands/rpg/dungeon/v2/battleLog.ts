@@ -43,7 +43,7 @@ export const viewDGBattleLog = async ({
         	attackLog.user_tag
         })\n**Outcome:** ${titleCase(attackLog.outcome)}\n**Rank:** ${titleCase(
         	attackLog.rank
-        )} ${emojiMap(attackLog.rank)}\n\n`;
+        )} ${emojiMap(attackLog.rank)}\n**Exp gain/lose:** ${attackLog.points}\n\n`;
 		}
 		if (defenseLog) {
 			logDesc =
@@ -52,7 +52,7 @@ export const viewDGBattleLog = async ({
         	defenseLog.user_tag
         })\n**Outcome:** ${titleCase(defenseLog.outcome)}\n**Rank:** ${titleCase(
         	defenseLog.rank
-        )} ${emojiMap(defenseLog.rank)}`;
+        )} ${emojiMap(defenseLog.rank)}\n**Exp gain/lose:** ${defenseLog.points}`;
 		}
 		embed
 			.setTitle(`DG Battle Logs ${emoji.crossedswords}`)

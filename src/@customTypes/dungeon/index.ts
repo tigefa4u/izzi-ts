@@ -22,17 +22,20 @@ export type DungeonProps = {
             username: string;
             outcome: "win" | "lose";
             rank: string;
+            points: number;
         },
         defended?: {
             user_tag: string;
             username: string;
             outcome: "win" | "lose";
             rank: string;
+            points: number;
         },
         shield?: {
             enabled: boolean;
             timestamp: number;
             endsAt: number;
+            destroyedBeforeEnd: boolean;
         },
         isValid?: boolean;
     }; // jsonb
