@@ -34,7 +34,7 @@ export const updateUserRank = async (
 ) => {
 	try {
 		loggers.info("Updating user ranks: " + JSON.stringify(params) + " Data: " + JSON.stringify(data));
-		return await UserRanks.update(params, data);
+		return UserRanks.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.UserRanksController.updateUserRank: ERROR",

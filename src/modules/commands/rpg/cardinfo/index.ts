@@ -51,7 +51,7 @@ async function prepareCinfoDetails(
 	embed
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
-			`**Series:** ${titleCase(characterInfo.series)}\n**Card Copies:** ${
+			`**Series:** ${titleCase(characterInfo.series.trim())}\n**Card Copies:** ${
 				characterInfo.copies
 			}\n**Element Type:** ${titleCase(characterInfo.type)} ${
 				elementTypeEmoji ? elementTypeEmoji : ""

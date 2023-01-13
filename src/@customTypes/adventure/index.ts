@@ -138,6 +138,7 @@ export type BattleStats = {
   simulation?: Simulation;
   attachments?: (CollectionCardInfoProps | undefined)[];
   isBot?: boolean;
+  username?: string;
 };
 
 export type PrepareBattleDescriptionProps = {

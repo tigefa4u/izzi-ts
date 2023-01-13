@@ -31,11 +31,13 @@ function getResponseObj(
 		if (!content || content === "") {
 			throw new Error("Unable to send content: " + JSON.stringify(content));
 		}
+		// Add "." at the end to maintain consistency
+		if (!content.endsWith(".")) content = content + ".";
 		Object.assign(responseObj, { content });
 	}
 	if (content instanceof MessageEmbed) {
 		if (!content.description) {
-			content.description = "\n";
+			content.description = "No content available.";
 		}
 		Object.assign(responseObj, { embeds: [ content ] });
 		if (content.attachments) {

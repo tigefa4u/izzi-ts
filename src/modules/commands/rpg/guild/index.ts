@@ -26,7 +26,7 @@ import { upgradeCard } from "./upgrades/card";
 
 export const guild = async ({ context, client, args, options }: BaseProps) => {
 	try {
-		const subcommand = filterSubCommands(args.shift() || "view", subcommands);
+		const subcommand = filterSubCommands(args.shift()?.toLowerCase() || "view", subcommands);
 		const params = {
 			context,
 			client,

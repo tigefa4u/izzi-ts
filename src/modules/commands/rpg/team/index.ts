@@ -1,7 +1,7 @@
-import { AuthorProps, ChannelProp, OverallStatsProps } from "@customTypes";
+import { AuthorProps, ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { SelectMenuOptions } from "@customTypes/selectMenu";
-import { TeamProps } from "@customTypes/teams";
+import { TeamMeta, TeamProps } from "@customTypes/teams";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getGuildMember } from "api/controllers/GuildMembersController";
 import { getGuild } from "api/controllers/GuildsController";
@@ -10,7 +10,6 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client, MessageSelectOptionData } from "discord.js";
 import { emojiMap } from "emojis";
-import emoji from "emojis/emoji";
 import { filterSubCommands } from "helpers/subcommands";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
@@ -31,7 +30,7 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const cmd = args.shift();
+		const cmd = args.shift()?.toLowerCase();
 		const subcommand = filterSubCommands(cmd || "view", subcommands);
 		const params = {
 			context,
@@ -120,7 +119,7 @@ export async function prepareAndSendTeamMenuEmbed<P>(
 export async function showTeam({
 	user_id,
 	name,
-	showGuildBonus = false
+	showGuildBonus = false,
 }: {
   name: string;
   user_id: number;
@@ -165,6 +164,17 @@ export async function showTeam({
 			desc,
 		};
 	}
+	const desc = prepareTeamDescription(totalOverallStats, teamPosition);	
+	return {
+		title: `Team ${name}`,
+		desc,
+	};
+}
+
+export const prepareTeamDescription = (
+	totalOverallStats: any,
+	teamPosition: TeamMeta[],
+) => {
 	const {
 		collections,
 		totalOverallStats: totalTeamStats,
@@ -175,7 +185,7 @@ export async function showTeam({
 			return a.position > b.position ? 1 : -1;
 		})
 		.map((item) => {
-			const card = collections.filter((c) => c.id === item.collection_id)[0];
+			const card = collections.filter((c: any) => c.id === item.collection_id)[0];
 			if (!card) {
 				item.collection_id = null;
 			}
@@ -211,13 +221,10 @@ export async function showTeam({
 		totalTeamStats.dexterityBonus ? ` (+${totalTeamStats.dexterityBonus})` : ""
 	}\n\n**Power Level:** ${totalTeamPowerLevel}`;
 
-	return {
-		title: `Team ${name}`,
-		desc,
-	};
-}
+	return desc;
+};
 
-function prepareDefaultTeamDescription() {
+export function prepareDefaultTeamDescription() {
 	const desc =
     "The Positions of the assigned cards are listed below.\n\n" +
     `${[ 1, 2, 3 ]

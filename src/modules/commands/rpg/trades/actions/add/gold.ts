@@ -5,7 +5,7 @@ import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_GOLD_IN_TRADE } from "helpers/constants";
 import loggers from "loggers";
-import { setTradeQueue } from "../../queue";
+import { delFromQueue, getTradeQueue, setTradeQueue } from "../../queue";
 import { viewTrade } from "../view";
 
 export const addGoldToTrade = async ({
@@ -31,8 +31,13 @@ export const addGoldToTrade = async ({
 		loggers.info(`${author.id} added ${amount} gold to trade`);
 		const trader = tradeQueue[author.id];
 		trader.gold = trader.gold + amount;
-		tradeQueue[trader.user_tag] = trader;
-		await setTradeQueue(tradeId, tradeQueue);
+		const refetchQueue = await getTradeQueue(tradeId);
+		if (!refetchQueue) {
+			await delFromQueue(tradeId);
+			return;
+		}
+		refetchQueue[trader.user_tag] = trader;
+		await setTradeQueue(tradeId, refetchQueue);
 		viewTrade({
 			author,
 			client,

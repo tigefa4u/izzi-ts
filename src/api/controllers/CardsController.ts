@@ -27,7 +27,7 @@ export const getCardBySeries: (params: {
 	series: string;
 }) => Promise<CardProps[] | undefined> = async function(params) {
 	try {
-		return await Cards.getBySeries(params);
+		return Cards.getBySeries(params);
 	} catch (err) {
 		loggers.error("api.controllers.CardsController.getCardBySeries: ERROR", err);
 		return;
@@ -36,7 +36,7 @@ export const getCardBySeries: (params: {
 
 export const getRandomCard = async (params: CardParams, limit: number) => {
 	try {
-		return await Cards.getRandomCard(params, limit);
+		return Cards.getRandomCard(params, limit);
 	} catch (err) {
 		loggers.error("api.controllers.CardsController.getRandomCard: ERROR", err);
 		return;

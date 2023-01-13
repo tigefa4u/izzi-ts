@@ -41,7 +41,7 @@ export const createTeam = async ({
 				collection_id: null
 			})))
 		});
-		context.channel?.sendMessage(`Successfully create **__Team ${name}__**`);
+		context.channel?.sendMessage(`Successfully created **__Team ${name}__**`);
 		return;
 	} catch (err) {
 		loggers.error(

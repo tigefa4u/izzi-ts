@@ -80,3 +80,7 @@ app.use(async (req: FastifyRequest, _res: FastifyReply, next) => {
       next();
     });
   });
+
+
+  # INCASE MIGRATION FAILS ADD THIS FILE
+  - Created Migration: /Users/hoax/Desktop/izzi/izzi-ts/src/db/migrations/20230113110055_rename-dungeons-table.ts

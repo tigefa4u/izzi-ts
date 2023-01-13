@@ -33,7 +33,7 @@ export const getMarket = async (
 
 export const getMarketCollection = async (params: { is_on_market: boolean, collection_id: number }) => {
 	try {
-		return await Markets.getMarketCollection(params);
+		return Markets.getMarketCollection(params);
 	} catch (err) {
 		loggers.error("api.controllers.MarksController.getMarketCollection: ERROR", err);
 		return;
@@ -43,7 +43,7 @@ export const getMarketCollection = async (params: { is_on_market: boolean, colle
 export const delFromMarket = async (params: { id?: number; collection_ids?: number | number[] }) => {
 	try {
 		loggers.info("Deleting card from market: " + JSON.stringify(params));
-		return await Markets.del(params);
+		return Markets.del(params);
 	} catch (err) {
 		loggers.error("api.controllers.MarketsController.delFromMarket: ERROR", err);
 		return;
@@ -52,7 +52,7 @@ export const delFromMarket = async (params: { id?: number; collection_ids?: numb
 
 export const createMarketCard = async (data: MarketCreateProps) => {
 	try {
-		return await Markets.create(data);
+		return Markets.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.MarketsController.createMarketCard: ERROR", err);
 		return;

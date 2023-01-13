@@ -37,7 +37,7 @@ export const createCollection: (
 	try {
 		if (!data) return;
 		loggers.info("creating collection with data: " + JSON.stringify(data));
-		return await Collections.create(data);
+		return Collections.create(data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.createCollection: ERROR",
@@ -113,7 +113,7 @@ export const updateCollection = async (
         " Data: " +
         JSON.stringify(data)
 		);
-		return await Collections.update(params, data);
+		return Collections.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.updateCollection: ERROR",

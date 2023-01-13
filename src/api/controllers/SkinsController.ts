@@ -20,8 +20,7 @@ export const getSkinById = async (params: Pick<SkinProps, "id">): Promise<SkinPr
 
 export const getSkinByCharacterId = async (params: { character_id: number | number[]; }) => {
 	try {
-		const result = await Skins.getByCharacterId(params);
-		return result;
+		return Skins.getByCharacterId(params);
 	} catch (err) {
 		loggers.error("api.controllers.SkinsController.getSkinByCharacterId: ERROR", err);
 		return;

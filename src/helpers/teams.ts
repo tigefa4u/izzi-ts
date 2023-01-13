@@ -232,7 +232,7 @@ export const prepareTeamForBattle = async ({
 		}),
 		getGuildMember({ user_id }),
 	]);
-	if (!collections) return;
+	if (!collections || collections.length <= 0) return;
 
 	let guildStats = undefined as GuildStatProps;
 	let itemStats = undefined as GuildStatProps;

@@ -47,7 +47,7 @@ export const getSkinCollectionById = async (params: {
 export const delSkinCollection = async (params: { id: number }) => {
 	try {
 		loggers.info("Deleting skin collection for ID: " + params.id);
-		return await SkinCollections.del(params);
+		return SkinCollections.del(params);
 	} catch (err) {
 		loggers.error("api.controllers.SkinCollectionController.delSkinCollection: ERROR", err);
 		return;
@@ -57,7 +57,7 @@ export const delSkinCollection = async (params: { id: number }) => {
 export const createSkinCollection = async (data: CreateSkinCollectionProps) => {
 	try {
 		loggers.info("Creating skin collection with details: -> " + JSON.stringify(data));
-		return await SkinCollections.create(data);
+		return SkinCollections.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.SkinCollectionController.createSkinCollection()", err);
 		return;

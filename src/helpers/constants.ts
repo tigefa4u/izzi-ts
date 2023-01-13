@@ -191,6 +191,7 @@ export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
 };
 
 export const MANA_PER_BATTLE = 5;
+export const DUNGEON_MANA_PER_BATTLE = 15;
 
 export const CANVAS_DEFAULTS = {
 	width: 708,
@@ -481,3 +482,5 @@ export const MAX_ADMINS_PER_GUILD = 6;
 export const UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL = 20;
 
 export const LOGGER_CONTEXT = "logger_context";
+
+export const COMMANDS_WITH_RAW_ARGS = [ "guild", "team", "dungeon" ];

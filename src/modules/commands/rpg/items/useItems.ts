@@ -33,7 +33,7 @@ async function findItemInTeamAndRemove({
 				if (idx >= 0) {
 					team.metadata[idx].item_id = null;
 					team.metadata[idx].itemName = null;
-					return await updateTeam({
+					return updateTeam({
 						id: team.id,
 						user_id: userId 
 					}, { metadata: JSON.stringify(team.metadata) });

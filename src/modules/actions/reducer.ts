@@ -22,7 +22,6 @@ import { compareCards } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
 import { consume } from "modules/commands/rpg/consumeOrbsToShards";
 import { crate } from "modules/commands/rpg/crates";
-import { dungeon } from "modules/commands/rpg/dungeon";
 import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
 import { upgradeCard } from "modules/commands/rpg/evolution/upgradeCard";
@@ -62,6 +61,7 @@ import { console } from "modules/commands/rpg/console";
 import { viewChangeLogs } from "modules/commands/basic/changelogs";
 import { userReferrals } from "modules/commands/basic/referrals";
 import { customCard } from "modules/commands/rpg/profile/customCard";
+import { dungeonFunc } from "modules/commands/rpg/dungeon/v2";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -120,7 +120,7 @@ const commandMap: CommandMapProps = {
 	update: updateIzziProfile,
 	raid: raidActions,
 	event: eventActions,
-	dungeon: dungeon,
+	dungeon: dungeonFunc,
 	enchantment: enchantCard,
 	bonk: bonk,
 	cry: cry,

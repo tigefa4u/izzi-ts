@@ -10,7 +10,7 @@ import loggers from "loggers";
 import { getSortCache } from "modules/commands/rpg/sorting/sortCache";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
-import { setTradeQueue } from "../../queue";
+import { delFromQueue, delFromTrade, getTradeQueue, setTradeQueue } from "../../queue";
 import { viewTrade } from "../view";
 
 export const addCardByIds = async ({
@@ -87,8 +87,13 @@ export const addCardByIds = async ({
 			loggers.info("adding cards to trade: " + JSON.stringify(arr));
 		}
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
-		tradeQueue[trader.user_tag] = trader;
-		setTradeQueue(tradeId, tradeQueue);
+		const refetchQueue = await getTradeQueue(tradeId);
+		if (!refetchQueue) {
+			await delFromQueue(tradeId);
+			return;
+		}
+		refetchQueue[trader.user_tag] = trader;
+		setTradeQueue(tradeId, refetchQueue);
 		const rankGroup = groupByKey(arr, "rank");
 		const keys = Object.keys(rankGroup);
 		const desc = `${

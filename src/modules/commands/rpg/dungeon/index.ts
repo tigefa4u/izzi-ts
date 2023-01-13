@@ -15,9 +15,9 @@ import {
 	BATTLE_TYPES,
 	DEFAULT_ERROR_TITLE,
 	DUNGEON_DEFAULTS,
+	DUNGEON_MANA_PER_BATTLE,
 	DUNGEON_MIN_LEVEL,
 	HIDE_VISUAL_BATTLE_ARG,
-	MANA_PER_BATTLE,
 } from "helpers/constants";
 import {
 	prepareSkewedCollectionsForBattle,
@@ -70,9 +70,9 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		if (user.dungeon_mana < MANA_PER_BATTLE) {
+		if (user.dungeon_mana < DUNGEON_MANA_PER_BATTLE) {
 			embed.setDescription(
-				`You do not have enough dungeon mana to battle **[${user.dungeon_mana} / ${MANA_PER_BATTLE}]**`
+				`You do not have enough dungeon mana to battle **[${user.dungeon_mana} / ${DUNGEON_MANA_PER_BATTLE}]**`
 			);
 			context.channel?.sendMessage(embed);
 			return;
@@ -136,7 +136,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 			);
 			return;
 		}
-		await refetchAndUpdateUserMana(author.id, MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
+		await refetchAndUpdateUserMana(author.id, DUNGEON_MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
 		clearCooldown(author.id, "dungeon-battle");
 		if (result?.isForfeit) {
 			result.isVictory = false;
@@ -155,7 +155,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 	}
 };
 
-async function prepareDungeonBoss(userRank?: UserRankProps) {
+export async function prepareDungeonBoss(userRank?: UserRankProps) {
 	const rankWithItem = computeLevel("grand master");
 	let itemsArray = [] as ItemProps[];
 	if ((userRank?.rank_id || 1) >= rankWithItem.rank_id) {

@@ -5,7 +5,6 @@ import {
 	updateCollection,
 } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
-import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -88,8 +87,13 @@ export const confirmTrade = async ({
 			invokeTrade = true;
 		}
 		if (invokeTrade === false) {
-			tradeQueue[trader.user_tag] = trader;
-			queue.setTradeQueue(tradeId, tradeQueue);
+			const refetchQueue = await queue.getTradeQueue(tradeId);
+			if (!refetchQueue) {
+				await queue.delFromQueue(tradeId);
+				return;
+			}
+			refetchQueue[trader.user_tag] = trader;
+			queue.setTradeQueue(tradeId, refetchQueue);
 			embed.setDescription("Trade Confirmed").setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			viewTrade({

@@ -21,7 +21,7 @@ export const createRaid = async (data: RaidCreateProps) => {
 export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps) => {
 	try {
 		loggers.info("Updating raid: " + JSON.stringify(params) + " " + JSON.stringify(data));
-		return await Raids.update(params, data);
+		return Raids.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.RaidsController.updateRaid: ERROR",
@@ -34,7 +34,7 @@ export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps)
 export const updateRaidEnergy = async (params: { id: number; }, data: RaidLobbyProps) => {
 	try {
 		loggers.info("Refilling raid energy: " + JSON.stringify(params) + " Lobby: " + JSON.stringify(data));
-		return await Raids.refillEnergy({
+		return Raids.refillEnergy({
 			id: params.id,
 			data 
 		});
@@ -54,7 +54,7 @@ export const updateLobby = async ({ raid_id, user_id, data }: {
 }) => {
 	try {
 		loggers.info("Updating raid lobby: " + `Raid ID: ${raid_id} > user_id: ${user_id} > ${JSON.stringify(data)}`);
-		return await Raids.updateLobby({
+		return Raids.updateLobby({
 			raid_id,
 			user_id,
 			data
@@ -84,7 +84,7 @@ export const getRaid = async (params: { id: number }) => {
 export const deleteRaid = async (params: { id: number | number[]; }) => {
 	try {
 		loggers.info("Deleting Raid: " + params.id);
-		return await Raids.destroy(params);
+		return Raids.destroy(params);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.RaidsController.deleteRaid: ERROR",

@@ -21,7 +21,7 @@ async function setCommandCache(key: string, data: CommandProps, cachedCommands: 
 
 export const getAllCommands = async () => {
 	try {
-		return await Commands.getAll();
+		return Commands.getAll();
 	} catch (err) {
 		return;
 	}

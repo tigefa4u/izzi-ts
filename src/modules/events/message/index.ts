@@ -13,7 +13,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 import loggers from "loggers";
-import { MAX_REQUESTS_PER_CHANNEL } from "helpers/constants";
+import { COMMANDS_WITH_RAW_ARGS, MAX_REQUESTS_PER_CHANNEL } from "helpers/constants";
 import {
 	getChannelCooldown,
 	getTTL,
@@ -50,6 +50,7 @@ const handleMessage = async (client: Client, context: Message) => {
 			);
 			return;
 		}
+		// if (botId !== BOT_PREFIX) return;
 		if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
 			if (context.guild?.id) {
 				dropCollectables({
@@ -104,7 +105,7 @@ const handleMessage = async (client: Client, context: Message) => {
       "function"
 		)
 			return;
-		if (command.name === "guild" || command.name === "team") {
+		if (COMMANDS_WITH_RAW_ARGS.includes(command.name)) {
 			args = content.split(/\s+/);
 			args.shift();
 		}

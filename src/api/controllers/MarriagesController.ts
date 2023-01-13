@@ -14,7 +14,7 @@ export const getMarriage = async (params: { user_tag: string }) => {
 
 export const delMarriage = async (params: { user_tag: string }) => {
     	try {
-		return await Marriages.del(params);
+		return Marriages.del(params);
 	} catch (err) {
 		loggers.error("api.controllers.MarriagesController.delMarriage: ERROR", err);
 		return;
@@ -23,7 +23,7 @@ export const delMarriage = async (params: { user_tag: string }) => {
 
 export const createMarriage = async (data: MarriageCreateProps) => {
     	try {
-		return await Marriages.create(data);
+		return Marriages.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.MarriagesController.createMarriage: ERROR", err);
 		return;

@@ -27,7 +27,7 @@ export const delGuildItems = async (params: {
 
 export const createGuildItem = async (data: GuildItemCreateProps) => {
 	try {
-		return await GuildItems.create(data);
+		return GuildItems.create(data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.GuildItemsController.createGuildItem: ERROR",
@@ -42,7 +42,7 @@ export const updateGuildItem = async (
 	data: { quantity: number }
 ) => {
 	try {
-		return await GuildItems.update(params, data);
+		return GuildItems.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.GuildItemsController.updateGuildItem: ERROR",

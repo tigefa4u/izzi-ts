@@ -115,7 +115,7 @@ export const handleDungeonBattleOutcome = async ({
 	}
 };
 
-async function processDGWin(userRank: UserRankProps, id: string) {
+export async function processDGWin(userRank: UserRankProps, id: string) {
 	const goldReward = userRank.rank_id * randomNumber(300, 500);
 	let desc = `• You have received __${goldReward}__ gold ${emoji.gold}`;
 	const xpGain = 4 * userRank.division;
@@ -183,7 +183,7 @@ async function processDGWin(userRank: UserRankProps, id: string) {
 	};
 }
 
-async function processDGLose(userRank: UserRankProps, id: string) {
+export async function processDGLose(userRank: UserRankProps, id: string) {
 	userRank.loss = userRank.loss + 1;
 	const xpLoss = 2 * userRank.division;
 	userRank.exp = userRank.exp - xpLoss;

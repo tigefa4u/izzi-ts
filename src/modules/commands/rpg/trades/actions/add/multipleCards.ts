@@ -19,7 +19,7 @@ import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
-import { getTradeQueue, setTradeQueue } from "../../queue";
+import { delFromQueue, getTradeQueue, setTradeQueue } from "../../queue";
 import { viewTrade } from "../view";
 
 type P = {
@@ -59,8 +59,13 @@ const addCardsToTrade = async ({
 			trader.queue
 		)}`
 	);
-	tradeQueue[trader.user_tag] = trader;
-	setTradeQueue(tradeId, tradeQueue);
+	const refetchQueue = await getTradeQueue(tradeId);
+	if (!refetchQueue) {
+		await delFromQueue(tradeId);
+		return;
+	}
+	refetchQueue[trader.user_tag] = trader;
+	setTradeQueue(tradeId, refetchQueue);
 	const rankGroup = groupByKey(arr, "rank");
 	const keys = Object.keys(rankGroup);
 	const desc = `${

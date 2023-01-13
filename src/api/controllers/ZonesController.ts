@@ -51,7 +51,7 @@ export const getAllZones = async (
 export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_ruin: number; max_floor: number; }) => {
 	try {
 		loggers.info("Creating Zone Backup: " + JSON.stringify(data));
-		return await ZoneBackup.createOrUpdate(data);
+		return ZoneBackup.createOrUpdate(data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.ZonesController.createOrUpdateZoneBackup: ERROR",
@@ -63,7 +63,7 @@ export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_rui
 
 export const getMaxLocation = async () => {
 	try {
-		return await Cache.fetch("max::location", async () => {
+		return Cache.fetch("max::location", async () => {
 			const result = await Zones.getMaxLocation();
 			return result.max;
 		});
