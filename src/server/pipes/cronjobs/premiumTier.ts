@@ -163,9 +163,9 @@ function boot() {
 			const miniPremiumUsers = users?.filter((u) => u.is_mini_premium);
 			const voteStreakUsers = users?.filter((u) => u.vote_streak > 0);
 			await Promise.all([
-				// resetVoteTimers(voteStreakUsers),
-				// premiumTimer(premiumUsers),
-				// miniPremiumTimer(miniPremiumUsers),
+				resetVoteTimers(voteStreakUsers),
+				premiumTimer(premiumUsers),
+				miniPremiumTimer(miniPremiumUsers),
 				resetUserActive(users)
 			]);
 			loggers.info("pipes.cronjobs.premiumTier.boot: completed...");
