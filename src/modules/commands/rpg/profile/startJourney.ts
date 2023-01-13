@@ -30,6 +30,7 @@ async function startUserJourney(author: AuthorProps) {
 		user_tag: author.id,
 		username: author.username,
 		gold: STARTER_GOLD,
+		is_active: true
 	});
 	if (!newUser) {
 		throw new Error("Unable to create new user");

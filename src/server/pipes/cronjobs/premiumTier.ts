@@ -1,5 +1,6 @@
 import { UserProps } from "@customTypes/users";
 import { getAllUsers, updateRPGUser } from "api/controllers/UsersController";
+import connection from "db";
 import { delay, generateUUID } from "helpers";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
@@ -121,19 +122,27 @@ async function resetUserActive(users: U) {
 		// const users = await getAllUsers();
 		if (!users) return;
 		loggers.info("cronjobs.premiumTier.resetUserActive: resetting user active status: users - " + users.length);
+		const usersToReset: string[] = [];
 		await Promise.all(
 			users.map(async (user) => {
-				const dt = new Date().getTime() + 10 * 24 * 60 * 60 * 1000;
-				if (dt < new Date(user.updated_at).valueOf()) {
-					return updateRPGUser(
-						{ user_tag: user.user_tag },
-						{ is_active: false },
-						// { hydrateCache: true }
-					);
+				const tenDays = 1000 * 60 * 60 * 24 * 30;
+				const diff = new Date().valueOf() - new Date(user.updated_at).valueOf();
+				if (diff >= tenDays) {
+					usersToReset.push("'" + user.user_tag + "'");
+					// return updateRPGUser(
+					// 	{ user_tag: user.user_tag },
+					// 	{ is_active: false },
+					// 	// { hydrateCache: true }
+					// );
 				}
 				return;
 			})
 		);
+		if (usersToReset.length > 0) {
+			loggers.info("cronjobs.premiumTier.resetUserActive: resetting " +
+			"user active status after computing: " + usersToReset.length);
+			await connection.raw(`update users set is_active = false where user_tag in (${usersToReset.join(",")})`);
+		}
 		loggers.info("cronjobs.premiumTier.resetUserActive: completed...");
 		return;
 	} catch (err) {
@@ -154,9 +163,9 @@ function boot() {
 			const miniPremiumUsers = users?.filter((u) => u.is_mini_premium);
 			const voteStreakUsers = users?.filter((u) => u.vote_streak > 0);
 			await Promise.all([
-				resetVoteTimers(voteStreakUsers),
-				premiumTimer(premiumUsers),
-				miniPremiumTimer(miniPremiumUsers),
+				// resetVoteTimers(voteStreakUsers),
+				// premiumTimer(premiumUsers),
+				// miniPremiumTimer(miniPremiumUsers),
 				resetUserActive(users)
 			]);
 			loggers.info("pipes.cronjobs.premiumTier.boot: completed...");

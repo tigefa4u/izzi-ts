@@ -60,4 +60,4 @@ type IgnoreUserProps = IgnoreProps | "user_tag"
 
 export type UserUpdateProps = Omit<Partial<UserProps>, IgnoreUserProps>
 
-export type UserCreateProps = Pick<UserProps, "username" | "user_tag" | "gold">
+export type UserCreateProps = Pick<UserProps, "username" | "user_tag" | "gold" | "is_active">

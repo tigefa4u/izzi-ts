@@ -37,7 +37,7 @@ function getResponseObj(
 	}
 	if (content instanceof MessageEmbed) {
 		if (!content.description) {
-			content.description = "No content available.";
+			content.description = "\n";
 		}
 		Object.assign(responseObj, { embeds: [ content ] });
 		if (content.attachments) {
