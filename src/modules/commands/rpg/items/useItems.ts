@@ -4,6 +4,7 @@ import {
 	getCollection,
 	updateCollection,
 } from "api/controllers/CollectionsController";
+import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
 import { getItemById } from "api/controllers/ItemsController";
 import { getAllTeams, updateTeam } from "api/controllers/TeamsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -45,6 +46,24 @@ async function findItemInTeamAndRemove({
 		return;
 	}
 }
+
+const findItemInDgTeamAndRemove = async (user_tag: string, item_id: number) => {
+	try {
+		const dgTeam = await getDGTeam(user_tag);
+		if (dgTeam) {
+			const idx = dgTeam.team.metadata.findIndex((m) => m.item_id === item_id);
+			if (idx >= 0) {
+				dgTeam.team.metadata[idx].item_id = null;
+				dgTeam.team.metadata[idx].itemName = null;
+				return updateDGTeam(user_tag, { team: dgTeam.team });
+			}
+		}
+		return;
+	} catch (err) {
+		loggers.error("findItemInDgTeamAndRemove: ERROR", err);
+		return;
+	}
+};
 
 export const equip = async ({ context, client, options, args }: BaseProps) => {
 	try {
@@ -94,7 +113,8 @@ export const equip = async ({ context, client, options, args }: BaseProps) => {
 				userId: user.id,
 				itemId: item.id,
 				collectionId: collectionData.id 
-			})
+			}),
+			findItemInDgTeamAndRemove(author.id, item.id)
 		]);
 
 		const name = collectionData.metadata?.nickname || collectionData.name;
