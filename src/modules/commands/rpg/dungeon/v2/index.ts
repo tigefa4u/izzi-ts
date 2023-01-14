@@ -4,6 +4,7 @@ import loggers from "loggers";
 import { dungeonBattle } from "./battle";
 import { viewDGBattleLog } from "./battleLog";
 import { createDGTeam } from "./create";
+import { equipDGItem } from "./equipItem";
 import { removeDGTeam } from "./remove";
 import { resetDGTeam } from "./reset";
 import { setDGTeam } from "./set";
@@ -28,6 +29,8 @@ export const dungeonFunc = async (params: BaseProps) => {
 			removeDGTeam(params);
 		} else if (cmd === "battle-log") {
 			viewDGBattleLog(params);
+		} else if (cmd === "equip") {
+			equipDGItem(params);
 		}
 		return;
 	} catch (err) {
