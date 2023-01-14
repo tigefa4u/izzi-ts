@@ -12,7 +12,10 @@ export const resetDGTeam = async ({ options, context, client }: BaseProps) => {
 		if (dgTeam) {
 			dgTeam.team.metadata = [ 1, 2, 3 ].map((n) => ({
 				collection_id: null,
-				position: n
+				position: n,
+				itemName: null,
+				item_id: null,
+				itemPosition: n
 			}));
 			await updateDGTeam(author.id, {
 				team: dgTeam.team,

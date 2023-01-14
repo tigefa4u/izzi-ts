@@ -15,7 +15,7 @@ export type DungeonProps = {
     id: number;
     user_tag: string;
     username: string;
-    team: { name: string; metadata: Pick<TeamMeta, "collection_id" | "position">[]; }; // jsonb
+    team: { name: string; metadata: TeamMeta[]; }; // jsonb
     metadata: {
         attacked?: {
             user_tag: string;

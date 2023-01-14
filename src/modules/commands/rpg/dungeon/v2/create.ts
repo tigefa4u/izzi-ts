@@ -39,7 +39,10 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 				name,
 				metadata: [ 1, 2, 3 ].map((n) => ({
 					collection_id: null,
-					position: n
+					position: n,
+					itemName: null,
+					item_id: null,
+					itemPosition: n
 				})),
 			},
 			user_tag: author.id,

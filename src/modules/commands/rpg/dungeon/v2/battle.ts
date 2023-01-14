@@ -134,7 +134,10 @@ export const dungeonBattle = async ({ context, options, client }: BaseProps) => 
 		 */
 		if (!randomOpponent) {
 			// spawn boss
-			opponent = await spawnDGBoss(userRank);
+			// opponent = await spawnDGBoss(userRank);
+			embed.setDescription("We could not find other players in your rank. Please try again later");
+			context.channel?.sendMessage(embed);
+			return;
 		} else {
 			const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
 			if (!opponentUser) {

@@ -26,5 +26,8 @@ export const subcommands = [
 	{
 		name: "battle-log",
 		alias: [ "log", "logs" ]
+	}, {
+		name: "equip",
+		alias: [ "eq" ]
 	}
 ];
