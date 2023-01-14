@@ -12,7 +12,7 @@ export const subcommands =  [ {
 	alias: [ "clan", "guilds" ]
 }, {
 	name: "rank",
-	alias: [ "ranks", "rk" ]
+	alias: [ "ranks", "rk", "dg" ]
 }, {
 	name: "game_points",
 	alias: [ "gp" ]
