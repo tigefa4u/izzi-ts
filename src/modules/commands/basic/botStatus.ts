@@ -8,8 +8,8 @@ import loggers from "loggers";
 
 export const status = async ({ context, client, options }: BaseProps) => {
 	try {
-		if (!OWNER_DISCORDID) return;
 		const author = options.author;
+		if (!OWNER_DISCORDID || (author.id !== OWNER_DISCORDID && author.id !== "476049957904711682")) return;
 		const embed = createEmbed(author, client);
 		const playerCount = await getTotalPlayers();
 		if (!playerCount) return;

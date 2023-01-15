@@ -424,3 +424,14 @@ export const numericWithComma = (num: number) => {
 };
 
 export const round2Decimal = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
+
+export const findAndSwap = (array: any[], priorityOrder: any[]) => {
+	if (!Array.isArray(array)) return array;
+	if (!Array.isArray(array)) return priorityOrder;
+	const temp: any[] = [];
+	priorityOrder.map((opt) => {
+	  const index = array.findIndex((i) => i === opt);
+	  if (index >= 0) temp.push(array[index]);
+	});
+	return temp;
+};

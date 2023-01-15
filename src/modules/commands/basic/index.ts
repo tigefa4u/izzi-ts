@@ -10,7 +10,7 @@ import {
 	PRIVACY_POLICY_URL,
 	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
 } from "../../../environment";
-import { Client, EmbedFieldData } from "discord.js";
+import { Client, EmbedFieldData, Message } from "discord.js";
 import { groupByKey } from "utility";
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
@@ -19,8 +19,11 @@ import {
 	SelectMenuOptions,
 } from "@customTypes/selectMenu";
 import loggers from "loggers";
-import { customButtonInteraction } from "utility/ButtonInteractions";
+import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
 import { CONSOLE_BUTTONS } from "helpers/constants";
+import { PageProps } from "@customTypes/pagination";
+import { findAndSwap } from "helpers";
+import { clientSidePagination } from "helpers/pagination";
 
 function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
 	const embed = createEmbed(undefined, client)
@@ -51,7 +54,7 @@ function prepareHelpDesc() {
     `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
     "\n" +
     `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**\n` +
-	`Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) for more tips.`
+    `Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) for more tips.`
 	);
 }
 
@@ -81,6 +84,46 @@ export const invite = async ({ context, client }: BaseProps) => {
 	context.channel?.sendMessage(embed);
 };
 
+const handleHelpPagination = async (params: { items: string[]; commandGroup: any; }, filter: PageProps) => {
+	const fields: EmbedFieldData[] = [];
+	const result = clientSidePagination(
+		params.items,
+		filter.currentPage,
+		filter.perPage
+	);
+	result.map((key) => {
+		fields.push({
+			name: titleCase(key),
+			value: `${params.commandGroup[key]
+				.map((cmd: CommandProps) => cmd.name)
+				.join(", ")}`,
+			inline: true,
+		});
+	});
+	return {
+		data: fields,
+		metadata: {
+			totalCount: params.items.length,
+			totalPages: Math.ceil(params.items.length / filter.perPage),
+			...filter,
+		},
+	};
+};
+
+const prepareHelpEmbed = (author: AuthorProps, client: Client, page: {
+	current_page: number;
+	total_pages: number;
+}) => {
+	return createEmbed(author, client)
+		.setTitle(":crossed_swords: Bot Commands :crossed_swords:")
+		.setDescription(prepareHelpDesc())
+		.setFooter({
+			text: "Filters include -n (name) -r (rank) -t (element type) -a (ability) | " +
+		`${page.current_page} / ${page.total_pages} Pages`, 
+		});
+};
+
+const excludeCommands = [ "sex", "wish", "stats" ];
 export const help = async ({
 	context,
 	client,
@@ -89,10 +132,10 @@ export const help = async ({
 }: BaseProps) => {
 	try {
 		const cmd = args.shift();
-		if (cmd === "sex") return;
+		if (cmd && excludeCommands.includes(cmd)) return;
 		let allCommands = await getAllCommands();
 		if (!allCommands) return;
-		allCommands = allCommands.filter((c) => c.name !== "sex");
+		allCommands = allCommands.filter((c) => !excludeCommands.includes(c.name));
 		if (cmd) {
 			const index = allCommands.findIndex((c) => c.alias.includes(cmd)) ?? -1;
 			if (index >= 0) {
@@ -104,28 +147,69 @@ export const help = async ({
 			}
 			return;
 		}
+
 		const commandGroup = groupByKey(allCommands, "type");
 		const keys = Object.keys(commandGroup);
-		const fields: EmbedFieldData[] = [];
-		keys.map((key) => {
-			fields.push({
-				name: titleCase(key),
-				value: `${commandGroup[key]
-					.map((cmd: CommandProps) => cmd.name)
-					.join(", ")}`,
-				inline: true,
-			});
-		});
-		const embed = createEmbed(options.author, client)
-			.setTitle(":crossed_swords: Bot Commands :crossed_swords:")
-			.setDescription(prepareHelpDesc())
-			.addFields(fields)
-			.addField(
-				"Usage",
-				"**```iz help {command} for more info about the command.```**"
-			)
-			.setFooter({ text: "Filters include -n (name) -r (rank) -t (element type) -a (ability)", });
 
+		const rearrangedkeys = findAndSwap(keys, [
+			"adventure",
+			"basics",
+			"information",
+			"shop",
+			"inventory",
+			"profile",
+			"guilds",
+			"dungeons",
+			"marriage",
+			"gamble",
+			"actions",
+			"emotions",
+			"miscellaneous",
+		]);
+		const pageFilter = {
+			currentPage: 1,
+			perPage: 7,
+		};
+
+		let sentMessage: Message;
+
+		let embed = prepareHelpEmbed(options.author, client, {
+			current_page: pageFilter.currentPage,
+			total_pages: Math.ceil(rearrangedkeys.length / pageFilter.perPage)
+		});
+
+		const paginationButtons = await paginatorInteraction(
+			context.channel,
+			options.author.id,
+			{
+				items: rearrangedkeys,
+				commandGroup
+			},
+			pageFilter,
+			handleHelpPagination,
+			(data, opts) => {
+				if (data) {
+					embed = prepareHelpEmbed(options.author, client, {
+						current_page: data.metadata.currentPage,
+						total_pages: data.metadata.totalPages
+					});
+					embed.addFields(data.data).addField(
+						"Usage",
+						"**```iz help {command} for more info about the command.```**"
+					);
+				}
+				if (opts?.isEdit) {
+					sentMessage.editMessage(embed);
+				}
+				if (opts?.isDelete) {
+					sentMessage.deleteMessage();
+				}
+			}
+		);
+		if (paginationButtons) {
+			embed.setButtons(paginationButtons);
+		}
+		
 		const buttons = customButtonInteraction(
 			context.channel,
 			[
@@ -133,20 +217,20 @@ export const help = async ({
 					label: CONSOLE_BUTTONS.GUIDE.label,
 					params: { id: CONSOLE_BUTTONS.GUIDE.id },
 					style: "LINK",
-					url: GUIDE_DOCS
+					url: GUIDE_DOCS,
 				},
 				{
 					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
 					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
 					style: "LINK",
-					url: `${GUIDE_DOCS}/change-logs`
+					url: `${GUIDE_DOCS}/change-logs`,
 				},
 				{
 					label: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.label,
 					params: { id: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.id },
 					style: "LINK",
-					url: OFFICIAL_SERVER_LINK
-				}
+					url: OFFICIAL_SERVER_LINK,
+				},
 			],
 			options.author.id,
 			() => {
@@ -159,19 +243,24 @@ export const help = async ({
 		);
 		const rulesEmbed = createEmbed(options.author, client)
 			.setTitle("IzzI Rules")
-			.setDescription("**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
-				"• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
-				"• Cross trading of any form.\n" +
-				"• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
-				"• Malicious/Suspicious activity.\n" +
-				"• Supporting someone who is doing these.\n" + 
-				"**Note: Exchanging izzi assets for any other assets, real money or server roles " +
-				"is considered Cross Trading**");
-			
+			.setDescription(
+				"**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
+          "• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
+          "• Cross trading of any form.\n" +
+          "• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
+          "• Malicious/Suspicious activity.\n" +
+          "• Supporting someone who is doing these.\n" +
+          "**Note: Exchanging izzi assets for any other assets, real money or server roles " +
+          "is considered Cross Trading**"
+			);
+
 		if (buttons) {
 			rulesEmbed.setButtons(buttons);
 		}
-		context.channel?.sendMessage(embed);
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
+			sentMessage = msg;
+		}
 		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {
 		loggers.error("modules.commands.basic.help: ERROR", err);
@@ -222,10 +311,7 @@ async function followUp(
 		}
 		channel?.sendMessage(embed);
 	} catch (err) {
-		loggers.error(
-			"modules.commands.basic.followUp: ERROR",
-			err
-		);
+		loggers.error("modules.commands.basic.followUp: ERROR", err);
 	}
 	return;
 }
@@ -246,7 +332,12 @@ function handleFollowUp(
 	return;
 }
 
-export const websiteUrls = ({ context, options, client, command }: BaseProps) => {
+export const websiteUrls = ({
+	context,
+	options,
+	client,
+	command,
+}: BaseProps) => {
 	if (!command) return;
 	const embed = createEmbed(options.author, client)
 		.setTitle(
@@ -260,9 +351,9 @@ export const websiteUrls = ({ context, options, client, command }: BaseProps) =>
 	return;
 };
 
-export const getWebsiteUrls = () => 
+export const getWebsiteUrls = () =>
 	`**All useful links are listed below**\n\n**Website:** ${IZZI_WEBSITE}\n` +
-`**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
-`**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premiums` +
-`\n**Commands:** ${IZZI_WEBSITE}/commands\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
-`**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`;
+  `**Skins:** ${IZZI_WEBSITE}/skins\n**Event Redeem:** ${IZZI_WEBSITE}/events\n` +
+  `**Tutorial Blogs:** ${IZZI_WEBSITE}/blogs\n**Premium Packs:** ${IZZI_WEBSITE}/premiums` +
+  `\n**Commands:** ${IZZI_WEBSITE}/commands\n**Abilities:** ${IZZI_WEBSITE}/abilities\n` +
+  `**Items:** ${IZZI_WEBSITE}/items\n**Donate:** ${IZZI_WEBSITE}/donate`;
