@@ -2,7 +2,7 @@ import Cache from "cache";
 
 async function flushBattleCooldowns() {
 	const allKeys: string[] = [];
-	await Promise.all([ "*event-battle*", "*raid-battle*", "*mana-battle*" ].map(async (key) => {
+	await Promise.all([ "*event-battle*", "*raid-battle*", "*mana-battle*", "*dungeon-battle*" ].map(async (key) => {
 		const keys = Cache.keys && await Cache.keys(key);
 		return keys || "";
 	})).then(res => allKeys.push(...res.flat()));
