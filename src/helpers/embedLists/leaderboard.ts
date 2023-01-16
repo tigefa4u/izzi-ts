@@ -55,7 +55,7 @@ export const createLBEmbedList = (
 							}${array[obj.index]["division"]}`
 						)} Exp: __${array[obj.index]["exp"]}__ Wins: __${
 							array[obj.index]["wins"]
-						}__ Loss: ${array[obj.index]["loss"]}`,
+						}__ Loss: __${array[obj.index]["loss"]}__`,
 					}
 				);
 			} else if (gpOrder === "game_points") {
