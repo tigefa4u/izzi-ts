@@ -1,5 +1,5 @@
 import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
-import { PermissionResolvable, PermissionString } from "discord.js";
+import { PermissionString } from "discord.js";
 import emoji from "emojis/emoji";
 import { ElementTypeColorProps, RanksMetaProps } from "./helperTypes";
 
@@ -192,6 +192,8 @@ export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
 
 export const MANA_PER_BATTLE = 5;
 export const DUNGEON_MANA_PER_BATTLE = 15;
+export const DUNGEON_MID_USER_LEVEL = 25;
+export const DUNGEON_MID_USER_RANK_ID = 3;
 
 export const CANVAS_DEFAULTS = {
 	width: 708,

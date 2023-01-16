@@ -5,7 +5,7 @@ export const subcommands = [
 	},
 	{
 		name: "view",
-		alias: [ "vw", "team" ]
+		alias: [ "vw", "team", "tm" ]
 	},
 	{
 		name: "create",

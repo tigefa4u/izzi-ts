@@ -72,7 +72,7 @@ export type AssetImageProps = {
     ext: string;
 }
 
-export type ConfirmationInteractionParams<T> = {
+export type ConfirmationInteractionParams<T = void> = {
     author: AuthorProps;
     channel: ChannelProp;
     client: Client;
