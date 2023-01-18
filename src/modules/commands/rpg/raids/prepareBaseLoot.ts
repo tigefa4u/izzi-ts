@@ -3,10 +3,11 @@ import { randomNumber } from "helpers";
 const baseLoot = (): any => ({
 	e: {
 		default: {
-			level: [ 70, 120 ],
+			bosses: 1,
+			level: [ 210, 360 ],
 			rank: [ "silver" ],
 			loot: {
-				gold: randomNumber(20000, 25000),
+				gold: randomNumber(18000, 20000),
 				extraGold: randomNumber(16000, 18000),
 				gamePoints: 1,
 				drop: [
@@ -61,10 +62,11 @@ const baseLoot = (): any => ({
 	},
 	m: {
 		default: {
-			level: [ 150, 300 ],
+			bosses: 1,
+			level: [ 450, 900 ],
 			rank: [ "silver" ],
 			loot: {
-				gold: randomNumber(25000, 30000),
+				gold: randomNumber(21000, 25000),
 				extraGold: randomNumber(22000, 25000),
 				gamePoints: 2,
 				drop: [
@@ -124,7 +126,7 @@ const baseLoot = (): any => ({
 			level: [ 280, 400 ],
 			rank: [ "platinum", "platinum" ],
 			loot: {
-				gold: randomNumber(35000, 40000),
+				gold: randomNumber(26000, 30000),
 				extraGold: randomNumber(25000, 32000),
 				gamePoints: 3,
 				drop: [
@@ -184,7 +186,7 @@ const baseLoot = (): any => ({
 			level: [ 400, 700 ],
 			rank: [ "gold", "diamond", "platinum", "legend", "divine" ],
 			loot: {
-				gold: randomNumber(40000, 50000),
+				gold: randomNumber(31000, 35000),
 				extraGold: randomNumber(32000, 35000),
 				gamePoints: 4,
 				drop: [

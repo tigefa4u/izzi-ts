@@ -26,7 +26,7 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 			effective: 1,
 		},
 		id: "boss",
-		cards: isEvent ? [ undefined, raid.raid_boss[0], undefined ] : raid.raid_boss,
+		cards: (isEvent || raid.raid_boss.length === 1) ? [ undefined, raid.raid_boss[0], undefined ] : raid.raid_boss,
 		name: `XeneX's ${isEvent ? "Event" : "Raid"} Boss`
 	} as BattleStats;
 };

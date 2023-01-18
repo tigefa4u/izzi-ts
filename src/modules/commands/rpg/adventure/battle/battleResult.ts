@@ -219,17 +219,17 @@ async function processFloorWin({
 	}
 	let rankReward = "silver";
 	let rankId = 1;
-	let goldReward = randomNumber(180, 230);
+	let goldReward = randomNumber(80, 109);
 	if (user.max_ruin >= 20 && user.max_ruin < 40) {
-		goldReward = randomNumber(280, 350);
+		goldReward = randomNumber(110, 150);
 		rankReward = "gold";
 		rankId = 2;
 	} else if (user.max_ruin >= 40 && user.max_ruin < 100) {
-		goldReward = randomNumber(360, 550);
+		goldReward = randomNumber(160, 200);
 		rankReward = "platinum";
 		rankId = 3;
 	} else if (user.max_ruin >= 100) {
-		goldReward = randomNumber(600, 1000);
+		goldReward = randomNumber(210, 500);
 		rankReward = "platinum";
 		rankId = 3;
 	}

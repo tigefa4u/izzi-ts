@@ -57,7 +57,7 @@ function prepareLoot(
 		result.loot.gold = baseLoot[difficulty].event.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].event.loot.extraGold;
 	} else {
-		result.bosses = 3;
+		result.bosses = baseLoot[difficulty].default.bosses || 3;
 		result.loot.drop.default = baseLoot[difficulty].default.loot.drop;
 		result.loot.rare = baseLoot[difficulty].default.loot.rare;
 		result.level = baseLoot[difficulty].default.level;

@@ -8,6 +8,7 @@ import {
 	getGuild,
 	updateGuild,
 } from "api/controllers/GuildsController";
+import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
@@ -15,6 +16,7 @@ import emoji from "emojis/emoji";
 import { BOT_PREFIX, OWNER_DISCORDID } from "environment";
 import { getMemberPermissions, numericWithComma } from "helpers";
 import {
+	BANNED_TERMS,
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_BASE_STATS,
@@ -33,6 +35,7 @@ export const addGuild = async ({
 }: BaseProps) => {
 	try {
 		if (!context.guild || !OWNER_DISCORDID) return;
+		const author = options.author;
 		const isAdmin = await getMemberPermissions(context, options.author.id).then(
 			(res) => res?.ADMINISTRATOR
 		);
@@ -44,6 +47,32 @@ export const addGuild = async ({
 		}
 		const name = args.join(" ");
 		if (!name || name.length > INPUT_CHARACTERS_MAX_COUNT) return;
+		if (BANNED_TERMS.includes(name.toLowerCase())) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
+			"using a banned term.");
+			const blackList = await getUserBlacklist({ user_tag: author.id });
+			if (blackList && blackList.length > 0) {
+				await updateUserBlacklist({ user_tag: author.id }, {
+					reason: "creating inappropriate guild names",
+					offense: blackList[0].offense + 1,
+					metadata: {
+						pastOffenses: [
+							...blackList[0].metadata.pastOffenses,
+							blackList[0].reason
+						]
+					}
+				});
+			} else {
+				await createUserBlacklist({
+					user_tag: author.id,
+					username: author.username,
+					reason: "creating inappropriate guild names",
+					offense: 1,
+					metadata: {}
+				});
+			}
+			return;
+		}
 		const guildExist = await getGuild({ guild_id: context.guild.id });
 		if (!guildExist) {
 			context.channel?.sendMessage("Oh no! error occured. Please try again");
@@ -153,6 +182,33 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 		}
 		const name = args.join(" ");
 		if (!name || name.length > 20) return;
+		const author = options.author;
+		if (BANNED_TERMS.includes(name.toLowerCase())) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
+			"using a banned term.");
+			const blackList = await getUserBlacklist({ user_tag: author.id });
+			if (blackList && blackList.length > 0) {
+				await updateUserBlacklist({ user_tag: author.id }, {
+					reason: "creating inappropriate guild re-names",
+					offense: blackList[0].offense + 1,
+					metadata: {
+						pastOffenses: [
+							...blackList[0].metadata.pastOffenses,
+							blackList[0].reason
+						]
+					}
+				});
+			} else {
+				await createUserBlacklist({
+					user_tag: author.id,
+					username: author.username,
+					reason: "creating inappropriate guild re-names",
+					offense: 1,
+					metadata: {}
+				});
+			}
+			return;
+		}
 		const user = await getRPGUser(
 			{ user_tag: options.author.id },
 			{ cached: true }
@@ -234,6 +290,32 @@ export const setGuildStatus = async ({ context, options }: BaseProps) => {
 		if (status.length > GUILD_STATUS_MAX_LENGTH) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
 			`Status text should not be more than __${GUILD_STATUS_MAX_LENGTH}__ letters.`);
+			return;
+		}
+		if (BANNED_TERMS.includes(status.toLowerCase())) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
+			"using a banned term.");
+			const blackList = await getUserBlacklist({ user_tag: author.id });
+			if (blackList && blackList.length > 0) {
+				await updateUserBlacklist({ user_tag: author.id }, {
+					reason: "creating inappropriate guild status",
+					offense: blackList[0].offense + 1,
+					metadata: {
+						pastOffenses: [
+							...blackList[0].metadata.pastOffenses,
+							blackList[0].reason
+						]
+					}
+				});
+			} else {
+				await createUserBlacklist({
+					user_tag: author.id,
+					username: author.username,
+					reason: "creating inappropriate guild status",
+					offense: 1,
+					metadata: {}
+				});
+			}
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });

@@ -486,3 +486,6 @@ export const UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL = 20;
 export const LOGGER_CONTEXT = "logger_context";
 
 export const COMMANDS_WITH_RAW_ARGS = [ "guild", "team", "dungeon" ];
+
+// Need to move this to DB
+export const BANNED_TERMS = [ "kkk", "ngga", "nigger", "nbba", "pussy", "porn" ];

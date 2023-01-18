@@ -116,7 +116,7 @@ export const prepareRaidViewEmbed = async ({
     client: Client;
 }) => {
 	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
-	if (isEvent) {
+	if (isEvent || currentRaid.raid_boss.length === 1) {
 		bossCanvas = createSingleCanvas(currentRaid.raid_boss[0], false);
 	} else {
 		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, {

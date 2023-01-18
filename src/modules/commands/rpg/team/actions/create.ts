@@ -1,17 +1,45 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { getAllTeams, createTeam as create } from "api/controllers/TeamsController";
-import { MAX_TEAMS_ALLOWED } from "helpers/constants";
+import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/controllers/UserBlacklistsController";
+import { BANNED_TERMS, MAX_TEAMS_ALLOWED } from "helpers/constants";
 import loggers from "loggers";
 
 export const createTeam = async ({
 	context,
 	args,
 	user_id,
+	author
 }: Omit<BaseProps, "options"> & { author: AuthorProps; user_id: number }) => {
 	try {
 		const name = args.join(" ");
 		if (name === "") return;
+		if (BANNED_TERMS.includes(name.toLowerCase())) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
+			"using a banned term.");
+			const blackList = await getUserBlacklist({ user_tag: author.id });
+			if (blackList && blackList.length > 0) {
+				await updateUserBlacklist({ user_tag: author.id }, {
+					reason: "creating inappropriate team names",
+					offense: blackList[0].offense + 1,
+					metadata: {
+						pastOffenses: [
+							...blackList[0].metadata.pastOffenses,
+							blackList[0].reason
+						]
+					}
+				});
+			} else {
+				await createUserBlacklist({
+					user_tag: author.id,
+					username: author.username,
+					reason: "creating inappropriate team names",
+					offense: 1,
+					metadata: {}
+				});
+			}
+			return;
+		}
 		if (name.length > 10) {
 			context.channel?.sendMessage("Please enter a team name between 1 and 10");
 			return;

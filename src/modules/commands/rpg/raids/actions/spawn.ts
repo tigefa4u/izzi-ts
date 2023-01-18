@@ -289,7 +289,7 @@ export const spawnRaid = async ({
 				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
 			);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
-		if (isEvent) {
+		if (isEvent || raidBosses.length === 1) {
 			bossCanvas = createSingleCanvas(raidBosses[0], false);
 		} else {
 			bossCanvas = await createBattleCanvas(raidBosses, {
