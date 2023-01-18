@@ -57,7 +57,7 @@ export const addGuild = async ({
 					offense: blackList[0].offense + 1,
 					metadata: {
 						pastOffenses: [
-							...blackList[0].metadata.pastOffenses,
+							...(blackList[0].metadata.pastOffenses || []),
 							blackList[0].reason
 						]
 					}
@@ -193,7 +193,7 @@ export const renameGuild = async ({ context, args, options }: BaseProps) => {
 					offense: blackList[0].offense + 1,
 					metadata: {
 						pastOffenses: [
-							...blackList[0].metadata.pastOffenses,
+							...(blackList[0].metadata.pastOffenses || []),
 							blackList[0].reason
 						]
 					}
@@ -302,7 +302,7 @@ export const setGuildStatus = async ({ context, options }: BaseProps) => {
 					offense: blackList[0].offense + 1,
 					metadata: {
 						pastOffenses: [
-							...blackList[0].metadata.pastOffenses,
+							...(blackList[0].metadata.pastOffenses || []),
 							blackList[0].reason
 						]
 					}

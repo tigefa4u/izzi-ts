@@ -51,7 +51,7 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 						offense: blackList[0].offense + 1,
 						metadata: {
 							pastOffenses: [
-								...blackList[0].metadata.pastOffenses,
+								...(blackList[0].metadata.pastOffenses || []),
 								blackList[0].reason
 							]
 						}

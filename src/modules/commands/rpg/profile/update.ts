@@ -29,7 +29,7 @@ export const updateIzziProfile = async ({ context, options, args }: BaseProps) =
 						offense: blackList[0].offense + 1,
 						metadata: {
 							pastOffenses: [
-								...blackList[0].metadata.pastOffenses,
+								...(blackList[0].metadata.pastOffenses || []),
 								blackList[0].reason
 							]
 						}

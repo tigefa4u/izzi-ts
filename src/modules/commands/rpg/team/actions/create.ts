@@ -18,13 +18,14 @@ export const createTeam = async ({
 			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
 			"using a banned term.");
 			const blackList = await getUserBlacklist({ user_tag: author.id });
+			console.log({ blackList });
 			if (blackList && blackList.length > 0) {
 				await updateUserBlacklist({ user_tag: author.id }, {
 					reason: "creating inappropriate team names",
 					offense: blackList[0].offense + 1,
 					metadata: {
 						pastOffenses: [
-							...blackList[0].metadata.pastOffenses,
+							...(blackList[0].metadata.pastOffenses || []),
 							blackList[0].reason
 						]
 					}

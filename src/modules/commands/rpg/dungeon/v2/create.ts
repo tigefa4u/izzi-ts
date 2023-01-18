@@ -29,7 +29,7 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 					offense: blackList[0].offense + 1,
 					metadata: {
 						pastOffenses: [
-							...blackList[0].metadata.pastOffenses,
+							...(blackList[0].metadata.pastOffenses || []),
 							blackList[0].reason
 						]
 					}
