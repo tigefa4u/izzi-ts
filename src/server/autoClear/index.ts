@@ -12,7 +12,8 @@ async function flushBattleCooldowns() {
 			"*mana-battle*",
 			"*dungeon-battle*",
 			...chs.map((c) => `*floors::ch-${c}*`),
-			"zone::1", "zone::2", "zone::3", "zone::10"
+			"zone::1", "zone::2", "zone::3", "zone::10",
+			"*stage::*"
 		].map(async (key) => {
 			const keys = Cache.keys && (await Cache.keys(key));
 			return keys || "";
