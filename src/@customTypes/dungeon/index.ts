@@ -38,6 +38,10 @@ export type DungeonProps = {
             destroyedBeforeEnd: boolean;
         },
         isValid?: boolean;
+        timeout?: {
+            duration: number, // in hours
+            endsAt: number;
+        }
     }; // jsonb
 };
 

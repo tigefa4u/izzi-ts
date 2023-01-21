@@ -8,12 +8,23 @@ import loggers from "loggers";
 export const createDGTeam = async ({ args, client, options, context }: BaseProps) => {
 	try {
 		const author = options.author;
-		const name = args.join(" ") || "";
+		let name = args.join(" ") || "";
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE)
 			.setFooter({
 				iconURL: author.displayAvatarURL(),
 				text: "Use 'dg set <#ID> <position #>' to set a dungeon team"
 			});
+
+		const blackList = await getUserBlacklist({ user_tag: author.id });
+		if (blackList && blackList.length > 0) {
+			name = `${author.username} dg team`;
+			embed.setTitle("Warning :warning:")
+				.setDescription(`Summoner **${author.username}**, we have set your DG Team name to **__${name}__**` +
+                "because you have been blacklisted for using banned terms in team names.");
+
+			context.channel?.sendMessage(embed);
+		}
+
 		if (name.length < 3 || name.length > 20) {
 			embed.setDescription(`Summoner **${author.username}**, Team name must be between 3 and 20 characters`);
 			context.channel?.sendMessage(embed);
@@ -22,7 +33,6 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 		if (BANNED_TERMS.includes(name.toLowerCase())) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
 			"using a banned term.");
-			const blackList = await getUserBlacklist({ user_tag: author.id });
 			if (blackList && blackList.length > 0) {
 				await updateUserBlacklist({ user_tag: author.id }, {
 					reason: "creating inappropriate dg team names",

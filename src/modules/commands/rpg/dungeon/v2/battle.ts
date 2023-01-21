@@ -2,6 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { TeamProps } from "@customTypes/teams";
 import { UserRankProps } from "@customTypes/userRanks";
 import { getDGTeam, getRandomDGOpponent, updateDGTeam } from "api/controllers/DungeonsController";
+import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { createUserRank, getUserRank } from "api/controllers/UserRanksController";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
@@ -75,10 +76,19 @@ export const dungeonBattle = async ({ context, options, client }: BaseProps) => 
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const [ dgTeam, _userRank ] = await Promise.all([
+		const [ dgTeam, _userRank, blackList ] = await Promise.all([
 			getDGTeam(author.id),
-			getUserRank({ user_tag: author.id })
+			getUserRank({ user_tag: author.id }),
+			getUserBlacklist({ user_tag: author.id })
 		]);
+		if (dgTeam && blackList && blackList.length > 0) {
+			dgTeam.metadata.isValid = false;
+			embed.setTitle("Warning :warning:").setDescription(
+				"You have been blacklisted and cannot participate in DG Ranked Challenge. Please contact support."
+			);
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		if (!dgTeam?.team) {
 			embed.setDescription(`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
             "using ``iz dg create <name>``");

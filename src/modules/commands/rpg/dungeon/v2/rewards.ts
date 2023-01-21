@@ -10,6 +10,7 @@ import { processDGLose, processDGWin } from "../rewards";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { emojiMap } from "emojis";
+import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 
 const fetchAndUpdateDgLog = async (
 	uid: string,
@@ -63,9 +64,17 @@ export const processBattleOutcome = async ({
 	opponentUsername,
 }: O) => {
 	try {
-		const userRank = await getUserRank({ user_tag: author.id });
+		const [ userRank, blacklist ] = await Promise.all([
+			getUserRank({ user_tag: author.id }),
+			getUserBlacklist({ user_tag: author.id })
+		]);
 		if (!userRank) {
 			channel?.sendMessage("Unable to process DG, please try again later");
+			return;
+		}
+		if (blacklist && blacklist.length > 0) {
+			channel?.sendMessage(`Summoner **${author.username}**, you have been blacklisted, ` +
+            "your DG battle will not be processed. Please contact support.");
 			return;
 		}
 		let resultDesc = "";

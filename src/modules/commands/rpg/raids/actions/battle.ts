@@ -144,7 +144,7 @@ export const battleRaidBoss = async ({
 			context,
 			playerStats: playerStats.stats,
 			enemyStats,
-			title: `${isEvent ? "Event" : "Raid"} Challenge Battle`,
+			title: `__${isEvent ? "Event" : "Raid"} Challenge Battle__`,
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 			multiplier
