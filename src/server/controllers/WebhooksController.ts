@@ -16,6 +16,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 		if (summoner?.is_banned) return;
 		let desc = "";
 		if (summoner && !hasVoted) {
+			summoner.vote_count = (summoner.vote_count || 1) + 1;
 			let streak = summoner.vote_streak ? summoner.vote_streak + 1 : 1;
 			if (streak > 30) streak = 30;
 			let goldReward = 2000 + 150 * streak;
@@ -42,7 +43,8 @@ export const processUpVote = async (req: Request, res: Response) => {
 				mana: summoner.mana,
 				gold: summoner.gold,
 				raid_pass: summoner.raid_pass,
-				dungeon_mana: summoner.dungeon_mana
+				dungeon_mana: summoner.dungeon_mana,
+				vote_count: summoner.vote_count
 			};
 
 			if (summoner.is_premium) {

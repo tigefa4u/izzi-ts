@@ -46,6 +46,7 @@ export type UserProps = {
 	mini_premium_since?: string;
 	mini_premium_days?: number;
 	game_points: number;
+	vote_count?: number;
 }
 
 export type UserParams = {
