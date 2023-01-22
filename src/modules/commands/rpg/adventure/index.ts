@@ -1,3 +1,4 @@
+import { ConfirmationInteractionOptions, ConfirmationInteractionParams } from "@customTypes";
 import { RPGBattleCardDetailProps } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
@@ -9,12 +10,14 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
+import { Message } from "discord.js";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
 import {
 	refetchAndUpdateUserMana,
 	validateFiveMinuteTimer,
 } from "helpers/battle";
+import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_STARTER_GUIDE_TITLE,
@@ -24,11 +27,19 @@ import {
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
+import { battleConfirmationInteraction } from "utility/ButtonInteractions";
 import { simulateBattle } from "./battle/battle";
 import { processBattleResult } from "./battle/battleResult";
 import * as battlePerChannel from "./battle/battlesPerChannelState";
 
-export const battle = async ({ context, args, options, client }: BaseProps) => {
+export const startBattle = async (params: BaseProps) => {
+	return battleConfirmationInteraction({
+		...params,
+		invokeFunc: battle
+	});
+};
+
+const battle = async ({ context, args, options, client }: BaseProps) => {
 	try {
 		const battlesInChannel = battlePerChannel.validateBattlesInChannel(
 			context.channel?.id || ""
@@ -152,19 +163,21 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 				context.channel?.sendMessage(errorEmbed);
 				return;
 			}
-			if (user.mana < MANA_PER_BATTLE) {
+			const refetchUser = await getRPGUser({ user_tag: author.id });
+			if (!refetchUser) return;
+			if (refetchUser.mana < MANA_PER_BATTLE) {
 				const newErrorEmbed = createEmbed(author, client);
 				newErrorEmbed
 					.setColor("#f51d11")
 					.setTitle("Error :no_entry:")
 					.setDescription(
-						`You do not have enough mana to proceed! **[${user.mana} / ${MANA_PER_BATTLE}]** Mana`
+						`You do not have enough mana to proceed! **[${refetchUser.mana} / ${MANA_PER_BATTLE}]** Mana`
 					);
 				context.channel?.sendMessage(newErrorEmbed);
 				return;
 			}
 			await setCooldown(author.id, "mana-battle", 1);
-			const multiplier = Math.floor(user.mana / MANA_PER_BATTLE) || 1;
+			const multiplier = Math.floor(refetchUser.mana / MANA_PER_BATTLE) || 1;
 			processBattleResult({
 				result: { isVictory: true },
 				card: battleCardDetails,
@@ -173,9 +186,9 @@ export const battle = async ({ context, args, options, client }: BaseProps) => {
 				multiplier: multiplier,
 				channel: context.channel,
 			});
-			user.mana = user.mana - multiplier * MANA_PER_BATTLE;
+			refetchUser.mana = refetchUser.mana - multiplier * MANA_PER_BATTLE;
 			await Promise.all([
-				updateRPGUser({ user_tag: user.user_tag }, { mana: user.mana }),
+				updateRPGUser({ user_tag: user.user_tag }, { mana: refetchUser.mana }),
 				clearCooldown(author.id, "mana-battle"),
 			]);
 			return;

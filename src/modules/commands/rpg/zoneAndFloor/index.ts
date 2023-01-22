@@ -2,15 +2,14 @@ import { ChannelProp } from "@customTypes";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import { BaseProps } from "@customTypes/command";
 import { CustomEmbedProps } from "@customTypes/embed";
-import { Client } from "discord.js";
 import { CONSOLE_BUTTONS } from "helpers/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
-import { battle } from "../adventure";
+import { startBattle } from "../adventure";
 
 const btFloorBoss = async ({ channel, user_tag, client }: CustomButtonInteractionParams) => {
 	const author = await client.users.fetch(user_tag);
-	battle({
+	startBattle({
 		context: { channel } as BaseProps["context"],
 		args: [],
 		options: { author },

@@ -5,15 +5,10 @@ import {
 	ConfirmationInteractionParams,
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { getTeamById } from "api/controllers/TeamsController";
 import { getRPGUser, getUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString } from "helpers";
-import {
-	prepareTeamForBattle,
-	validateAndPrepareTeam,
-	validateTeam,
-} from "helpers/teams";
+import { validateAndPrepareTeam, } from "helpers/teams";
 import loggers from "loggers";
 import { simulateBattle } from "../../../adventure/battle/battle";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";

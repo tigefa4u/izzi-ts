@@ -38,7 +38,7 @@ import {
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
-import { battle } from "..";
+import { startBattle } from "..";
 import { floor } from "../../zoneAndFloor/floor";
 import { zone } from "../../zoneAndFloor/zone";
 import { viewBattleLogs } from "./viewBattleLogs";
@@ -68,7 +68,7 @@ const handleButtonActions = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.FLOOR_BT.id: {
-			battle(options);
+			startBattle(options);
 			return;
 		}
 		case CONSOLE_BUTTONS.NEXT_ZONE.id: {

@@ -10,7 +10,7 @@ import { bet } from "modules/commands/basic/gamble";
 import { help, invite, ping, websiteUrls } from "modules/commands/basic/index";
 import { daily, donate, server } from "modules/commands/basic/info.";
 import { ability } from "modules/commands/rpg/abilities";
-import { battle } from "modules/commands/rpg/adventure";
+import { startBattle } from "modules/commands/rpg/adventure";
 import { cinfo } from "modules/commands/rpg/cardinfo";
 import { redirect } from "modules/commands/rpg/cardSpawn/redirect";
 import { cardCollection } from "modules/commands/rpg/collections";
@@ -48,8 +48,6 @@ import { give, hourly } from "modules/commands/rpg/resource";
 import { sacrificeCard } from "modules/commands/rpg/sacrifice";
 import { skins } from "modules/commands/rpg/skins";
 import { wishlist } from "modules/commands/rpg/wishlist";
-import { sort } from "modules/commands/rpg/sorting";
-import { spbt } from "modules/commands/rpg/spbt";
 import { team } from "modules/commands/rpg/team";
 import { trade } from "modules/commands/rpg/trades";
 import { dex } from "modules/commands/rpg/xendex";
@@ -112,7 +110,7 @@ const commandMap: CommandMapProps = {
 	equip: equip,
 	unequip: unEquip,
 	favorite: favorite,
-	battle: battle,
+	battle: startBattle,
 	trade: trade,
 	sacrifice: sacrificeCard,
 	evolution: evolveCard,

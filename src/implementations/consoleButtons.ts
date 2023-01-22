@@ -13,7 +13,7 @@ import {
 	MAX_CHOSEN_SKINS_ALLOWED,
 } from "helpers/constants";
 import loggers from "loggers";
-import { battle } from "modules/commands/rpg/adventure";
+import { startBattle } from "modules/commands/rpg/adventure";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { zone } from "modules/commands/rpg/zoneAndFloor/zone";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -150,7 +150,7 @@ const handleConsoleButtonInteractions = async ({
 		}
 		case CONSOLE_BUTTONS.FLOOR_BT.id: {
 			options.args = [];
-			battle(options);
+			startBattle(options);
 			return;
 		}
 		case CONSOLE_BUTTONS.NEXT_ZONE.id: {
@@ -287,7 +287,7 @@ const handleIntemediateConsoleButtons = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.FLOOR_BT_ALL.id: {
-			battle(options);
+			startBattle(options);
 			return;
 		}
 		case CONSOLE_BUTTONS.RAID_COMMANDS.id: {

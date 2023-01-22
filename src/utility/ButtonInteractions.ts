@@ -1,9 +1,19 @@
-import { ChannelProp, MapProps, ResponseWithPagination } from "@customTypes";
+import {
+	ChannelProp,
+	ConfirmationInteractionOptions,
+	ConfirmationInteractionParams,
+	MapProps,
+	ResponseWithPagination,
+} from "@customTypes";
 import { ButtonOptions } from "@customTypes/button";
+import { BaseProps } from "@customTypes/command";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
+import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageActionRow } from "discord.js";
+import emoji from "emojis/emoji";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
+import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
@@ -70,7 +80,7 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			initLoggerContext(async () => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
-					userTag: buttonInteraction.user.id
+					userTag: buttonInteraction.user.id,
 				});
 				buttonInteraction.deferUpdate();
 				const id = buttonInteraction.customId;
@@ -83,7 +93,8 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 						return;
 					}
 					case nextLabel: {
-						pageFilter.currentPage < totalPages && (pageFilter.currentPage += 1);
+						pageFilter.currentPage < totalPages &&
+              (pageFilter.currentPage += 1);
 						break;
 					}
 					case prevLabel: {
@@ -168,7 +179,7 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 			initLoggerContext(async () => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
-					userTag: buttonInteraction.user.id
+					userTag: buttonInteraction.user.id,
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(
@@ -249,7 +260,7 @@ export const collectableInteraction = async <P>(
 			initLoggerContext(() => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
-					userTag: buttonInteraction.user.id
+					userTag: buttonInteraction.user.id,
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(
@@ -342,7 +353,7 @@ export const customButtonInteraction = <P>(
 			initLoggerContext(() => {
 				setLoggerContext({
 					trackingId: generateUUID(10),
-					userTag: buttonInteraction.user.id
+					userTag: buttonInteraction.user.id,
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(
@@ -383,6 +394,73 @@ export const customButtonInteraction = <P>(
 		return buttons;
 	} catch (err) {
 		loggers.error("utility.ButtonInteractions.customInteraction: ERROR", err);
+		return;
+	}
+};
+
+export const battleConfirmationInteraction = async ({
+	context,
+	options,
+	client,
+	args,
+	invokeFunc,
+	command,
+}: BaseProps & {
+  invokeFunc: (params: BaseProps & { isEvent?: boolean; }) => void;
+}) => {
+	try {
+		let confirmEmbed = createEmbed(options.author, client)
+			.setDescription("No content available")
+			.setHideConsoleButtons(true);
+		let sentMessage: Message;
+		const buttons = await confirmationInteraction(
+			context.channel,
+			options.author.id,
+			{
+				client,
+				channel: context.channel,
+				author: options.author,
+			},
+			async (
+				_p: ConfirmationInteractionParams,
+				opts?: ConfirmationInteractionOptions
+			) => {
+				if (opts?.isConfirm) {
+					invokeFunc({
+						client,
+						context,
+						options,
+						args,
+						command,
+					});
+				}
+				return true;
+			},
+			(data, opts) => {
+				if (data) {
+					confirmEmbed = createConfirmationEmbed(options.author, client)
+						.setDescription("Are you ready to battle? " + emoji.calm)
+						.setHideConsoleButtons(true);
+				}
+				if (opts?.isDelete) {
+					sentMessage.deleteMessage();
+				}
+			}
+		);
+
+		if (buttons) {
+			confirmEmbed.setButtons(buttons);
+		}
+		const msg = await context.channel?.sendMessage(confirmEmbed);
+		if (msg) {
+			sentMessage = msg;
+		}
+		return;
+	} catch (err) {
+		loggers.error(
+			"ButtonInteractions.battleConfirmationInteraction: ERROR",
+			err
+		);
 		return;
 	}
 };

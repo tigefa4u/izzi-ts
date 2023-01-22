@@ -30,7 +30,7 @@ import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { numericWithComma } from "helpers";
-import { customButtonInteraction } from "utility/ButtonInteractions";
+import { battleConfirmationInteraction, customButtonInteraction } from "utility/ButtonInteractions";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import Cache from "cache";
 import { eventActions } from "../events";
@@ -39,13 +39,20 @@ import { BaseProps } from "@customTypes/command";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 
-export const battleRaidBoss = async ({
+export const battleRaidBoss = async (params: BaseProps) => {
+	return battleConfirmationInteraction({
+		...params,
+		invokeFunc: battleBoss
+	});
+};
+
+export const battleBoss = async ({
 	context,
 	options,
 	client,
 	isEvent,
 	args,
-}: RaidActionProps) => {
+}: any) => { // has to be type RaidActionProps
 	try {
 		const author = options.author;
 		let inBattle = await getCooldown(

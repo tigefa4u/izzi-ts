@@ -105,6 +105,7 @@ export const processBattleOutcome = async ({
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
+				// Interchange points for season 2
 				const userWonPoints = userRank.division * 4;
 				const opponentLosePoints = opponentUserRank.division * 2;
 				promises.push(

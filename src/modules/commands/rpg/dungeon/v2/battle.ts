@@ -16,11 +16,13 @@ import {
 import { prepareSkewedCollectionsForBattle, prepareTeamForBattle } from "helpers/teams";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { battleConfirmationInteraction } from "utility/ButtonInteractions";
 import { prepareDungeonBoss } from "..";
 import { simulateBattle } from "../../adventure/battle/battle";
 import * as battlesInChannel from "../../adventure/battle/battlesPerChannelState";
 import { processBattleOutcome } from "./rewards";
 
+// dungeon V2
 const spawnDGBoss = async (userRank?: UserRankProps) => {
 	const dungeonBoss = await prepareDungeonBoss(userRank);
 	const enemyStats = await prepareSkewedCollectionsForBattle({
@@ -32,7 +34,14 @@ const spawnDGBoss = async (userRank?: UserRankProps) => {
 	return enemyStats;
 };
 
-export const dungeonBattle = async ({ context, options, client }: BaseProps) => {
+export const dungeonBattle = async (params: BaseProps) => {
+	return battleConfirmationInteraction({
+		...params,
+		invokeFunc: invokeDungeonBattle
+	});
+};
+
+export const invokeDungeonBattle = async ({ context, options, client }: BaseProps) => {
 	try {
 		const author = options.author;
 		const seasonEnd = await Cache.get("dg-season-end");
