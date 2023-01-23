@@ -107,7 +107,7 @@ export const calculateUserProgress = (user: UserProps, card: C, author: A, { xpG
 	}
 };
 
-export const calculateUserRewards = (user: UserProps) => {
+export const calculateUserRewards = (user: UserProps, multiple = 1) => {
 	try {
 		let rankReward = "silver";
 		let rankId = 1;
@@ -128,7 +128,7 @@ export const calculateUserRewards = (user: UserProps) => {
 		return {
 			rankReward,
 			rankId,
-			goldReward
+			goldReward: goldReward * multiple
 		};
 	} catch (err) {
 		loggers.error("battleTransaction.calculateUserRewards: ERROR", err);

@@ -89,7 +89,7 @@ export const processBattleTransaction = async ({
 				channel?.sendMessage("Something's terribly wrong please contact support");
 				return;
 			}
-			userRewards = calculateUserRewards(refetchUser);
+			userRewards = calculateUserRewards(refetchUser, multiplier);
 			if (!userRewards) {
 				return;
 			}

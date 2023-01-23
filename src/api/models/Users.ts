@@ -125,7 +125,7 @@ export const update: (
 		}
 	}
 	if (isEmptyValue(data)) return;
-	return await connection(tableName).where(params).update(data);
+	return connection(tableName).where(params).update(data);
 };
 
 export const getPlayerCount = async (
