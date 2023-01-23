@@ -114,12 +114,12 @@ export const rapidFire = ({
 	simulation
 }: BattleProcessProps) => {
 	if (!card) return;
-	// After a short delay decrease the enemies defense by __25%__. Their defense increases by __10%__ every turn.
-	if (round % 2 === 0 && !playerStats.totalStats.isRapid) {
+	// decrease the enemies defense by __32%__.
+	if (round % 4 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isUsePassive = true;
 		playerStats.totalStats.isRapid = true;
 		// calculate % based on rank
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(32, card.rank);
 		const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
 		opponentStats.totalStats.defense =
       opponentStats.totalStats.defense - defPer;
@@ -138,21 +138,6 @@ export const rapidFire = ({
 			isItem: false,
 			simulation
 		});
-	}
-	if (round % 2 === 1 && playerStats.totalStats.isRapid)
-		playerStats.totalStats.isRapid = false;
-	if (playerStats.totalStats.isUsePassive) {
-		// let inc = calcPercentRatio(6, card.rank);
-		let inc = 10;
-		if (
-			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
-				card.rank
-			)
-		) {
-			inc = 14;
-		}
-		const temp = getRelationalDiff(opponentStats.totalStats.defense, inc);
-		opponentStats.totalStats.defense = opponentStats.totalStats.defense + temp;
 	}
 	return {
 		playerStats,
