@@ -43,7 +43,7 @@ import { floor } from "../../zoneAndFloor/floor";
 import { zone } from "../../zoneAndFloor/zone";
 import { viewBattleLogs } from "./viewBattleLogs";
 
-const handleButtonActions = async ({
+export const handleButtonActions = async ({
 	user_tag,
 	client,
 	channel,
@@ -402,7 +402,7 @@ async function upgradeUser(
 	};
 }
 
-async function upgradeCard(card: CollectionCardInfoProps, multiplier = 1) {
+export async function upgradeCard(card: CollectionCardInfoProps, multiplier = 1) {
 	const powerLevel = await getPowerLevelByRank({ rank: card.rank });
 	if (!powerLevel) {
 		throw new Error(

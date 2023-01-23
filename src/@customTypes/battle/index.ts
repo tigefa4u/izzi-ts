@@ -1,5 +1,24 @@
-import { BattleProcessProps, BattleStats, PrepareBattleDescriptionProps } from "@customTypes/adventure";
+import { AuthorProps, ChannelProp } from "@customTypes";
+import {
+	BattleProcessProps, BattleStats, PrepareBattleDescriptionProps, RPGBattleCardDetailProps, Simulation 
+} from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
+import { UserProps } from "@customTypes/users";
 import { Message, MessageEmbed } from "discord.js";
+
+export type BattleTransactionProps = {
+    result: {
+      isVictory: boolean;
+      simulation?: Simulation;
+      attachments?: (CollectionCardInfoProps | undefined)[];
+    };
+    card: RPGBattleCardDetailProps;
+    enemyCard: CollectionCardInfoProps;
+    author: AuthorProps;
+    multiplier: number;
+    channel: ChannelProp;
+    user: UserProps;
+  };
 
 export type AbilityProcDescriptionProps = PrepareBattleDescriptionProps & {
     isPlayerFirst: boolean;

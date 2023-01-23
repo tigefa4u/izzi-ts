@@ -1,3 +1,4 @@
+import { BattleStats } from "@customTypes/adventure";
 import { BaseProps } from "@customTypes/command";
 import { TeamProps } from "@customTypes/teams";
 import { UserRankProps } from "@customTypes/userRanks";
@@ -7,6 +8,7 @@ import { createUserRank, getUserRank } from "api/controllers/UserRanksController
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
+import transaction from "db/transaction";
 import { emojiMap } from "emojis";
 import { addTeamEffectiveness } from "helpers/adventure";
 import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
@@ -91,12 +93,12 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			getUserBlacklist({ user_tag: author.id })
 		]);
 		if (dgTeam && blackList && blackList.length > 0) {
-			dgTeam.metadata.isValid = false;
+			// dgTeam.metadata.isValid = false;
 			embed.setTitle("Warning :warning:").setDescription(
 				"You have been blacklisted and cannot participate in DG Ranked Challenge. Please contact support."
 			);
 			context.channel?.sendMessage(embed);
-			return;
+			// return;
 		}
 		if (!dgTeam?.team) {
 			embed.setDescription(`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
@@ -143,7 +145,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		let opponent, opponentTeanName = "";
+		let opponent: BattleStats | undefined, opponentTeanName = "";
 		const randomOpponent = await getRandomDGOpponent({
 			exclude_tag: author.id,
 			rank_id: userRank?.rank_id || 1
@@ -226,14 +228,41 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			result.isVictory = false;
 		}
 		// update user dg mana
-		await refetchAndUpdateUserMana(author.id, DUNGEON_MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
-		processBattleOutcome({
-			result,
-			author,
-			client,
-			channel: context.channel,
-			opponentId: opponent.id,
-			opponentUsername: opponent.username || opponent.name
+		// await refetchAndUpdateUserMana(author.id, DUNGEON_MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
+        
+		await transaction(async (trx) => {
+			try {
+				loggers.info("dungeon.v2.battle.dungeonBattle: transaction started...");
+				const updatedObj = await trx.raw(
+					`update users set dungeon_mana = dungeon_mana - ${DUNGEON_MANA_PER_BATTLE}
+                    where user_tag = '${author.id}' and is_banned = false returning *`
+				).then((res) => res.rows[0]);
+				if (!updatedObj) {
+					embed.setTitle(DEFAULT_ERROR_TITLE)
+						.setDescription("You do not have enough mana to battle!");
+
+					context.channel?.sendMessage(embed);
+					return trx.rollback();
+				}
+				loggers.info("Dungeon mana update successful for uid: " + author.id + " " + JSON.stringify(updatedObj));
+				loggers.info("dungeon.v2.battle.dungeonBattle: battle outcome processing started... uid " + author.id);
+				if (!opponent) {
+					result.isBot = true;
+				}
+				processBattleOutcome({
+					result,
+					author,
+					client,
+					channel: context.channel,
+					opponentId: opponent?.id || "No id",
+					opponentUsername: opponent?.username || opponent?.name || "No Name"
+				});
+				loggers.info("battle outcome proessed for user: " + author.id);
+				return trx.commit();
+			} catch (err) {
+				loggers.error("dungeon.v2.battle.dungeonBattle: transaction FAILED", err);
+				return trx.rollback();
+			}
 		});
 		return;
 	} catch (err) {

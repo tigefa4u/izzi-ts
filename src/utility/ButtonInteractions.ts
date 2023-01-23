@@ -409,53 +409,61 @@ export const battleConfirmationInteraction = async ({
   invokeFunc: (params: BaseProps & { isEvent?: boolean; }) => void;
 }) => {
 	try {
-		let confirmEmbed = createEmbed(options.author, client)
-			.setDescription("No content available")
-			.setHideConsoleButtons(true);
-		let sentMessage: Message;
-		const buttons = await confirmationInteraction(
-			context.channel,
-			options.author.id,
-			{
-				client,
-				channel: context.channel,
-				author: options.author,
-			},
-			async (
-				_p: ConfirmationInteractionParams,
-				opts?: ConfirmationInteractionOptions
-			) => {
-				if (opts?.isConfirm) {
-					invokeFunc({
-						client,
-						context,
-						options,
-						args,
-						command,
-					});
-				}
-				return true;
-			},
-			(data, opts) => {
-				if (data) {
-					confirmEmbed = createConfirmationEmbed(options.author, client)
-						.setDescription("Are you ready to battle? " + emoji.calm)
-						.setHideConsoleButtons(true);
-				}
-				if (opts?.isDelete) {
-					sentMessage.deleteMessage();
-				}
-			}
-		);
-
-		if (buttons) {
-			confirmEmbed.setButtons(buttons);
-		}
-		const msg = await context.channel?.sendMessage(confirmEmbed);
-		if (msg) {
-			sentMessage = msg;
-		}
+		invokeFunc({
+			client,
+			context,
+			options,
+			args,
+			command
+		});
 		return;
+		// let confirmEmbed = createEmbed(options.author, client)
+		// 	.setDescription("No content available")
+		// 	.setHideConsoleButtons(true);
+		// let sentMessage: Message;
+		// const buttons = await confirmationInteraction(
+		// 	context.channel,
+		// 	options.author.id,
+		// 	{
+		// 		client,
+		// 		channel: context.channel,
+		// 		author: options.author,
+		// 	},
+		// 	async (
+		// 		_p: ConfirmationInteractionParams,
+		// 		opts?: ConfirmationInteractionOptions
+		// 	) => {
+		// 		if (opts?.isConfirm) {
+		// 			invokeFunc({
+		// 				client,
+		// 				context,
+		// 				options,
+		// 				args,
+		// 				command,
+		// 			});
+		// 		}
+		// 		return true;
+		// 	},
+		// 	(data, opts) => {
+		// 		if (data) {
+		// 			confirmEmbed = createConfirmationEmbed(options.author, client)
+		// 				.setDescription("Are you ready to battle? " + emoji.calm)
+		// 				.setHideConsoleButtons(true);
+		// 		}
+		// 		if (opts?.isDelete) {
+		// 			sentMessage.deleteMessage();
+		// 		}
+		// 	}
+		// );
+
+		// if (buttons) {
+		// 	confirmEmbed.setButtons(buttons);
+		// }
+		// const msg = await context.channel?.sendMessage(confirmEmbed);
+		// if (msg) {
+		// 	sentMessage = msg;
+		// }
+		// return;
 	} catch (err) {
 		loggers.error(
 			"ButtonInteractions.battleConfirmationInteraction: ERROR",

@@ -1,4 +1,3 @@
-import { ConfirmationInteractionOptions, ConfirmationInteractionParams } from "@customTypes";
 import { RPGBattleCardDetailProps } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
@@ -10,14 +9,12 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { Message } from "discord.js";
 import { preparePlayerBase } from "helpers";
 import { addEffectiveness, preparePlayerStats } from "helpers/adventure";
 import {
 	refetchAndUpdateUserMana,
 	validateFiveMinuteTimer,
 } from "helpers/battle";
-import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_STARTER_GUIDE_TITLE,
@@ -29,8 +26,8 @@ import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { battleConfirmationInteraction } from "utility/ButtonInteractions";
 import { simulateBattle } from "./battle/battle";
-import { processBattleResult } from "./battle/battleResult";
 import * as battlePerChannel from "./battle/battlesPerChannelState";
+import { processBattleTransaction } from "./battle/battleTransaction";
 
 export const startBattle = async (params: BaseProps) => {
 	return battleConfirmationInteraction({
@@ -163,34 +160,29 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 				context.channel?.sendMessage(errorEmbed);
 				return;
 			}
-			const refetchUser = await getRPGUser({ user_tag: author.id });
-			if (!refetchUser) return;
-			if (refetchUser.mana < MANA_PER_BATTLE) {
+			if (user.mana < MANA_PER_BATTLE) {
 				const newErrorEmbed = createEmbed(author, client);
 				newErrorEmbed
 					.setColor("#f51d11")
 					.setTitle("Error :no_entry:")
 					.setDescription(
-						`You do not have enough mana to proceed! **[${refetchUser.mana} / ${MANA_PER_BATTLE}]** Mana`
+						`You do not have enough mana to proceed! **[${user.mana} / ${MANA_PER_BATTLE}]** Mana`
 					);
 				context.channel?.sendMessage(newErrorEmbed);
 				return;
 			}
 			await setCooldown(author.id, "mana-battle", 1);
-			const multiplier = Math.floor(refetchUser.mana / MANA_PER_BATTLE) || 1;
-			processBattleResult({
+			const multiplier = Math.floor(user.mana / MANA_PER_BATTLE) || 1;
+			processBattleTransaction({
 				result: { isVictory: true },
 				card: battleCardDetails,
 				enemyCard,
 				author,
 				multiplier: multiplier,
 				channel: context.channel,
+				user
 			});
-			refetchUser.mana = refetchUser.mana - multiplier * MANA_PER_BATTLE;
-			await Promise.all([
-				updateRPGUser({ user_tag: user.user_tag }, { mana: refetchUser.mana }),
-				clearCooldown(author.id, "mana-battle"),
-			]);
+			await clearCooldown(author.id, "mana-battle");
 			return;
 		}
 
@@ -264,13 +256,15 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 			options: { hideVisualBattle: paramArgs === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 		});
 		clearCooldown(author.id, "mana-battle");
-		refetchAndUpdateUserMana(author.id);
 		if (!result) {
 			context.channel?.sendMessage("Unable to process your battle");
 			return;
 		}
-		if (result.isForfeit) return;
-		processBattleResult({
+		if (result.isForfeit) {
+			await refetchAndUpdateUserMana(author.id);
+			return;
+		}
+		processBattleTransaction({
 			result: {
 				isVictory: result.isVictory || false,
 				simulation: result.simulation,
@@ -281,6 +275,7 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 			author,
 			multiplier: 1,
 			channel: context.channel,
+			user
 		});
 
 		const key = "guide::" + author.id;

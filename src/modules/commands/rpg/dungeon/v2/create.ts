@@ -18,11 +18,11 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 		const blackList = await getUserBlacklist({ user_tag: author.id });
 		if (blackList && blackList.length > 0) {
 			name = `${author.username} dg team`;
-			embed.setTitle("Warning :warning:")
+			const warningEmbed = createEmbed(author, client).setTitle("Warning :warning:")
 				.setDescription(`Summoner **${author.username}**, we have set your DG Team name to **__${name}__**` +
                 "because you have been blacklisted for using banned terms in team names.");
 
-			context.channel?.sendMessage(embed);
+			context.channel?.sendMessage(warningEmbed);
 		}
 
 		if (name.length < 3 || name.length > 20) {

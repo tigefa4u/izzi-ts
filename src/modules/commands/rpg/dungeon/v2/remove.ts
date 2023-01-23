@@ -57,7 +57,8 @@ export const removeDGTeam = async ({ context, options, client }: BaseProps) => {
 				if (_data) {
 					embed = createConfirmationEmbed(author, client)
 						.setDescription("Are you sure you want to remove your DG Team? " +
-                        "Doing so will also reset your DG Rank!");
+                        "Doing so will also reset your DG Rank!")
+						.setHideConsoleButtons(true);
 				}
 				if (opts?.isDelete) {
 					sentMessage.deleteMessage();

@@ -41,8 +41,16 @@ export const customCard = async ({ context, options, args, client }: BaseProps) 
 			getCustomCards(mentionId),
 			client.users.fetch(mentionId)
 		]);
-		if (!customCardDetails || !mentionedUser) return;
+		if (!mentionedUser) return;
 		const embed = createEmbed(mentionedUser).setTitle("Custom Card " + emoji.dagger);
+		if (!customCardDetails) {
+			embed.setDescription(
+				`Summoner **${mentionedUser.username}** does not have a custom card. ` +
+          `Click [here](${IZZI_WEBSITE}/@me/customcard) to create your custom card`
+			);
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		const customCards = customCardDetails.cards;
 		if (!customCards || customCards.length <= 0) {
 			embed.setDescription(
