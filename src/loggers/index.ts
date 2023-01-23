@@ -1,3 +1,4 @@
+import { getLoggerContext } from "./context";
 import winstonLogger from "./winston";
 
 const error = (errMessage: string, err: unknown) => {
@@ -5,24 +6,24 @@ const error = (errMessage: string, err: unknown) => {
 	if (err instanceof Error) {
 		errorMessage = err.stack;
 	}
-	// console.error(errMessage, errorMessage);
-	winstonLogger.error(errMessage + JSON.stringify(errorMessage));
+	console.error(errMessage, errorMessage);
+	// winstonLogger.error(errMessage + JSON.stringify(errorMessage));
 };
 
 const info = (infoMessage: string) => {
-	// console.info(infoMessage, "pid: ", process.pid);
-	winstonLogger.info(infoMessage);
+	console.info(infoMessage, "pid: ", getLoggerContext());
+	// winstonLogger.info(infoMessage);
 };
 
 const debug = (...args: any[]) => {
 	// console.log(args.join(", "));
-	winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
+	// winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
 };
 
 const timerify = (...args: (string | number)[]) => {
 	const log = args.join(" -> ");
-	// console.log(log);
-	winstonLogger.logTime(log);
+	console.log(log);
+	// winstonLogger.logTime(log);
 };
 
 const startTimer = (message?: string) => {
@@ -41,9 +42,23 @@ const endTimer = (timer: { startTime: [number, number]; message?: string; }) => 
 
 type METHODS = "delete" | "get" | "post" | "patch" | "put" 
 const logApi = (method: METHODS, ...args: string[]) => {
-	winstonLogger.logApi(`[${method}] ${args.join(" -> ")}`);
+	// winstonLogger.logApi(`[${method}] ${args.join(" -> ")}`);
 };
 
+// class Logger {
+// 	private id = "None";
+// 	init(id: string) {
+// 		this.id = id;
+// 	}
+// 	error(message: any, err: any) {
+// 		error(message, err);
+// 	}
+// 	info(message: string) {
+// 		info(message + " Logged ID: " + this.id);
+// 	}
+// }
+
+// export default new Logger();
 export default {
 	error,
 	info,

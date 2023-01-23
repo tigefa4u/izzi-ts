@@ -4,6 +4,7 @@ import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff } from "helpers/battle";
+import { clone } from "utility";
 
 export const exhaust = ({
 	playerStats,
@@ -19,6 +20,27 @@ export const exhaust = ({
 	if (!card) return;
 	if (!playerStats.totalStats.exhNum) {
 		playerStats.totalStats.exhNum = 2;
+	}
+	// At start of battle if enemy SPD is more, swap spd
+	if (round === 1 && opponentStats.totalStats.dexterity > playerStats.totalStats.dexterity) {
+		const swp = clone(opponentStats.totalStats.dexterity);
+		opponentStats.totalStats.dexterity = playerStats.totalStats.dexterity;
+		playerStats.totalStats.dexterity = swp;
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: `**[PSV]** swapping all ally **SPD** with ${opponentStats.name}`,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation
+		});
 	}
 	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
 	// as well as buffing all allies for the same stat

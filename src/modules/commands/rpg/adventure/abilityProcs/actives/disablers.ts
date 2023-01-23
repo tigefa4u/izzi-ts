@@ -69,6 +69,13 @@ export const electrocute = ({
 		const percent = calcPercentRatio(20, card.rank);
 		perDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
 		if (isNaN(perDamage)) perDamage = 0;
+		// reduce damage by 50%
+		if (opponentStats.totalStats.damageReductionPercent?.electrocute) {
+			const reductionPercent = opponentStats.totalStats.damageReductionPercent.electrocute.percent || 0;
+			const reductionRatio = getRelationalDiff(perDamage, reductionPercent);
+			perDamage = perDamage - reductionRatio;
+		}
+
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - perDamage;
 		if (

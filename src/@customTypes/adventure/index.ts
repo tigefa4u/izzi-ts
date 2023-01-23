@@ -46,6 +46,7 @@ type StatStateProps = {
   pomNum?: number;
   tempEle?: number;
   tempEleInc?: number;
+  tempAtkPB?: number;
 };
 
 export type AbilityStackProps = StatStateProps &
@@ -113,7 +114,12 @@ export type AbilityStackProps = StatStateProps &
       [name in keyof Partial<AbilityProcMapProps>]: {
         [stat in keyof Partial<CharacterStatProps>]: {
           percent: number;
-        }
+        };
+      }
+    },
+    damageReductionPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number
       }
     }
   };

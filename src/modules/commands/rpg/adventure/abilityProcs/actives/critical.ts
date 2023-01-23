@@ -16,6 +16,9 @@ export const pointBlank = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase the accuracy of all allies by __35%__ as well as increasing crit chances by __30%__
+	/**
+	 * Increase acc & atk (20%)
+	 */
 	if (round % 2 === 0 && !playerStats.totalStats.isPB) {
 		playerStats.totalStats.isPB = true;
 		if (!basePlayerStats.totalStats.tempPB)
@@ -33,9 +36,19 @@ export const pointBlank = ({
       ((basePlayerStats.totalStats.tempAccPB * accPercent) / 100);
 		playerStats.totalStats.accuracy =
 		basePlayerStats.totalStats.accuracy + accuracy;
+
+		if (!basePlayerStats.totalStats.tempAtkPB) basePlayerStats.totalStats.tempAtkPB = 1;
+		const atkPercent = calcPercentRatio(20, card.rank);
+		const atk =
+      basePlayerStats.totalStats.vitality *
+      ((basePlayerStats.totalStats.tempAtkPB * atkPercent) / 100);
+		playerStats.totalStats.vitality =
+		basePlayerStats.totalStats.vitality + atk;
+
+		basePlayerStats.totalStats.tempAtkPB = basePlayerStats.totalStats.tempAtkPB + 1;
 		basePlayerStats.totalStats.tempAccPB = basePlayerStats.totalStats.tempAccPB + 1;
-		const desc = `Increasing **CRIT Chances** by __${pbPercent}%__ and ` +
-        `its **ACC** is increased by __${accPercent}%__`;
+		const desc = `Increasing **CRIT Chances** by __${pbPercent}%__ as well as ` +
+        `increasing its **ATK** by ${atkPercent} and **ACC** by __${accPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
