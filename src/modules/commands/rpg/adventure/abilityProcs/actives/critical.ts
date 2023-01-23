@@ -48,7 +48,7 @@ export const pointBlank = ({
 		basePlayerStats.totalStats.tempAtkPB = basePlayerStats.totalStats.tempAtkPB + 1;
 		basePlayerStats.totalStats.tempAccPB = basePlayerStats.totalStats.tempAccPB + 1;
 		const desc = `Increasing **CRIT Chances** by __${pbPercent}%__ as well as ` +
-        `increasing its **ATK** by ${atkPercent} and **ACC** by __${accPercent}%__`;
+        `increasing its **ATK** by __${atkPercent}%__ and **ACC** by __${accPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

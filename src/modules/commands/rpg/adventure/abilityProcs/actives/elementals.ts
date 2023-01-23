@@ -176,7 +176,7 @@ export const spellBook = ({
 		playerDamageDiff;
 	if (round % 2 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
-		const temp = randomElementFromArray([ "vitality", "defense", "strength" ]);
+		const temp = randomElementFromArray([ "vitality", "dexterity", "strength" ]);
 		// calculate % based on rank
 		// Cast a spell on all enemies dealing bonus magic damage or gain __20%__ SPD/HP based on your speed.
 		const percent = calcPercentRatio(20, card.rank);
