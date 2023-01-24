@@ -48,9 +48,7 @@ async function validateAndAcceptRaid(
 		params.channel
 	);
 	if (!currentRaid) return;
-	else if (!currentRaid.is_private) {
-		return;
-	} else if (Object.keys(currentRaid.lobby).length >= MAX_RAID_LOBBY_MEMBERS) {
+	else if (Object.keys(currentRaid.lobby).length >= MAX_RAID_LOBBY_MEMBERS) {
 		params.channel?.sendMessage("The Challenger Lobby is already full.");
 		return;
 	} else if (!currentRaid.lobby[userId].is_leader) {

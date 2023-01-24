@@ -88,6 +88,8 @@ export const calculateUserProgress = (user: UserProps, card: C, author: A, { xpG
         }`;
 			if (user.max_mana < MAX_MANA_GAIN) {
 				rawUpdateObject.max_mana = user.max_mana + 2;
+			} else {
+				rawUpdateObject.max_mana = user.max_mana;
 			}
 		} else {
 			rawUpdateObject.exp = currentExp;
