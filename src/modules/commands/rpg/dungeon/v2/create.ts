@@ -20,7 +20,7 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 			name = `${author.username} dg team`;
 			const warningEmbed = createEmbed(author, client).setTitle("Warning :warning:")
 				.setDescription(`Summoner **${author.username}**, we have set your DG Team name to **__${name}__**` +
-                "because you have been blacklisted for using banned terms in team names.");
+                " because you have been blacklisted for using banned terms in team names.");
 
 			context.channel?.sendMessage(warningEmbed);
 		}

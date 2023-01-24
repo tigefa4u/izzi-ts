@@ -1,7 +1,6 @@
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import Cache from "../../cache/index";
 import emoji from "emojis/emoji";
-import { randomNumber } from "helpers";
 import loggers from "loggers";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import { DUNGEON_MAX_MANA } from "helpers/constants";
@@ -33,7 +32,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 			summoner.vote_streak = streak;
 			summoner.voted_at = new Date();
 
-			let messageStr =
+			const messageStr =
         "Thank you for voting! You have received " +
         `__${goldReward}__ Gold ${emoji.gold}, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
         "and refilled your mana and dungeon mana for dailying.";
@@ -47,15 +46,15 @@ export const processUpVote = async (req: Request, res: Response) => {
 				vote_count: summoner.vote_count
 			};
 
-			if (summoner.is_premium) {
-				const IPreward = randomNumber(3, 4);
-				summoner.izzi_points = summoner.izzi_points
-					? summoner.izzi_points + IPreward
-					: IPreward;
+			// if (summoner.is_premium) {
+			// 	const IPreward = randomNumber(3, 4);
+			// 	summoner.izzi_points = summoner.izzi_points
+			// 		? summoner.izzi_points + IPreward
+			// 		: IPreward;
 
-				Object.assign(updateObj, { izzi_points: summoner.izzi_points });
-				messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP.`;
-			}
+			// 	Object.assign(updateObj, { izzi_points: summoner.izzi_points });
+			// 	messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP.`;
+			// }
 			await updateRPGUser({ user_tag }, updateObj);
 			desc = messageStr;
 		} else {
@@ -100,7 +99,7 @@ export const processServerUpvote = async (req: Request, res: Response) => {
 			summoner.shards = summoner.shards + shardReward;
 			summoner.gold = summoner.gold + goldReward;
 
-			let messageStr =
+			const messageStr =
         "Thank you for voting **XeneX Server**! You have received " +
         `__${goldReward}__ Gold ${emoji.gold}, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
 		`__${shardReward}__ Shards ${emoji.shard} ` +
@@ -111,15 +110,15 @@ export const processServerUpvote = async (req: Request, res: Response) => {
 				raid_pass: summoner.raid_pass,
 			};
 
-			if (summoner.is_premium) {
-				const IPreward = randomNumber(3, 4);
-				summoner.izzi_points = summoner.izzi_points
-					? summoner.izzi_points + IPreward
-					: IPreward;
+			// if (summoner.is_premium) {
+			// 	const IPreward = randomNumber(3, 4);
+			// 	summoner.izzi_points = summoner.izzi_points
+			// 		? summoner.izzi_points + IPreward
+			// 		: IPreward;
 
-				Object.assign(updateObj, { izzi_points: summoner.izzi_points });
-				messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP.`;
-			}
+			// 	Object.assign(updateObj, { izzi_points: summoner.izzi_points });
+			// 	messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP.`;
+			// }
 			await updateRPGUser({ user_tag }, updateObj);
 			desc = messageStr;
 		} else {
