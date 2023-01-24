@@ -66,7 +66,7 @@ export const exhaust = ({
 			percent
 		);
 		playerStats.totalStats[temp as keyof CharacterStatProps] =
-		playerStats.totalStats[temp as keyof CharacterStatProps] - buffDiff;
+		playerStats.totalStats[temp as keyof CharacterStatProps] + buffDiff;
 
 		opponentStats.totalStats[temp as keyof CharacterStatProps] =
       opponentStats.totalStats[temp as keyof CharacterStatProps] - relDiff;
