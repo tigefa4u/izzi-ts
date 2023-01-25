@@ -41,8 +41,8 @@ export const addCardByIds = async ({
 		const options = {
 			user_id: trader.user_id,
 			row_number: ids,
-			is_on_market: false,
-			is_on_cooldown: false,
+			// is_on_market: false,
+			// is_on_cooldown: false,
 		};
 		// const exclude_ids = trader.queue.map((i) => i.id);
 		// if (exclude_ids.length > 0) {
