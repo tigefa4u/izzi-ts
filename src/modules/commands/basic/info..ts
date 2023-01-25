@@ -11,7 +11,6 @@ import {
 } from "environment";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
-import { help } from ".";
 
 export const server = ({ context }: BaseProps) => {
 	try {
@@ -60,7 +59,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           " " +
           "as you vote! You get bonus __1000__ gold if you're married!" +
           " " +
-				//   `You get (3 or 4) ${emoji.izzipoints} IP if premium and ` +
+				  `You get 4IP ${emoji.izzipoints} if premium and ` +
 		  "Your mana as well as dungeon mana also gets refilled as you vote." +
           "\n\n" +
           `Vote for **__Xenex Server__** here:-\n${XENEX_VOTE_LINK}\n\n` +

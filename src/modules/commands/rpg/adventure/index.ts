@@ -104,7 +104,10 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 			user_id: user.id,
 			user_tag: user.user_tag,
 		});
-		if (!card) return;
+		if (!card) {
+			context.channel?.sendMessage("Please select a card to fight alongside you!");
+			return;
+		}
 
 		const battleCardDetails: RPGBattleCardDetailProps = {
 			selected_card_id: user.selected_card_id,
