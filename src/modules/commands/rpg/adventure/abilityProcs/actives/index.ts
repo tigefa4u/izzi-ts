@@ -168,15 +168,15 @@ export const bonePlating = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	/**
-   * At the start of the round take 80% less damage,
+   * At the start of the round take 40% less damage,
    * damage taken increases every 3rd round proc
-   * by 15%
+   * by 8%
    */
 	if (round === 1 && !playerStats.totalStats.isPlatting) {
 		playerStats.totalStats.isEndure = true;
 		playerStats.totalStats.isPlatting = true;
 		playerStats.totalStats.previousRound = round;
-		const percent = calcPercentRatio(80, card.rank);
+		const percent = calcPercentRatio(40, card.rank);
 		const { percent: bonePlatePercent } = (playerStats.totalStats
 			.trueDamageReductionPercent || {})["bone plating"] || { percent: 0 };
 		playerStats.totalStats.trueDamageReductionPercent = {
@@ -214,7 +214,7 @@ export const bonePlating = ({
     playerStats.totalStats.trueDamageReductionPercent["bone plating"]
 	) {
 		playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent =
-      playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent - 15;
+      playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent - 8;
 		// 	const temp = getRelationalDiff(opponentStats.totalStats.vitality, 15);
 		// 	opponentStats.totalStats.vitality =
 		//   opponentStats.totalStats.vitality + temp;
