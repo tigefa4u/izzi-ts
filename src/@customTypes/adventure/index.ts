@@ -121,6 +121,11 @@ export type AbilityStackProps = StatStateProps &
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number
       }
+    },
+    trueDamageReductionPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number;
+      }
     }
   };
 

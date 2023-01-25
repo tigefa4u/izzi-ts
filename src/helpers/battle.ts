@@ -84,8 +84,17 @@ export const getPlayerDamageDealt = (
 	// );
 	// testing
 	// let damage = Math.floor((1 + (vitality * 0.01)) * (vitality/Math.max(1, defense)) * modifiers * 100);
-	const damage = Math.floor((atk ** 2 / (atk + def)) * modifiers);
+	let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers);
 	// if (damage <= 0) damage = randomNumber(300, 500);
+
+	// True damage reduction
+	// for Bone Plating
+	if (enemyTotalStats.trueDamageReductionPercent && enemyTotalStats.trueDamageReductionPercent["bone plating"]) {
+		const reldiff = getRelationalDiff(damage, enemyTotalStats.trueDamageReductionPercent["bone plating"].percent);
+		if (reldiff > 0 && reldiff < damage) {
+			damage = damage - reldiff;
+		}
+	}
 	return damage;
 };
 

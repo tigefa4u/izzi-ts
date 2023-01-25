@@ -168,23 +168,30 @@ export const bonePlating = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	/**
-	 * At the start of the round take 80% less damage,
-	 * damage taken increases every 3rd round proc
-	 * by 15%
-	 */
+   * At the start of the round take 80% less damage,
+   * damage taken increases every 3rd round proc
+   * by 15%
+   */
 	if (round === 1 && !playerStats.totalStats.isPlatting) {
 		playerStats.totalStats.isEndure = true;
 		playerStats.totalStats.isPlatting = true;
 		playerStats.totalStats.previousRound = round;
 		const percent = calcPercentRatio(80, card.rank);
+		const { percent: bonePlatePercent } = (playerStats.totalStats
+			.trueDamageReductionPercent || {})["bone plating"] || { percent: 0 };
+		playerStats.totalStats.trueDamageReductionPercent = {
+			...playerStats.totalStats.trueDamageReductionPercent,
+			"bone plating": { percent: percent + bonePlatePercent },
+		};
 		const relDiff = getRelationalDiff(
 			opponentStats.totalStats.vitality,
 			percent
 		);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - relDiff;
-		const desc = `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
-		"Ally **Endurance** will reduce by __15%__ every 3rd round.";
+		const desc =
+      `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
+      "Ally **Endurance** will reduce by __15%__ every 3rd round.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -200,10 +207,17 @@ export const bonePlating = ({
 			simulation,
 		});
 	}
-	if (round % 3 === 0 && playerStats.totalStats.isPlatting) {
-		const temp = getRelationalDiff(opponentStats.totalStats.vitality, 15);
-		opponentStats.totalStats.vitality =
-      opponentStats.totalStats.vitality + temp;
+	if (
+		round % 3 === 0 &&
+    playerStats.totalStats.isPlatting &&
+    playerStats.totalStats.trueDamageReductionPercent &&
+    playerStats.totalStats.trueDamageReductionPercent["bone plating"]
+	) {
+		playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent =
+      playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent - 15;
+		// 	const temp = getRelationalDiff(opponentStats.totalStats.vitality, 15);
+		// 	opponentStats.totalStats.vitality =
+		//   opponentStats.totalStats.vitality + temp;
 	}
 	return {
 		playerStats,
@@ -282,17 +296,17 @@ const abilitiesToResist = [
 	{
 		name: "Elemental Strike",
 		emoji: emoji.elementalstrike,
-		key: "elementalStrike"
+		key: "elementalStrike",
 	},
 	{
 		name: "Electrocute",
 		emoji: emoji.electrocute,
-		key: "electrocute"
+		key: "electrocute",
 	},
 	{
 		name: "Tornado",
 		emoji: emoji.tornado,
-		key: "tornado"
+		key: "tornado",
 	},
 ];
 export const futureSight = ({
@@ -308,16 +322,16 @@ export const futureSight = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	/**
-	 * Passive - at start of round proc
-	 * 50% ability damage reduction
-	 */
+   * Passive - at start of round proc
+   * 50% ability damage reduction
+   */
 
 	if (round === 1) {
 		playerStats.totalStats.damageReductionPercent = {
 			...playerStats.totalStats.damageReductionPercent,
 			"elemental strike": { percent: 50 },
 			electrocute: { percent: 50 },
-			tornado: { percent: 50 }
+			tornado: { percent: 50 },
 		};
 
 		prepSendAbilityOrItemProcDescription({
@@ -328,13 +342,14 @@ export const futureSight = ({
 			embed,
 			round,
 			isDescriptionOnly: false,
-			description: "**[PSV]** gaining __50%__ **Damage Reduction** on " +
-			"**Elemental Strike, Tornado, Electrocute**",
+			description:
+        "**[PSV]** gaining __50%__ **Damage Reduction** on " +
+        "**Elemental Strike, Tornado, Electrocute**",
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
 			simulation,
-		});	
+		});
 	}
 
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
