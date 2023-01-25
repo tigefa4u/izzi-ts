@@ -29,10 +29,14 @@ export const getCardInfoByRowNumber = async (
 		if (params.user_tag) {
 			skinArr = await getSkinArr(params.user_tag);
 		}
-		const result = await Collections.getByRowNumber({
+		if (typeof params.row_number === "number") {
+			params.row_number = [ params.row_number ];
+		}
+		const result = await Promise.all(params.row_number.map((num) => Collections.getByRowNumber({
 			...params,
+			row_number: num,
 			sort
-		});
+		}))).then((res) => res.flat());
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(
 				result.map(async (data) => {

@@ -194,7 +194,7 @@ export const getAll = async function (
 		.as(alias);
 
 	query = db
-		.select(db.raw(`${alias}.*, count(*) over() as total_count`))
+		.select(db.raw(`${alias}.*, count(1) over() as total_count`))
 		.from(query);
 	// .orderBy(`${alias}.rank_id`, "desc");
 
@@ -249,7 +249,7 @@ export const update = async (
 };
 
 export const getByRowNumber = async (params: {
-  row_number: number | number[];
+  row_number: number;
   user_id: number;
   exclude_ids?: number[];
   is_on_cooldown?: boolean;
@@ -262,38 +262,28 @@ export const getByRowNumber = async (params: {
 		sortOrder: "desc"
 	};
 	const db = connection;
-	const alias = "collectionalias";
 	let query = db
-		.select(db.raw(`${tableName}.*, row_number() over(order by rank_id desc, 
-			id asc)`))
-	// ${sort ? sort.sortOrder : "desc"}
+		.select("*")
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
-		.where(`${tableName}.is_item`, false)
-		.as(alias);
+		.andWhereRaw(`not ${tableName}.is_item`)
+		.orderBy("rank_id", "desc")
+		.orderBy("id", "asc")
+		.offset(params.row_number - 1) // Need to subtract 1, to choose correct row
+		.limit(1);
 	
 	if (params.exclude_ids) {
 		query = query.whereNotIn(`${tableName}.id`, params.exclude_ids);
 	}
-	
-	query = db.select(db.raw(`${alias}.*`))
-		.from(query);
 
-	if (typeof params.row_number === "number") {
-		query = query
-			.where(`${alias}.row_number`, params.row_number);
-	} else if (typeof params.row_number === "object") {
-		query = query
-			.whereIn(`${alias}.row_number`, params.row_number);
-	}
 	if (typeof params.is_on_cooldown === "boolean") {
-		query = query.where(`${alias}.is_on_cooldown`, params.is_on_cooldown);
+		query = query.where(`${tableName}.is_on_cooldown`, params.is_on_cooldown);
 	}
 	if (typeof params.is_on_market === "boolean") {
-		query = query.where(`${alias}.is_on_market`, params.is_on_market);
+		query = query.where(`${tableName}.is_on_market`, params.is_on_market);
 	}
 	if (typeof params.is_tradable === "boolean") {
-		query = query.where(`${alias}.is_tradable`, params.is_tradable);
+		query = query.where(`${tableName}.is_tradable`, params.is_tradable);
 	}
 
 	return query;
