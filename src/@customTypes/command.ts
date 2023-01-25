@@ -7,7 +7,8 @@ export type BaseProps = {
     command?: CommandProps;
     args: string[];
     options: {
-        author: AuthorProps,
+        author: AuthorProps;
+		extras?: { isFromButtonSource?: boolean; };
     }
 }
 

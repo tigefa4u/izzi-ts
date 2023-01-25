@@ -45,11 +45,14 @@ function prepareInfoDescription(
 }
 
 const handleCardUpgrade = async ({
-	user_tag, client, id, channel, author, cardId, rowId
-} : CustomButtonInteractionParams & { author: AuthorProps; cardId: number; rowId?: number; }) => {
+	user_tag, client, id, channel, author, cardId
+} : CustomButtonInteractionParams & { author: AuthorProps; cardId: number; }) => {
 	const options = {
 		context: { channel } as BaseProps["context"],
-		options: { author },
+		options: {
+			author,
+			extras: { isFromButtonSource: true }
+		},
 		client,
 		args: [ `${cardId}` ]
 	};
@@ -59,14 +62,14 @@ const handleCardUpgrade = async ({
 			return;
 		}
 		case CONSOLE_BUTTONS.EVOLVE_CARD.id: {
-			if (!rowId) return;
-			options.args = [ `${rowId}` ];
+			if (!cardId) return;
+			options.args = [ `${cardId}` ];
 			evolveCard(options);
 			return;
 		}
 		case CONSOLE_BUTTONS.SELECT_CARD.id: {
-			if (!rowId) return;
-			options.args = [ `${rowId}` ];
+			if (!cardId) return;
+			options.args = [ `${cardId}` ];
 			selectCard(options);
 			return;
 		}
@@ -136,7 +139,6 @@ export const getCardInfo = async ({
 						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
 						author,
 						cardId: infoData.id,
-						rowId: infoData.row_number
 					}
 				},
 				{
@@ -145,7 +147,6 @@ export const getCardInfo = async ({
 						id: CONSOLE_BUTTONS.SELECT_CARD.id,
 						author,
 						cardId: infoData.id,
-						rowId: infoData.row_number
 					}
 				}
 			],

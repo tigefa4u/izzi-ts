@@ -4,7 +4,7 @@ import {
 } from "@customTypes";
 import { CharacterCanvasProps } from "@customTypes/canvas";
 import { BaseProps } from "@customTypes/command";
-import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
+import { getCardInfoByRowNumber, getCollectionById } from "api/controllers/CollectionInfoController";
 import { updateCollection } from "api/controllers/CollectionsController";
 import {
 	getPowerLevelByRank,
@@ -28,7 +28,7 @@ import { confirmationInteraction } from "utility/ButtonInteractions";
 import { getSortCache } from "../sorting/sortCache";
 
 async function verifyAndProcessEvolution(
-	params: ConfirmationInteractionParams<{ id: number }>,
+	params: ConfirmationInteractionParams<{ id: number; isFromButtonSource: boolean; }>,
 	options?: ConfirmationInteractionOptions
 ) {
 	const id = params.extras?.id;
@@ -36,11 +36,19 @@ async function verifyAndProcessEvolution(
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
 	const sort = await getSortCache(params.author.id);
-	const collection = await getCardInfoByRowNumber({
-		row_number: id,
-		user_id: user.id,
-		user_tag: params.author.id,
-	}, sort);
+	let collection;
+	if (params.extras?.isFromButtonSource) {
+		collection = await getCollectionById({
+			id: id,
+			user_id: user.id
+		});
+	} else {
+		collection = await getCardInfoByRowNumber({
+			row_number: id,
+			user_id: user.id,
+			user_tag: params.author.id
+		}, sort);
+	}
 	const embed = createEmbed(params.author, params.client).setTitle(
 		DEFAULT_ERROR_TITLE
 	);
@@ -161,6 +169,7 @@ export const evolveCard = async ({
 	args,
 }: BaseProps) => {
 	try {
+		const isFromButtonSource = options.extras?.isFromButtonSource || false;
 		const author = options.author;
 		const cooldownCommand = "evolve-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
@@ -174,7 +183,10 @@ export const evolveCard = async ({
 			client,
 			author,
 			channel: context.channel,
-			extras: { id },
+			extras: {
+				id,
+				isFromButtonSource 
+			},
 		};
 		let embed = createEmbed(author);
 		let sentMessage: Message;

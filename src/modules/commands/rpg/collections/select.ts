@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
+import { getCardInfoByRowNumber, getCollectionById } from "api/controllers/CollectionInfoController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
@@ -16,6 +16,7 @@ export const selectCard = async ({
 	client
 }: BaseProps) => {
 	try {
+		const isFromButtonSource = options.extras?.isFromButtonSource || false;
 		const author = options.author;
 		const id = Number(args.shift());
 		if (!id || id <= 0 || isNaN(id)) return;
@@ -26,10 +27,18 @@ export const selectCard = async ({
 		]);
 		if (!user) return;
 		const sort = await getSortCache(author.id);
-		const infoDataByRow = await getCardInfoByRowNumber({
-			row_number: id,
-			user_id: user.id,
-		}, sort);
+		let infoDataByRow;
+		if (isFromButtonSource) {
+			infoDataByRow = await getCollectionById({
+				id: id,
+				user_id: user.id
+			});
+		} else {
+			infoDataByRow = await getCardInfoByRowNumber({
+				row_number: id,
+				user_id: user.id,
+			}, sort);
+		}
 		if (!infoDataByRow) return;
 		const infoData = infoDataByRow[0];
 		await updateRPGUser(
