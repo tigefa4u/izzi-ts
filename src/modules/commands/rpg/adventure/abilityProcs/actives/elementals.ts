@@ -81,7 +81,10 @@ export const elementalStrike = ({
 			damageDealt = abilityDamageCap;
 		}
 		// reduce damage by 50%
-		if (opponentStats.totalStats.damageReductionPercent["elemental strike"]) {
+		if (
+			opponentStats.totalStats.damageReductionPercent &&
+      opponentStats.totalStats.damageReductionPercent["elemental strike"]
+		) {
 			const reductionPercent =
         opponentStats.totalStats.damageReductionPercent["elemental strike"]
         	.percent || 0;
