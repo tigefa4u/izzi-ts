@@ -55,10 +55,20 @@ async function verifyAndProcessSacrifice(
 		);
 		return;
 	}
-	const card = collections.filter((c) => Number(c.row_number) === id).pop();
-	const cardToConsume = collections
-		.filter((c) => Number(c.row_number) === sacrificeId)
-		.pop();
+	const [ _card, _cardToConsume ] = await Promise.all([
+		getCardInfoByRowNumber({
+			row_number: [ id ],
+			user_id: user.id,
+			user_tag: params.author.id,
+		}, sort),
+		getCardInfoByRowNumber({
+			row_number: [ sacrificeId ],
+			user_id: user.id,
+			user_tag: params.author.id,
+		}, sort)
+	]);
+	const card = (_card || [])[0];
+	const cardToConsume = (_cardToConsume || [])[0];
 	if (!card || !cardToConsume) {
 		params.channel?.sendMessage(
 			"We could not find the card you were looking for!"

@@ -37,6 +37,7 @@ export const getCardInfoByRowNumber = async (
 			row_number: num,
 			sort
 		}))).then((res) => res.flat());
+
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(
 				result.map(async (data) => {
