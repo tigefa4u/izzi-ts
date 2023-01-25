@@ -191,7 +191,7 @@ export const bonePlating = ({
       opponentStats.totalStats.vitality - relDiff;
 		const desc =
       `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
-      "Ally **Endurance** will reduce by __15%__ every 3rd round.";
+      "Ally **Endurance** will reduce by __8%__ every 3rd round.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
