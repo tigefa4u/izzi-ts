@@ -63,7 +63,7 @@ export const addCardByIds = async ({
 		}
 		embed.setTitle(DEFAULT_ERROR_TITLE);
 		collections = collections?.filter(
-			(c) => !c.is_on_cooldown && c.is_tradable
+			(c) => !c.is_on_cooldown && c.is_tradable && !c.is_on_market
 		);
 		if (!collections || collections.length <= 0) {
 			embed

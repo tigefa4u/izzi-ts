@@ -44,17 +44,6 @@ async function verifyAndProcessSacrifice(
 	const user = await getRPGUser({ user_tag: params.author.id });
 	if (!user) return;
 	const sort = await getSortCache(params.author.id);
-	const collections = await getCardInfoByRowNumber({
-		row_number: [ id, sacrificeId ],
-		user_id: user.id,
-		user_tag: params.author.id,
-	}, sort);
-	if (!collections || collections.length < 2) {
-		params.channel?.sendMessage(
-			"We could not find the card you were looking for!"
-		);
-		return;
-	}
 	const [ _card, _cardToConsume ] = await Promise.all([
 		getCardInfoByRowNumber({
 			row_number: [ id ],
