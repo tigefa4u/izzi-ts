@@ -329,9 +329,9 @@ export const futureSight = ({
 	if (round === 1) {
 		playerStats.totalStats.damageReductionPercent = {
 			...playerStats.totalStats.damageReductionPercent,
-			"elemental strike": { percent: 50 },
-			electrocute: { percent: 50 },
-			tornado: { percent: 50 },
+			"elemental strike": { percent: 30 },
+			electrocute: { percent: 30 },
+			"balancing strike": { percent: 30 },
 		};
 
 		prepSendAbilityOrItemProcDescription({

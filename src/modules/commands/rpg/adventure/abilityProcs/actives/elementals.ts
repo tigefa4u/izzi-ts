@@ -177,12 +177,13 @@ export const spellBook = ({
 		abilityDamage,
 		damageDiff,
 		playerDamageDiff;
-	if (round % 2 === 0 && !playerStats.totalStats.isSB) {
+	if (round % 1 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
 		const temp = randomElementFromArray([ "vitality", "dexterity", "strength" ]);
 		// calculate % based on rank
-		// Cast a spell on all enemies dealing bonus magic damage or gain __20%__ SPD/HP based on your speed.
-		const percent = calcPercentRatio(20, card.rank);
+		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
+		// proc every round [PSV]
+		const percent = calcPercentRatio(8, card.rank);
 		let ratio = getRelationalDiff(playerStats.totalStats.dexterity, percent);
 		if (temp === "strength") {
 			const hpDiff =
@@ -325,14 +326,6 @@ export const tornado = ({
 		);
 		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = ratio * 3;
-
-		// reduce damage by 50%
-		if (opponentStats.totalStats.damageReductionPercent?.tornado) {
-			const reductionPercent =
-        opponentStats.totalStats.damageReductionPercent.tornado.percent || 0;
-			const reductionRatio = getRelationalDiff(abilityDamage, reductionPercent);
-			abilityDamage = abilityDamage - reductionRatio;
-		}
 
 		const abilityDamageCap = Math.floor(
 			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)

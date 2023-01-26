@@ -3,7 +3,7 @@ import { CharacterStatProps } from "@customTypes/characters";
 import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { compare, getRelationalDiff } from "helpers/battle";
+import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 import { clone } from "utility";
 
 export const exhaust = ({
@@ -113,17 +113,39 @@ export const rapidFire = ({
 	card,
 	simulation
 }: BattleProcessProps) => {
-	if (!card) return;
-	// decrease the enemies defense by __32%__.
-	if (round % 4 === 0 && !playerStats.totalStats.isRapid) {
+	if (!card || !opponentStats.totalStats.originalHp) return;
+	// decrease the enemies defense by __10%__.
+	// deal 125% damage based on diff btwn enemy def
+
+	let damageDealt, damageDiff;
+	if (round % 3 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isUsePassive = true;
 		playerStats.totalStats.isRapid = true;
 		// calculate % based on rank
-		const percent = calcPercentRatio(32, card.rank);
+		const defDiff = Math.abs(playerStats.totalStats.defense - opponentStats.totalStats.defense);
+		damageDealt = getRelationalDiff(defDiff, 125);
+		opponentStats.totalStats.strength =
+		opponentStats.totalStats.strength - damageDealt;
+		  if (
+			  opponentStats.totalStats.strength < 0 ||
+		isNaN(opponentStats.totalStats.strength)
+		  )
+			  opponentStats.totalStats.strength = 0;
+		  damageDiff = relativeDiff(
+			  opponentStats.totalStats.strength,
+			  opponentStats.totalStats.originalHp
+		  );
+		  if (damageDiff < 0) damageDiff = 0;
+		  const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+		  opponentStats.totalStats.strength = processedHpBar.strength;
+		  opponentStats.totalStats.health = processedHpBar.health;
+
+		const percent = calcPercentRatio(10, card.rank);
 		const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
 		opponentStats.totalStats.defense =
       opponentStats.totalStats.defense - defPer;
-		const desc = `Decreasing the **DEF** of all enemies by __${percent}%__`;
+		const desc = `Dealing __${damageDealt}%__ damage as well as ` +
+		`decreasing the **DEF** of all enemies by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -142,6 +164,8 @@ export const rapidFire = ({
 	return {
 		playerStats,
 		opponentStats,
+		damageDiff,
+		abilityDamage: damageDealt
 	};
 };
 

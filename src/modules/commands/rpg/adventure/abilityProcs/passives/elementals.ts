@@ -60,6 +60,20 @@ export const balancingStrike = ({
 		});
 		const effective = elementalEffectiveness.playerStats.effective;
 		damageDealt = Math.floor(damageDealt * effective);
+
+		// damage reduction by 50%
+		if (
+			opponentStats.totalStats.damageReductionPercent &&
+      opponentStats.totalStats.damageReductionPercent["balancing strike"]
+		) {
+			const diff = getRelationalDiff(
+				damageDealt,
+				opponentStats.totalStats.damageReductionPercent["balancing strike"]
+					.percent || 0
+			);
+			damageDealt = damageDealt - diff;
+		}
+
 		abilityDamage = damageDealt;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
