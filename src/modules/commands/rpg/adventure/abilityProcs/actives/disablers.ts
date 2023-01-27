@@ -320,6 +320,18 @@ export const restriction = ({
 		isResist = [ true, false ][resistProb];
 	}
 	if (round % 2 === 0 && !opponentStats.totalStats.isRestrictResisted) {
+		const cardHasRapidFire = opponentStats.cards.find((c) => c?.abilityname === "rapid fire");
+		if (cardHasRapidFire) {
+			const percent = calcPercentRatio(30, cardHasRapidFire.rank);
+			opponentStats.totalStats.damageBuildUpPercent = {
+				...opponentStats.totalStats.damageBuildUpPercent,
+				"rapid fire": {
+					percent: percent,
+					basePercent: percent
+				}
+			};
+		}
+
 		// restrict all enemies from using their passive for the next 2 turns.
 		opponentStats.totalStats.isRestrictResisted = !isResist;
 		desc =
