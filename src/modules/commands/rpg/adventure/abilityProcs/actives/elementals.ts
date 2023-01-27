@@ -177,7 +177,7 @@ export const spellBook = ({
 		abilityDamage,
 		damageDiff,
 		playerDamageDiff;
-	if (round % 1 === 0 && !playerStats.totalStats.isSB) {
+	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
 		const temp = randomElementFromArray([ "vitality", "dexterity", "strength" ]);
 		// calculate % based on rank

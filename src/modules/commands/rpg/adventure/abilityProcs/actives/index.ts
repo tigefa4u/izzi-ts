@@ -343,8 +343,8 @@ export const futureSight = ({
 			round,
 			isDescriptionOnly: false,
 			description:
-        "**[PSV]** gaining __50%__ **Damage Reduction** on " +
-        "**Elemental Strike, Tornado, Electrocute**",
+        "**[PSV]** gaining __30%__ **Damage Reduction** on " +
+        "**Elemental Strike, Balancing Strike, Electrocute**",
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,

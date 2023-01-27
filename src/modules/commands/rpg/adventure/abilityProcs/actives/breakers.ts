@@ -115,15 +115,16 @@ export const rapidFire = ({
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// decrease the enemies defense by __10%__.
-	// deal 125% damage based on diff btwn enemy def
+	// deal 50% bonus damage based on INT
 
 	let damageDealt, damageDiff;
 	if (round % 3 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isUsePassive = true;
 		playerStats.totalStats.isRapid = true;
 		// calculate % based on rank
-		const defDiff = Math.abs(playerStats.totalStats.defense - opponentStats.totalStats.defense);
-		damageDealt = getRelationalDiff(defDiff, 125);
+		const damagePercent = calcPercentRatio(50, card.rank);
+
+		damageDealt = getRelationalDiff(playerStats.totalStats.intelligence, damagePercent);
 		opponentStats.totalStats.strength =
 		opponentStats.totalStats.strength - damageDealt;
 		  if (
@@ -144,7 +145,7 @@ export const rapidFire = ({
 		const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
 		opponentStats.totalStats.defense =
       opponentStats.totalStats.defense - defPer;
-		const desc = `Dealing __${damageDealt}%__ damage as well as ` +
+		const desc = `Dealing __${damageDealt}__ damage as well as ` +
 		`decreasing the **DEF** of all enemies by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
