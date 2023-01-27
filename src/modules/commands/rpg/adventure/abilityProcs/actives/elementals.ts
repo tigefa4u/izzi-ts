@@ -179,7 +179,7 @@ export const spellBook = ({
 		playerDamageDiff;
 	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
-		const temp = randomElementFromArray([ "vitality", "dexterity", "strength" ]);
+		const temp = randomElementFromArray([ "vitality", "dexterity", "strength", "nothing" ]);
 		// calculate % based on rank
 		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
 		// proc every round [PSV]
@@ -200,6 +200,8 @@ export const spellBook = ({
 			playerStats.totalStats.dexterity =
         playerStats.totalStats.dexterity + ratio;
 			desc = `increasing its **SPD** by __${percent}%__`;
+		} else if (temp === "nothing")  {
+			desc = "**but nothing happened.**";
 		} else if (temp === "vitality") {
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 			const tempDamage = getPlayerDamageDealt(

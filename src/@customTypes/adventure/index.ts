@@ -115,18 +115,24 @@ export type AbilityStackProps = StatStateProps &
         [stat in keyof Partial<CharacterStatProps>]: {
           percent: number;
         };
-      }
-    },
+      };
+    };
     damageReductionPercent?: {
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number
-      }
-    },
+      };
+    };
     trueDamageReductionPercent?: {
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number;
-      }
-    }
+      };
+    };
+    damageBuildUpPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number;
+        basePercent: number;
+      };
+    };
   };
 
 export type BattleStats = {
