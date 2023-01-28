@@ -1,7 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { compare } from "helpers/battle";
+import { compare, getRelationalDiff } from "helpers/battle";
 
 export const pointBlank = ({
 	playerStats,
@@ -39,9 +39,9 @@ export const pointBlank = ({
 
 		if (!basePlayerStats.totalStats.tempAtkPB) basePlayerStats.totalStats.tempAtkPB = 1;
 		const atkPercent = calcPercentRatio(20, card.rank);
-		const atk =
-      basePlayerStats.totalStats.vitality *
-      ((basePlayerStats.totalStats.tempAtkPB * atkPercent) / 100);
+		const atk = getRelationalDiff(basePlayerStats.totalStats.vitality, atkPercent);
+		//   basePlayerStats.totalStats.vitality *
+		//   ((basePlayerStats.totalStats.tempAtkPB * atkPercent) / 100);
 
 		playerStats.totalStats.vitality =
 		playerStats.totalStats.vitality + atk;
