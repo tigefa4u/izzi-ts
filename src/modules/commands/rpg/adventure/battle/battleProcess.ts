@@ -4,6 +4,7 @@ import {
 	AbilityProcReturnType,
 	ItemProcMapProps,
 } from "@customTypes/battle";
+import { calcPercentRatio } from "helpers/ability";
 import {
 	getPlayerDamageDealt,
 	processHpBar,
@@ -34,6 +35,7 @@ type Stack = Pick<
   | "isTornado"
   | "isHarbingerOfDeath"
   | "isLifestealProc"
+  | "isRapid"
 >;
 function processStack(stats: Stack) {
 	[
@@ -51,6 +53,7 @@ function processStack(stats: Stack) {
 		"isTornado",
 		"isHarbingerOfDeath",
 		"isLifestealProc",
+		"isRapid"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -155,7 +158,25 @@ export const BattleProcess = async ({
 	// 	playerStats.totalStats,
 	// 	isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
 	// );
-	if (!isDefeated && !processUnableToAttack(playerStats, opponentStats)) {
+
+	// Reset rapid fire bonus damage percent
+	// if player is unable to attack
+	const unableToAttack = processUnableToAttack(playerStats, opponentStats);
+	if (unableToAttack && !opponentStats.totalStats.isEvadeHit) {
+		const cardHasRapidFire = playerStats.cards.find((c) => c?.abilityname === "rapid fire");
+		if (cardHasRapidFire) {
+			// rapid fire is 35%
+			const percent = calcPercentRatio(35, cardHasRapidFire.rank);
+			playerStats.totalStats.damageBuildUpPercent = {
+				...playerStats.totalStats.damageBuildUpPercent,
+				"rapid fire": {
+					percent: percent,
+					basePercent: percent
+				}
+			};
+		}
+	}
+	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
 			opponentStats.totalStats

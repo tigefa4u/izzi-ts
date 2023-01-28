@@ -40,13 +40,16 @@ export const harbingerOfDeath = ({
 		// opponentStats.totalStats.criticalDamage = 1;
 		// opponentStats.totalStats.criticalInc = 1;
 		// opponentStats.totalStats.criticalTemp = 1;
+		
+		// Bone plating is no longer stack
+		// opponentStats.totalStats.isPlatting = false;
+		// opponentStats.totalStats.isEndure = false;
+
 		opponentStats.totalStats.evasion = 1;
 		opponentStats.totalStats.evasionInc = 1;
 		opponentStats.totalStats.evasionTemp = 1;
 		opponentStats.totalStats.isEvadeHit = false;
-		opponentStats.totalStats.isPlatting = false;
 		opponentStats.totalStats.isToxic = false;
-		opponentStats.totalStats.isEndure = false;
 		// opponentStats.totalStats.isCriticalHit = false;
 
 		// playerStats.totalStats.isEvadeHit = false;

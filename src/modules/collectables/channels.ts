@@ -20,12 +20,14 @@ export const verifyDropChannels = async ({ client, guild, channel }: T) => {
 			if (chId) {
 				const ch = client.channels.cache.get(chId);
 				if (ch) {
-					permissions = guild.me?.permissionsIn(chId).serialize();
-					if (!permissions?.VIEW_CHANNEL || !permissions.SEND_MESSAGES) {
-						return;
-					}
 					dropChannel = ch;
 				}
+			}
+		}
+		if (dropChannel) {
+			permissions = guild.me?.permissionsIn(dropChannel.id).serialize();
+			if (!permissions?.VIEW_CHANNEL || !permissions.SEND_MESSAGES) {
+				return;
 			}
 		}
 		return dropChannel;

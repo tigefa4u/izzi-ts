@@ -46,6 +46,7 @@ type StatStateProps = {
   pomNum?: number;
   tempEle?: number;
   tempEleInc?: number;
+  tempAtkPB?: number;
 };
 
 export type AbilityStackProps = StatStateProps &
@@ -113,9 +114,25 @@ export type AbilityStackProps = StatStateProps &
       [name in keyof Partial<AbilityProcMapProps>]: {
         [stat in keyof Partial<CharacterStatProps>]: {
           percent: number;
-        }
-      }
-    }
+        };
+      };
+    };
+    damageReductionPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number
+      };
+    };
+    trueDamageReductionPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number;
+      };
+    };
+    damageBuildUpPercent?: {
+      [name in keyof Partial<AbilityProcMapProps>]: {
+        percent: number;
+        basePercent: number;
+      };
+    };
   };
 
 export type BattleStats = {

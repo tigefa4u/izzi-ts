@@ -400,6 +400,13 @@ export const validateChannelPermissions = (context: BaseProps["context"], ch?: s
 	return hasPermission;
 };
 
+export const checkReadMessagePerms = (context: BaseProps["context"], ch?: string) => {
+	if (!context.channel?.id) return false;
+	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id)?.serialize();	
+	if (permissionsMap?.READ_MESSAGE_HISTORY) return true;
+	return false;
+};
+
 export const escapeSpecialCharacters = (text = "") => {
 	return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };

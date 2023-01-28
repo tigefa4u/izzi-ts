@@ -1,11 +1,9 @@
 import { BattleProcessProps } from "@customTypes/adventure";
-import { AbilityProcMapProps } from "@customTypes/battle";
 import emoji from "emojis/emoji";
-import { randomElementFromArray, round2Decimal } from "helpers";
+import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
-import { titleCase } from "title-case";
 
 export * from "./stacks";
 export * from "./heals";
@@ -169,19 +167,31 @@ export const bonePlating = ({
 	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Buff your allies with **Bone Plating** taking, __30%__ less damage from normal attacks for 2 turns
-	if (round % 3 === 0 && !playerStats.totalStats.isPlatting) {
+	/**
+   * At the start of the round take 40% less damage,
+   * damage taken increases every 3rd round proc
+   * by 8%
+   */
+	if (round === 1 && !playerStats.totalStats.isPlatting) {
 		playerStats.totalStats.isEndure = true;
 		playerStats.totalStats.isPlatting = true;
 		playerStats.totalStats.previousRound = round;
-		const percent = calcPercentRatio(30, card.rank);
+		const percent = calcPercentRatio(40, card.rank);
+		const { percent: bonePlatePercent } = (playerStats.totalStats
+			.trueDamageReductionPercent || {})["bone plating"] || { percent: 0 };
+		playerStats.totalStats.trueDamageReductionPercent = {
+			...playerStats.totalStats.trueDamageReductionPercent,
+			"bone plating": { percent: percent + bonePlatePercent },
+		};
 		const relDiff = getRelationalDiff(
 			opponentStats.totalStats.vitality,
 			percent
 		);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - relDiff;
-		const desc = `Buffing all allies with **Endurance**, taking __${percent}%__ less damage`;
+		const desc =
+      `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
+      "Ally **Endurance** will reduce by __8%__ every 3rd round.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -197,14 +207,17 @@ export const bonePlating = ({
 			simulation,
 		});
 	}
-	if (round % 3 === 2 && playerStats.totalStats.isPlatting)
-		playerStats.totalStats.isPlatting = false;
-	if ((playerStats.totalStats.previousRound || 0) + 2 == round) {
-		const inc = calcPercentRatio(30, card.rank);
-		playerStats.totalStats.isEndure = false;
-		const temp = getRelationalDiff(opponentStats.totalStats.vitality, inc);
-		opponentStats.totalStats.vitality =
-      opponentStats.totalStats.vitality + temp;
+	if (
+		round % 3 === 0 &&
+    playerStats.totalStats.isPlatting &&
+    playerStats.totalStats.trueDamageReductionPercent &&
+    playerStats.totalStats.trueDamageReductionPercent["bone plating"]
+	) {
+		playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent =
+      playerStats.totalStats.trueDamageReductionPercent["bone plating"].percent - 8;
+		// 	const temp = getRelationalDiff(opponentStats.totalStats.vitality, 15);
+		// 	opponentStats.totalStats.vitality =
+		//   opponentStats.totalStats.vitality + temp;
 	}
 	return {
 		playerStats,
@@ -283,17 +296,17 @@ const abilitiesToResist = [
 	{
 		name: "Elemental Strike",
 		emoji: emoji.elementalstrike,
-		key: "elementalStrike"
+		key: "elementalStrike",
 	},
 	{
 		name: "Electrocute",
 		emoji: emoji.electrocute,
-		key: "electrocute"
+		key: "electrocute",
 	},
 	{
 		name: "Tornado",
 		emoji: emoji.tornado,
-		key: "tornado"
+		key: "tornado",
 	},
 ];
 export const futureSight = ({
@@ -308,9 +321,39 @@ export const futureSight = ({
 	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
+	/**
+   * Passive - at start of round proc
+   * 50% ability damage reduction
+   */
+
+	if (round === 1) {
+		playerStats.totalStats.damageReductionPercent = {
+			...playerStats.totalStats.damageReductionPercent,
+			"elemental strike": { percent: 30 },
+			electrocute: { percent: 30 },
+			"balancing strike": { percent: 30 },
+		};
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description:
+        "**[PSV]** gaining __30%__ **Damage Reduction** on " +
+        "**Elemental Strike, Balancing Strike, Electrocute**",
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+		});
+	}
+
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
-	// as well as increasing **EVA** by __15%__. Also gain __80%__ chance to evade Elemental strike, Electrocute
-	// and Tornado.
+	// as well as increasing **EVA** by __15%__.
 	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);
@@ -323,23 +366,6 @@ export const futureSight = ({
 		if (!basePlayerStats.totalStats.evasionTemp)
 			basePlayerStats.totalStats.evasionTemp = 1;
 
-		const resistPercent = calcPercentRatio(80, card.rank);
-		abilitiesToResist.map((item) => {
-			if (playerStats.totalStats.abilityToResist) {
-				playerStats.totalStats.abilityToResist = {
-					...playerStats.totalStats.abilityToResist,
-					[item.key]: {
-						percent: round2Decimal(
-							(playerStats.totalStats.abilityToResist[item.key as keyof AbilityProcMapProps]
-								?.percent || 0) + resistPercent
-						),
-					},
-				};
-			} else {
-				playerStats.totalStats.abilityToResist = { [item.key]: { percent: (resistPercent) } };
-			}
-		});
-
 		const evaPercent = calcPercentRatio(15, card.rank);
 		const evaRatio =
       basePlayerStats.totalStats.evasion *
@@ -349,8 +375,7 @@ export const futureSight = ({
       basePlayerStats.totalStats.evasion + evaRatio;
 		const desc =
       `increasing **INT** of all allies by __${percent}%__ as well as increasing ` +
-      `**Evasion Chances** by __${evaPercent}%__ and has also gained __${resistPercent}%__ chance to ` +
-      `evade ${abilitiesToResist.map((item) => `**${item.name} ${item.emoji}**`).join(", ")}`;
+      `**Evasion Chances** by __${evaPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

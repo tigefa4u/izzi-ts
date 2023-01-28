@@ -1,6 +1,6 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
-import { generateUUID, validateChannelPermissions } from "helpers";
+import { checkReadMessagePerms, generateUUID, validateChannelPermissions } from "helpers";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 import {
@@ -34,11 +34,12 @@ export const handleClientEvents = (client: Client) => {
 
 	client.on("messageCreate", (context: Message) => {
 		const hasPermissions = validateChannelPermissions(context);
+		const hasReadPerms = checkReadMessagePerms(context);
+
 		const cannotProcessContext =
       context.author.bot ||
       context.channel.type === "DM" ||
-      !context.guild ||
-	  !hasPermissions;
+      !context.guild || !hasReadPerms;
 
 		if (cannotProcessContext) return;
 		initLoggerContext(() => {
@@ -46,7 +47,7 @@ export const handleClientEvents = (client: Client) => {
 				trackingId: generateUUID(10),
 				userTag: context.author.id
 			});
-			handleMessage(client, context);
+			handleMessage(client, context, { hasPermissions });
 		});
 	});
 

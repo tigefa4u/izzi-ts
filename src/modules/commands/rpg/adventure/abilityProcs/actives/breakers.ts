@@ -1,9 +1,16 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
-import { randomElementFromArray } from "helpers";
+import { probability, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { compare, getRelationalDiff } from "helpers/battle";
+import {
+	compare,
+	getPlayerDamageDealt,
+	getRelationalDiff,
+	processHpBar,
+	relativeDiff,
+} from "helpers/battle";
+import { clone } from "utility";
 
 export const exhaust = ({
 	playerStats,
@@ -14,11 +21,35 @@ export const exhaust = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.exhNum) {
 		playerStats.totalStats.exhNum = 2;
+	}
+	// At start of battle if enemy SPD is more, swap spd
+	if (
+		round === 1 &&
+    opponentStats.totalStats.dexterity > playerStats.totalStats.dexterity
+	) {
+		const swp = clone(opponentStats.totalStats.dexterity);
+		opponentStats.totalStats.dexterity = playerStats.totalStats.dexterity;
+		playerStats.totalStats.dexterity = swp;
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: `**[PSV]** swapping all ally **SPD** with ${opponentStats.name}`,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+		});
 	}
 	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
 	// as well as buffing all allies for the same stat
@@ -49,13 +80,11 @@ export const exhaust = ({
 		opponentStats.totalStats[temp as keyof CharacterStatProps] =
       opponentStats.totalStats[temp as keyof CharacterStatProps] - relDiff;
 
-	  const statDesc =
-		temp === "dexterity"
-			? "SPD"
-			: "INT";
-	
-		const desc = `Decreasing ${opponentStats.name}'s **${statDesc}** by __${percent}%__ ` +
-		`as well as increasing **${statDesc}** of all allies by __${percent}%__`;
+		const statDesc = temp === "dexterity" ? "SPD" : "INT";
+
+		const desc =
+      `Decreasing ${opponentStats.name}'s **${statDesc}** by __${percent}%__ ` +
+      `as well as increasing **${statDesc}** of all allies by __${percent}%__`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -69,7 +98,7 @@ export const exhaust = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isExhaust)
@@ -89,20 +118,76 @@ export const rapidFire = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
-	if (!card) return;
-	// After a short delay decrease the enemies defense by __25%__. Their defense increases by __10%__ every turn.
-	if (round % 2 === 0 && !playerStats.totalStats.isRapid) {
-		playerStats.totalStats.isUsePassive = true;
+	if (!card || !opponentStats.totalStats.originalHp) return;
+	// decrease the enemies defense by __10%__.
+	// Buff damage dealt % by 5% every round
+	// deal damage on random round based on this %
+
+	let damageDealt, damageDiff;
+	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isRapid = true;
-		// calculate % based on rank
-		const percent = calcPercentRatio(25, card.rank);
-		const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
-		opponentStats.totalStats.defense =
-      opponentStats.totalStats.defense - defPer;
-		const desc = `Decreasing the **DEF** of all enemies by __${percent}%__`;
-		prepSendAbilityOrItemProcDescription({
+		const damagePercent = calcPercentRatio(35, card.rank);
+
+		const _buildUpPercent = (playerStats.totalStats.damageBuildUpPercent || {})[
+			"rapid fire"
+		];
+		playerStats.totalStats.damageBuildUpPercent = {
+			...playerStats.totalStats.damageBuildUpPercent,
+			"rapid fire": {
+				basePercent: damagePercent,
+				percent: _buildUpPercent?.percent
+					? _buildUpPercent.percent + 5
+					: damagePercent,
+			},
+		};
+		let desc = "Increasing its **Bonus Damage** by __5%__";
+
+		const canDealDamage = [ true, false ][probability([ 50, 50 ])];
+
+		if (canDealDamage) {
+			damageDealt = getPlayerDamageDealt(
+				playerStats.totalStats,
+				opponentStats.totalStats
+			);
+
+			const buildUpPercent =
+        (playerStats.totalStats.damageBuildUpPercent || {})["rapid fire"]
+        	?.percent || damagePercent;
+			damageDealt = getRelationalDiff(damageDealt, buildUpPercent);
+
+			desc = desc + `, dealing __${damageDealt}__.`;
+
+			opponentStats.totalStats.strength =
+        opponentStats.totalStats.strength - damageDealt;
+			if (
+				opponentStats.totalStats.strength < 0 ||
+        isNaN(opponentStats.totalStats.strength)
+			)
+				opponentStats.totalStats.strength = 0;
+			damageDiff = relativeDiff(
+				opponentStats.totalStats.strength,
+				opponentStats.totalStats.originalHp
+			);
+			if (damageDiff < 0) damageDiff = 0;
+			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+			opponentStats.totalStats.strength = processedHpBar.strength;
+			opponentStats.totalStats.health = processedHpBar.health;
+		}
+		if (round % 3 === 0) {
+			const percent = calcPercentRatio(10, card.rank);
+			const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
+			opponentStats.totalStats.defense =
+		  opponentStats.totalStats.defense - defPer;
+		  if (canDealDamage) {
+				desc = desc + " Decreasing";
+		  } else {
+				desc = desc + " as well as decreasing";
+		  }
+		  desc = desc + ` the **DEF** of all enemies by __${percent}%__`;
+		}
+	  prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
 			card,
@@ -114,27 +199,14 @@ export const rapidFire = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
-	}
-	if (round % 2 === 1 && playerStats.totalStats.isRapid)
-		playerStats.totalStats.isRapid = false;
-	if (playerStats.totalStats.isUsePassive) {
-		// let inc = calcPercentRatio(6, card.rank);
-		let inc = 10;
-		if (
-			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
-				card.rank
-			)
-		) {
-			inc = 14;
-		}
-		const temp = getRelationalDiff(opponentStats.totalStats.defense, inc);
-		opponentStats.totalStats.defense = opponentStats.totalStats.defense + temp;
 	}
 	return {
 		playerStats,
 		opponentStats,
+		damageDiff,
+		abilityDamage: damageDealt,
 	};
 };
 
@@ -147,7 +219,7 @@ export const dominator = ({
 	isPlayerFirst,
 	baseEnemyStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 2;
@@ -174,9 +246,10 @@ export const dominator = ({
 		);
 		opponentStats.totalStats.intelligence =
       opponentStats.totalStats.intelligence - decRatio;
-	  
+
 		if (opponentStats.totalStats.intelligence < 0) {
-			opponentStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+			opponentStats.totalStats.intelligence =
+        baseEnemyStats.totalStats.intelligence;
 		}
 
 		const desc =
@@ -194,7 +267,7 @@ export const dominator = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isDominator) {
@@ -215,7 +288,7 @@ export const crusher = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
@@ -224,10 +297,14 @@ export const crusher = ({
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(25, card.rank);
 		const ratio = getRelationalDiff(opponentStats.totalStats.vitality, percent);
-		const defDecratio = getRelationalDiff(opponentStats.totalStats.defense, percent);
+		const defDecratio = getRelationalDiff(
+			opponentStats.totalStats.defense,
+			percent
+		);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
-	  opponentStats.totalStats.defense = opponentStats.totalStats.defense - defDecratio;
+		opponentStats.totalStats.defense =
+      opponentStats.totalStats.defense - defDecratio;
 
 		let inc = 5;
 		if (
@@ -237,8 +314,9 @@ export const crusher = ({
 		) {
 			inc = 6;
 		}
-		const desc = `Decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. ` +
-		`**__${opponentStats.name}'s__** **ATK** will increase by __${inc}%__ each round.`;
+		const desc =
+      `Decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. ` +
+      `**__${opponentStats.name}'s__** **ATK** will increase by __${inc}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -251,7 +329,7 @@ export const crusher = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
 		});
 	}
 	if (round % 4 === 0 && playerStats.totalStats.isUseCrusher)

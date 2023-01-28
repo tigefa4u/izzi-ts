@@ -10,13 +10,13 @@ const error = (errMessage: string, err: unknown) => {
 };
 
 const info = (infoMessage: string) => {
-	// console.info(infoMessage, "pid: ", process.pid);
+	// console.info(infoMessage, "pid: ", getLoggerContext());
 	winstonLogger.info(infoMessage);
 };
 
 const debug = (...args: any[]) => {
 	// console.log(args.join(", "));
-	winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
+	// winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
 };
 
 const timerify = (...args: (string | number)[]) => {
@@ -41,9 +41,23 @@ const endTimer = (timer: { startTime: [number, number]; message?: string; }) => 
 
 type METHODS = "delete" | "get" | "post" | "patch" | "put" 
 const logApi = (method: METHODS, ...args: string[]) => {
-	winstonLogger.logApi(`[${method}] ${args.join(" -> ")}`);
+	// winstonLogger.logApi(`[${method}] ${args.join(" -> ")}`);
 };
 
+// class Logger {
+// 	private id = "None";
+// 	init(id: string) {
+// 		this.id = id;
+// 	}
+// 	error(message: any, err: any) {
+// 		error(message, err);
+// 	}
+// 	info(message: string) {
+// 		info(message + " Logged ID: " + this.id);
+// 	}
+// }
+
+// export default new Logger();
 export default {
 	error,
 	info,

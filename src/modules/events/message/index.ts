@@ -25,7 +25,7 @@ import { getGuild } from "api/controllers/GuildsController";
 
 const ratelimitMap = new Map();
 
-const handleMessage = async (client: Client, context: Message) => {
+const handleMessage = async (client: Client, context: Message, { hasPermissions = false }) => {
 	try {
 		const { content } = context;
 		let args = content.toLowerCase().split(/\s+/);
@@ -43,7 +43,7 @@ const handleMessage = async (client: Client, context: Message) => {
 				prefix = BOT_PREFIX;
 			}
 		}
-		if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id) {
+		if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id && hasPermissions) {
 			context.channel?.sendMessage(
 				`The prefix on this server is \`\`${prefix}\`\`. ` +
 				`Use \`\`${prefix} ge prefix <prefix>\`\` to change the server prefix.`
@@ -62,6 +62,7 @@ const handleMessage = async (client: Client, context: Message) => {
 			}
 			return;
 		}
+		if (!hasPermissions) return;
 		const channelCD = await getChannelCooldown(
 			context.channel.id,
 			"channel-cd"

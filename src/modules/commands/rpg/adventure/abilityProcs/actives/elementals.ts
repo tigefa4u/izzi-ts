@@ -80,6 +80,17 @@ export const elementalStrike = ({
 		if (damageDealt > abilityDamageCap) {
 			damageDealt = abilityDamageCap;
 		}
+		// reduce damage by 50%
+		if (
+			opponentStats.totalStats.damageReductionPercent &&
+      opponentStats.totalStats.damageReductionPercent["elemental strike"]
+		) {
+			const reductionPercent =
+        opponentStats.totalStats.damageReductionPercent["elemental strike"]
+        	.percent || 0;
+			const reductionRatio = getRelationalDiff(damageDealt, reductionPercent);
+			damageDealt = damageDealt - reductionRatio;
+		}
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
 		if (opponentStats.totalStats.strength < 0)
@@ -166,12 +177,13 @@ export const spellBook = ({
 		abilityDamage,
 		damageDiff,
 		playerDamageDiff;
-	if (round % 2 === 0 && !playerStats.totalStats.isSB) {
+	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
-		const temp = randomElementFromArray([ "vitality", "defense", "strength" ]);
+		const temp = randomElementFromArray([ "vitality", "dexterity", "strength", "nothing" ]);
 		// calculate % based on rank
-		// Cast a spell on all enemies dealing bonus magic damage or gain __20%__ DEF/HP based on your speed.
-		const percent = calcPercentRatio(20, card.rank);
+		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
+		// proc every round [PSV]
+		const percent = calcPercentRatio(8, card.rank);
 		let ratio = getRelationalDiff(playerStats.totalStats.dexterity, percent);
 		if (temp === "strength") {
 			const hpDiff =
@@ -184,9 +196,12 @@ export const spellBook = ({
 					playerStats.totalStats.isBleeding = false;
 			}
 			desc = `and restores __${ratio}__ missing **HP** ${emoji.heal}`;
-		} else if (temp === "defense") {
-			playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
-			desc = `increasing its **DEF** by __${percent}%__`;
+		} else if (temp === "dexterity") {
+			playerStats.totalStats.dexterity =
+        playerStats.totalStats.dexterity + ratio;
+			desc = `increasing its **SPD** by __${percent}%__`;
+		} else if (temp === "nothing")  {
+			desc = "**but nothing happened.**";
 		} else if (temp === "vitality") {
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 			const tempDamage = getPlayerDamageDealt(
@@ -302,36 +317,6 @@ export const tornado = ({
     !playerStats.totalStats.originalHp
 	)
 		return;
-	// deal bonus __20%__ **Wind** damage based on attack (damage buff 3x)
-	if (opponentStats.totalStats.abilityToResist?.tornado) {
-		const canResist = [ true, false ][
-			probability([
-				opponentStats.totalStats.abilityToResist.tornado.percent,
-				100,
-			])
-		];
-		if (canResist) {
-			const desc = "But it has missed! Dealing __0__ damage.";
-			prepSendAbilityOrItemProcDescription({
-				playerStats,
-				enemyStats: opponentStats,
-				card,
-				message,
-				embed,
-				round,
-				isDescriptionOnly: false,
-				description: desc,
-				totalDamage: 0,
-				isPlayerFirst,
-				isItem: false,
-				simulation,
-			});
-			return {
-				playerStats,
-				opponentStats,
-			};
-		}
-	}
 
 	let abilityDamage, damageDiff;
 	if (round % 2 === 0 && !playerStats.totalStats.isTornado) {
@@ -343,6 +328,7 @@ export const tornado = ({
 		);
 		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = ratio * 3;
+
 		const abilityDamageCap = Math.floor(
 			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
 		);
