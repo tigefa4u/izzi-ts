@@ -42,8 +42,9 @@ export const pointBlank = ({
 		const atk =
       basePlayerStats.totalStats.vitality *
       ((basePlayerStats.totalStats.tempAtkPB * atkPercent) / 100);
+
 		playerStats.totalStats.vitality =
-		basePlayerStats.totalStats.vitality + atk;
+		playerStats.totalStats.vitality + atk;
 
 		basePlayerStats.totalStats.tempAtkPB = basePlayerStats.totalStats.tempAtkPB + 1;
 		basePlayerStats.totalStats.tempAccPB = basePlayerStats.totalStats.tempAccPB + 1;
