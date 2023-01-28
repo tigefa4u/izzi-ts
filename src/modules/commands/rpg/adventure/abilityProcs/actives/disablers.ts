@@ -71,7 +71,9 @@ export const electrocute = ({
 		if (isNaN(perDamage)) perDamage = 0;
 		// reduce damage by 50%
 		if (opponentStats.totalStats.damageReductionPercent?.electrocute) {
-			const reductionPercent = opponentStats.totalStats.damageReductionPercent.electrocute.percent || 0;
+			const reductionPercent =
+        opponentStats.totalStats.damageReductionPercent.electrocute.percent ||
+        0;
 			const reductionRatio = getRelationalDiff(perDamage, reductionPercent);
 			perDamage = perDamage - reductionRatio;
 		}
@@ -320,23 +322,37 @@ export const restriction = ({
 		isResist = [ true, false ][resistProb];
 	}
 	if (round % 2 === 0 && !opponentStats.totalStats.isRestrictResisted) {
-		const cardHasRapidFire = opponentStats.cards.find((c) => c?.abilityname === "rapid fire");
-		if (cardHasRapidFire) {
-			const percent = calcPercentRatio(30, cardHasRapidFire.rank);
-			opponentStats.totalStats.damageBuildUpPercent = {
-				...opponentStats.totalStats.damageBuildUpPercent,
-				"rapid fire": {
-					percent: percent,
-					basePercent: percent
-				}
-			};
+		let rapidFireReset = false;
+		if (!isResist) {
+			const cardHasRapidFire = opponentStats.cards.find(
+				(c) => c?.abilityname === "rapid fire"
+			);
+			if (cardHasRapidFire) {
+				rapidFireReset = true;
+				const percent = calcPercentRatio(35, cardHasRapidFire.rank);
+				opponentStats.totalStats.damageBuildUpPercent = {
+					...opponentStats.totalStats.damageBuildUpPercent,
+					"rapid fire": {
+						percent: percent,
+						basePercent: percent,
+					},
+				};
+			}
 		}
 
 		// restrict all enemies from using their passive for the next 2 turns.
 		opponentStats.totalStats.isRestrictResisted = !isResist;
 		desc =
       `restricting **__${opponentStats.name}__** from using its ` +
-      `**Abilities**${isResist ? ", But it resisted!" : ""}.`;
+      `**Abilities**${
+      	isResist
+      		? ", But it resisted!"
+      		: `${
+      			rapidFireReset
+      				? " as well as resetting **Rapid Fire** binus damage %"
+      				: ""
+      		}`
+      }.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

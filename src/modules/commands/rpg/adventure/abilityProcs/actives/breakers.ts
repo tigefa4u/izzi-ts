@@ -122,13 +122,13 @@ export const rapidFire = ({
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// decrease the enemies defense by __10%__.
-	// deal 50% bonus true damage based on INT
 	// Buff damage dealt % by 5% every round
+	// deal damage on random round based on this %
 
 	let damageDealt, damageDiff;
 	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isRapid) {
 		playerStats.totalStats.isRapid = true;
-		const damagePercent = calcPercentRatio(30, card.rank);
+		const damagePercent = calcPercentRatio(35, card.rank);
 
 		const _buildUpPercent = (playerStats.totalStats.damageBuildUpPercent || {})[
 			"rapid fire"
@@ -185,7 +185,7 @@ export const rapidFire = ({
 		  } else {
 				desc = desc + " as well as decreasing";
 		  }
-		  desc = desc + `the **DEF** of all enemies by __${percent}%__`;
+		  desc = desc + ` the **DEF** of all enemies by __${percent}%__`;
 		}
 	  prepSendAbilityOrItemProcDescription({
 			playerStats,

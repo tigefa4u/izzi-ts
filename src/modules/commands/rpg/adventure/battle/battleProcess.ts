@@ -165,7 +165,8 @@ export const BattleProcess = async ({
 	if (unableToAttack && !opponentStats.totalStats.isEvadeHit) {
 		const cardHasRapidFire = playerStats.cards.find((c) => c?.abilityname === "rapid fire");
 		if (cardHasRapidFire) {
-			const percent = calcPercentRatio(30, cardHasRapidFire.rank);
+			// rapid fire is 35%
+			const percent = calcPercentRatio(35, cardHasRapidFire.rank);
 			playerStats.totalStats.damageBuildUpPercent = {
 				...playerStats.totalStats.damageBuildUpPercent,
 				"rapid fire": {
