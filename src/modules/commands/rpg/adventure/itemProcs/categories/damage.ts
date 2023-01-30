@@ -1,8 +1,10 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { updateCollection } from "api/controllers/CollectionsController";
+import transaction from "db/transaction";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { ranksMeta } from "helpers/constants";
+import loggers from "loggers";
 import { titleCase } from "title-case";
 import { processItemStats } from "..";
 
@@ -177,7 +179,20 @@ export const desolator = ({
 						card.name
 					)}** has also gained __${soulsToSeal}__ Souls.`;
 					card.souls = card.souls + soulsToSeal;
-					updateCollection({ id: card.id }, { souls: card.souls });
+					transaction(async (trx) => {
+						const updatedId = await trx.raw(`update collections set 
+						souls = souls + ${soulsToSeal} where id = ${card.id} returning id`);
+						if (!updatedId) {
+							loggers.info("could not add souls to cid: " + card.id);
+							loggers.info("card details - " + JSON.stringify(card));	
+							return trx.rollback();
+						}
+						return trx.commit();
+					}).catch((err) => {
+						loggers.info("could not add souls to cid: " + card.id);
+						loggers.info("card details - " + JSON.stringify(card));
+					});
+					// updateCollection({ id: card.id }, { souls: card.souls });
 				}
 			}
 		}

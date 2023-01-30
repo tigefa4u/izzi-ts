@@ -65,7 +65,9 @@ export async function prepareRankAndFetchCards({
 			})
 		);
 	}
+	const starttimer = loggers.startTimer("prepareRankAndFetchCards: started...");
 	const [ result, stash ] = await Promise.all(promises);
+	loggers.endTimer(starttimer);
 	if (!result) {
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
@@ -167,7 +169,7 @@ export async function prepareRankAndFetchCards({
 				}
 
 				loggers.info("re-iterating function prepareRankAndFetchCards:");
-				return await prepareRankAndFetchCards({
+				return prepareRankAndFetchCards({
 					card,
 					reqExp,
 					user_id,
@@ -248,6 +250,7 @@ async function fetchRequiredCards({
 		exclude_character_ids
 	} as CollectionParams & { limit: number };
 
+	loggers.info("fetchRequiredCards: fetching data with params - " + JSON.stringify(params));
 	const collections = await getCollection(params);
 	if (!collections) {
 		return;

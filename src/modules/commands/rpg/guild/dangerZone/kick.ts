@@ -15,7 +15,12 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 		if (!id) return;
 		const mentionId = getIdFromMentionedString(id);
 		const mentionedUser = await getRPGUser({ user_tag: mentionId }, { cached: true });
-		if (!mentionedUser) return;
+		if (!mentionedUser) {
+			context.channel?.sendMessage("We are not able to find this user, please contact support");
+			return;
+		}
+		loggers.info("kickFromGuild: member being kicked by admin: " + author.id);
+		loggers.info("kickFromGuild: mentioned user found: " + JSON.stringify(mentionedUser));
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
@@ -27,6 +32,7 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 			extras: { user_id: user.id }
 		});
 		if (!validGuild) return;
+		loggers.info("kickFromGuild: guild details: " + JSON.stringify(validGuild));
 		const member = await getGuildMember({ user_id: mentionedUser.id });
 		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_ERROR_TITLE);
@@ -40,6 +46,7 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		loggers.info("Member is being kicked memberId: " + mentionId);
 		validGuild.guild.points = validGuild.guild.points - member.supporter_points;
 		await Promise.all([
 			delGuildMember({ id: member.id }),

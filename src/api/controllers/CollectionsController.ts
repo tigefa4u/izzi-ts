@@ -78,17 +78,26 @@ export const getCollection: (
 		}
 		const result = await Collections.get(params);
 		const charactersMeta = reorderObjectKey(characters, "id");
-		await Promise.all(result.map(async (r, idx) => {
+		const cidsToFetch: number[] = [];
+		result.map(async (r, idx) => {
 			if (charactersMeta[r.character_id]) {
 				r.name = charactersMeta[r.character_id].name;
 			} else {
-				const resp = await getCharacterById({ id: r.character_id });
-				if (resp) {
-					r.name = resp.name;
-				}
+				cidsToFetch.push(r.character_id);
 			}
 			return r;
-		}));
+		});
+		if (cidsToFetch.length > 0) {
+			const resp = await getCharacters({ ids: [ ...new Set(cidsToFetch) ] });
+			if (resp) {
+				const meta = reorderObjectKey(resp, "id");
+				result.map((r) => {
+					if (meta[r.character_id] && !r.name) {
+						r.name = meta[r.character_id].name;
+					}
+				});
+			}
+		}
 		if (cb && params.isForTrade) {
 			cb(characters, result);
 		}

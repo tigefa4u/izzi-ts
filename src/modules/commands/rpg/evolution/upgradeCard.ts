@@ -9,6 +9,7 @@ import { updateCollection } from "api/controllers/CollectionsController";
 import { getPowerLevelByRankId } from "api/controllers/PowerLevelController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
+import transaction from "db/transaction";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
@@ -140,14 +141,33 @@ const validateAndUpgradeCard = async (
 		card.character_level = card.character_level + 1;
 		card.souls =  card.souls - totalSouls;
 		if (card.souls < 0) card.souls = 0;
-		await updateCollection(
-			{ id },
-			{
-				character_level: card.character_level,
-				souls: card.souls,
+		await transaction(async (trx) => {
+			try {
+				loggers.info("upgradeCard: transaction started for card: " + id);
+				const updatedObj = await trx.raw(
+					`update collections set character_level = character_level + 1, souls = souls - ${totalSouls} 
+					where id = ${id} returning id, character_level, souls`
+				);
+				if (!updatedObj) {
+					throw "Unable to update";
+				}
+				loggers.info("upgradeCard: successfully upgraded card - " + JSON.stringify(updatedObj));
+				channel?.sendMessage(embed);
+				return trx.commit();
+			} catch (err) {
+				loggers.error("upgradeCard: unable to upgrade: ", err);
+				channel?.sendMessage("Something went wrong while upgrading card. Please try again :x:");
+				return trx.rollback();
 			}
-		);
-		channel?.sendMessage(embed);
+		});
+		// await updateCollection(
+		// 	{ id },
+		// 	{
+		// 		character_level: card.character_level,
+		// 		souls: card.souls,
+		// 	}
+		// );
+		// channel?.sendMessage(embed);
 		return;
 	}
 	return card;

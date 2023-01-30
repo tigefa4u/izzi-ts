@@ -19,7 +19,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
-import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
@@ -52,11 +52,13 @@ async function confirmAndEnchantCard(
 		return;
 	}
 	if (options?.isConfirm) {
+		const verificationTimer = loggers.startTimer("verification started");
 		const ids = computed.accumulator.map((a) => a.id);
 		const collections = await verifyCollectionsById({
 			user_id: user.id,
 			ids: [ ...new Set([ ...ids, cardToEnchant.id ]) ],
 		});
+		loggers.endTimer(verificationTimer);
 		if (
 			!collections ||
       collections.length !== [ ...new Set([ ...ids, cardToEnchant.id ]) ].length
@@ -84,6 +86,7 @@ async function confirmAndEnchantCard(
       cardToEnchant.character_level + computed.levelCounter;
 		cardToEnchant.r_exp = computed.r_exp;
 		cardToEnchant.exp = computed.exp;
+		const updatetimer = loggers.startTimer("enchantment update timer started");
 		await Promise.all([
 			updateCollection(
 				{ id: cardToEnchant.id },
@@ -96,7 +99,7 @@ async function confirmAndEnchantCard(
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			deleteCollection({ ids }),
 		]);
-
+		loggers.endTimer(updatetimer);
 		params.channel?.sendMessage(embed);
 	}
 	return true;
@@ -110,11 +113,13 @@ export const enchantCard = async ({
 }: BaseProps) => {
 	try {
 		const author = options.author;
+		loggers.info("enchantment started for uid: " + author.id);
 		const cd = await getCooldown(author.id, "enchant");
 		if (cd) {
-			context.channel?.sendMessage(
-				"You can use this command again after a minute"
-			);
+			sendCommandCDResponse(context.channel, cd, author.id, "enchant");
+			// context.channel?.sendMessage(
+			// 	"You can use this command again after a minute"
+			// );
 			return;
 		}
 		const id = Number(args.shift());
@@ -123,10 +128,12 @@ export const enchantCard = async ({
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const sort = await getSortCache(author.id);
+		const rowNumTimer = loggers.startTimer("enchantCard: starting get card by row number: " + id);
 		const card = await getCardInfoByRowNumber({
 			user_id: user.id,
 			row_number: id,
 		}, sort);
+		loggers.endTimer(rowNumTimer);
 		let cardsToExclude;
 		if (params.exclude) {
 			cardsToExclude = await getCharacterInfo({ name: params.exclude });
@@ -145,6 +152,9 @@ export const enchantCard = async ({
 		if (cardsToExclude && cardsToExclude.length > 0) {
 			excludeCharacters.push(...cardsToExclude.map((cc) => cc.id));
 		}
+		const computationTimer = loggers.startTimer("computation for cid: " + cardToEnchant.id);
+		loggers.info("computation started for cid: " + cardToEnchant.id);
+		loggers.info("computation started for card to enchant: " + JSON.stringify(cardToEnchant));
 		const computed = await preComputeRequiredCards({
 			card: cardToEnchant,
 			...params,
@@ -155,6 +165,7 @@ export const enchantCard = async ({
 			exclude_character_ids: [ ...new Set(excludeCharacters) ],
 			channel: context.channel,
 		});
+		loggers.endTimer(computationTimer);
 		if (!computed) return;
 		if (computed.max_level) {
 			context.channel?.sendMessage(
@@ -233,7 +244,7 @@ export const enchantCard = async ({
 		embed.setHideConsoleButtons(true);
 		if (buttons) {
 			embed.setButtons(buttons);
-			setCooldown(author.id, "enchant");
+			setCooldown(author.id, "enchant", 60 * 5);
 			const msg = await context.channel?.sendMessage(embed);
 			if (msg) {
 				sentMessage = msg;

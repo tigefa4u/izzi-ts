@@ -12,7 +12,12 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { overallStats, prepareStatsDesc } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import {
+	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
+	CONSOLE_BUTTONS,
+	ranksMeta,
+} from "helpers/constants";
+import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -25,6 +30,17 @@ function prepareInfoDescription(
 	infoData: CollectionCardInfoProps,
 	overAllStatData: OverallStatsProps
 ) {
+	let reqSouls = 0;
+	if (infoData.rank_id === ranksMeta.ultimate.rank_id) {
+		const souls = getReqSouls(infoData.rank_id);
+		const levelDifference =
+      infoData.character_level - (ranksMeta.ultimate.max_level || 70);
+		if (levelDifference < CHARACTER_LEVEL_EXTENDABLE_LIMIT) {
+			const extraSouls = Math.ceil(levelDifference ** 1.57);
+			reqSouls = souls + extraSouls;
+		}
+	}
+
 	const statsPrep = {
 		...overAllStatData,
 		itemname: infoData.itemname,
@@ -37,24 +53,31 @@ function prepareInfoDescription(
 		infoData.exp
 	} / ${infoData.r_exp}]**\n**Element Type:** ${infoData.type} ${emojiMap(
 		infoData.type
-	)}\n**RANK:** ${titleCase(infoData.rank)}\n**SOULS:** ${
-		infoData.souls
+	)}\n**RANK:** ${titleCase(infoData.rank)}\n**SOULS:** ${infoData.souls}${
+		reqSouls > 0
+			? ` / ${reqSouls} ${reqSouls >= infoData.souls ? "(Upgradable)" : ""}`
+			: ""
 	}\n${prepareStatsDesc(statsPrep, infoData.rank)}`;
 
 	return desc;
 }
 
 const handleCardUpgrade = async ({
-	user_tag, client, id, channel, author, cardId
-} : CustomButtonInteractionParams & { author: AuthorProps; cardId: number; }) => {
+	user_tag,
+	client,
+	id,
+	channel,
+	author,
+	cardId,
+}: CustomButtonInteractionParams & { author: AuthorProps; cardId: number }) => {
 	const options = {
 		context: { channel } as BaseProps["context"],
 		options: {
 			author,
-			extras: { isFromButtonSource: true }
+			extras: { isFromButtonSource: true },
 		},
 		client,
-		args: [ `${cardId}` ]
+		args: [ `${cardId}` ],
 	};
 	switch (id) {
 		case CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id: {
@@ -89,11 +112,14 @@ export const getCardInfo = async ({
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const sort = await getSortCache(author.id);
-		const infoDataByRow = await getCardInfoByRowNumber({
-			row_number: id,
-			user_id: user.id,
-			user_tag: author.id
-		}, sort);
+		const infoDataByRow = await getCardInfoByRowNumber(
+			{
+				row_number: id,
+				user_id: user.id,
+				user_tag: author.id,
+			},
+			sort
+		);
 		if (!infoDataByRow) return;
 		const infoData = infoDataByRow[0];
 		if (!infoData || !infoData.characterInfo) return;
@@ -108,7 +134,7 @@ export const getCardInfo = async ({
 			stats: infoData.stats,
 			character_level: infoData.character_level,
 			powerLevel,
-			guildStats: guild?.guild_stats
+			guildStats: guild?.guild_stats,
 		});
 		const canvas = createSingleCanvas(infoData.characterInfo, false);
 		const attachment = createAttachment(
@@ -117,8 +143,14 @@ export const getCardInfo = async ({
 		);
 		const embed = createEmbed(author, client);
 		embed
-			.setTitle(`[${infoData.id}] ${titleCase(infoData.metadata?.nickname || infoData.name)}`)
-			.setDescription(prepareInfoDescription(infoData, overAllStatData.totalStats))
+			.setTitle(
+				`[${infoData.id}] ${titleCase(
+					infoData.metadata?.nickname || infoData.name
+				)}`
+			)
+			.setDescription(
+				prepareInfoDescription(infoData, overAllStatData.totalStats)
+			)
 			.setImage("attachment://info.jpg")
 			.attachFiles([ attachment ]);
 
@@ -130,8 +162,8 @@ export const getCardInfo = async ({
 					params: {
 						id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
 						author,
-						cardId: infoData.id
-					}
+						cardId: infoData.id,
+					},
 				},
 				{
 					label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
@@ -139,7 +171,7 @@ export const getCardInfo = async ({
 						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
 						author,
 						cardId: infoData.id,
-					}
+					},
 				},
 				{
 					label: CONSOLE_BUTTONS.SELECT_CARD.label,
@@ -147,8 +179,8 @@ export const getCardInfo = async ({
 						id: CONSOLE_BUTTONS.SELECT_CARD.id,
 						author,
 						cardId: infoData.id,
-					}
-				}
+					},
+				},
 			],
 			author.id,
 			handleCardUpgrade,
