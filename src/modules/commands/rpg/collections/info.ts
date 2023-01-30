@@ -55,7 +55,7 @@ function prepareInfoDescription(
 		infoData.type
 	)}\n**RANK:** ${titleCase(infoData.rank)}\n**SOULS:** ${infoData.souls}${
 		reqSouls > 0
-			? ` / ${reqSouls} ${reqSouls >= infoData.souls ? "(Upgradable)" : ""}`
+			? ` / ${reqSouls} ${infoData.souls >= reqSouls ? "(Upgradable)" : ""}`
 			: ""
 	}\n${prepareStatsDesc(statsPrep, infoData.rank)}`;
 
