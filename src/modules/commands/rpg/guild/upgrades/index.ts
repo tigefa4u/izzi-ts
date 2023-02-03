@@ -84,7 +84,14 @@ async function validateAndUpgradeGuild(
 		}
 	);
 	if (validGuild.guild.guild_level >= GUILD_MAX_LEVEL) {
-		if (!params.extras.stat) return;
+		if (!params.extras.stat || !statMap[params.extras.stat]) {
+			embed.setDescription(
+				"Please provide a valid stat to upgrade. One of **__(atk/hp/def/spd/int)__**\n" +
+				"**Hint:** Use command ``iz guild upgrade <atk/hp/def/spd/int>``"
+			);
+			params.channel?.sendMessage(embed);
+			return;
+		}
 		return upgradeGuildBeyond150({
 			validGuild,
 			guilditems,
