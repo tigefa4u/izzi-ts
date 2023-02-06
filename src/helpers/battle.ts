@@ -78,7 +78,7 @@ export const getPlayerDamageDealt = (
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
-    randomNumber(atk / 2, atk / 8, true); // This was 0.85 - 1 before
+    randomNumber(atk / 2, atk / 4, true); // This was 0.85 - 1 before
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
