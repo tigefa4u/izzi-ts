@@ -76,7 +76,7 @@ export const getPlayerDamageDealt = (
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
-    randomNumber(atk/2, atk/8, true); // This was 0.85 - 1 before
+    randomNumber(atk / 2, atk / 8, true); // This was 0.85 - 1 before
 	atk = atk + Math.floor(playerTotalStats.intelligence * (30 / 100)); // prev - 6 (35)
 	def = def + Math.floor(enemyTotalStats.intelligence * (40 / 100)); // prev - 10 (40)
 	// let damage = Math.round(
@@ -87,7 +87,7 @@ export const getPlayerDamageDealt = (
 	// let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers); // Original formula
 	// if (damage <= 0) damage = randomNumber(300, 500);
 
-	let damage = Math.floor((atk / (atk + def)) * modifiers;
+	let damage = Math.floor((atk / (atk + def)) * modifiers);
 
 	// True damage reduction
 	// for Bone Plating
