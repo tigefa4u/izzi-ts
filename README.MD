@@ -69,3 +69,7 @@ REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - Izzi server - premium job
 - izzi test server - mana, premium and normal raid permit refill
 - izzi dashboard - minute & raid energy refill
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
