@@ -4,8 +4,8 @@ import loggers from "loggers";
 
 export const registerSlashCommands = async (client: Client) => {
 	try {
-		const guildId = "784087004806774815";
-		const guild = client.guilds.cache.get(guildId);
+		// const guildId = "784087004806774815";
+		// const guild = client.guilds.cache.get(guildId);
 
 		const registerCommands = [ {
 			name: "help",
@@ -53,8 +53,8 @@ export const registerSlashCommands = async (client: Client) => {
 		await client?.application?.commands.set([]).catch((err) => {
 			throw err;
 		});
-		// const commands = client?.application?.commands;
-		const commands = guild?.commands;
+		const commands = client?.application?.commands;
+		// const commands = guild?.commands;
 		await Promise.all(registerCommands.map((cmd) => commands?.create(cmd)));
 		// commands?.create({
 		// 	name: "iz",
