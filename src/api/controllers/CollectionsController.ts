@@ -156,16 +156,26 @@ export const getAllCollections = async (
 		if (charactersData.length > 0) {
 			Object.assign(filter, { character_ids: charactersData.map((c) => c.id) });
 		}
-		const result = await Collections.getAll(
-			{
+		const [ result, _count ] = await Promise.all([
+			Collections.getAll(
+				{
+					...filter,
+					is_item: false
+				},
+				await paginationParams(pageProps),
+				sort
+			),
+			Collections.getCountForGetAll({
 				...filter,
 				is_item: false
-			},
-			await paginationParams(pageProps),
-			sort
-		);
+			})
+		]);
+		const total_count = Number((_count[0] || {}).total_count || 0);
 		if (charactersData.length <= 0) {
 			charactersData = await fetchCharacterDetails({ ids: result.map((r) => r.character_id), });
+		}
+		if (result.length > 0) {
+			result[0].total_count = total_count || 0;
 		}
 		const [ pagination ] = await Promise.all([
 			paginationForResult({

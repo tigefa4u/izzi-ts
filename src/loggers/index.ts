@@ -5,13 +5,13 @@ const error = (errMessage: string, err: unknown) => {
 	if (err instanceof Error) {
 		errorMessage = err.stack;
 	}
-	// console.error(errMessage, errorMessage);
-	winstonLogger.error(errMessage + JSON.stringify(errorMessage));
+	console.error(errMessage, errorMessage);
+	// winstonLogger.error(errMessage + JSON.stringify(errorMessage));
 };
 
 const info = (infoMessage: string) => {
-	// console.info(infoMessage, "pid: ", getLoggerContext());
-	winstonLogger.info(infoMessage);
+	console.info(infoMessage);
+	// winstonLogger.info(infoMessage);
 };
 
 const debug = (...args: any[]) => {
@@ -21,8 +21,8 @@ const debug = (...args: any[]) => {
 
 const timerify = (...args: (string | number)[]) => {
 	const log = args.join(" -> ");
-	// console.log(log);
-	winstonLogger.logTime(log);
+	console.log(log);
+	// winstonLogger.logTime(log);
 };
 
 const startTimer = (message?: string) => {

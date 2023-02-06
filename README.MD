@@ -69,3 +69,14 @@ REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - Izzi server - premium job
 - izzi test server - mana, premium and normal raid permit refill
 - izzi dashboard - minute & raid energy refill
+
+# Improve DB Performance
+- run 'vacuum' command regularly to speed up index-only scans. It reduces the heap size
+- There are two variants of VACUUM: standard VACUUM and VACUUM FULL. VACUUM FULL can reclaim more disk space but runs much more slowly. Also, the standard form of VACUUM can run in parallel with production database operations. (Commands such as SELECT, INSERT, UPDATE, and DELETE will continue to function normally, though you will not be able to modify the definition of a table with commands such as ALTER TABLE while it is being vacuumed.) VACUUM FULL requires an ACCESS EXCLUSIVE lock on the table it is working on, and therefore cannot be done in parallel with other use of the table. Generally, therefore, administrators should strive to use standard VACUUM and avoid VACUUM FULL.
+``
+SELECT
+  schemaname, relname,
+  last_vacuum, last_autovacuum,
+  vacuum_count, autovacuum_count
+FROM pg_stat_user_tables;
+``
