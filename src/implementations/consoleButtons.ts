@@ -3,7 +3,6 @@ import { UserProps } from "@customTypes/users";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { DMChannel, TextChannel, ThreadChannel } from "discord.js";
 import emoji from "emojis/emoji";
 import { BOT_VOTE_LINK } from "environment";
 import { numericWithComma } from "helpers";
@@ -24,6 +23,7 @@ import { lottery } from "modules/commands/rpg/misc";
 import { hourly } from "modules/commands/rpg/resource";
 import { help } from "modules/commands/basic";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
+import { ChannelProp } from "@customTypes";
 
 const prepareConsoleDescription = async (user: UserProps) => {
 	const anonymousMarketPurchaseKey =
@@ -303,8 +303,7 @@ const handleIntemediateConsoleButtons = async ({
 	}
 };
 
-type CProps = TextChannel | DMChannel | ThreadChannel;
-export const prepareConsoleButton = (channel: CProps) => {
+export const prepareConsoleButton = (channel: ChannelProp) => {
 	try {
 		return customButtonInteraction(
 			channel,
