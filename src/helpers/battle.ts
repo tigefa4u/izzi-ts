@@ -72,13 +72,13 @@ export const getPlayerDamageDealt = (
 	const { defense } = enemyTotalStats;
 	let atk = clone(Math.floor(vitality));
 	let def = clone(Math.floor(defense));
+	atk = atk + Math.floor(playerTotalStats.intelligence * (30 / 100)); // prev - 6 (35)
+	def = def + Math.floor(enemyTotalStats.intelligence * (40 / 100)); // prev - 10 (40)
 	const modifiers =
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
     randomNumber(atk / 2, atk / 8, true); // This was 0.85 - 1 before
-	atk = atk + Math.floor(playerTotalStats.intelligence * (30 / 100)); // prev - 6 (35)
-	def = def + Math.floor(enemyTotalStats.intelligence * (40 / 100)); // prev - 10 (40)
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
