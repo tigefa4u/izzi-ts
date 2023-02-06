@@ -4,19 +4,19 @@ import { LoggingWinston } from "@google-cloud/logging-winston";
 import { GCP_PROJECT_ID, GCP_RESOURCE_PREFIX } from "environment";
 import { getLoggerContext } from "./context";
 
-const cloudLogger = new LoggingWinston({
-	projectId: GCP_PROJECT_ID,
-	keyFilename: "izzi-cloud-logging.json",
-	prefix: GCP_RESOURCE_PREFIX,
-	defaultCallback: (err, resp) => {
-		console.log({
-			err,
-			resp 
-		});
-	},
-	resource: { type: "service_account" },
-	// labels: { pid: process.pid.toString() }
-});
+// const cloudLogger = new LoggingWinston({
+// 	projectId: GCP_PROJECT_ID,
+// 	keyFilename: "izzi-cloud-logging.json",
+// 	prefix: GCP_RESOURCE_PREFIX,
+// 	defaultCallback: (err, resp) => {
+// 		console.log({
+// 			err,
+// 			resp 
+// 		});
+// 	},
+// 	resource: { type: "service_account" },
+// 	// labels: { pid: process.pid.toString() }
+// });
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
@@ -85,13 +85,14 @@ const apiRequestResponseTransporter = new transports.DailyRotateFile({
 const winstonDebugLogger = createLogger({
 	transports: [ 
 	// debugTransporter, 
-		cloudLogger ] 
+		// cloudLogger
+	] 
 });
 
 const winstonErrorLogger = createLogger({
 	transports: [
 		// errorTransporter,
-		cloudLogger
+		// cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
 		// 	level: "error",
@@ -117,7 +118,7 @@ const winstonErrorLogger = createLogger({
 const winstonAPILogger = createLogger({
 	transports: [
 		// apiRequestResponseTransporter,
-		cloudLogger
+		// cloudLogger
 		// new transports.File({
 		// 	filename: "logs/error.log",
 		// 	level: "error",
@@ -143,7 +144,7 @@ const winstonAPILogger = createLogger({
 const winstonInfoLogger = createLogger({
 	transports: [
 		// infoTransporter,
-		cloudLogger
+		// cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",
@@ -155,7 +156,7 @@ const winstonInfoLogger = createLogger({
 const winstonTimerLogger = createLogger({
 	transports: [
 		// timerTransporter,
-		cloudLogger
+		// cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",
