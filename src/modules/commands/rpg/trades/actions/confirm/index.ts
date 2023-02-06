@@ -8,6 +8,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
 import loggers from "loggers";
+import { titleCase } from "title-case";
 import * as queue from "../../queue";
 import { viewTrade } from "../view";
 
@@ -39,14 +40,19 @@ async function validateTraderQueue(
 		}
 		if (user.selected_card_id) {
 			const hasSelectedCard = trader.queue
-				.map((q) => q.id)
-				.includes(user.selected_card_id);
+				.find((q) => {
+					return q.id === user.selected_card_id;
+				});
 			if (hasSelectedCard) {
-				embed.setDescription(
-					"Trade has been cancelled. You cannot trade the card you've selected for battle!"
+				user.selected_card_id = null;
+
+				embed.setTitle("Warning :warning:").setDescription(
+					"You are trading a card you've selected. " +
+					`**__${titleCase(hasSelectedCard.rank)}__ ` +
+					`${titleCase(hasSelectedCard.name || "No Name")} (${hasSelectedCard.id})**`
 				).setHideConsoleButtons(true);
 				channel?.sendMessage(embed);
-				return;
+				// return;
 			}
 		}
 	}
@@ -89,8 +95,7 @@ export const confirmTrade = async ({
 		if (invokeTrade === false) {
 			const refetchQueue = await queue.getTradeQueue(tradeId);
 			if (!refetchQueue) {
-				await queue.delFromQueue(tradeId);
-				return;
+				return queue.delFromQueue(tradeId);
 			}
 			refetchQueue[trader.user_tag] = trader;
 			queue.setTradeQueue(tradeId, refetchQueue);

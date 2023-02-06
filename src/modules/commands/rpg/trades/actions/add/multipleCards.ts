@@ -16,7 +16,7 @@ import {
 } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { groupByKey } from "utility";
+import { clone, groupByKey } from "utility";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import { delFromQueue, getTradeQueue, setTradeQueue } from "../../queue";
@@ -61,8 +61,7 @@ const addCardsToTrade = async ({
 	);
 	const refetchQueue = await getTradeQueue(tradeId);
 	if (!refetchQueue) {
-		await delFromQueue(tradeId);
-		return;
+		return delFromQueue(tradeId);
 	}
 	refetchQueue[trader.user_tag] = trader;
 	setTradeQueue(tradeId, refetchQueue);
@@ -191,7 +190,7 @@ export const addMultipleCards = async ({
 		if (exclude_ids.length > 0) {
 			Object.assign(options, { exclude_ids });
 		}
-		await getCollection(options, async (characters, collections) => {
+		await getCollection(clone(options), async (characters, collections) => {
 			const hasNonTradableCard = collections?.find((c) => !c.is_tradable);
 			if (hasNonTradableCard) {
 				const newEmbed = createEmbed(author, client)	
@@ -232,7 +231,7 @@ export const addMultipleCards = async ({
 							characters,
 							tradeId,
 							args,
-							options
+							options: clone(options)
 						},
 					},
 					handleCharacterSelect,
