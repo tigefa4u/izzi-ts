@@ -54,7 +54,25 @@ export function recreateBattleEmbed(title: string, description: string) {
 		.setDescription(description)
 		.setImage("attachment://battle.jpg");
 }
-
+// testing
+function damageCalculation(atk: number, def: number) {
+	const mean = 1;
+	const stddev = 0.1;
+  
+	const m2 = mean + (randomNormal(mean, stddev) * .85);
+	const damage = Math.floor((atk ** 2) / (atk + def) * m2);
+  
+	return damage;
+}
+function randomNormal(mean: number, stddev: number) {
+	let u1, u2, z;
+	do {
+		  u1 = Math.random();
+		  u2 = Math.random();
+		  z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+	} while (z > 3 || z < -3);
+	return z * stddev + mean;
+}
 export const getPlayerDamageDealt = (
 	playerTotalStats: BattleStats["totalStats"],
 	enemyTotalStats: BattleStats["totalStats"]
@@ -78,7 +96,7 @@ export const getPlayerDamageDealt = (
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
-    randomNumber(atk / 2, atk / 4, true); // This was 0.85 - 1 before
+    randomNumber(.85, 1, true); // This was 0.85 - 1 before
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
@@ -87,7 +105,7 @@ export const getPlayerDamageDealt = (
 	// let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers); // Original formula
 	// if (damage <= 0) damage = randomNumber(300, 500);
 
-	let damage = Math.floor((atk / (atk + def)) * modifiers);
+	let damage = Math.floor(damageCalculation(atk, def) * modifiers);
 
 	// True damage reduction
 	// for Bone Plating

@@ -341,16 +341,16 @@ export const overallStats = (params: {
 				if (stat === "strength") {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 10
+							totalStats[stat as keyof CharacterStatProps] * 8
 						),
 						originalHp: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 10
+							totalStats[stat as keyof CharacterStatProps] * 8
 						),
 					});
 				} else {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 3
+							totalStats[stat as keyof CharacterStatProps] * 2.5
 						),
 					});
 				}
