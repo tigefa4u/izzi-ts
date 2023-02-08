@@ -34,7 +34,10 @@ export const getCardBySeries: (params: {
 	}
 };
 
-export const getRandomCard = async (params: CardParams, limit: number) => {
+export const getRandomCard = async (params: CardParams & {
+	group_with?: number;
+	group_id?: number;
+}, limit: number) => {
 	try {
 		return Cards.getRandomCard(params, limit);
 	} catch (err) {

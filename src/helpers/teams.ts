@@ -274,7 +274,7 @@ export const prepareSkewedCollectionsForBattle = async ({
 			if (idx >= 0) {
 				collections[idx].name = collections[idx].metadata?.nickname || collections[idx].name;
 			}
-			if (card && !card.item_id && m.item_id) {
+			if (card && m.item_id) {
 				if (idx >= 0) {
 					const item = await getItemById({ id: m.item_id });
 					if (item) {

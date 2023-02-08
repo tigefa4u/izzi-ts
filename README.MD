@@ -5,7 +5,7 @@
 INSTALL BETTER SQLITE3 on UBUNTU
 sudo apt-get install build-essential
 
-forever start -c "node -r dotenv/config max-old-space-size=7024" -o out.log -e error.log lib/server/shard.js
+forever start -c "node -r dotenv/config --max-old-space-size=7024" -o out.log -e error.log lib/server/shard.js
 
 pkill -9 -f client.js
 

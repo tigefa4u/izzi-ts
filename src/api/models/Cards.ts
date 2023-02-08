@@ -1,5 +1,6 @@
 import { CardParams, CardProps, RandomCardProps } from "@customTypes/cards";
 import connection from "db";
+import { clone } from "utility";
 
 const tableName = "cards";
 const characters = "characters";
@@ -51,9 +52,15 @@ export const get: (params: CardParams) => Promise<CardProps[]> = async function 
 };
 
 export const getRandomCard: (
-  params: CardParams,
+  params: CardParams & { group_with?: number; group_id?: number; },
   limit: number
 ) => Promise<RandomCardProps[]> = async function (params, limit = 1) {
+	const queryParams = clone(params);
+
+	const group_with = queryParams.group_with;
+	const group_id = queryParams.group_id;
+	delete queryParams.group_with;
+	delete queryParams.group_id;
 	const db = connection;
 	let query = db
 		.select(
@@ -65,19 +72,25 @@ export const getRandomCard: (
 		.from(tableName)
 		.leftJoin(characters, `${tableName}.character_id`, `${characters}.id`)
 		.leftJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
-		.where(params);
-	if (params.is_event) {
+		.where(queryParams);
+	if (queryParams.is_event) {
 		query = query.where(`${tableName}.has_event_ended`, "false");
 	} else {
 		query = query.where(`${tableName}.is_random`, "true");
 	}
-	if (params.is_referral_card) {
+	if (queryParams.is_referral_card) {
 		query = query.where(`${tableName}.is_referral_card`, true);
 	} else {
 		query = query.where(`${tableName}.is_referral_card`, false);
 	}
-	if (!params.series) {
+	if (!queryParams.series) {
 		query = query.whereNot(`${tableName}.series`, "=", "%xenex%");
+	}
+	if (group_id) {
+		query = query.where(`${tableName}.group_id`, group_id);
+	}
+	if (group_with) {
+		query = query.where(`${tableName}.group_with`, group_with);
 	}
 	query = query.orderByRaw("random()").limit(limit);
 

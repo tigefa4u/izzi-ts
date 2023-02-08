@@ -92,6 +92,7 @@ export const createRaidBoss = async ({
 	isPrivate,
 }: C) => {
 	// character_id: i === 0 ? 611 : i === 1 ? 1044 : 1004
+
 	const raidBosses = (await Promise.all(
 		Array(computedBoss.bosses)
 			.fill(0)
@@ -101,14 +102,22 @@ export const createRaidBoss = async ({
 					computedBoss.level[0],
 					computedBoss.level[1]
 				);
+				const params: any = {
+					is_logo: false,
+					rank,
+					is_event: isEvent,
+					// is_random: true,
+					// character_id: i === 0 ? 573 : i === 1 ? 969 : 740
+				};
+				if (isEvent) {
+					if (i === 0) {
+						params.group_id = computedBoss.group_id;
+					} else if (i === 1) {
+						params.group_with = computedBoss.group_id;
+					}
+				}
 				const card = await getRandomCard(
-					{
-						is_logo: false,
-						rank,
-						is_event: isEvent,
-						// is_random: true,
-						// character_id: i === 0 ? 573 : i === 1 ? 969 : 740
-					},
+					params,
 					1
 				);
 				if (!card) return;
@@ -289,7 +298,7 @@ export const spawnRaid = async ({
 				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
 			);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
-		if (isEvent || raidBosses.length === 1) {
+		if (raidBosses.length === 1) {
 			bossCanvas = createSingleCanvas(raidBosses[0], false);
 		} else {
 			bossCanvas = await createBattleCanvas(raidBosses, {

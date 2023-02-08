@@ -35,7 +35,9 @@ export const getCommand = async (key: string) => {
 		const cachedCommands = resp.cachedCommands;
 		if (!result) {
 			result = await Commands.findOne(key);
-			await setCommandCache(key, result, cachedCommands);
+			if (result) {
+				await setCommandCache(key, result, cachedCommands);
+			}
 		}
 		return result;
 	} catch (err) {

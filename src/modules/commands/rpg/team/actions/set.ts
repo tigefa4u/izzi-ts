@@ -108,7 +108,8 @@ async function handleTeamView(
 	}
 	const embed = createEmbed(params.author, params.client)
 		.setTitle(teamDetails.title)
-		.setDescription(teamDetails.desc);
+		.setDescription(teamDetails.desc)
+		.setHideConsoleButtons(true);
 
 	params.channel?.sendMessage(embed);
 	const setParams = {

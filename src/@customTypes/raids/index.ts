@@ -95,6 +95,7 @@ export type PrepareLootProps = {
     difficulty: string;
     level: number[];
     rank: string[];
+    group_id?: number;
 }
 
 export type ProcessRaidLootProps = {
