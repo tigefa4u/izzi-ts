@@ -194,7 +194,8 @@ export const prepareTeamDescription = (
 					? `**${titleCase(card.metadata?.nickname || card.name)} ${emojiMap(
 						card.type
 					)} ${emojiMap(
-						(item.item_id && item.itemName ? item.itemName : card.itemname || "") ||
+						card.itemname ||
+                (item.item_id && item.itemName ? item.itemName : "") ||
                 ""
 					)}**\n__${titleCase(card.rank)}__ | Level ${card.character_level}`
 					: `Not Assigned | ${
