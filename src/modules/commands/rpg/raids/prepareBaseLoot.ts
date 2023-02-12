@@ -51,7 +51,7 @@ const baseLoot = (): any => ({
 			}
 		},
 		event: {
-			level: [ 180, 220 ],
+			level: [ 100, 120 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(18000, 25000),
@@ -109,7 +109,7 @@ const baseLoot = (): any => ({
 			}
 		},
 		event: {
-			level: [ 450, 520 ],
+			level: [ 200, 220 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(25000, 32000),
@@ -169,7 +169,7 @@ const baseLoot = (): any => ({
 			}
 		},
 		event: {
-			level: [ 630, 680 ],
+			level: [ 230, 280 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(32000, 40000),
@@ -236,7 +236,7 @@ const baseLoot = (): any => ({
 			}
 		},
 		event: {
-			level: [ 700, 750 ],
+			level: [ 300, 350 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(40000, 48000),
