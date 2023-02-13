@@ -19,7 +19,6 @@ import {
 } from "helpers/battle";
 import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, CONSOLE_BUTTONS, ELEMENTAL_ADVANTAGES } from "helpers/constants";
 import loggers from "loggers";
-import { performance, PerformanceObserver } from "perf_hooks";
 import { clone } from "utility";
 import { BattleProcess } from "./battleProcess";
 import { prepareCriticalHitChance, prepareEvadeHitChance } from "./chances";
@@ -28,21 +27,6 @@ import { CollectionCardInfoProps } from "@customTypes/collections";
 import { createBattleCanvas } from "helpers/canvas";
 import { Message } from "discord.js";
 import { customButtonInteraction } from "utility/ButtonInteractions";
-import { viewBattleLogs } from "./viewBattleLogs";
-
-const timerify = performance.timerify(createBattleCanvas);
-
-const obs = new PerformanceObserver((list) => {
-	const entries = list.getEntriesByName("createBattleCanvas");
-	loggers.timerify(
-		entries[0].name +
-      " took: " +
-      list.getEntries()[0].duration.toFixed(3) +
-      "ms"
-	);
-	obs.disconnect();
-});
-obs.observe({ entryTypes: [ "function" ] });
 
 export const simulateBattle = async ({
 	context,
@@ -149,6 +133,7 @@ export const simulateBattle = async ({
 				roundStats: clone(roundStats),
 				retries: 0,
 				authorId: playerStats.id,
+				isRaid
 			});
 		}
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
@@ -272,7 +257,7 @@ const processRoundDesc = async ({
 		sliceY: dy,
 	});
 	if (battleRound && battleRound.length > 0) {
-		return await processRoundDesc({
+		return processRoundDesc({
 			round,
 			rounds,
 			title,
@@ -294,6 +279,7 @@ type V = {
   retries: number;
   authorId: string;
   roundStats?: BattleStats;
+  isRaid?: boolean;
 };
 async function visualizeSimulation({
 	simulation,
@@ -302,8 +288,12 @@ async function visualizeSimulation({
 	roundStats,
 	retries,
 	authorId,
+	isRaid
 }: V): Promise<BattleStats | undefined> {
-	const canvas = await timerify(attachments);
+	const canvas = await createBattleCanvas(attachments, {
+		isRaid,
+		isSingleRow: false 
+	});
 	if (!canvas) {
 		throw new Error("Failed to create battle canvas");
 	}
@@ -426,7 +416,7 @@ async function visualizeSimulation({
 		retries = retries + 1;
 		simulation.rounds = newRounds;
 		delete roundStats?.isForfeit;
-		return await visualizeSimulation({
+		return visualizeSimulation({
 			context,
 			simulation,
 			retries,

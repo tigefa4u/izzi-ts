@@ -303,7 +303,7 @@ export const spawnRaid = async ({
 		} else {
 			bossCanvas = await createBattleCanvas(raidBosses, {
 				isSingleRow: true,
-				version: "default" 
+				version: "default",
 			});
 		}
 

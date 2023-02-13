@@ -269,7 +269,8 @@ const handleButtonClick = async ({
 			simulation,
 			authorId: author.id,
 			attachments,
-			channel
+			channel,
+			isRaid: true
 		});
 	}
 	return;

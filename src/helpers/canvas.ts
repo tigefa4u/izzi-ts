@@ -108,6 +108,7 @@ export const createBattleCanvas = async (
 	extras?: {
     isSingleRow: boolean;
     version?: "small" | "medium" | "default";
+	isRaid?: boolean;
   }
 ): Promise<Canvas | undefined> => {
 	if (!Array.isArray(cards)) return;
@@ -117,7 +118,7 @@ export const createBattleCanvas = async (
 	);
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = "#000000";
+	ctx.fillStyle = "#2f3136";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	if (!extras?.isSingleRow) {
 		const cachedBg = ImageCache.getImage("battle-bg") || {} as {
@@ -126,7 +127,7 @@ export const createBattleCanvas = async (
 		};
 		let bgPath = cachedBg.image;
 		if (!bgPath) {
-			bgPath = await loadImage("./assets/images/background.jpeg");
+			bgPath = await loadImage("./assets/images/valentines.jpg");
 		}
 		ImageCache.setImage("battle-bg", bgPath);
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
@@ -194,7 +195,7 @@ export const createBattleCanvas = async (
 				return acc;
 			}, {} as { [key: string]: { id: number; image: Image } })
 		);
-		return await new Promise((resolve) => {
+		return new Promise((resolve) => {
 			for (let i = 0; i < cards.length; i++) {
 				const card = cards[i];
 				if (!card) continue;
@@ -203,9 +204,13 @@ export const createBattleCanvas = async (
 					? 0
 					: (canvas.height / 2) * Math.floor(i / 3);
 
+				let dx = (canvas.width / 3) * (i % 3);
+				if (!extras?.isSingleRow && i >= 3 && cards[i - 1] && extras?.isRaid) {
+					dx = canvas.width / 3 * (i % 3) + (canvas.width / 6);
+				}
 				ctx.drawImage(
 					images[card.id].image,
-					(canvas.width / 3) * (i % 3),
+					dx,
 					dy,
 					canvas.width / 3,
 					dh

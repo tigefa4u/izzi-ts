@@ -121,7 +121,7 @@ export const prepareRaidViewEmbed = async ({
 	} else {
 		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, {
 			isSingleRow: true,
-			version: "default" 
+			version: "default",
 		});
 	}
 

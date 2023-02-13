@@ -122,9 +122,7 @@ export function prepareRaidBossEmbedDesc(raid: RaidProps, isEvent = false) {
 		.join("")}\n\n**Element Type:** ${boss
 		.map((c) => emojiMap(c.type))
 		.join("")}${
-		raid.raid_boss.length === 1
-			? `\n**Raid Boss:** **__${titleCase(raid.raid_boss[0].name)}__**`
-			: ""
+		`\n**Raid Bosses: ${raid.raid_boss.map((b) => titleCase(b.name)).join(", ")}**`
 	}\n**Boss Ability:** ${boss
 		.map((c) => emojiMap(c.abilityname))
 		.join(" ")}\n**Total HP:** ${

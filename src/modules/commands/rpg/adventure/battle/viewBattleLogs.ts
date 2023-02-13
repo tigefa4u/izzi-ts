@@ -16,12 +16,14 @@ type V = {
   authorId: string;
   attachments: (CollectionCardInfoProps | undefined)[];
   channel: ChannelProp;
+  isRaid?: boolean;
 };
 export const viewBattleLogs = async ({
 	simulation,
 	authorId,
 	attachments,
 	channel,
+	isRaid
 }: V) => {
 	try {
 		const rounds = simulation.rounds;
@@ -78,7 +80,10 @@ export const viewBattleLogs = async ({
 			.setTitle(`__${simulation.title} Battle Logs__`)
 			.setDescription(allDescriptions[0]);
 
-		const canvas = await createBattleCanvas(attachments);
+		const canvas = await createBattleCanvas(attachments, {
+			isSingleRow: false,
+			isRaid 
+		});
 		if (canvas) {
 			const attachment = createAttachment(
 				canvas.createJPEGStream(),
