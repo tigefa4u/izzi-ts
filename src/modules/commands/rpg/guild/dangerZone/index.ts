@@ -27,7 +27,7 @@ async function validateAndDisbandGuild(
 		author: params.author,
 		params: [ "is_leader" ],
 		isAdmin: true,
-		isOriginServer: true,
+		isOriginServer: false,
 		extras: { user_id: params.extras.user_id },
 	});
 	if (!validGuild) return;
