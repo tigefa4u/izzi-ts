@@ -127,7 +127,7 @@ export const createBattleCanvas = async (
 		};
 		let bgPath = cachedBg.image;
 		if (!bgPath) {
-			bgPath = await loadImage("./assets/images/valentines.jpg");
+			bgPath = await loadImage("./assets/images/background.jpeg");
 		}
 		ImageCache.setImage("battle-bg", bgPath);
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
@@ -204,10 +204,10 @@ export const createBattleCanvas = async (
 					? 0
 					: (canvas.height / 2) * Math.floor(i / 3);
 
-				let dx = (canvas.width / 3) * (i % 3);
-				if (!extras?.isSingleRow && i >= 3 && cards[i - 1] && extras?.isRaid) {
-					dx = canvas.width / 3 * (i % 3) + (canvas.width / 6);
-				}
+				const dx = (canvas.width / 3) * (i % 3);
+				// if (!extras?.isSingleRow && i >= 3 && cards[i - 1] && extras?.isRaid) {
+				// 	dx = canvas.width / 3 * (i % 3) + (canvas.width / 6);
+				// }
 				ctx.drawImage(
 					images[card.id].image,
 					dx,
