@@ -64,10 +64,10 @@ async function verifyAndProcessSacrifice(
 		);
 		return;
 	}
-	if (cardToConsume.souls <= 0) {
-		params.channel?.sendMessage("The card you are trying to sacrifice must have atleast 1 soul! :x:");
-		return;
-	}
+	// if (cardToConsume.souls <= 0) {
+	// 	params.channel?.sendMessage("The card you are trying to sacrifice must have atleast 1 soul! :x:");
+	// 	return;
+	// }
 	const embed = createEmbed(params.author, params.client).setTitle(
 		DEFAULT_ERROR_TITLE
 	);
