@@ -69,3 +69,7 @@ REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - Izzi server - premium job
 - izzi test server - mana, premium and normal raid permit refill
 - izzi dashboard - minute & raid energy refill
+
+# DATABASE BACKUP
+- remove database logs using cronjob ``rm /var/log/postgresql/*``
+- run db-backup.sh in cronjob to create backups at intervals
