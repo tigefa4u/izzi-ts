@@ -193,32 +193,32 @@ export const getAllCollections = async (
 					}
 				}
 				c.reqSouls = reqSouls;
-				let remainingHours = 0,
-					remainingMinutes = 0;
-				if (c.is_on_cooldown) {
-					const key = "card-cd::" + c.id;
-					try {
-						let cd = (await Cache.get(key)) as any;
-						if (cd) {
-							cd = JSON.parse(cd) as any;
-							const { cooldownEndsAt } = cd;
-							const remainingTime =
-            (cooldownEndsAt - new Date().getTime()) / 1000 / 60;
-							remainingHours = Math.floor(remainingTime / 60);
-							remainingMinutes = Math.floor(remainingTime % 60);
-							if (remainingHours < 0) {
-								remainingHours = 0;
-							}
-							if (remainingMinutes < 0) {
-								remainingMinutes = 0;
-							}
-						}
-					} catch (err) {
-						// pass
-					}
-					c.remainingHours = remainingHours;
-					c.remainingMinutes = remainingMinutes;
-				}
+				// 	let remainingHours = 0,
+				// 		remainingMinutes = 0;
+				// 	if (c.is_on_cooldown) {
+				// 		const key = "card-cd::" + c.id;
+				// 		try {
+				// 			let cd = (await Cache.get(key)) as any;
+				// 			if (cd) {
+				// 				cd = JSON.parse(cd) as any;
+				// 				const { cooldownEndsAt } = cd;
+				// 				const remainingTime =
+				// (cooldownEndsAt - new Date().getTime()) / 1000 / 60;
+				// 				remainingHours = Math.floor(remainingTime / 60);
+				// 				remainingMinutes = Math.floor(remainingTime % 60);
+				// 				if (remainingHours < 0) {
+				// 					remainingHours = 0;
+				// 				}
+				// 				if (remainingMinutes < 0) {
+				// 					remainingMinutes = 0;
+				// 				}
+				// 			}
+				// 		} catch (err) {
+				// 			// pass
+				// 		}
+				// 		c.remainingHours = remainingHours;
+				// 		c.remainingMinutes = remainingMinutes;
+				// 	}
 
 			})
 		]);
