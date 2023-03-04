@@ -131,7 +131,8 @@ export const get = async (
 			"skin_id",
 			"is_on_cooldown",
 			"character_level",
-			"is_tradable"
+			"is_tradable",
+			"metadata"
 		)
 		.from(tableName)
 		.where(queryParams);
@@ -264,6 +265,7 @@ export const getAll = async function (
 				${tableName}.is_on_cooldown, 
 				${tableName}.is_tradable,
 				${tableName}.character_level,
+				${tableName}.metadata,
 				row_number() over(order by rank_id desc, id 
 					asc)`
 				// ${sort ? sort.sortOrder : "desc"}
