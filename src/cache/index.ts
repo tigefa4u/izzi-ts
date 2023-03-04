@@ -8,6 +8,7 @@ import { CacheProps } from "./cacheTypes";
 // };
 
 const client = new redisClient({ password: REDIS_PASSWORD });
+// const client = new redisClient();
 
 const Cache: CacheProps = {
 	get: (key) => client.get(key),

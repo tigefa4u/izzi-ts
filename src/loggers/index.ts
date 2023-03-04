@@ -10,13 +10,13 @@ const error = (errMessage: string, err: unknown) => {
 };
 
 const info = (infoMessage: string) => {
-	// console.info(infoMessage, "pid: ", getLoggerContext());
+	// console.info(infoMessage);
 	winstonLogger.info(infoMessage);
 };
 
 const debug = (...args: any[]) => {
 	// console.log(args.join(", "));
-	// winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
+	winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
 };
 
 const timerify = (...args: (string | number)[]) => {

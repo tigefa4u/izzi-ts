@@ -74,7 +74,7 @@ export const transformation = {
 	},
 	isFavorite: {
 		type: "boolean",
-		columnName: "is_favorite"
+		columnName: "is_favorite",
 	},
 	createdAt: {
 		type: "timestamp",
@@ -86,8 +86,8 @@ export const transformation = {
 	},
 	isTradable: {
 		type: "boolean",
-		columnName: "is_tradable"
-	}
+		columnName: "is_tradable",
+	},
 };
 
 export const get = async (
@@ -109,12 +109,33 @@ export const get = async (
 
 	queryParams = safeParseQueryParams({
 		query: queryParams,
-		attributes: transformation
+		attributes: transformation,
 	});
 
 	const db = connection;
-	let query = db.select("*").from(tableName).where(queryParams);
-	
+	let query = db
+		.select(
+			"id",
+			"character_id",
+			"user_id",
+			"rank",
+			"is_on_market",
+			"is_item",
+			"exp",
+			"r_exp",
+			"souls",
+			"item_id",
+			"character_id",
+			"rank_id",
+			"is_favorite",
+			"skin_id",
+			"is_on_cooldown",
+			"character_level",
+			"is_tradable"
+		)
+		.from(tableName)
+		.where(queryParams);
+
 	if (ids) {
 		query = query.whereIn("id", ids);
 	}
@@ -130,11 +151,7 @@ export const get = async (
 	if (typeof rank === "string") {
 		query = query.where(`${tableName}.rank`, rank);
 	} else if (typeof rank === "object") {
-		query = query.where(
-			`${tableName}.rank`,
-			"~*",
-			`(${rank.join("|")}).*`
-		);
+		query = query.where(`${tableName}.rank`, "~*", `(${rank.join("|")}).*`);
 	}
 	if (typeof queryParams.is_on_market === "boolean") {
 		query = query.where(`${tableName}.is_on_market`, queryParams.is_on_market);
@@ -149,6 +166,53 @@ export const get = async (
 	return query;
 };
 
+export const getCountForGetAll = async (params: CollectionParams) => {
+	let queryParams = clone(params);
+	const character_ids = queryParams.character_ids;
+	delete queryParams.character_ids;
+	const rankIds = queryParams.rank_ids;
+	delete queryParams.rank_ids;
+	const isFavorite = queryParams.is_favorite;
+	delete queryParams.is_favorite;
+	const isOnMarket = queryParams.is_on_market;
+	delete queryParams.is_on_market;
+	const isTradable = queryParams.is_tradable;
+	delete queryParams.is_tradable;
+	const isOnCooldown = queryParams.is_on_cooldown;
+	delete queryParams.is_on_cooldown;
+
+	queryParams = safeParseQueryParams({
+		query: queryParams,
+		attributes: transformation,
+	});
+
+	const db = connection;
+	let query = db.select(db.raw("count(1) as total_count"))
+		.from(tableName)
+		.where(queryParams);
+	if (character_ids) {
+		query = query.whereIn(`${tableName}.character_id`, character_ids);
+	}
+	if (typeof rankIds === "number") {
+		query = query.where(`${tableName}.rank_id`, rankIds);
+	} else if (typeof rankIds === "object") {
+		query = query.whereIn(`${tableName}.rank_id`, rankIds);
+	}
+	if (isFavorite === true || isFavorite === false) {
+		query = query.where(`${tableName}.is_favorite`, isFavorite);
+	}
+	if (isOnMarket === true || isOnMarket === false) {
+		query = query.where(`${tableName}.is_on_market`, isOnMarket);
+	}
+	if (isOnCooldown === true || isOnCooldown === false) {
+		query = query.where(`${tableName}.is_on_cooldown`, isOnCooldown);
+	}
+	if (isTradable === true || isTradable === false) {
+		query = query.where(`${tableName}.isTradable`, isOnMarket);
+	}	
+	return query;
+};
+
 export const getAll = async function (
 	params: CollectionParams,
 	pagination: PaginationProps = {
@@ -157,7 +221,7 @@ export const getAll = async function (
 	},
 	sort: SortProps = {
 		sortBy: "id",
-		sortOrder: "desc"
+		sortOrder: "desc",
 	}
 ): Promise<CollectionProps[]> {
 	let queryParams = clone(params);
@@ -176,7 +240,7 @@ export const getAll = async function (
 
 	queryParams = safeParseQueryParams({
 		query: queryParams,
-		attributes: transformation
+		attributes: transformation,
 	});
 
 	const db = connection;
@@ -184,7 +248,23 @@ export const getAll = async function (
 	let query = db
 		.select(
 			db.raw(
-				`${tableName}.*, row_number() over(order by rank_id desc, id 
+				`${tableName}.id,
+				${tableName}.character_id,
+				${tableName}.user_id,
+				${tableName}.rank,
+				${tableName}.is_on_market,
+				${tableName}.is_item,
+				${tableName}.exp,
+				${tableName}.r_exp,
+				${tableName}.souls,
+				${tableName}.item_id,
+				${tableName}.rank_id,
+				${tableName}.is_favorite,
+				${tableName}.skin_id,
+				${tableName}.is_on_cooldown, 
+				${tableName}.is_tradable,
+				${tableName}.character_level,
+				row_number() over(order by rank_id desc, id 
 					asc)`
 				// ${sort ? sort.sortOrder : "desc"}
 			)
@@ -194,7 +274,7 @@ export const getAll = async function (
 		.as(alias);
 
 	query = db
-		.select(db.raw(`${alias}.*, count(1) over() as total_count`))
+		.select(db.raw(`${alias}.*`))
 		.from(query);
 	// .orderBy(`${alias}.rank_id`, "desc");
 
@@ -226,7 +306,7 @@ export const create: (
   data: ICollectionCreateProps
 ) => Promise<CollectionProps> = async (data) => {
 	const db = connection;
-	if (!data || Array.isArray(data) && data.length <= 0) return;
+	if (!data || (Array.isArray(data) && data.length <= 0)) return;
 	return await db(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);
@@ -259,7 +339,7 @@ export const getByRowNumber = async (params: {
 }): Promise<CollectionProps[]> => {
 	const sort = params.sort || {
 		sortBy: "id",
-		sortOrder: "desc"
+		sortOrder: "desc",
 	};
 	const db = connection;
 	let query = db
@@ -271,7 +351,7 @@ export const getByRowNumber = async (params: {
 		.orderBy("id", "asc")
 		.offset(params.row_number - 1) // Need to subtract 1, to choose correct row
 		.limit(1);
-	
+
 	if (params.exclude_ids) {
 		query = query.whereNotIn(`${tableName}.id`, params.exclude_ids);
 	}
@@ -306,7 +386,8 @@ export const destroy = async (params: Pick<CollectionParams, "id" | "ids">) => {
 export const verifyIds = async (params: { user_id: number; ids: number[] }) => {
 	if (!params.user_id) return;
 	const db = connection;
-	const query = db.select("id")
+	const query = db
+		.select("id")
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.whereIn(`${tableName}.id`, params.ids);
