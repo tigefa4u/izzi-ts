@@ -4,7 +4,7 @@ import { PageProps } from "@customTypes/pagination";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Items from "../models/Items";
-import { getAll as getCollections } from "../models/Collections";
+import { getAll as getCollections, getCountForGetAll } from "../models/Collections";
 import Cache from "cache";
 import { clone } from "utility";
 
@@ -25,19 +25,26 @@ export const getItems: (
 		let collectionTotalCount = 0;
 		if (options.withCollection) {
 			if (!filter.user_id) return;
-			const itemCollection = await getCollections(
-				{
-					is_on_market: false,
-					is_item: true,
+			const [ itemCollection, totalCount ] = await Promise.all([
+				getCollections(
+					{
+						is_on_market: false,
+						is_item: true,
+						user_id: filter.user_id,
+					},
+					await paginationParams(pageProps)
+				),
+				getCountForGetAll({
 					user_id: filter.user_id,
-				},
-				await paginationParams(pageProps)
-			);
+					is_item: true,
+					is_on_market: false
+				})
+			]);
 			const ids = itemCollection.map((c) => c.item_id && c.item_id);
 			if (ids.length <= 0) {
 				return;
 			}
-			collectionTotalCount = itemCollection[0].total_count || 0;
+			collectionTotalCount = Number(totalCount[0].total_count || 0);
 			Object.assign(filter, { ids });
 		}
 		let itemPageProps = clone(pageProps);
