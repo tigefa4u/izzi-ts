@@ -50,18 +50,18 @@ const handleMessage = async (client: Client, context: Message, { hasPermissions 
 			);
 			return;
 		}
-		if (botId !== BOT_PREFIX) return;
-		// if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
-		// 	if (context.guild?.id) {
-		// 		dropCollectables({
-		// 			client,
-		// 			author: context.author,
-		// 			guild: context.guild,
-		// 			channel: context.channel,
-		// 		});
-		// 	}
-		// 	return;
-		// }
+		// if (botId !== BOT_PREFIX) return;
+		if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
+			if (context.guild?.id) {
+				dropCollectables({
+					client,
+					author: context.author,
+					guild: context.guild,
+					channel: context.channel,
+				});
+			}
+			return;
+		}
 		if (!hasPermissions) return;
 		const channelCD = await getChannelCooldown(
 			context.channel.id,
