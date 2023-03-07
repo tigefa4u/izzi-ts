@@ -11,6 +11,10 @@ export const createLBEmbedList = (
 	lb: string,
 	gpOrder: string
 ) => {
+	const orderName = order;
+	if (order === "vote count") {
+		order = "vote_count";
+	}
 	return Promise.all(
 		array.map((item, i) => {
 			if (lb === "guilds") {
@@ -66,10 +70,6 @@ export const createLBEmbedList = (
 						value: `__${array[obj.index][gpOrder]}__ Game Points`,
 					}
 				);
-			}
-			const orderName = order;
-			if (order === "vote count") {
-				order = "vote_count";
 			}
 			// | Server **${obj.guild_name}**
 			return Object.assign(
