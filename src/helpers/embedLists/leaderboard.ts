@@ -35,9 +35,9 @@ export const createLBEmbedList = (
 						name: `#${obj.index + 1}| ${array[obj.index].name || ""} (${
 							array[obj.index].guild_id
 						}) | ${numericWithComma(array[obj.index].gold)} ${emoji.gold}`,
-						value: `Clan Level **${
-							array[obj.index].guild_level || 0
-						}** ${emoji.up} | Reputation **${array[obj.index].points}**`,
+						value: `Clan Level **${array[obj.index].guild_level || 0}** ${
+							emoji.up
+						} | Reputation **${array[obj.index].points}**`,
 					}
 				);
 			} else if (lb === "ranks") {
@@ -63,22 +63,34 @@ export const createLBEmbedList = (
 					{},
 					{
 						name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
-						value: `__${array[obj.index][gpOrder]}__ Game Points`
+						value: `__${array[obj.index][gpOrder]}__ Game Points`,
 					}
 				);
+			}
+			const orderName = order;
+			if (order === "vote count") {
+				order = "vote_count";
 			}
 			// | Server **${obj.guild_name}**
 			return Object.assign(
 				{},
 				{
 					name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
-					value: `${titleCase(order)} **${
-						order === "gold" ? numericWithComma(array[obj.index][order]) : array[obj.index][order]
+					value: `${titleCase(orderName)} **${
+						order === "gold" || order === "ultimate cards"
+							? numericWithComma(array[obj.index][order])
+							: array[obj.index][order]
 					}** ${
 						order === "zone"
 							? `Max Floor **${array[obj.index]["max_floor"]}**`
 							: ""
-					} ${order === "gold" ? emoji.gold : order === "zone" ? ":map:" : emoji.up}`,
+					} ${
+						order === "gold"
+							? emoji.gold
+							: order === "zone"
+								? ":map:"
+								: emoji.up
+					}`,
 				}
 			);
 		})

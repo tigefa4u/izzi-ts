@@ -20,6 +20,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
 	MARKET_PRICE_CAP,
+	ranksMeta,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -56,6 +57,13 @@ async function validateAndSellCard(
 				`The card you are trying to sell cannot be sold on the Global Market, or traded **(${titleCase(
 					cardToBeSold.name || "No Name"
 				)})**`
+			);
+			return;
+		}
+		if (cardToBeSold.rank_id <= ranksMeta["platinum"].rank_id) {
+			params.channel?.sendMessage(
+				`Summoner **${params.author.username}**, You cannot sell **Fodders** on the Global Market. ` +
+				"Cards that are of rank **Silver, Gold, Platinum** are considered as Fodders."
 			);
 			return;
 		}

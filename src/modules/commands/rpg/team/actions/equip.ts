@@ -112,7 +112,7 @@ export const equipTeamItem = async ({
 		user_id 
 	});
 	if (!teams || teams.length <= 0) {
-		embed.setDescription("We cound not find the team you were looking for");
+		embed.setDescription("We could not find the team you were looking for");
 		context.channel?.sendMessage(embed);
 		return;
 	}

@@ -58,6 +58,18 @@ export const leaderboard = async ({
 				orderName: "Game Points",
 				order: "game_points"
 			});
+		} else if (subcommand === "ultimate") {
+			Object.assign(params, {
+				lb: "ultimate",
+				orderName: "ultimate cards",
+				order: "ult"
+			});
+		} else if (subcommand === "vote_count") {
+			Object.assign(params, {
+				lb: "users",
+				orderName: "vote count",
+				order: "vote_count"
+			});
 		}
 		getLB(context, author, client, params.order, params.orderName, params.lb);
 		return;
@@ -96,15 +108,21 @@ async function getLB(
 			order
 		);
 		const embed = createEmbed(author, client);
-		embed
-			.setDescription(
+		embed.setTitle(`User ${titleCase(orderName)} Leaderboard`);
+
+		if (lb === "ultimate") {
+			embed.setDescription(
+				"Users with most Ultimate Cards on Izzi are shown below."
+			);
+		} else {
+			embed.setDescription(
 				`Top 10 User ${titleCase(
 					orderName
 				)} on Izzi are shown below. Want to view more than Top 10 results? ` +
             `[Click here](${IZZI_WEBSITE}/leaderboards?lb=${lb}${lb === "ranks" ? "" : `&order=${order}`})` +
             "\n**The Leaderboard is updated every 15 minutes**"
-			)
-			.setTitle(`User ${titleCase(orderName)} Leaderboard`);
+			);
+		}
 		if (fields.length > 0) embed.addFields(fields);
 		context.channel?.sendMessage(embed);
 		return;

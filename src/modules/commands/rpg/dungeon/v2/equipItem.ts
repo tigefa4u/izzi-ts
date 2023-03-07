@@ -68,7 +68,7 @@ export const equipDGItem = async ({ context, options, client, args }: BaseProps)
 		const item = await getItemById({ id: itemInCollection[0].item_id });
 		if (!item) {
 			loggers.info("item not found for ID: " + itemInCollection[0].item_id);
-			context.channel?.sendMessage("We cound not find this item on izzi, please contact support");
+			context.channel?.sendMessage("We could not find this item on izzi, please contact support");
 			return;
 		}
 		const itemId = item.id;

@@ -48,7 +48,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 					remainingHours > 0
 						? `${remainingHours} Hour(s) Until Reset`
 						: "Resets Every 24 hours"
-				})`
+				}) (Total Votes: ${user.vote_count || 0})`
 			)
 			.setDescription(
 				`Vote for **__Izzi__** here:-\n${BOT_VOTE_LINK}\n\n` +
