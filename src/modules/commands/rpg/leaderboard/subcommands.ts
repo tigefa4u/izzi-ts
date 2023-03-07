@@ -18,7 +18,7 @@ export const subcommands =  [ {
 	alias: [ "gp" ]
 }, {
 	name: "vote_count",
-	alias: [ "vc", "streak" ]
+	alias: [ "vc", "streak", "vote" ]
 }, {
 	name: "ultimate",
 	alias: [ "ult", "ultimate" ]
