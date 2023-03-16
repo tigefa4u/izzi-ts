@@ -56,16 +56,20 @@ export const fetchAndCompleteQuest = async (
 		const isCriteriaValid = validateCriteria(quest.criteria, quest.is_daily);
 		if (!isCriteriaValid) return;
 
+		if (!author.id) {
+			author.id = user_tag;
+		}
+
 		loggers.info(
 			"quests.common.fetchAndCompleteQuest: processing quest as criteria is valid"
 		);
 		const [ userQuest, streaks ] = await Promise.all([
 			getUserQuestByQuestid({
 				quest_id: quest.id,
-				user_tag: author.id,
+				user_tag: user_tag,
 				is_daily: quest.is_daily,
 			}),
-			getUserStreaks({ user_tag: author.id }),
+			getUserStreaks({ user_tag: user_tag }),
 		]);
 		if (userQuest && userQuest.length > 0) {
 			await clearRaidChallengeCache(author.id, quest.type);
