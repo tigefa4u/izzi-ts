@@ -83,3 +83,6 @@ SELECT
   vacuum_count, autovacuum_count
 FROM pg_stat_user_tables;
 ``
+
+# Migrations
+- knex `createTableIfNotExist` is deprecated

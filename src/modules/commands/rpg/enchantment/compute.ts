@@ -70,9 +70,13 @@ export const preComputeRequiredCards = async ({
 }: ProcessEnchantmentProps): Promise<ComputedReturnType | undefined> => {
 	try {
 		const currentExp = card.exp;
-		let reqExp = await prepareRequiredExp({ card: card });
-		if (typeof reqExp === "object") {
-			return reqExp as ComputedReturnType;
+		const reqExpobj = await prepareRequiredExp({ card: card });
+		if (reqExpobj.has_reached_max_level) {
+			return { has_reached_max_level: true } as ComputedReturnType;
+		}
+		let reqExp = reqExpobj.exp;
+		if (!reqExp) {
+			return;
 		}
 		reqExp = reqExp - currentExp; // Card already has some exp
 		const { withSameName, withDifferentName } = prepareXpGainObject(reqExp);
@@ -169,7 +173,8 @@ export const preComputeRequiredCards = async ({
 			levelCounter,
 			r_exp,
 			exp,
-			reqExp
+			reqExp,
+			max_level: reqExpobj.max_level
 		};
 	} catch (err) {
 		loggers.error(
@@ -188,10 +193,13 @@ export async function prepareRequiredExp({ card, }: {
 		throw new Error("Unable to fetch powerlevel for rank: " + card.rank);
 	}
 	if (card.character_level >= powerLevel.max_level) {
-		return { max_level: true };
+		return { has_reached_max_level: true };
 	}
 	const levelDiff = powerLevel.max_level - card.character_level;
-	return getReqExpBetweenLevels(card.character_level, levelDiff);
+	return {
+		exp: getReqExpBetweenLevels(card.character_level, levelDiff),
+		max_level: powerLevel.max_level
+	};
 }
 
 export function getReqExpBetweenLevels(level: number, levelDiff: number) {

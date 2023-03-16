@@ -77,7 +77,7 @@ export const viewBattleLogs = async ({
 			}
 		}
 		const embed = createEmbed()
-			.setTitle(`__${simulation.title} Battle Logs__`)
+			.setTitle(`__${simulation.title.replaceAll("_", "")} Battle Logs__`)
 			.setDescription(allDescriptions[0]);
 
 		const canvas = await createBattleCanvas(attachments, {

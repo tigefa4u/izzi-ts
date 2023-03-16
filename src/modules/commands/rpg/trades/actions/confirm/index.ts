@@ -6,8 +6,9 @@ import {
 } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MIN_TRADE_CARDS_FOR_QUEST, QUEST_TYPES } from "helpers/constants";
 import loggers from "loggers";
+import { validateAndCompleteQuest } from "modules/commands/rpg/quests";
 import { titleCase } from "title-case";
 import * as queue from "../../queue";
 import { viewTrade } from "../view";
@@ -163,6 +164,19 @@ export const confirmTrade = async ({
 					trader_1.queue.splice(index, 1);
 				}
 			}
+			if (trader_1.queue.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+				promises.push(validateAndCompleteQuest({
+					user_tag: trader_1.user_tag,
+					type: QUEST_TYPES.TRADING,
+					options: {
+						channel,
+						client,
+						author,
+						extras: { tradeQueueLen: trader_1.queue.length },
+					},
+					level: 0
+				}));
+			}
 			promises.push(
 				updateCollection(
 					{ ids: trader_1.queue.map((q) => q.id) },
@@ -184,6 +198,19 @@ export const confirmTrade = async ({
 				if (index >= 0) {
 					trader_2.queue.splice(index, 1);
 				}
+			}
+			if (trader_2.queue.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+				promises.push(validateAndCompleteQuest({
+					user_tag: trader_2.user_tag,
+					type: QUEST_TYPES.TRADING,
+					options: {
+						channel,
+						client,
+						author,
+						extras: { tradeQueueLen: trader_2.queue.length },
+					},
+					level: 0
+				}));
 			}
 			promises.push(
 				updateCollection(

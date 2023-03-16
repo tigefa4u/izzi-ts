@@ -15,6 +15,7 @@ import loggers from "loggers";
 import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
 import { ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
+import { RanksMetaProps } from "./helperTypes";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];
@@ -196,7 +197,7 @@ export const prepareBattleDesc = ({
 			: ""
 	}\n${
 		filterPlayerCards.length === 1
-			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank].size)
+			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].size)
 				.fill(":star:")
 				.map((i) => i)
 				.join("")}\n`
@@ -218,7 +219,7 @@ export const prepareBattleDesc = ({
 			: ""
 	}\n${
 		filterEnemyCards.length === 1
-			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank].size)
+			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank as keyof RanksMetaProps].size)
 				.fill(":star:")
 				.map((i) => i)
 				.join("")}\n`

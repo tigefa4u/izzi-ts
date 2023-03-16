@@ -26,6 +26,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
 	MARKET_PURCHASE_LIMIT,
+	QUEST_TYPES,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
@@ -38,6 +39,7 @@ import {
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
+import { validateAndCompleteQuest } from "../../quests";
 
 async function processPurchase(
 	buyer: UserProps,
@@ -79,13 +81,30 @@ async function notifySeller(
 	marketCard: IMarketProps,
 	client: Client
 ) {
-	const totalCost = await processPurchase(
-		buyer,
-		dealer,
-		seller,
-		marketCard.price,
-		marketCard.id
-	);
+	const [ totalCost ]: [number, void] = await Promise.all([
+		processPurchase(
+			buyer,
+			dealer,
+			seller,
+			marketCard.price,
+			marketCard.id
+		),
+		validateAndCompleteQuest({
+			user_tag: seller.user_tag,
+			level: seller.level,
+			options: {
+				client,
+				channel: {} as ChannelProp,
+				author: {} as AuthorProps,
+				extras: {
+					rank: marketCard.rank,
+					price: marketCard.price
+				}
+			},
+			isDMUser: true,
+			type: QUEST_TYPES.MARKET
+		})
+	]);
 	loggers.info(
 		"Notifying seller of Market Purchase: " +
       JSON.stringify({
@@ -97,6 +116,7 @@ async function notifySeller(
       	collectionId: marketCard.collection_id
       })
 	);
+
 	const key = "anonymous-market-purchase::" + buyer.user_tag;
 	const anonymousMarketPurchase = await Cache.get(key);
 	const embed = createEmbed()

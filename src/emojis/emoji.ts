@@ -156,6 +156,7 @@ const emoji: EmojiProps = {
 	dance: "<a:AEMJ_anime_dancing:856012313102516275>",
 	cooldown: ":hourglass:",
 	blush: "<a:AEMJ_IchikaBlush:961550202806890516>",
+	permit: ":ticket:"
 };
 
 export default emoji;

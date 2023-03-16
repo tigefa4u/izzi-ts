@@ -7,6 +7,7 @@ import {
 import connection from "db";
 import emoji from "emojis/emoji";
 import { MAX_GOLD_THRESHOLD } from "helpers/constants";
+import { Knex } from "knex";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import { isEmptyValue } from "utility";
 
@@ -140,4 +141,13 @@ export const getPlayerCount = async (
 			builder.select(db.raw("'total' as status, count(*)")).from(tableName)
 		);
 	return query;
+};
+
+export const startTransaction = async (cb: (trx: Knex.Transaction) => void) => {
+	const db = connection;
+	return db.transaction((trx) => {
+		return cb(trx);
+	}).catch(err => {
+		throw err;
+	});
 };

@@ -1,4 +1,5 @@
 import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
+import { QuestTypes } from "@customTypes/quests";
 import { PermissionString } from "discord.js";
 import emoji from "emojis/emoji";
 import { ElementTypeColorProps, RanksMetaProps } from "./helperTypes";
@@ -7,6 +8,7 @@ export const BASE_XP = 10;
 
 export const XP_GAIN_EXPONENT = 1.5;
 
+export const DOT = "•";
 export const BASE_RANK = "silver";
 export const STARTER_CARD_RANK = "diamond";
 export const STARTER_CARD_RANK_ID = 4;
@@ -18,6 +20,7 @@ export const STARTER_CARD_R_EXP = Math.floor(
 export const STARTER_GOLD = 0;
 export const DEFAULT_ERROR_TITLE = "Error :no_entry:";
 export const DEFAULT_SUCCESS_TITLE = `Success ${emoji.celebration}`;
+export const DEFAULT_QUEST_COMPLETE_TITLE = `Quest Completed ${emoji.celebration}`;
 
 export const ranksMeta: RanksMetaProps = {
 	silver: {
@@ -238,7 +241,7 @@ export const BATTLE_FORFEIT_RETRIES = 1;
 export const USER_XP_GAIN_PER_BATTLE = 8;
 
 export const MAX_GOLD_IN_TRADE = 100000000;
-export const MAX_CARDS_IN_TRADE = 1000;
+export const MAX_CARDS_IN_TRADE = 10000;
 
 export const SACRIFICE_GOLD_COST = 1350;
 
@@ -489,3 +492,19 @@ export const COMMANDS_WITH_RAW_ARGS = [ "guild", "team", "dungeon" ];
 
 // Need to move this to DB
 export const BANNED_TERMS = [ "kkk", "ngga", "nigger", "nbba", "pussy", "porn" ];
+
+export const QUEST_TYPES: {
+	[key in QuestTypes]: QuestTypes
+} = {
+	RAID_CHALLENGE: "RAID_CHALLENGE",
+	RAID_CARRY: "RAID_CARRY",
+	CARD_LEVELING: "CARD_LEVELING",
+	WEBPAGES: "WEBPAGES",
+	TRADING: "TRADING",
+	MARKET: "MARKET",
+	DUNGEON: "DUNGEON",
+	PVP: "PVP",
+	WORLD_BOSS: "WORLD_BOSS"
+};
+
+export const MIN_TRADE_CARDS_FOR_QUEST = 1000;

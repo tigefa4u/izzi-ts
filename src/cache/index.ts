@@ -1,5 +1,6 @@
 import redisClient from "@hoax7/memory_cache";
 import { REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, REDIS_USERNAME } from "environment";
+import { getEodTimeRemainingInSec } from "helpers";
 import loggers from "loggers";
 import { CacheProps } from "./cacheTypes";
 
@@ -10,10 +11,18 @@ import { CacheProps } from "./cacheTypes";
 const client = new redisClient({ password: REDIS_PASSWORD });
 // const client = new redisClient();
 
-const Cache: CacheProps = {
+const Cache: CacheProps & {
+	expireEod: (key: string) => Promise<boolean> | undefined;
+} = {
 	get: (key) => client.get(key),
 	set: (key, value) => client.set(key, value),
 	del: (key) => client.del(key),
+	/**
+	 * 
+	 * @param key 
+	 * @param ttl in seconds
+	 * @returns 
+	 */
 	expire: (key, ttl) => client.expire(key, ttl),
 	keys: (pattern = "*") => client.keys(pattern),
 	fetch: async <T>(key: string, cb: () => Promise<T>) => {
@@ -33,7 +42,8 @@ const Cache: CacheProps = {
 	},
 	incr: (key) => client.incr(key),
 	decr: (key) => client.decr(key),
-	ttl: (key) => client.ttl(key)
+	ttl: (key) => client.ttl(key),
+	expireEod: (key: string) => client.expire(key, getEodTimeRemainingInSec())
 };
 
 export default Cache;

@@ -93,7 +93,9 @@ const emojis: MapProps = {
 	"dream eater": emoji.dreameater,
 	"lunar wand": emoji.lunarwand,
 	"staff of medana": emoji.staffofmedana,
-	"renewal taekwondo": emoji.renewaltaekwondo
+	"renewal taekwondo": emoji.renewaltaekwondo,
+	permit: emoji.permit,
+	gold: emoji.gold
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

@@ -442,3 +442,11 @@ export const findAndSwap = (array: any[], priorityOrder: any[]) => {
 	});
 	return temp;
 };
+
+export const getEodTimeRemainingInSec = () => {
+	const d = new Date();
+	const h = d.getHours();
+	const m = d.getMinutes();
+	const s = d.getSeconds();
+	return (24 * 60 * 60) - (h * 60 * 60) - (m * 60) - s;
+};

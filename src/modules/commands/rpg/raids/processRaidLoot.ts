@@ -1,4 +1,4 @@
-import { AuthorProps } from "@customTypes";
+import { AuthorProps, ChannelProp } from "@customTypes";
 import { CollectionCreateProps } from "@customTypes/collections";
 import {
 	ProcessRaidLootProps,
@@ -13,8 +13,9 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { probability } from "helpers";
+import { probability, randomElementFromArray } from "helpers";
 import {
+	QUEST_TYPES,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
@@ -24,6 +25,7 @@ import { getLobbyMvp } from "helpers/raid";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey, isEmptyValue } from "utility";
+import { validateAndCompleteQuest } from "../quests";
 import { prepareRaidParty } from "./actions/party";
 
 type R = {
@@ -134,6 +136,34 @@ export const processRaidLoot = async ({
 				reward.user_tag
 			)
 		);
+
+		if (!isEvent) {
+			const options = {
+				author,
+				channel: {} as ChannelProp,
+				client,
+				extras: {
+					characterId: randomElementFromArray(raid.raid_boss.map((b) => b.character_id)),
+					raidRank: raid.stats.difficulty.toLowerCase(),
+					raidId: raid.id,
+					lobby: raid.lobby
+				}
+			};
+			await Promise.all([
+				validateAndCompleteQuest({
+					user_tag: author.id,
+					type: QUEST_TYPES.RAID_CHALLENGE,
+					level: 0,
+					options
+				}),
+				validateAndCompleteQuest({
+					type: QUEST_TYPES.RAID_CARRY,
+					user_tag: author.id,
+					level: 0,
+					options
+				})
+			]);
+		}
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.processRaidLoot: ERROR", err);

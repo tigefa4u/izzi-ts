@@ -7,6 +7,7 @@ import { Message } from "discord.js";
 import { PAGE_FILTER, ranksMeta } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
+import { RanksMetaProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
@@ -17,7 +18,7 @@ function getRankId(rank_id: string) {
 	const keys = Object.keys(ranksMeta);
 	const index = keys.findIndex((r) => r.includes(rank_id));
 	if (index >= 0) {
-		return ranksMeta[keys[index]].rank_id;
+		return ranksMeta[keys[index] as keyof RanksMetaProps].rank_id;
 	}
 }
 

@@ -5,6 +5,7 @@ import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
 import { ranksMeta } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
+import { RanksMetaProps } from "helpers/helperTypes";
 import loggers from "loggers";
 
 export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
@@ -18,7 +19,7 @@ export const setCharacterRank = async ({ client, context, options, args }: BaseP
 		if (!id || isNaN(id)) return;
 		const rank = args.shift();
 		if (!rank) return;
-		const rankFound = ranksMeta[rank];
+		const rankFound = ranksMeta[rank as keyof RanksMetaProps];
 		if (!rankFound) return;
 		await updateCollection({ id }, {
 			rank,

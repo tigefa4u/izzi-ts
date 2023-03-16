@@ -17,13 +17,14 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, QUEST_TYPES } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
+import { validateAndCompleteQuest } from "../quests";
 import { getSortCache } from "../sorting/sortCache";
 import { preComputeRequiredCards } from "./compute";
 
@@ -98,6 +99,21 @@ async function confirmAndEnchantCard(
 			),
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			deleteCollection({ ids }),
+			validateAndCompleteQuest({
+				type: QUEST_TYPES.CARD_LEVELING,
+				level: user.level,
+				user_tag: user.user_tag,
+				options: {
+					author: params.author,
+					client: params.client,
+					channel: params.channel,
+					extras: {
+						levelCounter: computed.levelCounter,
+						maxlevel: computed.max_level,
+						characterlevelAfterEnh: cardToEnchant.character_level
+					}
+				}
+			})
 		]);
 		loggers.endTimer(updatetimer);
 		params.channel?.sendMessage(embed);
@@ -167,7 +183,7 @@ export const enchantCard = async ({
 		});
 		loggers.endTimer(computationTimer);
 		if (!computed) return;
-		if (computed.max_level) {
+		if (computed.has_reached_max_level) {
 			context.channel?.sendMessage(
 				`Summoner **${author.username}** the card you are trying to Enchant is already max level!`
 			);
