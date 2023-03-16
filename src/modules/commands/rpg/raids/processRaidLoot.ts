@@ -144,7 +144,7 @@ export const processRaidLoot = async ({
 				client,
 				extras: {
 					characterId: randomElementFromArray(raid.raid_boss.map((b) => b.character_id)),
-					raidRank: raid.stats.difficulty.toLowerCase(),
+					raidRank: raid.stats.rawDifficulty.toLowerCase(),
 					raidId: raid.id,
 					lobby: raid.lobby
 				}
