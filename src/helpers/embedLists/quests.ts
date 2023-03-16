@@ -16,6 +16,8 @@ export const prepareRewards = (
 			if (forResult) {
 				return `• __${numericWithComma(reward.amount)}__ ${
 					reward.emoji ? emojiMap(reward.emoji) : ""
+				}${
+					cids.length > 0 ? ` Cards **(${cids.join(", ")})**` : ""
 				}`;
 			}
 			return `${titleCase(reward.name)}: __${numericWithComma(
