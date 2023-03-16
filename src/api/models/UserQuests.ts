@@ -4,6 +4,7 @@ import {
 	UserQuestCreateProps,
 } from "@customTypes/quests/users";
 import connection from "db";
+import { Knex } from "knex";
 
 const tableName = "user_quests";
 const quests = "quests";
@@ -54,35 +55,44 @@ export const get = async (
 			"is_deleted"
 		)
 		.from(tableName)
-		.where("user_tag", params.user_tag)
-		.where({ is_deleted: false });
+		.where({
+			is_deleted: false,
+			user_tag: params.user_tag 
+		});
 
-	if (params.quest_id) {
-		switch (typeof params.quest_id) {
-			case "number":
-				query = query.where("quest_id", params.quest_id);
-				break;
-			case "object":
-				query = query.whereIn("quest_id", params.quest_id);
-				break;
-			default:
-				break;
+	const filterDate = (builder: Knex.QueryBuilder) => {
+		if (params.is_daily_quest) {
+			const fromDate = new Date().setHours(0, 0, 0, 0);
+			const toDate = new Date().setHours(24, 0, 0, 0);
+			if (params.useAndClause) {
+				query = builder.andWhereBetween("created_at", [
+					new Date(fromDate),
+					new Date(toDate),
+				]);
+			} else {
+				query = builder.orWhereBetween("created_at", [
+					new Date(fromDate),
+					new Date(toDate),
+				]);
+			}
 		}
+	};
+
+	const qId = params.quest_id;
+	if (typeof qId === "number") {
+		query = query.andWhere(builder => {
+			builder.where("quest_id", qId);
+			filterDate(builder);
+		});
+	} else if (typeof qId === "object") {
+		query = query.andWhere((builder) => {
+			builder.whereIn("quest_id", qId);
+			filterDate(builder);
+		});
 	}
-	if (params.is_daily_quest) {
-		const fromDate = new Date().setHours(0, 0, 0, 0);
-		const toDate = new Date().setHours(24, 0, 0, 0);
-		if (params.useAndClause) {
-			query = query.andWhereBetween("created_at", [
-				new Date(fromDate),
-				new Date(toDate),
-			]);
-		} else {
-			query = query.orWhereBetween("created_at", [
-				new Date(fromDate),
-				new Date(toDate),
-			]);
-		}
+
+	if (!qId) {
+		filterDate(query);
 	}
 	return query;
 };
@@ -110,7 +120,8 @@ export const getByQuestType = async (params: {
 		.innerJoin(quests, `${tableName}.quest_id`, `${quests}.id`)
 		.where(`${quests}.min_level`, "<=", params.level)
 		.andWhere(`${quests}.max_level`, ">=", params.level)
-		.andWhere(`${quests}.type`, params.type);
+		.andWhere(`${quests}.type`, params.type)
+		.andWhere(`${tableName}.user_tag`, params.user_tag);
 
 	if (params.is_daily) {
 		const fromDate = new Date().setHours(0, 0, 0, 0);
