@@ -14,6 +14,7 @@ type DexEmbedProps = {
   title: string;
   description: string;
   pageName: string;
+  extraFooterText?: string;
 };
 
 function calcTotalPageCount(
@@ -35,6 +36,7 @@ export const createEmbedList = ({
 	title,
 	description,
 	pageName,
+	extraFooterText = ""
 }: DexEmbedProps) => {
 	const embed = createEmbed(author, client);
 	embed
@@ -47,7 +49,7 @@ export const createEmbedList = ({
 				totalCount === 0
 					? 0
 					: calcTotalPageCount(pageCount, currentPage, PAGE_FILTER.perPage)
-			} / ${totalCount}`,
+			} / ${totalCount}${extraFooterText ? ` | ${extraFooterText}` : ""}`,
 		}).setHideConsoleButtons(true);
 	if (list.length > 0) embed.addFields(list);
 	return embed;

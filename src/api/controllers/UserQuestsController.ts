@@ -47,7 +47,7 @@ export const getUserQuests = async (
 			is_daily_quest: true,
 		});
 		const userQuestIds = resp.map((r) => r.quest_id);
-		const data = await Promise.all(result.map(async (item) => {
+		let data = await Promise.all(result.map(async (item) => {
 			const object = item as QuestResultProps;
 			if (userQuestIds.includes(item.id)) {
 				object.hasCompleted = true;
@@ -73,6 +73,8 @@ export const getUserQuests = async (
 			}
 			return object;
 		}));
+
+		data = data.sort((a, b) => a.hasCompleted ? 1 : -1);
 		return {
 			data,
 			metadata: pagination,

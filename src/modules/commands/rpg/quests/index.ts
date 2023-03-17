@@ -5,7 +5,7 @@ import { getUserQuests } from "api/controllers/UserQuestsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import {  Message } from "discord.js";
-import { PAGE_FILTER, QUEST_TYPES } from "helpers/constants";
+import { PAGE_FILTER, QUEST_TYPES, STAR } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createQuestList } from "helpers/embedLists/quests";
 import loggers from "loggers";
@@ -62,6 +62,7 @@ export const quests = async ({ options, context, client, args }: BaseProps) => {
               	((streaks || [])[0] || {}).daily_quest_streaks || 0
               }__ :fire:`,
 						pageName: "quests",
+						extraFooterText: `${STAR} = daily quests`
 					}).setHideConsoleButtons(true);
 				}
 				if (options?.isEdit) {
