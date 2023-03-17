@@ -32,6 +32,7 @@ export type CardProps = {
 	created_at: string;
 	updated_at: string;
 	is_referral_card: boolean;
+	is_world_boss: boolean;
 }
 
 export type CardParams = Omit<Partial<CardProps>, IgnoreProps | "copies" | "filepath">

@@ -2,7 +2,8 @@ import { QuestResultProps, QuestReward } from "@customTypes/quests";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { numericWithComma } from "helpers";
+import { getEodTimeRemainingInSec, numericWithComma } from "helpers";
+import { STAR } from "helpers/constants";
 import { titleCase } from "title-case";
 
 export const prepareRewards = (
@@ -17,7 +18,9 @@ export const prepareRewards = (
 				return `• __${numericWithComma(reward.amount)}__ ${
 					reward.emoji ? emojiMap(reward.emoji) : ""
 				}${
-					cids.length > 0 && reward.key === "card" ? ` Cards **(${cids.join(", ")})**` : ""
+					cids.length > 0 && reward.key === "card"
+						? ` Cards **(${cids.join(", ")})**`
+						: ""
 				}`;
 			}
 			return `${titleCase(reward.name)}: __${numericWithComma(
@@ -36,15 +39,20 @@ export const createQuestList = (
 ) => {
 	const fields: EmbedFieldData[] = [];
 	array.map((item, i) => {
+		const secondsInEpoch = Math.round(
+			new Date().setSeconds(getEodTimeRemainingInSec()) / 1000
+		);
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} | ${titleCase(item.name)}${
 				item.criteria.toComplete && !item.hasCompleted
 					? ` (${item.completedRaids || 0} / ${item.criteria.toComplete})`
 					: ""
-			}${item.is_daily ? " [daily]" : ""}${
+			}${item.is_daily ? ` [${STAR} daily]` : ""}${
 				item.hasCompleted ? ` [completed] ${emoji.dance}` : ""
 			}`,
-			value: `${item.description}.\n**[Rewards] ${prepareRewards(
+			value: `${
+				item.description
+			}.${item.is_daily ? `**\nReset: <t:${secondsInEpoch}:R>**` : ""}\n**[Rewards] ${prepareRewards(
 				item.reward
 			)}**`,
 		});

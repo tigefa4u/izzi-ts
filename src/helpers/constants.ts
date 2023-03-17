@@ -9,6 +9,7 @@ export const BASE_XP = 10;
 export const XP_GAIN_EXPONENT = 1.5;
 
 export const DOT = "•";
+export const STAR = "★";
 export const BASE_RANK = "silver";
 export const STARTER_CARD_RANK = "diamond";
 export const STARTER_CARD_RANK_ID = 4;

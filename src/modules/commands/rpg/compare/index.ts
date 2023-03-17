@@ -8,7 +8,7 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import { statRelationMap } from "helpers/ability";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, STAR } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
@@ -88,7 +88,7 @@ export const compareCards = async ({
 			const list = createCharacterStatList(characters);
 			embed.setTitle("Base Stats").addFields(list)
 				.setFooter({
-					text: "★ = Highest value for stat",
+					text: `${STAR} = Highest value for stat`,
 					iconURL: author.displayAvatarURL()
 				})
 				.setHideConsoleButtons(true);
