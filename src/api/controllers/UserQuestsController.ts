@@ -43,7 +43,7 @@ export const getUserQuests = async (
 
 		const resp = await UserQuests.get({
 			user_tag: params.user_tag,
-			quest_id: result.map((r) => r.id),
+			quest_id: result.filter((q) => !q.is_daily).map((r) => r.id),
 			is_daily_quest: true,
 		});
 		const userQuestIds = resp.map((r) => r.quest_id);
