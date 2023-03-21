@@ -85,6 +85,7 @@ export type RaidCreateProps = {
     is_event: boolean;
     is_start: boolean;
     is_private: boolean;
+    is_world_boss?: boolean;
 }
 
 export type RaidUpdateProps = Partial<Omit<RaidCreateProps, "lobby_member">>

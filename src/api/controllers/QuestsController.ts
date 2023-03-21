@@ -6,12 +6,15 @@ import loggers from "loggers";
 import * as Quests from "../models/Quests";
 
 export const getQuestsByUserLevel = async (
-	params: { level: number },
+	params: { level: number; user_tag: string; },
 	filters: PageProps
 ): Promise<ResponseWithPagination<QuestProps[]> | undefined> => {
 	try {
 		const result = await Quests.getByUserLevel(
-			{ level: params.level },
+			{
+				level: params.level,
+				user_tag: params.user_tag 
+			},
 			await paginationParams({
 				currentPage: filters.currentPage,
 				perPage: filters.perPage,

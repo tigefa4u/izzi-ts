@@ -11,7 +11,8 @@ export const makeAWishHelp = async ({ context, client, options }: BaseProps) => 
 			"\n\n**re**\nRefills raid energy." +
 			"\n\n**chl <ID> <level>**\nSet a character level for a card (Hoax only)." +
             "\n\n**chr <ID> <rank>**\nSet a character rank for a card (Hoax only)." +
-            "\n\n**rdmg <raidID> <userID> <damage>**\nHack raid damage (Hoax only).");
+            "\n\n**rdmg <raidID> <userID> <damage>**\nHack raid damage (Hoax only)." +
+			"\n\n**wspawn**\nSpawn World boss (Hoax only).");
 
 		context.channel?.sendMessage(embed);
 		return;

@@ -8,6 +8,7 @@ import {
 import connection from "db";
 
 const tableName = "quests";
+const userQuests = "user_quests";
 
 export const transformation = {
 	id: { type: "number" },
@@ -95,7 +96,7 @@ export const getByid = async (params: QuestParams): Promise<QuestProps[]> => {
 };
 
 export const getByUserLevel = async (
-	params: { level: number },
+	params: { level: number; user_tag: string; },
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
@@ -104,24 +105,38 @@ export const getByUserLevel = async (
 	const db = connection;
 	const query = db
 		.select(
-			db.raw(`id,
-        name,
-        description,
-        difficulty,
-        reward,
-        min_level,
-        max_level,
-        is_daily,
-        is_special,
-        parent_id,
-        type,
-        criteria,
-        metadata, count(1) over() as total_count`)
+			db.raw(`${tableName}.id,
+            ${tableName}.name,
+            ${tableName}.description,
+            ${tableName}.difficulty,
+            ${tableName}.reward,
+            ${tableName}.min_level,
+            ${tableName}.max_level,
+            ${tableName}.is_daily,
+            ${tableName}.is_special,
+            ${tableName}.parent_id,
+            ${tableName}.type,
+            ${tableName}.criteria,
+            ${tableName}.metadata, count(1) over() as total_count`)
 		)
 		.from(tableName)
-		.where({ is_deleted: false })
-		.where("min_level", "<=", params.level)
-		.andWhere("max_level", ">=", params.level)
+		.where(`${tableName}.is_deleted`, false)
+		.where(`${tableName}.min_level`, "<=", params.level)
+		.andWhere(`${tableName}.max_level`, ">=", params.level)
+		.leftJoin(`${userQuests}`, `${userQuests}.quest_id`, `${userQuests}.id`)
+		.where(`${userQuests}.user_tag`, params.user_tag)
+		.where(builder => {
+			builder.whereNot(`${userQuests}.quest_id`, `${tableName}.id`)
+				.orWhere((builder2 => {
+					const fromDate = new Date().setHours(0, 0, 0, 0);
+					const toDate = new Date().setHours(24, 0, 0, 0);
+					builder2.where(`${tableName}.is_daily`, true)
+						.andWhereBetween(`${userQuests}.created_at`, [
+							new Date(fromDate),
+							new Date(toDate)
+						]);
+				}));
+		})
 		.limit(pagination.limit)
 		.offset(pagination.offset);
 

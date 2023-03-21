@@ -52,6 +52,11 @@ export const transformation = {
 		columnName: "is_event",
 		default: false,
 	},
+	isWorldBoss: {
+		type: "boolean",
+		columnName: "is_world_boss",
+		default: false
+	},
 	createdAt: {
 		type: "timestamp",
 		columnName: "created_at",
@@ -62,17 +67,18 @@ export const transformation = {
 	},
 };
 export const create = async (data: RaidCreateProps): Promise<RaidProps> => {
-	return await connection(tableName)
+	return connection(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);
 };
 
 export const get = async (params: { id: number }): Promise<RaidProps[]> => {
-	return await connection.select("*").from(tableName).where(params);
+	return connection.select("*").from(tableName).where(params)
+		.where({ is_world_boss: false });
 };
 
 export const update = async (params: { id: number }, data: RaidUpdateProps) => {
-	return await connection(tableName).where({ id: params.id }).update(data);
+	return connection(tableName).where({ id: params.id }).update(data);
 };
 
 export const updateLobby = async ({
@@ -84,7 +90,7 @@ export const updateLobby = async ({
   user_id: number;
   data: RaidLobbyProps[0];
 }) => {
-	return await connection(tableName).where({ id: raid_id }).update({
+	return connection(tableName).where({ id: raid_id }).update({
 		lobby: connection.raw(`
 		jsonb_set(??, '{${user_id}}', ?)`, [ "lobby", JSON.stringify(data) ])
 	});
@@ -94,7 +100,7 @@ export const refillEnergy = async (params: {
   data: RaidLobbyProps;
   id: number;
 }) => {
-	return await Promise.all(
+	return Promise.all(
 		Object.keys(params.data).map(async (id) => {
 			await connection(tableName).where({ id: params.id }).update({
 				lobby: connection.raw(`
@@ -118,7 +124,8 @@ export const getAll = async (
 	params?: Partial<RaidProps>
 ): Promise<RaidProps[]> => {
 	const raidDisabled = await Cache.get("disable-raids");
-	let query = connection(tableName).where({ is_event: raidDisabled ? true : false, });
+	let query = connection(tableName).where({ is_event: raidDisabled ? true : false, })
+		.where({ is_world_boss: false });
 	if (params && (params.is_start === true || params.is_start === false)) {
 		query = query.where(`${tableName}.is_start`, params.is_start);
 	}
@@ -129,7 +136,7 @@ export const getRaidLobby = async (params: {
   user_id: number;
 }): Promise<RaidProps[]> => {
 	const db = connection;
-	const query = await db
+	const query = db
 		.select(
 			db.raw(`${tableName}.*, lobby->'${params.user_id}' as lobby_member`)
 		)
@@ -161,6 +168,7 @@ export const getRaids = (
 		.where(`${tableName}.is_start`, false)
 		.where(`${tableName}.is_private`, false)
 		.where(`${tableName}.is_event`, filters.isEvent ? filters.isEvent : false)
+		.where(`${tableName}.is_world_boss`, false)
 		.as(raidAlias);
 
 	let aliasString = raidAlias;
@@ -191,4 +199,12 @@ export const getRaids = (
 	query = query.limit(pagination.limit).offset(pagination.offset);
 
 	return query;
+};
+
+export const getWorldBoss = async (): Promise<RaidProps> => {
+	return connection(tableName).where({
+		is_world_boss: true,
+		is_start: true 
+	})
+		.then((res) => res[0]);
 };
