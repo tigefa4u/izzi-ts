@@ -1,4 +1,4 @@
-import { ChannelProp } from "@customTypes";
+import { AuthorProps, ChannelProp } from "@customTypes";
 import { TradeActionProps, TradeQueueProps } from "@customTypes/trade";
 import {
 	getCollection,
@@ -171,7 +171,7 @@ export const confirmTrade = async ({
 					options: {
 						channel,
 						client,
-						author,
+						author: {} as AuthorProps,
 						extras: { tradeQueueLen: trader_1.queue.length },
 					},
 					level: 0
@@ -206,7 +206,7 @@ export const confirmTrade = async ({
 					options: {
 						channel,
 						client,
-						author,
+						author: {} as AuthorProps,
 						extras: { tradeQueueLen: trader_2.queue.length },
 					},
 					level: 0

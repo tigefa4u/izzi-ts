@@ -45,14 +45,18 @@ export const fetchAndCompleteQuest = async (
 			"quests.common.fetchAndCompleteQuest: start quest process for uid: " +
         user_tag
 		);
-		const { author, client, channel } = params.options;
-		const quests = await getQuestByTypeAndLevel({
-			type: type,
-			level: level,
-		});
+		const { client, channel } = params.options;
+		const [ quests, _author ] = await Promise.all([
+			getQuestByTypeAndLevel({
+				type: type,
+				level: level,
+			}),
+			client.users.fetch(user_tag)
+		]);
 		if (!quests || quests.length <= 0) return;
 		const quest = quests[0];
-
+		params.options.author = _author;
+		const author = _author;
 		const isCriteriaValid = validateCriteria(quest.criteria, quest.is_daily);
 		if (!isCriteriaValid) return;
 
@@ -72,7 +76,7 @@ export const fetchAndCompleteQuest = async (
 			getUserStreaks({ user_tag: user_tag }),
 		]);
 		if (userQuest && userQuest.length > 0) {
-			await clearRaidChallengeCache(author.id, quest.type);
+			await clearRaidChallengeCache(user_tag, quest.type);
 			return;
 		}
 		const cardReward = {} as QuestCompleteCardRewardProps;
@@ -92,7 +96,7 @@ export const fetchAndCompleteQuest = async (
 		await completeQuest(
 			quest.reward,
 			{
-				user_tag: author.id,
+				user_tag: user_tag,
 				username: author.username,
 				quest_id: quest.id,
 				isUpdateUserQuestStreak: streaks && streaks.length > 0 ? true : false,
