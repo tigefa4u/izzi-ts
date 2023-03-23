@@ -123,20 +123,20 @@ export const getByUserLevel = async (
 		.where(`${tableName}.is_deleted`, false)
 		.where(`${tableName}.min_level`, "<=", params.level)
 		.andWhere(`${tableName}.max_level`, ">=", params.level)
-		.leftJoin(`${userQuests}`, `${userQuests}.quest_id`, `${userQuests}.id`)
-		.where(`${userQuests}.user_tag`, params.user_tag)
-		.where(builder => {
-			builder.whereNot(`${userQuests}.quest_id`, `${tableName}.id`)
-				.orWhere((builder2 => {
-					const fromDate = new Date().setHours(0, 0, 0, 0);
-					const toDate = new Date().setHours(24, 0, 0, 0);
-					builder2.where(`${tableName}.is_daily`, true)
-						.andWhereBetween(`${userQuests}.created_at`, [
-							new Date(fromDate),
-							new Date(toDate)
-						]);
-				}));
-		})
+		// .leftJoin(`${userQuests}`, `${userQuests}.quest_id`, `${tableName}.id`)
+		// .where(`${userQuests}.user_tag`, params.user_tag)
+		// .where(builder => {
+		// 	builder.whereNot(`${userQuests}.quest_id`, `${tableName}.id`)
+		// 		.orWhere((builder2 => {
+		// 			const fromDate = new Date().setHours(0, 0, 0, 0);
+		// 			const toDate = new Date().setHours(24, 0, 0, 0);
+		// 			builder2.where(`${tableName}.is_daily`, true)
+		// 				.andWhereBetween(`${userQuests}.created_at`, [
+		// 					new Date(fromDate),
+		// 					new Date(toDate)
+		// 				]);
+		// 		}));
+		// })
 		.limit(pagination.limit)
 		.offset(pagination.offset);
 
