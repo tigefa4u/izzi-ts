@@ -21,8 +21,6 @@ export const processMarketQuest = async <
 		const { rank, price } = params.options.extras;
 		if (!rank || !price || isNaN(price)) return;
 
-		const _author = await params.options.client.users.fetch(params.user_tag);
-		params.options.author = _author;
 		fetchAndCompleteQuest(params, (criteria) => {
 			const isValid = validateCriteria(
 				criteria,

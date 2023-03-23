@@ -24,13 +24,9 @@ export const processRaidMvpQuest = async <ET extends {
 		loggers.info("quests.functions.raidMvp.processRaidMvp: mvp found - " +
         JSON.stringify(member));
 
-		const [ user, _author ] = await Promise.all([
-			getRPGUser({ user_tag: member.user_tag }),
-			params.options.client.users.fetch(member.user_tag)
-		]);
+		const user = await getRPGUser({ user_tag: member.user_tag });
 		if (!user) return;
 		params.level = user.level;
-		params.options.author = _author;
 
 		loggers.info("quests.functions.raidMvp.processRaidMvp: mvp quest started for raid ID: " + 
         params.options.extras?.raidId || "No ID found");

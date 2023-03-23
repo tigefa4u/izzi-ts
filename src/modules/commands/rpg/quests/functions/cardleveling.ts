@@ -23,7 +23,6 @@ export const processCardLeveling = async <ET extends processCardLevelingExtras>(
 	params: ProcessQuestProps<ET>
 ) => {
 	try {
-		const { author, channel, client } = params.options;
 		loggers.info(
 			"rpg.quests.functions.processCardLeveling: starting card leveling quest for user: " +
         params.user_tag
