@@ -151,7 +151,7 @@ export const battleBoss = async ({
 			context,
 			playerStats: playerStats.stats,
 			enemyStats,
-			title: `__${isEvent ? "Event" : "Raid"} Challenge Battle__`,
+			title: `__${isEvent ? "Event" : "Raid"} Boss Battle__`,
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 			multiplier
@@ -333,7 +333,7 @@ async function processRaidResult({
 				updateObj.stats.remaining_strength
 			)} / ${numericWithComma(updateObj.stats.original_strength)} ${
 				emoji.hp
-			}**\n${fakeHp.map((i) => i).join("")}`
+			}**\n${fakeHp.join("")}`
 		)
 		.setThumbnail("attachment://boss.jpg")
 		.attachFiles([ attachment ]);

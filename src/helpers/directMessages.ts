@@ -1,4 +1,5 @@
-import { Client, MessageEmbed } from "discord.js";
+import { ChannelProp } from "@customTypes";
+import { Client, Guild, MessageEmbed, TextBasedChannel } from "discord.js";
 import { delay } from "helpers";
 import loggers from "loggers";
 
@@ -23,4 +24,70 @@ export const DMUser = async (
 		);
 	}
 	return;
+};
+
+export const MessageGuildDefaultChannel = async (
+	client: Client,
+	guildId: string,
+	content: string | MessageEmbed
+) => {
+	try {
+		const guild = await client.guilds.fetch(guildId);
+		const me = guild.me;
+		if (!me) return;
+		let defaultChannel = {} as TextBasedChannel;
+		const dfKeys = Object.keys(defaultChannel);
+		// finding the channel with send message permissions
+		guild.channels.cache.forEach((channel) => {
+			const channelPerms = channel.permissionsFor(me);
+			if (channel.type === "GUILD_TEXT" && dfKeys.length === 0 && 
+			channelPerms && channelPerms.has("SEND_MESSAGES") && channelPerms.has("VIEW_CHANNEL")) {
+				defaultChannel = channel;
+			}
+		});
+		defaultChannel.sendMessage(content);
+		return;
+	} catch (err) {
+		loggers.error(
+			"helpers.directMessages.MessageGuildChannels: Unable to send messages: Content: " +
+        JSON.stringify(content),
+			err
+		);
+		return;
+	}
+};
+
+type P = {
+  client: Client;
+  content: string | MessageEmbed;
+};
+export const PublishMessageToAllGuilds = async ({ content, client }: P) => {
+	try {
+		// const guilds = await getAllGuilds();
+		// if (!guilds || guilds.length <= 0) {
+		// 	throw new Error("There are no guilds found");
+		// }
+		const guilds = (
+			await client.shard?.broadcastEval((g) => g.guilds.cache)
+		)?.flat();
+
+		const len = guilds?.length || 0;
+		console.log("Publishing started...");
+		if (guilds && len > 0) {
+			const totalInter = Math.ceil(len / 1000);
+			for (let i = 0; i < totalInter; i++) {
+				const chunk = guilds.splice(0, 1000);
+				await Promise.all(chunk.map((guild) => MessageGuildDefaultChannel(client, guild.id, content)));
+				await delay(500);
+			}
+		}
+		console.log("Publishing completed...");
+		return;
+	} catch (err) {
+		loggers.error(
+			"helpers.directMessages.PublishMessageToAllGuilds: ERROR",
+			err
+		);
+		return;
+	}
 };

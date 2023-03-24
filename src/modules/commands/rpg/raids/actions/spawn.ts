@@ -85,6 +85,56 @@ const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
 	return loot;
 };
 
+export const computeRaidBossStats = async ({
+	raidBosses,
+	computedBoss
+}: {
+	raidBosses: CollectionCardInfoProps[];
+	computedBoss: C["computedBoss"];
+}) => {
+	const stats = await prepareTotalOverallStats({
+		collections: clone(raidBosses),
+		isBattle: false,
+	});
+	if (!stats) {
+		throw new Error("Unable to prepare raid boss stats");
+	}
+
+	if (stats.totalOverallStats.originalHp === 0) {
+		stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
+	}
+	const dt = new Date();
+	const reducedLevel = raidBosses.reduce(
+		(acc, r) => {
+			acc.character_level = acc.character_level + r.character_level;
+			return acc;
+		},
+    { character_level: 0 } as { character_level: number }
+	);
+
+	const totalBossLevel: number = reducedLevel.character_level;
+	const computedLoot = calculateDropRateByPL(stats.totalPowerLevel, computedBoss.loot);
+
+	const raidStats = {
+		battle_stats: {
+			boss_level: totalBossLevel,
+			bosses: computedBoss.bosses,
+			power_level: stats.totalPowerLevel,
+			stats: stats.totalOverallStats,
+		},
+		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
+		timestamp: dt.setHours(dt.getHours() + 1),
+		rawDifficulty: computedBoss.difficulty
+	} as RaidStatsProps;
+
+	return {
+		raidStats,
+		computedLoot 
+	};
+};
+
 export const createRaidBoss = async ({
 	computedBoss,
 	isEvent,
@@ -140,43 +190,10 @@ export const createRaidBoss = async ({
 			})
 	)) as CollectionCardInfoProps[];
 
-	const stats = await prepareTotalOverallStats({
-		collections: clone(raidBosses),
-		isBattle: false,
+	const { raidStats, computedLoot } = await computeRaidBossStats({
+		raidBosses,
+		computedBoss
 	});
-	if (!stats) {
-		throw new Error("Unable to prepare raid boss stats");
-	}
-
-	if (stats.totalOverallStats.originalHp === 0) {
-		stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
-	}
-	const dt = new Date();
-	const reducedLevel = raidBosses.reduce(
-		(acc, r) => {
-			acc.character_level = acc.character_level + r.character_level;
-			return acc;
-		},
-    { character_level: 0 } as { character_level: number }
-	);
-
-	const totalBossLevel: number = reducedLevel.character_level;
-	const computedLoot = calculateDropRateByPL(stats.totalPowerLevel, computedBoss.loot);
-
-	const raidStats = {
-		battle_stats: {
-			boss_level: totalBossLevel,
-			bosses: computedBoss.bosses,
-			power_level: stats.totalPowerLevel,
-			stats: stats.totalOverallStats,
-		},
-		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
-		timestamp: dt.setHours(dt.getHours() + 1),
-		rawDifficulty: computedBoss.difficulty
-	} as RaidStatsProps;
-
 	const raid = await createRaid({
 		stats: raidStats,
 		lobby: lobby,

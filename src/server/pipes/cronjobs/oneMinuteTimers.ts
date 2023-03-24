@@ -3,7 +3,7 @@ import loggers from "loggers";
 import { DMUserViaApi } from "../directMessage";
 import "../../../module";
 import autoKick from "../autoKick";
-import { delay, generateUUID } from "helpers";
+import { delay, generateUUID, getRemainingHoursAndMinutes } from "helpers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 
 // connect to process - chrome dev tool - remote connection
@@ -14,14 +14,9 @@ async function raidTimers() {
 		loggers.info("cronjobs.oneMinuteTimers.raidTimers: cronjob invoked..");
 		const raidIdsToDelete: number[] = [];
 		raids.map((raid) => {
-			const remainingTime =
-          (new Date(raid.stats.timestamp).valueOf() - new Date().valueOf()) /
-          1000 /
-          60;
-			const remainingHours = Math.floor(remainingTime / 60);
-			const remainingMinutes = Math.floor(remainingTime % 60);
+			const { remainingHours, remainingMinutes } = getRemainingHoursAndMinutes(raid.stats.timestamp);
 			if (remainingMinutes <= 0 && remainingHours <= 0) {
-				const keys = Object.keys(raid.lobby).map(Number);
+				// const keys = Object.keys(raid.lobby).map(Number);
 				raidIdsToDelete.push(raid.id);
 				return;
 				// return await deleteRaid({ id: raid.id });

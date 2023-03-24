@@ -113,7 +113,7 @@ export const fetchAndCompleteQuest = async (
 						`**__${titleCase(quest.name)}__**\nCongratulations summoner **${
 							author.username
 						}**! You have completed your ` +
-              "Daily Quest." +
+              `${quest.is_daily ? "Daily Quest." : ""}` +
               `\n\n**__Rewards__**\n${prepareRewards(
               	quest.reward,
               	true,

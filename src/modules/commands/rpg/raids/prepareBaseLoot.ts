@@ -1,4 +1,5 @@
 import { randomNumber } from "helpers";
+import { crates } from "./crateLoot";
 
 const baseLoot = (): any => ({
 	e: {
@@ -124,7 +125,7 @@ const baseLoot = (): any => ({
 	h: {
 		default: {
 			level: [ 280, 400 ],
-			rank: [ "platinum", "platinum" ],
+			rank: [ "platinum" ],
 			loot: {
 				gold: randomNumber(26000, 30000),
 				extraGold: randomNumber(25000, 32000),
@@ -165,7 +166,42 @@ const baseLoot = (): any => ({
 						rate: 3.25,
 						number: 1
 					}
-				]
+				],
+				worldBoss: {
+					// Per battle (50 mana) w 9x fodders
+					gold: randomNumber(8000, 9000),
+					default: [ {
+						rank: "divine",
+						rank_id: 6,
+						number: 1,
+						rate: 15,
+						threshold: 5,
+						extraGold: randomNumber(8000, 9000),
+						souls: 10,
+						crates: crates.legendary,
+						crateDropRate: 5
+					}, {
+						rank: "immortal",
+						rank_id: 7,
+						number: 1,
+						rate: 25,
+						threshold: 15,
+						extraGold: randomNumber(10000, 15000),
+						souls: 15,
+						crates: crates.legendary,
+						crateDropRate: 10
+					}, {
+						rank: "exclusive",
+						rank_id: 8,
+						number: 1,
+						rate: 25,
+						threshold: 25,
+						extraGold: randomNumber(15000, 20000),
+						souls: 30,
+						crates: crates.premium,
+						crateDropRate: 15
+					} ],
+				}
 			}
 		},
 		event: {

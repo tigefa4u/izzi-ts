@@ -1,8 +1,10 @@
 import { BaseProps } from "@customTypes/command";
 import { updateCollection } from "api/controllers/CollectionsController";
 import { getRaid, updateRaid } from "api/controllers/RaidsController";
+import { getWorldBossRaid } from "api/controllers/WorldBossController";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
+import { numericWithComma } from "helpers";
 import { ranksMeta } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { RanksMetaProps } from "helpers/helperTypes";
@@ -100,6 +102,33 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 		return;
 	} catch (err) {
 		loggers.error("specialCommands.addRaidDamage: ERROR", err);
+		return;
+	}
+};
+
+export const addWorldBossDamage = async ({ options, client, context, args }: BaseProps) => {
+	try {
+		const author = options.author;
+		if (author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			return;
+		}
+		const dmg = Number(args.shift());
+		if (!dmg || isNaN(dmg)) return;
+		const raid = await getWorldBossRaid({ is_start: true });
+		if (!raid) {
+			context.channel?.sendMessage("World Boss does not exist or has not started.");
+			return;
+		}
+		raid.stats.remaining_strength = raid.stats.remaining_strength - dmg;
+		if (raid.stats.remaining_strength < 10000) raid.stats.remaining_strength = 10000;
+		updateRaid({ id: raid.id }, { stats: raid.stats });
+		const msg = "Hi dad, I've updated the world boss HP for ID: " + raid.id + 
+		"\nCurrent HP: " + numericWithComma(raid.stats.remaining_strength || 0);
+		context.channel?.sendMessage(msg);
+		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
+	} catch (err) {
+		loggers.error("specialCommands.addWorldBossDamage: ERROR", err);
 		return;
 	}
 };

@@ -3,9 +3,12 @@ import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { sort } from "../sorting";
 import { makeAWishHelp } from "./help";
-import { addRaidDamage, setCharacterLevel, setCharacterRank } from "./hoaxCommands";
+import { addRaidDamage, addWorldBossDamage, setCharacterLevel, setCharacterRank } from "./hoaxCommands";
+import { spawnWorldBoss } from "./worldboss/spawn";
 import { specialWish } from "./specialWish";
 import { subcommands } from "./subcommands";
+import { startWB } from "./worldboss/start";
+import { finishWB } from "./worldboss/end";
 
 const wishesFrom = [ "476049957904711682", "266457718942990337" ];
 export const makeAWish = async (params: BaseProps) => {
@@ -36,6 +39,18 @@ export const makeAWish = async (params: BaseProps) => {
 			} else if (subcommand === "re") {
 				params.args = [ "raid-energy" ];
 				specialWish(params);
+				return;
+			} else if (subcommand === "wspawn") {
+				spawnWorldBoss(params);
+				return;
+			} else if (subcommand === "wstart") {
+				startWB(params);
+				return;
+			} else if (subcommand === "wend") {
+				finishWB(params);
+				return;
+			} else if (subcommand === "wdmg") {
+				addWorldBossDamage(params);
 				return;
 			}
 		}

@@ -443,6 +443,14 @@ export const CONSOLE_BUTTONS = {
 	UPGRADE_GUILD: {
 		id: "upgrade_guild",
 		label: "Upgrade Guild"
+	},
+	ATTACK_WORLDBOSS: {
+		id: "attack_worldboss",
+		label: "Battle World Boss"
+	},
+	DISCLAIMER: {
+		id: "disclaimer",
+		label: "Show Disclaimer"
 	}
 };
 
@@ -509,3 +517,12 @@ export const QUEST_TYPES: {
 };
 
 export const MIN_TRADE_CARDS_FOR_QUEST = 1000;
+
+export const WORLD_BOSS_DIFFICULTY = "hard";
+export const WORLD_BOSS_LEVEL = 1800;
+// Number of iterations before the raid boss is defeated
+export const WORLD_BOSS_ENERGY = 7;
+export const WORLD_BOSS_HP_MULTIPLIER = 20;
+export const WORLD_BOSS_EXPIRES_IN_DAYS = 14;
+export const WORLD_BOSS_MANA_PER_BATTLE = 50;
+export const WORLD_BOSS_MIN_LEVEL = 12;

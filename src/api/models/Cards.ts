@@ -44,6 +44,10 @@ export const transformation = {
 	isReferralCard: {
 		type: "boolean",
 		columnName: "is_referral_card"
+	},
+	isWorldBoss: {
+		type: "boolean",
+		columnName: "is_world_boss"
 	}
 };
 export const get: (params: CardParams) => Promise<CardProps[]> = async function (params) {
@@ -72,7 +76,8 @@ export const getRandomCard: (
 		.from(tableName)
 		.leftJoin(characters, `${tableName}.character_id`, `${characters}.id`)
 		.leftJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
-		.where(queryParams);
+		.where(queryParams)
+		.andWhere({ is_world_boss: false });
 	if (queryParams.is_event) {
 		query = query.where(`${tableName}.has_event_ended`, "false");
 	} else {
@@ -107,4 +112,32 @@ export const getBySeries: (params: {
 		.where(`${tableName}.series`, "ilike", `%${params.series}%`);
 
 	return query;
+};
+
+export const getForWorldBoss = (params: { rank: string; }): Promise<RandomCardProps> => {
+	const db = connection;
+	const query = db.select(db.raw(`
+		${tableName}.id,
+		${tableName}.filepath,
+		${tableName}.metadata,
+		${tableName}.rank,
+		${tableName}.character_id,
+		${tableName}.is_world_boss,
+		${tableName}.created_at,
+		${characters}.name, ${characters}.type, ${characters}.stats, ${abilities}.name as abilityname
+	`)).from(tableName)
+		.innerJoin(characters, `${tableName}.character_id`, `${characters}.id`)
+		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
+		.where({
+			is_world_boss: true,
+			has_event_ended: false 
+		})
+		.where({ rank: params.rank })
+		.then((res) => res[0]);
+
+	return query;
+};
+
+export const finishWbChallenge = async (cids: number[]) => {
+	return connection(tableName).whereIn("character_id", cids).update({ has_event_ended: true });
 };

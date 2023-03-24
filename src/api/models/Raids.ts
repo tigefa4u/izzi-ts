@@ -201,10 +201,11 @@ export const getRaids = (
 	return query;
 };
 
-export const getWorldBoss = async (): Promise<RaidProps> => {
-	return connection(tableName).where({
-		is_world_boss: true,
-		is_start: true 
-	})
-		.then((res) => res[0]);
+export const getWorldBoss = async (params?: { is_start: boolean; }): Promise<RaidProps> => {
+	let query = connection(tableName).where({ is_world_boss: true, });
+	
+	if (typeof params?.is_start === "boolean") {
+		query = query.where({ is_start: params.is_start });
+	}
+	return query.then((res) => res[0]);
 };

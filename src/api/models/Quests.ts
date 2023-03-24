@@ -123,6 +123,8 @@ export const getByUserLevel = async (
 		.where(`${tableName}.is_deleted`, false)
 		.where(`${tableName}.min_level`, "<=", params.level)
 		.andWhere(`${tableName}.max_level`, ">=", params.level)
+
+		// FIXME: Fix this to make fetch userquests with single query
 		// .leftJoin(`${userQuests}`, `${userQuests}.quest_id`, `${tableName}.id`)
 		// .where(`${userQuests}.user_tag`, params.user_tag)
 		// .where(builder => {

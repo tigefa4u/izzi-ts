@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { getUserRaidLobby, updateRaid, updateRaidEnergy } from "api/controllers/RaidsController";
+import { getUserRaidLobby, updateRaidEnergy } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";

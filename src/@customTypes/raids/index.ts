@@ -45,7 +45,26 @@ export type RaidLootProps = {
         event?: {
             shard: number;
             orbs: number;
-        }
+        };
+        worldBoss?: {
+            gold: number;
+            default: {
+                rank: string;
+                rank_id: number;
+                number: number;
+                rate: number;
+                threshold: number;
+                extraGold: number;
+                souls: number;
+                crates: {
+                    category: string;
+                    price: 0;
+                    contents: Record<string, unknown>;
+                    is_on_market: boolean;
+                };
+                crateDropRate: number;
+            }[];
+        };
     };
     rare?: RaidLootDropProps[]
     division?: string;
@@ -57,6 +76,7 @@ export type RaidStatsProps = {
         boss_level: number;
         power_level: number;
         stats: OverallStatsProps;
+        energy?: number;
     };
     remaining_strength: number;
     original_strength: number;
@@ -75,6 +95,7 @@ export type RaidProps = {
     is_start: boolean;
     is_private: boolean;
     lobby_member?: L;
+    created_at?: string;
 }
 
 export type RaidCreateProps = {

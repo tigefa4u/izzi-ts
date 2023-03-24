@@ -108,6 +108,7 @@ export type CommandMapProps = {
 	referral: (params: BaseProps) => void;
 	customcard: (params: BaseProps) => void;
 	quest: (params: BaseProps) => void;
+	worldboss: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

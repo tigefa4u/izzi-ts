@@ -97,3 +97,12 @@ export const disbandAndBackupGuild = async ({ guild }: { guild: GuildProps; }) =
 		return;
 	}
 };
+
+export const getAllGuilds = async () => {
+	try {
+		return Guilds.getAll();
+	} catch (err) {
+		loggers.error("controllers.GuildsController.getAllGuilds: ERROR", err);
+		return;
+	}
+};

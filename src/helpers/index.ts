@@ -58,8 +58,9 @@ export const randomNumber = (num1: number, num2: number, float = false) => {
 };
 
 export const randomElementFromArray = <T>(array: T[]) => {
+	if (array.length === 1) return array[0];
 	const sample = _.sample<T>(array);
-	if (!sample)  return array[0];
+	if (!sample) return array[0];
 	return sample;
 };
 
@@ -79,7 +80,9 @@ export const checkExistingAccount = async (id: string) => {
 
 export const verifyFilter = (id: string, propsToVerify: MapProps): boolean => {
 	let flag = false;
-	const isValid = Object.keys(propsToVerify).filter((k) => id === propsToVerify[k]);
+	const isValid = Object.keys(propsToVerify).filter(
+		(k) => id === propsToVerify[k]
+	);
 	if (isValid.length > 0) {
 		flag = true;
 	}
@@ -189,10 +192,13 @@ export const getIdFromMentionedString = (id = "") => {
 	return id.replace(/<@!/, "").replace(/<@/, "").replace(/>/, "");
 };
 
-type ProbabilityDistributionMap = Map<string, {
-	x: number;
-	y: number;
-}>
+type ProbabilityDistributionMap = Map<
+  string,
+  {
+    x: number;
+    y: number;
+  }
+>;
 export const probability = (chances: number[]): number => {
 	let sum = 0;
 	chances.forEach(function (chance) {
@@ -218,7 +224,7 @@ export const probability = (chances: number[]): number => {
 	// 	if (i === 0) {
 	// 		distributionMap.set(`${item}#${i}`, {
 	// 			x: i,
-	// 			y: item - 1 
+	// 			y: item - 1
 	// 		});
 	// 	} else {
 	// 		distributionMap.set(`${item}#${i}`, {
@@ -295,7 +301,7 @@ export const overallStats = (params: {
   powerLevel: PLProps;
   guildStats?: GuildStatProps;
   isForBattle?: boolean;
-}): { totalStats: OverallStatsProps; baseStats: OverallStatsProps; } => {
+}): { totalStats: OverallStatsProps; baseStats: OverallStatsProps } => {
 	const {
 		stats, character_level, powerLevel, guildStats, isForBattle 
 	} =
@@ -310,7 +316,7 @@ export const overallStats = (params: {
 			)
 		) {
 			Object.assign(totalStats, { [stat]: stats[stat as keyof CharacterStatProps], });
-			Object.assign(baseStats, { [stat]: stats[stat as keyof CharacterStatProps] });
+			Object.assign(baseStats, { [stat]: stats[stat as keyof CharacterStatProps], });
 		} else {
 			Object.assign(totalStats, {
 				[stat]: calcStat(
@@ -335,8 +341,8 @@ export const overallStats = (params: {
 				});
 			}
 
-			Object.assign(baseStats, { [stat]: totalStats[stat as keyof CharacterStatProps] });
-			
+			Object.assign(baseStats, { [stat]: totalStats[stat as keyof CharacterStatProps], });
+
 			if (isForBattle === true) {
 				if (stat === "strength") {
 					Object.assign(totalStats, {
@@ -359,7 +365,7 @@ export const overallStats = (params: {
 	});
 	return {
 		totalStats,
-		baseStats 
+		baseStats,
 	};
 };
 
@@ -367,18 +373,18 @@ export const preparePlayerBase = ({
 	id,
 	playerStats,
 	name,
-	card
+	card,
 }: {
-	id: string;
-	card: CollectionCardInfoProps;
-	name: string;
-	playerStats: BattleStats["totalStats"];
+  id: string;
+  card: CollectionCardInfoProps;
+  name: string;
+  playerStats: BattleStats["totalStats"];
 }) => {
 	const baseStats: BattleStats = {
 		id,
 		cards: [],
 		name,
-		totalStats: playerStats
+		totalStats: playerStats,
 	};
 	baseStats.cards[0] = undefined;
 	baseStats.cards[1] = card;
@@ -387,10 +393,15 @@ export const preparePlayerBase = ({
 	return baseStats;
 };
 
-export const validateChannelPermissions = (context: BaseProps["context"], ch?: string) => {
+export const validateChannelPermissions = (
+	context: BaseProps["context"],
+	ch?: string
+) => {
 	let hasPermission = true;
 	if (!context.channel?.id) return false;
-	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id)?.serialize();
+	const permissionsMap = context.guild?.me
+		?.permissionsIn(ch || context.channel.id)
+		?.serialize();
 	for (const permission of BOT_GLOBAL_PERMISSIONS) {
 		if (!permissionsMap || !permissionsMap[permission]) {
 			hasPermission = false;
@@ -400,9 +411,14 @@ export const validateChannelPermissions = (context: BaseProps["context"], ch?: s
 	return hasPermission;
 };
 
-export const checkReadMessagePerms = (context: BaseProps["context"], ch?: string) => {
+export const checkReadMessagePerms = (
+	context: BaseProps["context"],
+	ch?: string
+) => {
 	if (!context.channel?.id) return false;
-	const permissionsMap = context.guild?.me?.permissionsIn(ch || context.channel.id)?.serialize();	
+	const permissionsMap = context.guild?.me
+		?.permissionsIn(ch || context.channel.id)
+		?.serialize();
 	if (permissionsMap?.READ_MESSAGE_HISTORY) return true;
 	return false;
 };
@@ -430,15 +446,16 @@ export const numericWithComma = (num: number) => {
 	return n.toLocaleString();
 };
 
-export const round2Decimal = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
+export const round2Decimal = (num: number) =>
+	Math.round((num + Number.EPSILON) * 100) / 100;
 
 export const findAndSwap = (array: any[], priorityOrder: any[]) => {
 	if (!Array.isArray(array)) return array;
 	if (!Array.isArray(array)) return priorityOrder;
 	const temp: any[] = [];
 	priorityOrder.map((opt) => {
-	  const index = array.findIndex((i) => i === opt);
-	  if (index >= 0) temp.push(array[index]);
+		const index = array.findIndex((i) => i === opt);
+		if (index >= 0) temp.push(array[index]);
 	});
 	return temp;
 };
@@ -448,5 +465,22 @@ export const getEodTimeRemainingInSec = () => {
 	const h = d.getHours();
 	const m = d.getMinutes();
 	const s = d.getSeconds();
-	return (24 * 60 * 60) - (h * 60 * 60) - (m * 60) - s;
+	return 24 * 60 * 60 - h * 60 * 60 - m * 60 - s;
+};
+
+export const getRemainingTimer = (timestamp: number) => {
+	const dt = Math.round(new Date(timestamp).getTime() / 1000);
+	return `<t:${dt}:R>`;
+};
+
+export const getRemainingHoursAndMinutes = (timestamp: number) => {
+	const remainingTime =
+    (new Date(timestamp).valueOf() - new Date().valueOf()) / 1000 / 60;
+	const remainingHours = Math.floor(remainingTime / 60);
+	const remainingMinutes = Math.floor(remainingTime % 60);
+
+	return {
+		remainingHours,
+		remainingMinutes,
+	};
 };

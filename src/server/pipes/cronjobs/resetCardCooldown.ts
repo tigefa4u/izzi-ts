@@ -1,5 +1,6 @@
 import { getCollectionsOnCooldown, updateCollection } from "api/controllers/CollectionsController";
 import Cache from "cache";
+import { getRemainingHoursAndMinutes } from "helpers";
 
 const resetCardCooldown = async () => {
 	try {
@@ -10,10 +11,7 @@ const resetCardCooldown = async () => {
 			if (item) {
 				item = JSON.parse(item);
 				const { cooldownEndsAt } = item;
-				const remainingTime =
-            (cooldownEndsAt - new Date().getTime()) / 1000 / 60;
-				const remainingHours = Math.floor(remainingTime / 60);
-				const remainingMinutes = Math.floor(remainingTime % 60);
+				const { remainingHours, remainingMinutes } = getRemainingHoursAndMinutes(cooldownEndsAt);
 				if (remainingHours <= 0 && remainingMinutes <= 0) {
 					return card.id;
 				}

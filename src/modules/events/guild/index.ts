@@ -1,12 +1,9 @@
-import { ChannelProp } from "@customTypes";
 import { CustomButtonInteractionParams } from "@customTypes/button";
-import { delGuildItems } from "api/controllers/GuildItemsController";
-import { delAllGuildMembers } from "api/controllers/GuildMembersController";
-import { createGuild, disbandAndBackupGuild, getGuild, updateGuild } from "api/controllers/GuildsController";
+import { createGuild, disbandAndBackupGuild, getGuild } from "api/controllers/GuildsController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
-import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK, SLASH_COMMANDS_KEYBOARD_SHORTCUTS } from "environment";
+import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
 import loggers from "loggers";
 import { getWebsiteUrls } from "modules/commands/basic";
 import { starterGuide } from "modules/commands/rpg/profile/guide";
@@ -54,9 +51,10 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 		}
 		const me = guild.me;
 		if (!me) return;
+		const dfKeys = Object.keys(defaultChannel);
 		// finding the channel with send message permissions
 		guild.channels.cache.forEach((channel) => {
-			if (channel.type === "GUILD_TEXT" && Object.keys(defaultChannel).length === 0) {
+			if (channel.type === "GUILD_TEXT" && dfKeys.length === 0) {
 				if (channel.permissionsFor(me).has("SEND_MESSAGES")) {
 					defaultChannel = channel;
 				}

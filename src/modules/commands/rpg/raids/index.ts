@@ -101,7 +101,12 @@ export const raidActions = async ({
 	}
 };
 
-export function prepareRaidBossEmbedDesc(raid: RaidProps, isEvent = false) {
+export function prepareRaidBossEmbedDesc(
+	raid: RaidProps,
+	isEvent = false,
+	isWorldBoss = false,
+	prepareLootCb?: () => string
+) {
 	const stats = raid.stats;
 	const loot = raid.loot;
 	const boss = raid.raid_boss;
@@ -114,28 +119,30 @@ export function prepareRaidBossEmbedDesc(raid: RaidProps, isEvent = false) {
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 
 	const desc = `**Level ${stats.battle_stats.boss_level} ${
-		isEvent ? "Event" : "Raid"
-	} Boss [${raid.is_private ? "Private" : "Public"}]**\n**${numericWithComma(
-		stats.remaining_strength
-	)} / ${numericWithComma(stats.original_strength)} ${emoji.hp}**\n${fakeHp
-		.map((i) => i)
-		.join("")}\n\n**Element Type:** ${boss
+		isWorldBoss ? "World" : isEvent ? "Event" : "Raid"
+	} Boss [${
+		isWorldBoss ? "Global" : raid.is_private ? "Private" : "Public"
+	}]**\n**${numericWithComma(stats.remaining_strength)} / ${numericWithComma(
+		stats.original_strength
+	)} ${emoji.hp}**\n${fakeHp.map((i) => i).join("")}\n\n**Element Type:** ${boss
 		.map((c) => emojiMap(c.type))
-		.join("")}${
-		`\n**Raid Bosses: ${raid.raid_boss.map((b) => titleCase(b.name)).join(", ")}**`
-	}\n**Boss Ability:** ${boss
+		.join("")}${`\n**Raid Bosses: ${raid.raid_boss
+		.map((b) => titleCase(b.name))
+		.join(", ")}**`}\n**Boss Ability:** ${boss
 		.map((c) => emojiMap(c.abilityname))
-		.join(" ")}\n**Total HP:** ${
-		stats.battle_stats.stats.strength
-	}\n**Total ATK:** ${stats.battle_stats.stats.vitality}\n**Total DEF:** ${
-		stats.battle_stats.stats.defense
-	}\n**Total SPD:** ${stats.battle_stats.stats.dexterity}\n**Total INT:** ${
+		.join(" ")}${
+		isWorldBoss
+			? `\n**Boss Energy (Lives):** ${raid.stats.battle_stats.energy || 1} ${emoji.hp}`
+			: ""
+	}\n**Total HP:** ${stats.battle_stats.stats.strength}\n**Total ATK:** ${
+		stats.battle_stats.stats.vitality
+	}\n**Total DEF:** ${stats.battle_stats.stats.defense}\n**Total SPD:** ${
+		stats.battle_stats.stats.dexterity
+	}\n**Total INT:** ${
 		stats.battle_stats.stats.intelligence
-	}\n\n**Power Level:** ${stats.battle_stats.power_level}\n\n${prepareLoot(
-		boss,
-		loot,
-		isEvent
-	)}`;
+	}\n\n**Power Level:** ${stats.battle_stats.power_level}\n\n${
+		prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)
+	}`;
 
 	return desc;
 }
@@ -168,7 +175,9 @@ function prepareLoot(
 		isEvent ? "Event" : "Raid"
 	} Rewards [For Everyone]__**\n__${numericWithComma(loot.gold)}__ Gold ${
 		emoji.gold
-	}${loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points :game_die:` : ""}\n${eventDesc}${
+	}${
+		loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points :game_die:` : ""
+	}\n${eventDesc}${
 		loot.drop && loot.drop.default && !isEmptyValue(loot.drop.default)
 			? loot.drop.default
 				.map(

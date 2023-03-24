@@ -54,25 +54,29 @@ export const transformation = {
 };
 
 export const get = async (params: GuildParams): Promise<GuildProps[]> => {
-	return await connection(tableName).where(params);
+	return connection(tableName).where(params);
+};
+
+export const getAll = async (): Promise<GuildProps[]> => {
+	return connection(tableName);
 };
 
 export const create = async (data: GuildCreateProps | GuildCreateProps[]) => {
-	return await connection(tableName).insert(data);
+	return connection(tableName).insert(data);
 };
 
 export const del = async (params: { id: number }) => {
-	return await connection(tableName).where(params).del();
+	return connection(tableName).where(params).del();
 };
 
 export const update = async (params: GuildParams, data: GuildUpdateProps) => {
-	return await connection(tableName).where(params).update(data);
+	return connection(tableName).where(params).update(data);
 };
 
 export const getDetails = async (params: {
   id: number;
 }): Promise<GuildMaterializedViewProps[]> => {
-	return await connection("guild_details").where({ guild_id: params.id });
+	return connection("guild_details").where({ guild_id: params.id });
 };
 
 export const getMemberAndItemCount = async (params: { id: number }): Promise<GuildMemberAndItemCountProps[]> => {

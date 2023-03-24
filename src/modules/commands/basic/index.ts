@@ -7,7 +7,6 @@ import {
 	GUIDE_DOCS,
 	IZZI_WEBSITE,
 	OFFICIAL_SERVER_LINK,
-	PRIVACY_POLICY_URL,
 	SLASH_COMMANDS_KEYBOARD_SHORTCUTS,
 } from "../../../environment";
 import { Client, EmbedFieldData, Message } from "discord.js";
@@ -24,6 +23,8 @@ import { CONSOLE_BUTTONS } from "helpers/constants";
 import { PageProps } from "@customTypes/pagination";
 import { findAndSwap } from "helpers";
 import { clientSidePagination } from "helpers/pagination";
+
+const freeCardTxt = `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me`;
 
 function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
 	const embed = createEmbed(undefined, client)
@@ -49,9 +50,7 @@ function prepareHelpDesc() {
     " " +
     "When your character is created, you will receive a random starter __Diamond__ card." +
     "\n" +
-    `For more information / tutorials you can check out ${IZZI_WEBSITE}` +
-    "\n" +
-    `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me` +
+    `For more information / tutorials you can check out ${IZZI_WEBSITE}\n${freeCardTxt}` +
     "\n" +
     `**[Read our Privacy Policy](${IZZI_WEBSITE}/privacy-policy)**\n` +
     `Check out our [community guide](${SLASH_COMMANDS_KEYBOARD_SHORTCUTS}) for more tips.`
@@ -116,7 +115,7 @@ const prepareHelpEmbed = (author: AuthorProps, client: Client, page: {
 }) => {
 	return createEmbed(author, client)
 		.setTitle(":crossed_swords: Bot Commands :crossed_swords:")
-		.setDescription(prepareHelpDesc())
+		.setDescription(`All Commands available on Izzi are shown below.\n${freeCardTxt}`)
 		.setFooter({
 			text: "Filters include -n (name) -r (rank) -t (element type) -a (ability) | " +
 		`${page.current_page} / ${page.total_pages} Pages`, 
@@ -196,7 +195,7 @@ export const help = async ({
 					embed.addFields(data.data).addField(
 						"Usage",
 						"**```iz help {command} for more info about the command.```**"
-					);
+					).setHideConsoleButtons(true);
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);
@@ -206,8 +205,39 @@ export const help = async ({
 				}
 			}
 		);
+
+		const disclaimerButton = customButtonInteraction(
+			context.channel,
+			[ {
+				label: CONSOLE_BUTTONS.DISCLAIMER.label,
+				params: { id: CONSOLE_BUTTONS.DISCLAIMER.id },
+				style: "SECONDARY"
+			} ],
+			options.author.id,
+			({ message, user_tag, id }) => {
+				const disclaimerEmbed = createEmbed(options.author, client)
+					.setTitle(embed.title || "Bot Disclaimer")
+					.setDescription(prepareHelpDesc())
+					.setHideConsoleButtons(true);
+				
+				context.channel?.sendMessage(disclaimerEmbed);
+				return;
+			},
+			() => {
+				return;
+			},
+			true,
+			10
+		);
+
 		if (paginationButtons) {
 			embed.setButtons(paginationButtons);
+		}
+		if (disclaimerButton && embed.buttons) {
+			embed.buttons.setComponents(
+				...embed.buttons.components,
+				...disclaimerButton.components
+			);
 		}
 		
 		const buttons = customButtonInteraction(

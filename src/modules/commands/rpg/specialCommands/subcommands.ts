@@ -19,4 +19,13 @@ export const subcommands = [ {
 }, {
 	name: "wspawn",
 	alias: []
+}, {
+	name: "wstart",
+	alias: []
+}, {
+	name: "wend",
+	alias: []
+}, {
+	name: "wdmg",
+	alias: []
 } ];

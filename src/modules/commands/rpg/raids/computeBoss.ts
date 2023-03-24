@@ -32,13 +32,14 @@ const coupleEventLevels: any = {
 	i: [ 550, 650 ]
 };
 
-export const computeRank = (difficulty = "e", isEvent = false) => {
-	return prepareLoot(difficulty, isEvent);
+export const computeRank = (difficulty = "e", isEvent = false, isWorldBoss = false) => {
+	return prepareLoot(difficulty, isEvent, isWorldBoss);
 };
 
 function prepareLoot(
 	difficulty = "e",
-	isEvent = false
+	isEvent = false,
+	isWorldBoss = false
 ): PrepareLootProps | undefined {
 	const result = {
 		loot: {
@@ -65,6 +66,11 @@ function prepareLoot(
 		result.loot.gold = baseLoot[difficulty].event.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].event.loot.extraGold;
 		result.group_id = randomElementFromArray([ 1, 2, 3 ]);
+	} else if (isWorldBoss) {
+		result.bosses = 1;
+		result.loot.drop.worldBoss = baseLoot[difficulty].default.loot.worldBoss;
+		result.rank = baseLoot[difficulty].default.rank;
+		result.level = baseLoot[difficulty].default.level;
 	} else {
 		result.bosses = baseLoot[difficulty].default.bosses || 3;
 		result.loot.drop.default = baseLoot[difficulty].default.loot.drop;

@@ -61,6 +61,7 @@ import { userReferrals } from "modules/commands/basic/referrals";
 import { customCard } from "modules/commands/rpg/profile/customCard";
 import { dungeonFunc } from "modules/commands/rpg/dungeon/v2";
 import { quests } from "modules/commands/rpg/quests";
+import { worldBossCommands } from "modules/commands/rpg/worldBoss";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -156,7 +157,8 @@ const commandMap: CommandMapProps = {
 	changelogs: viewChangeLogs,
 	referral: userReferrals,
 	customcard: customCard,
-	quest: quests
+	quest: quests,
+	worldboss: worldBossCommands
 	// spbt: spbt, // temporarily removed
 	// sort: sort, // removed
 };
