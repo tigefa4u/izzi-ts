@@ -4,6 +4,7 @@ import { getWorldBossBattleLb, getWorldBossRaid } from "api/controllers/WorldBos
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
+import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -13,7 +14,7 @@ const _prepareFields = (array: WorldBossBattleProps[]) => {
 	array.map((item, i) => {
 		fields.push({
 			name: `#${i + 1} | ${item.username} (${item.user_tag})`,
-			value: `Damage Dealt: __${numericWithComma(item.damage_dealt)}__`
+			value: `Damage Dealt: __${numericWithComma(item.damage_dealt)}__ ${emoji.crossedswords}`
 		});
 	});
 	return fields;

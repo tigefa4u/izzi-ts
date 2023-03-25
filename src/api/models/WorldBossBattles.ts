@@ -59,35 +59,17 @@ export const fetchTotalDamageDealt = async ({
 
 export const getForLeaderboard = async (params: { fromDate: Date }): Promise<WorldBossBattleProps[]> => {
 	const db = connection;
-	const maxDamageSubquery = db("world_boss_battles")
-		.select("user_tag", db.raw("max(damage_dealt) as damage_dealt"))
-		.where("damage_dealt", ">", 0)
-		.where("created_at", ">=", params.fromDate)
-		.groupBy("user_tag")
-		.as("max_damages");
-
-	const query = db("world_boss_battles")
-		.select("world_boss_battles.user_tag", "max_damages.damage_dealt", "users.username")
-		.innerJoin("users", "users.user_tag", "=", "world_boss_battles.user_tag")
-		.innerJoin(maxDamageSubquery, function() {
-			this.on("world_boss_battles.user_tag", "=", "max_damages.user_tag")
-				.andOn("world_boss_battles.damage_dealt", "=", "max_damages.damage_dealt");
-		})
-		.orderBy("max_damages.damage_dealt", "desc")
+	const query = db.select(db.raw(`
+        ${tableName}.user_tag,
+        sum(${tableName}.damage_dealt) as damage_dealt,
+        ${users}.username
+    `)).from(tableName)
+		.innerJoin(users, `${users}.user_tag`, `${tableName}.user_tag`)
+		.where(`${tableName}.damage_dealt`, ">=", 0)
+		.where(`${tableName}.created_at`, ">=", params.fromDate)
+		.orderBy("damage_dealt", "desc")
+		.groupBy([ `${tableName}.user_tag`, `${users}.username` ])
 		.limit(10);
 
 	return query;
-	// return db
-	// 	.select(
-	// 		db.raw(
-	// 			`distinct on (${tableName}.user_tag) damage_dealt, ${tableName}.user_tag, ${users}.username`
-	// 		)
-	// 	)
-	// 	.from(tableName)
-	// 	.innerJoin(users, `${users}.user_tag`, `${tableName}.user_tag`)
-	// 	.orderByRaw(`${tableName}.user_tag, ${tableName}.damage_dealt desc`)
-	// 	.orderBy(`${tableName}.damage_dealt`, "desc")
-	// 	.where(`${tableName}.created_at`, ">=", params.fromDate)
-	// 	.where(`${tableName}.damage_dealt`, ">", 0)
-	// 	.limit(10);
 };
