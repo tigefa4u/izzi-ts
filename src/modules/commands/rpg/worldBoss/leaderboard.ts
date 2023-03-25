@@ -1,6 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { WorldBossBattleProps } from "@customTypes/raids/worldBoss";
 import { getWorldBossBattleLb, getWorldBossRaid } from "api/controllers/WorldBossController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import { numericWithComma } from "helpers";
@@ -37,7 +38,7 @@ export const viewWorldBossLB = async ({ client, context, options }: BaseProps) =
 			.setTitle("World Boss Battle Leaderboard")
 			.setDescription("Top 10 Damage dealt by Global Izzi players are shown below.")
 			.setFooter({
-				text: `page 1 / 1 | Summoner ID: ${author.id}`,
+				text: "page 1 / 1 | Leaderboard is updated every hour",
 				iconURL: author.displayAvatarURL()
 			});
 
@@ -54,7 +55,9 @@ export const viewWorldBossLB = async ({ client, context, options }: BaseProps) =
 };
 
 export const fetchWorldBossLeaderboardFields = async (fromDate: Date) => {
-	const result = await getWorldBossBattleLb({ fromDate: fromDate });
+	const result = await Cache.fetch("worldboss-lb", async () => {
+		return getWorldBossBattleLb({ fromDate: fromDate });
+	});
 	if (!result) return;
 	const fields = _prepareFields(result);
 
