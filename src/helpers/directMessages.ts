@@ -67,21 +67,21 @@ export const PublishMessageToAllGuilds = async ({ content, client }: P) => {
 		// if (!guilds || guilds.length <= 0) {
 		// 	throw new Error("There are no guilds found");
 		// }
-		const guilds = (
-			await client.shard?.broadcastEval((g) => g.guilds.cache)
-		)?.flat();
+		// const guilds = (
+		// 	await client.shard?.broadcastEval((g) => g.guilds.cache)
+		// )?.flat();
 
-		const len = guilds?.length || 0;
-		console.log("Publishing started...");
-		if (guilds && len > 0) {
-			const totalInter = Math.ceil(len / 1000);
-			for (let i = 0; i < totalInter; i++) {
-				const chunk = guilds.splice(0, 1000);
-				await Promise.all(chunk.map((guild) => MessageGuildDefaultChannel(client, guild.id, content)));
-				await delay(500);
-			}
-		}
-		console.log("Publishing completed...");
+		// const len = guilds?.length || 0;
+		// console.log("Publishing started...");
+		// if (guilds && len > 0) {
+		// 	const totalInter = Math.ceil(len / 1000);
+		// 	for (let i = 0; i < totalInter; i++) {
+		// 		const chunk = guilds.splice(0, 1000);
+		// 		await Promise.all(chunk.map((guild) => MessageGuildDefaultChannel(client, guild.id, content)));
+		// 		await delay(500);
+		// 	}
+		// }
+		// console.log("Publishing completed...");
 		return;
 	} catch (err) {
 		loggers.error(
