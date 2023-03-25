@@ -308,8 +308,8 @@ const prepareAndSendResult = async ({
         	""
         )}\n\n**__Rewards__**\n${DOT} __${numericWithComma(totalGoldLooted)}__ Total Gold Looted ${
         	emoji.gold
-        }\n` +
-        `${soulsLooted > 0 ? `${DOT} __${soulsLooted}x__ Souls ${emoji.soul}` : ""}` +
+        }` +
+        `${soulsLooted > 0 ? `\n${DOT} __${soulsLooted}x__ Souls ${emoji.soul}` : ""}` +
         `${crateLooted ? `\n${DOT} __1x__ **${titleCase(crateLooted?.category || "No Name")}** Crate` : ""}` +
         `\n${DOT} __6x__ Platinum of **${raid.raid_boss
         	.map((b) => titleCase(b.name))
