@@ -168,8 +168,7 @@ export const processWorldBossRewards = async (params: {
 		});
 		const _totalDamage = Number(sum || 0) + damageDealt;
 
-		const bossHp = raid.stats.remaining_strength - damageDealt;
-		const damagePercent = Math.floor((_totalDamage / bossHp) * 100);
+		const damagePercent = Math.floor((_totalDamage / raid.stats.original_strength) * 100);
 
 		let totalGoldLooted = loot.gold;
 		const attackerRewards = { gold: loot.gold } as Record<string, any>;
