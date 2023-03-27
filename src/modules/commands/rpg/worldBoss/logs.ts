@@ -53,7 +53,21 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 			})
 		]);
 		const totalDamage = Number(sum || 0);
-		const threshold = Math.floor((totalDamage / raid.stats.original_strength) * 100);
+		const originalHp = raid.stats.original_strength;
+		const threshold = Math.floor((totalDamage / originalHp) * 100);
+
+		const fivePercentThresDmg = {
+			name: "Total damage required for __5%__ Threshold",
+			num: Math.floor(originalHp * .05)
+		};
+		const fifteenPercentThresDmg = {
+			name: "Total damage required for __15%__ Threshold",
+			num: Math.floor(originalHp * .15)
+		};
+		const twentyFivePercentThresDmg = {
+			name: "Total damage required for __25%__ Threshold",
+			num: Math.floor(originalHp * .25)
+		};
 		let ttlDesc = "";
 		if (ttl > 0) {
 			const dt = new Date();
@@ -62,8 +76,11 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 		}
 		embed.setTitle("World Boss Attack Logs")
 			.setDescription("Your latest 5 Attack logs are shown below." + 
-            `\n**Total Damage Dealt: ${numericWithComma(totalDamage)}**` +
-            `\n**Damage Threshold: __${threshold}%__**` + ttlDesc)
+            `\n**Total Damage Dealt:** __${numericWithComma(totalDamage)}__` +
+            `\n**Damage Threshold:** __${threshold}%__` +
+            `\n${[ fivePercentThresDmg, fifteenPercentThresDmg, twentyFivePercentThresDmg ].map(({ num, name }) => {
+            	return `**${name}:** __${numericWithComma(num)}__`;
+            }).join("\n")}` + ttlDesc)
 			.setFooter({
 				text: `page 1 / 1 | Summoner ID: ${author.id}`,
 				iconURL: author.displayAvatarURL()
