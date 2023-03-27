@@ -225,7 +225,7 @@ export const battleWB = async ({
 					// 	content: bossDefeatEmbed
 					// });
 				} else {
-					setCooldown(author.id, wbAtkTimerKey, 60 * 60 * 3);
+					setCooldown(author.id, wbAtkTimerKey, 60 * 60 * 4);
 				}
 				prepareAndSendResult({
 					author,

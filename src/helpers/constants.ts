@@ -521,7 +521,7 @@ export const MIN_TRADE_CARDS_FOR_QUEST = 1000;
 export const WORLD_BOSS_DIFFICULTY = "hard";
 export const WORLD_BOSS_LEVEL = 1800;
 // Number of iterations before the raid boss is defeated
-export const WORLD_BOSS_ENERGY = 30;
+export const WORLD_BOSS_ENERGY = 100;
 export const WORLD_BOSS_HP_MULTIPLIER = 20;
 export const WORLD_BOSS_EXPIRES_IN_DAYS = 14;
 export const WORLD_BOSS_MANA_PER_BATTLE = 50;
