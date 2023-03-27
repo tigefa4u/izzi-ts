@@ -357,7 +357,7 @@ const prepareAndSendResult = async ({
 	}, {} as { [key: string]: { count: number; characters: { [i: number]: string } } });
 
 	const dt = new Date();
-	const nextAtkTimestamp = dt.setHours(dt.getHours() + 3);
+	const nextAtkTimestamp = dt.setHours(dt.getHours() + 4);
 
 	const embed = createEmbed(author, client)
 		.setTitle(`${emoji.dance} Total Damage Dealt`)
