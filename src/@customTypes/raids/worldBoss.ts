@@ -8,8 +8,9 @@ export type WorldBossBattleProps = {
   metadata?: Record<string, unknown>;
   created_at: Date;
   username: string;
+  user_id: number;
 };
 
 export type CreateWorldBossBattleProps =
-  | Omit<WorldBossBattleProps, "id" | "created_at" | "username">
-  | Omit<WorldBossBattleProps, "id" | "created_at" | "username">[];
+  | Omit<WorldBossBattleProps, "id" | "created_at" | "username" | "user_id">
+  | Omit<WorldBossBattleProps, "id" | "created_at" | "username" | "user_id">[];

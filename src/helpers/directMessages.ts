@@ -1,7 +1,7 @@
-import { ChannelProp } from "@customTypes";
-import { Client, Guild, MessageEmbed, TextBasedChannel } from "discord.js";
+import { Client, Guild, MessageEmbed } from "discord.js";
 import { delay } from "helpers";
 import loggers from "loggers";
+import { getGuildsViaApi } from "server/pipes/directMessage";
 
 export const DMUser = async (
 	client: Client,
@@ -32,20 +32,23 @@ export const MessageGuildDefaultChannel = async (
 	content: string | MessageEmbed
 ) => {
 	try {
-		const guild = await client.guilds.fetch(guildId);
-		const me = guild.me;
-		if (!me) return;
-		let defaultChannel = {} as TextBasedChannel;
-		const dfKeys = Object.keys(defaultChannel);
-		// finding the channel with send message permissions
-		guild.channels.cache.forEach((channel) => {
-			const channelPerms = channel.permissionsFor(me);
-			if (channel.type === "GUILD_TEXT" && dfKeys.length === 0 && 
-			channelPerms && channelPerms.has("SEND_MESSAGES") && channelPerms.has("VIEW_CHANNEL")) {
-				defaultChannel = channel;
-			}
-		});
-		defaultChannel.sendMessage(content);
+		// const guild = await client.guilds.fetch(guildId);
+		// const me = guild.me;
+		// if (!me) return;
+		// let defaultChannel = {} as TextBasedChannel;
+		// // finding the channel with send message permissions
+		// guild.channels.cache.forEach((channel) => {
+		// 	const dfKeys = Object.keys(defaultChannel);
+		// 	const channelPerms = channel.permissionsFor(me);
+		// 	if (channel.type === "GUILD_TEXT" && dfKeys.length === 0 && 
+		// 	channelPerms && channelPerms.has("SEND_MESSAGES") && channelPerms.has("VIEW_CHANNEL")) {
+		// 		defaultChannel = channel;
+		// 	}
+		// });
+		// if (content instanceof MessageEmbed) {
+		// 	sendChannelMessageViaApi(defaultChannel.id, { embeds: [ content ] });
+		// }
+		// defaultChannel.sendMessage(content);
 		return;
 	} catch (err) {
 		loggers.error(
@@ -58,11 +61,12 @@ export const MessageGuildDefaultChannel = async (
 };
 
 type P = {
-  client: Client;
   content: string | MessageEmbed;
 };
-export const PublishMessageToAllGuilds = async ({ content, client }: P) => {
+export const PublishMessageToAllGuilds = async ({ content }: P) => {
 	try {
+		// const guilds = await getGuildsViaApi();
+		// console.log({ guilds });
 		// const guilds = await getAllGuilds();
 		// if (!guilds || guilds.length <= 0) {
 		// 	throw new Error("There are no guilds found");
@@ -81,7 +85,7 @@ export const PublishMessageToAllGuilds = async ({ content, client }: P) => {
 		// 		await delay(500);
 		// 	}
 		// }
-		// console.log("Publishing completed...");
+		console.log("Publishing completed...");
 		return;
 	} catch (err) {
 		loggers.error(

@@ -1,6 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { WorldBossBattleProps } from "@customTypes/raids/worldBoss";
 import { getWorldBossBattles, getWorldBossRaid } from "api/controllers/WorldBossController";
+import { fetchTotalDamageDealt } from "api/models/WorldBossBattles";
 import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
@@ -36,25 +37,32 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const [ logs, ttl ] = await Promise.all([
+		const fromDate = raid.created_at ? new Date(raid.created_at) : new Date();
+		const [ logs, ttl, { sum } ] = await Promise.all([
 			getWorldBossBattles({
 				user_tag: author.id,
-				fromDate: raid.created_at ? new Date(raid.created_at) : new Date()
+				fromDate
 			}, {
 				currentPage: 1,
 				perPage: 5
 			}),
-			getTTL(author.id, "worldboss-attack")
+			getTTL(author.id, "worldboss-attack"),
+			fetchTotalDamageDealt({
+				user_tag: author.id,
+				fromDate 
+			})
 		]);
+		const totalDamage = Number(sum || 0);
+		const threshold = Math.floor((totalDamage / raid.stats.original_strength) * 100);
 		let ttlDesc = "";
-
-		if (ttl) {
+		if (ttl > 0) {
 			const dt = new Date();
 			const ttls = dt.setSeconds(dt.getSeconds() + ttl);
 			ttlDesc = `\n**Next Attack: ${getRemainingTimer(ttls)}**`;
 		}
 		embed.setTitle("World Boss Attack Logs")
-			.setDescription("Your latest 5 Attack logs are shown below." + ttlDesc)
+			.setDescription("Your latest 5 Attack logs are shown below." + 
+            `\n**Damage Threshold: __${threshold}%__**` + ttlDesc)
 			.setFooter({
 				text: `page 1 / 1 | Summoner ID: ${author.id}`,
 				iconURL: author.displayAvatarURL()

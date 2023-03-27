@@ -34,10 +34,10 @@ export const startWB = async ({
 			)
 			.setHideConsoleButtons(true);
 		
-		PublishMessageToAllGuilds({
-			client,
-			content: embed
-		});
+		// PublishMessageToAllGuilds({
+		// 	client,
+		// 	content: embed
+		// });
 		return;
 	} catch (err) {
 		loggers.error("specialCommands.worldboss.start.startWB: ERROR", err);

@@ -1,8 +1,14 @@
+import { ChannelProp } from "@customTypes";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
-import { CollectionProps } from "@customTypes/collections";
+import {
+	CollectionCreateProps,
+	CollectionProps,
+} from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { CrateProps } from "@customTypes/crates";
 import { RaidProps } from "@customTypes/raids";
+import { WorldBossBattleProps } from "@customTypes/raids/worldBoss";
+import { createCollection } from "api/controllers/CollectionsController";
 import { deleteRaid } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import {
@@ -12,6 +18,7 @@ import {
 } from "api/controllers/WorldBossController";
 import { Canvas } from "canvas";
 import { createEmbed } from "commons/embeds";
+import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import {
 	getRemainingHoursAndMinutes,
@@ -29,10 +36,14 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DOT,
 	HIDE_VISUAL_BATTLE_ARG,
+	ranksMeta,
+	STARTER_CARD_EXP,
+	STARTER_CARD_LEVEL,
+	STARTER_CARD_R_EXP,
 	WORLD_BOSS_MANA_PER_BATTLE,
 	WORLD_BOSS_MIN_LEVEL,
 } from "helpers/constants";
-import { PublishMessageToAllGuilds } from "helpers/directMessages";
+import { DMUser, PublishMessageToAllGuilds } from "helpers/directMessages";
 import { prepareRaidBossBase } from "helpers/raid";
 import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
@@ -63,7 +74,7 @@ export const battleWB = async ({
 			}
 			context.channel?.sendMessage(
 				`Summoner **${author.username}**, You can Attack in: ` +
-                `**\`\`${remainingHours} hours ${remainingMinutes} minutes\`\`**`
+          `**\`\`${remainingHours} hours ${remainingMinutes} minutes\`\`**`
 			);
 			return;
 		} else {
@@ -172,7 +183,11 @@ export const battleWB = async ({
 			channel: context.channel,
 			damageDealt: result.totalDamage || 0,
 			cb: async ({
-				updatedRaidObj, cards, totalGoldLooted, soulsLooted, crateLooted 
+				updatedRaidObj,
+				cards,
+				totalGoldLooted,
+				soulsLooted,
+				crateLooted,
 			}) => {
 				const bossLives = updatedRaidObj.stats.battle_stats.energy;
 				if (!bossLives || bossLives <= 0) {
@@ -182,28 +197,33 @@ export const battleWB = async ({
 						"**Congratulations Summoner! World Boss has been defeated!**"
 					);
 					const cids = raid.raid_boss.map((b) => b.character_id);
-					// const resp = await fetchWorldBossLeaderboardFields(new Date(raid.created_at || ""));
-                    
+
 					const [ resp ] = await Promise.all([
 						fetchWorldBossLeaderboardFields(new Date(raid.created_at || "")),
 						deleteRaid({ id: raid.id }),
-						finishWorldBossEvent(cids)
+						finishWorldBossEvent(cids),
 					]);
-					const bossDefeatEmbed = createEmbed(author, client) 
+					const bossDefeatEmbed = createEmbed(author, client)
 						.setTitle("World Boss Defeated!")
-						.setDescription("Congratulations on defeating the World Boss " +
-                        `**Level ${raid.stats.battle_stats.boss_level}**\n\n` +
-                        `**Summoner ${author.username} has dealt the final blow to the World Boss!**\n\n`
-                        // "Bonus Rewards will be distributed to Top 10 Players."
+						.setDescription(
+							"Congratulations on defeating the World Boss " +
+                `**Level ${raid.stats.battle_stats.boss_level}**\n\n` +
+                `**Summoner ${author.username} has dealt the final blow to the World Boss!**\n\n`
+							// "Bonus Rewards will be distributed to Top 10 Players."
 						);
 
 					if (resp?.fields) {
 						bossDefeatEmbed.setFields(resp.fields);
 					}
-					PublishMessageToAllGuilds({
+					sendTopWinnerRewards({
 						client,
-						content: bossDefeatEmbed
+						data: resp?.rawResult || [],
+						raid: updatedRaidObj,
 					});
+					// PublishMessageToAllGuilds({
+					// 	client,
+					// 	content: bossDefeatEmbed
+					// });
 				} else {
 					setCooldown(author.id, wbAtkTimerKey, 60 * 60 * 3);
 				}
@@ -216,7 +236,7 @@ export const battleWB = async ({
 					totalGoldLooted,
 					damageDealt: result.totalDamage || 0,
 					soulsLooted,
-					crateLooted
+					crateLooted,
 				});
 				return;
 			},
@@ -224,6 +244,52 @@ export const battleWB = async ({
 		return;
 	} catch (err) {
 		loggers.error("rpg.worldBoss.battle.battleWB: ERROR", err);
+		return;
+	}
+};
+
+type S = {
+  data: WorldBossBattleProps[];
+  client: Client;
+  raid: RaidProps;
+};
+const sendTopWinnerRewards = async ({ data, client, raid }: S) => {
+	try {
+		const collectionData = data
+			.map((user) => {
+				return raid.raid_boss
+					.map((boss) => {
+						return Array(10)
+							.fill(0)
+							.map(() => {
+								return {
+									user_id: user.user_id,
+									character_id: boss.character_id,
+									r_exp: STARTER_CARD_R_EXP,
+									exp: STARTER_CARD_EXP,
+									character_level: STARTER_CARD_LEVEL,
+									is_item: false,
+									is_tradable: true,
+									is_on_cooldown: false,
+									rank: "divine",
+									rank_id: ranksMeta.divine.rank_id,
+								} as CollectionCreateProps;
+							});
+					})
+					.flat();
+			})
+			.flat();
+		await createCollection(collectionData);
+		const rewardEmbed = createEmbed(undefined, client)
+			.setTitle("World Boss Defeated!")
+			.setDescription(
+				"Congratulations on defeating the world boss!\n" +
+          "You were one of the Top 10 highest damage dealers and received bonus rewards." +
+          `\n\n**__Bonus Rewards__**\n${DOT} __10x__ **Divine** cards of ` +
+          `**${raid.raid_boss.map((b) => titleCase(b.name)).join(", ")}**`
+			);
+		data.map((item) => DMUser(client, rewardEmbed, item.user_tag));
+	} catch (err) {
 		return;
 	}
 };
@@ -248,7 +314,7 @@ const prepareAndSendResult = async ({
 	cards,
 	totalGoldLooted,
 	soulsLooted,
-	crateLooted
+	crateLooted,
 }: R) => {
 	const damageDiff = relativeDiff(
 		raid.stats.remaining_strength,
@@ -297,20 +363,30 @@ const prepareAndSendResult = async ({
 		.setTitle(`${emoji.dance} Total Damage Dealt`)
 		.setDescription(
 			`**Summoner ${author.username}, you have dealt:**` +
-        `\n**Energy (Lives):** ${raid.stats.battle_stats.energy || 0} ${emoji.hp}` +
+        `\n**Energy (Lives):** ${raid.stats.battle_stats.energy || 0} ${
+        	emoji.hp
+        }` +
         `\n\n**__${numericWithComma(damageDealt)}__** Damage to World Boss` +
         `\n\n**${numericWithComma(
         	raid.stats.remaining_strength
         )} / ${numericWithComma(raid.stats.original_strength)} ${
         	emoji.hp
         }**\n` +
-        `${fakeHp.join(
-        	""
-        )}\n\n**__Rewards__**\n${DOT} __${numericWithComma(totalGoldLooted)}__ Total Gold Looted ${
-        	emoji.gold
+        `${fakeHp.join("")}\n\n**__Rewards__**\n${DOT} __${numericWithComma(
+        	totalGoldLooted
+        )}__ Total Gold Looted ${emoji.gold}` +
+        `${
+        	soulsLooted > 0
+        		? `\n${DOT} __${soulsLooted}x__ Souls ${emoji.soul}`
+        		: ""
         }` +
-        `${soulsLooted > 0 ? `\n${DOT} __${soulsLooted}x__ Souls ${emoji.soul}` : ""}` +
-        `${crateLooted ? `\n${DOT} __1x__ **${titleCase(crateLooted?.category || "No Name")}** Crate` : ""}` +
+        `${
+        	crateLooted
+        		? `\n${DOT} __1x__ **${titleCase(
+        			crateLooted?.category || "No Name"
+        		)}** Crate`
+        		: ""
+        }` +
         `\n${DOT} __6x__ Platinum of **${raid.raid_boss
         	.map((b) => titleCase(b.name))
         	.join(", ")}**` +
@@ -324,7 +400,8 @@ const prepareAndSendResult = async ({
         		.map((k: any) => extraCardLoot[key].characters[k])
         		.join(", ")}**`;
         })}\n\n**Next Attack: ${getRemainingTimer(nextAtkTimestamp)}**`
-		).setHideConsoleButtons(true);
+		)
+		.setHideConsoleButtons(true);
 
 	channel?.sendMessage(embed);
 	return;

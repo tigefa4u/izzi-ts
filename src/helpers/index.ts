@@ -442,7 +442,7 @@ export const parsePremiumUsername = (username: string) => {
 };
 
 export const numericWithComma = (num: number) => {
-	const n = num;
+	const n = Number(num);
 	return n.toLocaleString();
 };
 

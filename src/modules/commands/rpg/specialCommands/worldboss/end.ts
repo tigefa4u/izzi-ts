@@ -29,10 +29,10 @@ export const finishWB = async ({ context, client, args, options }: BaseProps) =>
 			.setTitle(`World Boss Expiration ${emoji.cry}`)
 			.setDescription("The World Boss has not been defeated and fled! Check back later for more challenges.");
 
-		PublishMessageToAllGuilds({
-			client,
-			content: embed
-		});
+		// PublishMessageToAllGuilds({
+		// 	client,
+		// 	content: embed
+		// });
 		return;
 	} catch (err) {
 		loggers.error("specialCommands.worldBoss.end.finishWB: ERROR", err);

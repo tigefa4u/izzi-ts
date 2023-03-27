@@ -122,10 +122,10 @@ export const spawnWorldBoss = async ({
 			"**Hello Summoners! A World Boss Challenge has been spawned. " +
 			`Participate and Attack the World Boss to loot Exciting Rewards.**\n\n${embed.description}`
 		).setHideConsoleButtons(true);
-		PublishMessageToAllGuilds({
-			client,
-			content: embed,
-		});
+		// PublishMessageToAllGuilds({
+		// 	client,
+		// 	content: embed,
+		// });
 		return;
 	} catch (err) {
 		loggers.error("specialCommands.worldboss.spawn.spawnWorldBoss: ERROR", err);

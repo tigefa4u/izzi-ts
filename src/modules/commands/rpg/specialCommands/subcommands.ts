@@ -28,4 +28,7 @@ export const subcommands = [ {
 }, {
 	name: "wdmg",
 	alias: []
+}, {
+	name: "wsend",
+	alias: []
 } ];

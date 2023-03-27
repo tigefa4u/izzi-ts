@@ -62,13 +62,13 @@ export const getForLeaderboard = async (params: { fromDate: Date }): Promise<Wor
 	const query = db.select(db.raw(`
         ${tableName}.user_tag,
         sum(${tableName}.damage_dealt) as damage_dealt,
-        ${users}.username
+        ${users}.username, ${users}.id as user_id
     `)).from(tableName)
 		.innerJoin(users, `${users}.user_tag`, `${tableName}.user_tag`)
 		.where(`${tableName}.damage_dealt`, ">=", 0)
 		.where(`${tableName}.created_at`, ">=", params.fromDate)
 		.orderBy("damage_dealt", "desc")
-		.groupBy([ `${tableName}.user_tag`, `${users}.username` ])
+		.groupBy([ `${tableName}.user_tag`, `${users}.username`, `${users}.id` ])
 		.limit(10);
 
 	return query;

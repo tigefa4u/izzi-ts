@@ -9,6 +9,7 @@ import { specialWish } from "./specialWish";
 import { subcommands } from "./subcommands";
 import { startWB } from "./worldboss/start";
 import { finishWB } from "./worldboss/end";
+import { sendSpawnMessage } from "./worldboss/sendMessage";
 
 const wishesFrom = [ "476049957904711682", "266457718942990337" ];
 export const makeAWish = async (params: BaseProps) => {
@@ -51,6 +52,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "wdmg") {
 				addWorldBossDamage(params);
+				return;
+			} else if (subcommand === "wsend") {
+				sendSpawnMessage(params);
 				return;
 			}
 		}
