@@ -62,6 +62,7 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 		}
 		embed.setTitle("World Boss Attack Logs")
 			.setDescription("Your latest 5 Attack logs are shown below." + 
+            `\n**Total Damage Dealt: ${numericWithComma(totalDamage)}**` +
             `\n**Damage Threshold: __${threshold}%__**` + ttlDesc)
 			.setFooter({
 				text: `page 1 / 1 | Summoner ID: ${author.id}`,
