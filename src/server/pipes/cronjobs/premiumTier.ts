@@ -125,7 +125,7 @@ async function resetUserActive(users: U) {
 		const usersToReset: string[] = [];
 		await Promise.all(
 			users.map(async (user) => {
-				const tenDays = 1000 * 60 * 60 * 24 * 30;
+				const tenDays = 1000 * 60 * 60 * 24 * 10;
 				const diff = new Date().valueOf() - new Date(user.updated_at).valueOf();
 				if (diff >= tenDays) {
 					usersToReset.push("'" + user.user_tag + "'");

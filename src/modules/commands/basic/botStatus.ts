@@ -3,7 +3,7 @@ import { getTotalPlayers } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
-import { parsePremiumUsername } from "helpers";
+import { numericWithComma, parsePremiumUsername } from "helpers";
 import loggers from "loggers";
 
 export const status = async ({ context, client, options }: BaseProps) => {
@@ -33,12 +33,12 @@ export const status = async ({ context, client, options }: BaseProps) => {
 				},
 				{
 					name: ":busts_in_silhouette: Izzi Players",
-					value: `${totalPlayers || 0}`,
+					value: numericWithComma(Number(totalPlayers || 0)),
 					inline: true,
 				},
 				{
 					name: "Active Players",
-					value: `${activePlayers || 0}`,
+					value: numericWithComma(Number(activePlayers || 0)),
 					inline: true,
 				},
 				{
