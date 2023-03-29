@@ -24,6 +24,7 @@ export const getUserQuests = async (
 	filter: PageProps
 ): Promise<ResponseWithPagination<QuestResultProps[]> | undefined> => {
 	try {
+		// OPTIMIZE - Find a way to cache 'quests'
 		loggers.info(
 			"UserQuestsController.getUserQuests: Fetching user quest details for user level: " +
         params.level
@@ -47,7 +48,7 @@ export const getUserQuests = async (
 			is_daily_quest: true,
 		});
 		const userQuestIds = resp.map((r) => r.quest_id);
-		let data = await Promise.all(result.map(async (item) => {
+		const data = await Promise.all(result.map(async (item) => {
 			const object = item as QuestResultProps;
 			if (userQuestIds.includes(item.id)) {
 				object.hasCompleted = true;
@@ -74,7 +75,7 @@ export const getUserQuests = async (
 			return object;
 		}));
 
-		data = data.sort((a, b) => a.hasCompleted ? 1 : -1);
+		// data = data.filter((item) => !item.hasCompleted);
 		return {
 			data,
 			metadata: pagination,

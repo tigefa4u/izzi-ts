@@ -42,8 +42,10 @@ export const quests = async ({ options, context, client, args }: BaseProps) => {
 			getUserQuests,
 			(data, options) => {
 				if (data?.data) {
+					const completedQuests = data.data.filter((q) => q.hasCompleted);
+					const remainingQuests = data.data.filter((q) => !q.hasCompleted);
 					const list = createQuestList(
-						data.data,
+						remainingQuests,
 						data.metadata.currentPage,
 						data.metadata.perPage
 					);
@@ -60,7 +62,7 @@ export const quests = async ({ options, context, client, args }: BaseProps) => {
               "All of your Quests are listed below.\n" +
               `__Streaks: ${
               	((streaks || [])[0] || {}).daily_quest_streaks || 0
-              }__ :fire:`,
+              }__ :fire:\n**You have Completed __${completedQuests.length}__ Quests**`,
 						pageName: "quests",
 						extraFooterText: `${STAR} = daily quests`
 					}).setHideConsoleButtons(true);
