@@ -42,15 +42,15 @@ export const worldBossShop = async ({
 					embed = createEmbedList({
 						author,
 						list,
-						title: "",
-						description: "",
+						title: "World Boss Market",
+						description: "All the cards available on the World Boss Market are shown below.",
 						totalCount: data.metadata.totalCount,
 						pageCount: data.metadata.totalPages,
 						pageName: "Shop",
 						client,
 						currentPage: data.metadata.currentPage,
 						totalPages: data.metadata.totalPages
-					}).setTitle("World Boss Market");
+					});
 				}
 				if (opts?.isDelete) {
 					sentMessage?.deleteMessage();

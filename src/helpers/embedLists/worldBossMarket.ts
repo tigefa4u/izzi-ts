@@ -13,7 +13,7 @@ export const createWorldBossMarketList = (
 	const fields = array.map((item, i) => {
 		const dt = new Date(item.created_at);
 		const endsAt = getRemainingTimer(
-			new Date(dt.setDate(dt.getDate() + 30)).getTime()
+			new Date(dt.setDate(dt.getDate() + 15)).getTime()
 		);
 		return {
 			name: `#${

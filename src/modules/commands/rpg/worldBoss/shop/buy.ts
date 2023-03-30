@@ -34,10 +34,14 @@ const validateAndCompletePurchase = async (
 		getWorldBossByCardId({ id: Number(id) }),
 		getRPGUser({ user_tag: author.id }),
 	]);
-	if (!result || result.length <= 0 || !user) return;
+	const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+	if (!result || result.length <= 0 || !user) {
+		embed.setDescription("The World Boss Card either does not exist or has already expired.");
+		channel?.sendMessage(embed);
+		return;
+	}
 	const card = result[0];
 	const shardCost = card.shard_cost;
-	const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 	if (!shardCost || shardCost <= 0) {
 		embed.setDescription("Unable to purchase card, please contact support.");
 		channel?.sendMessage(embed);

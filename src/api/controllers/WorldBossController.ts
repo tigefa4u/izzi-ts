@@ -35,10 +35,15 @@ export const getAllWorldBossForMarket = async (
 ): Promise<ResponseWithPagination<RandomCardProps[]> | undefined> => {
 	try {
 		const dt = new Date();
-		const past30Days = dt.setDate(dt.getDate() - 30);
-		loggers.info("fetching world boss for market from date: " + new Date(past30Days));
+		const toDt = new Date();
+		const fromDate = new Date(dt.setDate(dt.getDate() - 7));
+		const toDate = new Date(toDt.setDate(toDt.getDate() - 15));
+		loggers.info("fetching world boss for market from date: " + fromDate + " to date: " + toDate);
 		const result = await Cards.getAllWorldBoss(
-			{ fromDate: new Date(past30Days) },
+			{
+				fromDate: fromDate,
+				toDate: toDate 
+			},
 			await paginationParams({
 				currentPage: filter.currentPage,
 				perPage: filter.perPage,
@@ -60,9 +65,17 @@ export const getAllWorldBossForMarket = async (
 
 export const getWorldBossByCardId = async (params: { id: number; }) => {
 	try {
+		const dt = new Date();
+		const toDt = new Date();
+		const fromDate = new Date(dt.setDate(dt.getDate() - 7));
+		const toDate = new Date(toDt.setDate(toDt.getDate() - 15));
 		return Cards.getForWorldBoss({
 			id: params.id,
-			rank: "platinum" 
+			rank: "platinum",
+			filter: {
+				fromDate,
+				toDate 
+			}
 		});
 	} catch (err) {
 		loggers.error("WorldBossController.getWorldBossByCardId: ERROR", err);

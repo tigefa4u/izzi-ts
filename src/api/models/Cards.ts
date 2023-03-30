@@ -119,6 +119,7 @@ export const getForWorldBoss = (params: {
   rank: string;
   hasEventEnded?: boolean;
   id?: number | number[];
+  filter?: { fromDate: Date; toDate: Date }
 }): Promise<RandomCardProps[]> => {
 	const db = connection;
 	let query = db
@@ -149,6 +150,10 @@ export const getForWorldBoss = (params: {
 	} else if (typeof params.id === "number") {
 		query = query.where(`${tableName}.id`, params.id);
 	}
+	if (params.filter) {
+		query = query.where(`${tableName}.created_at`, ">=", params.filter.fromDate)
+			.where(`${tableName}.created_at`, "<", params.filter.toDate);
+	}
 
 	return query;
 };
@@ -160,14 +165,14 @@ export const finishWbChallenge = async (cids: number[]) => {
 };
 
 export const getAllWorldBoss = (
-	filter: { fromDate: Date },
+	filter: { fromDate: Date; toDate: Date; },
 	pagination = {
 		limit: 10,
 		offset: 0,
 	}
 ): Promise<RandomCardProps[]> => {
 	const db = connection;
-	let query = db
+	const query = db
 		.select(
 			db.raw(`
 		${tableName}.id,
@@ -190,12 +195,10 @@ export const getAllWorldBoss = (
 			has_event_ended: false,
 		})
 		.where({ rank: "platinum" })
+		.where(`${tableName}.created_at`, ">=", filter.fromDate)
+		.where(`${tableName}.created_at`, "<", filter.toDate)
 		.limit(pagination.limit)
 		.offset(pagination.offset);
-
-	if (filter.fromDate) {
-		query = query.where(`${tableName}.created_at`, ">=", filter.fromDate);
-	}
 
 	return query;
 };
