@@ -19,11 +19,56 @@ import * as Cards from "../models/Cards";
 import { RaidCreateProps, RaidProps } from "@customTypes/raids";
 import { UserProps } from "@customTypes/users";
 import { startTransaction } from "api/models/Users";
-import { CollectionCreateProps, CollectionProps } from "@customTypes/collections";
+import {
+	CollectionCreateProps,
+	CollectionProps,
+} from "@customTypes/collections";
 import { probability } from "helpers";
 import { createEmbed } from "commons/embeds";
 import { setCooldown } from "modules/cooldowns";
 import { CrateProps } from "@customTypes/crates";
+import { RandomCardProps } from "@customTypes/cards";
+
+export const getAllWorldBossForMarket = async (
+	params = {},
+	filter = PAGE_FILTER
+): Promise<ResponseWithPagination<RandomCardProps[]> | undefined> => {
+	try {
+		const dt = new Date();
+		const past30Days = dt.setDate(dt.getDate() - 30);
+		loggers.info("fetching world boss for market from date: " + new Date(past30Days));
+		const result = await Cards.getAllWorldBoss(
+			{ fromDate: new Date(past30Days) },
+			await paginationParams({
+				currentPage: filter.currentPage,
+				perPage: filter.perPage,
+			})
+		);
+		const pagination = await paginationForResult({
+			data: result,
+			query: filter,
+		});
+		return {
+			data: result,
+			metadata: pagination,
+		};
+	} catch (err) {
+		loggers.error("WorldBossController.getAllWorldBosses: ERROR", err);
+		return;
+	}
+};
+
+export const getWorldBossByCardId = async (params: { id: number; }) => {
+	try {
+		return Cards.getForWorldBoss({
+			id: params.id,
+			rank: "platinum" 
+		});
+	} catch (err) {
+		loggers.error("WorldBossController.getWorldBossByCardId: ERROR", err);
+		return;
+	}
+};
 
 export const createWorldBossBattle = async (
 	data: CreateWorldBossBattleProps
@@ -41,7 +86,7 @@ export const createWorldBossBattle = async (
 };
 
 export const getWorldBossBattles = async (
-	params: { user_tag?: string; fromDate?: Date; forLeaderboard?: boolean; },
+	params: { user_tag?: string; fromDate?: Date; forLeaderboard?: boolean },
 	filter = PAGE_FILTER
 ): Promise<ResponseWithPagination<WorldBossBattleProps[]> | undefined> => {
 	try {
@@ -70,11 +115,14 @@ export const getWorldBossBattles = async (
 	}
 };
 
-export const getWorldBossBattleLb = async (params: { fromDate: Date; }) => {
+export const getWorldBossBattleLb = async (params: { fromDate: Date }) => {
 	try {
 		return WorldBossBattles.getForLeaderboard(params);
 	} catch (err) {
-		loggers.error("controllers.WorldBossController.getWorldBossBattleLb: ERROR", err);
+		loggers.error(
+			"controllers.WorldBossController.getWorldBossBattleLb: ERROR",
+			err
+		);
 		return;
 	}
 };
@@ -108,7 +156,10 @@ export const getWorldBossRaid = async (params?: { is_start: boolean }) => {
 export const getWorldBossToSpawn = async (params: { rank: string }) => {
 	try {
 		loggers.info("Fetching world boss card...");
-		return Cards.getForWorldBoss(params);
+		return Cards.getForWorldBoss({
+			...params,
+			hasEventEnded: false
+		});
 	} catch (err) {
 		loggers.error(
 			"controllers.WorldBossController.getWorldBossToSpawn: ERROR",
@@ -119,12 +170,12 @@ export const getWorldBossToSpawn = async (params: { rank: string }) => {
 };
 
 type CB = {
-    cards: CollectionProps[];
-    totalGoldLooted: number;
-    updatedRaidObj: RaidProps;
-    soulsLooted: number;
-    crateLooted?: CrateProps;
-}
+  cards: CollectionProps[];
+  totalGoldLooted: number;
+  updatedRaidObj: RaidProps;
+  soulsLooted: number;
+  crateLooted?: CrateProps;
+};
 export const processWorldBossRewards = async (params: {
   raid: RaidProps;
   user: UserProps;
@@ -145,13 +196,14 @@ export const processWorldBossRewards = async (params: {
 				damage_dealt: 0,
 				loot: { gold: 0 },
 				boss_stats: raid.stats.battle_stats,
-				character_id: raid.raid_boss[0].character_id
+				character_id: raid.raid_boss[0].character_id,
 			});
-			embed.setTitle("Total Damage Dealt")
+			embed
+				.setTitle("Total Damage Dealt")
 				.setDescription(
 					`**Summoner ${user.username}, you have dealt:**\n**__0__** Damage to the World Boss` +
-                    "\n\nYou are not eligible to receive loot. " +
-                    "You can attack again ``in 1 Hour``."
+            "\n\nYou are not eligible to receive loot. " +
+            "You can attack again ``in 1 Hour``."
 				);
 			channel?.sendMessage(embed);
 			return;
@@ -168,7 +220,9 @@ export const processWorldBossRewards = async (params: {
 		});
 		const _totalDamage = Number(sum || 0) + damageDealt;
 
-		const damagePercent = Math.floor((_totalDamage / raid.stats.original_strength) * 100);
+		const damagePercent = Math.floor(
+			(_totalDamage / raid.stats.original_strength) * 100
+		);
 
 		let totalGoldLooted = loot.gold;
 		const attackerRewards = { gold: loot.gold } as Record<string, any>;
@@ -226,7 +280,9 @@ export const processWorldBossRewards = async (params: {
 			soulsLooted = extraLoot.souls;
 
 			// loot crate
-			const canLootCrate = [ true, false ][probability([ extraLoot.crateDropRate, 100 ])];
+			const canLootCrate = [ true, false ][
+				probability([ extraLoot.crateDropRate, 100 ])
+			];
 			if (canLootCrate) {
 				crateLooted = extraLoot.crates;
 			}
@@ -293,7 +349,8 @@ export const processWorldBossRewards = async (params: {
 						{}
 					);
 
-					embed.setTitle(DEFAULT_ERROR_TITLE)
+					embed
+						.setTitle(DEFAULT_ERROR_TITLE)
 						.setDescription(
 							`Summoner **${user.username}**, You do not have sufficient mana to finish this battle.`
 						);
@@ -303,13 +360,20 @@ export const processWorldBossRewards = async (params: {
 				}
 
 				if (crateLooted) {
-					crateLooted = await trx("crates").insert({
-						...crateLooted,
-						user_tag: user.user_tag
-					}, "*").then((res) => res[0]);
+					crateLooted = await trx("crates")
+						.insert(
+							{
+								...crateLooted,
+								user_tag: user.user_tag,
+							},
+							"*"
+						)
+						.then((res) => res[0]);
 
 					if (!crateLooted) {
-						channel?.sendMessage("We were not able to process your rewards, Please try again.");
+						channel?.sendMessage(
+							"We were not able to process your rewards, Please try again."
+						);
 						throw new Error("Unable to create crates");
 					}
 				}
@@ -319,21 +383,28 @@ export const processWorldBossRewards = async (params: {
 					.update({
 						stats: trx.raw(
 							"jsonb_set(stats, '{remaining_strength}', to_jsonb((stats ->> " +
-                            `'remaining_strength')::integer - ${damageDealt}))`
+                `'remaining_strength')::integer - ${damageDealt}))`
 						),
-					}).returning("*")
+					})
+					.returning("*")
 					.then((res) => res[0]);
 
 				if (!updatedRaidObj) {
-					channel?.sendMessage("Unable to process your battle, Please try again later. :x:");
+					channel?.sendMessage(
+						"Unable to process your battle, Please try again later. :x:"
+					);
 					trx.rollback();
 					return;
 				}
 
 				if (updatedRaidObj.stats.remaining_strength <= 0) {
-					updatedRaidObj.stats.remaining_strength = updatedRaidObj.stats.original_strength;
-					updatedRaidObj.stats.battle_stats.energy = updatedRaidObj.stats.battle_stats.energy - 1;
-					await trx("raids").where({ id: raid.id }).update({ stats: updatedRaidObj.stats });
+					updatedRaidObj.stats.remaining_strength =
+            updatedRaidObj.stats.original_strength;
+					updatedRaidObj.stats.battle_stats.energy =
+            updatedRaidObj.stats.battle_stats.energy - 1;
+					await trx("raids")
+						.where({ id: raid.id })
+						.update({ stats: updatedRaidObj.stats });
 				}
 
 				loggers.info(
@@ -345,13 +416,20 @@ export const processWorldBossRewards = async (params: {
 					"[transaction] WB Create Collections with data: " +
             JSON.stringify(collectionData)
 				);
-				const collectionDataCreated = await trx("collections").insert(collectionData, "*");
+				const collectionDataCreated = await trx("collections").insert(
+					collectionData,
+					"*"
+				);
 				if (!collectionDataCreated) {
-					channel?.sendMessage("We were not able to process your rewards, Please try again.");
+					channel?.sendMessage(
+						"We were not able to process your rewards, Please try again."
+					);
 					throw new Error("Unable to create Cards");
 				}
-				loggers.info("[transaction] WB collections created with data: " 
-                + JSON.stringify(collectionDataCreated));
+				loggers.info(
+					"[transaction] WB collections created with data: " +
+            JSON.stringify(collectionDataCreated)
+				);
 				const _worldBossBattleData = {
 					user_tag: user.user_tag,
 					loot: attackerRewards,
@@ -372,7 +450,7 @@ export const processWorldBossRewards = async (params: {
 					totalGoldLooted,
 					updatedRaidObj,
 					soulsLooted,
-					crateLooted
+					crateLooted,
 				});
 				return;
 			} catch (err) {
@@ -397,7 +475,8 @@ export const finishWorldBossEvent = async (cids: number[]) => {
 		return Cards.finishWbChallenge(cids);
 	} catch (err) {
 		loggers.error(
-			"controllers.WorldBossController.finishWorldBossEvent: ERROR", err
+			"controllers.WorldBossController.finishWorldBossEvent: ERROR",
+			err
 		);
 		return;
 	}

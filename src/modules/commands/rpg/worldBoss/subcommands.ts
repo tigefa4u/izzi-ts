@@ -10,4 +10,7 @@ export const subcommands = [ {
 }, {
 	name: "leaderboard",
 	alias: [ "lb" ]
+}, {
+	name: "shop",
+	alias: [ "mk", "shop" ]
 } ];

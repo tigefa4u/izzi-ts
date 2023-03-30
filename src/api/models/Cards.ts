@@ -43,20 +43,22 @@ export const transformation = {
 	},
 	isReferralCard: {
 		type: "boolean",
-		columnName: "is_referral_card"
+		columnName: "is_referral_card",
 	},
 	isWorldBoss: {
 		type: "boolean",
-		columnName: "is_world_boss"
-	}
+		columnName: "is_world_boss",
+	},
 };
-export const get: (params: CardParams) => Promise<CardProps[]> = async function (params) {
+export const get: (
+  params: CardParams & { id?: number }
+) => Promise<CardProps[]> = async function (params) {
 	const db = connection;
 	return db.select("*").from(tableName).where(params);
 };
 
 export const getRandomCard: (
-  params: CardParams & { group_with?: number; group_id?: number; },
+  params: CardParams & { group_with?: number; group_id?: number },
   limit: number
 ) => Promise<RandomCardProps[]> = async function (params, limit = 1) {
 	const queryParams = clone(params);
@@ -102,21 +104,26 @@ export const getRandomCard: (
 	return query;
 };
 
-export const getBySeries: (params: {
-	series: string;
-}) => Promise<CardProps[]> = async function(params) {
-	const db = connection;
-	const query = db
-		.select(db.raw(`distinct ${tableName}.character_id`))
-		.from(tableName)
-		.where(`${tableName}.series`, "ilike", `%${params.series}%`);
+export const getBySeries: (params: { series: string }) => Promise<CardProps[]> =
+  async function (params) {
+  	const db = connection;
+  	const query = db
+  		.select(db.raw(`distinct ${tableName}.character_id`))
+  		.from(tableName)
+  		.where(`${tableName}.series`, "ilike", `%${params.series}%`);
 
-	return query;
-};
+  	return query;
+  };
 
-export const getForWorldBoss = (params: { rank: string; }): Promise<RandomCardProps> => {
+export const getForWorldBoss = (params: {
+  rank: string;
+  hasEventEnded?: boolean;
+  id?: number | number[];
+}): Promise<RandomCardProps[]> => {
 	const db = connection;
-	const query = db.select(db.raw(`
+	let query = db
+		.select(
+			db.raw(`
 		${tableName}.id,
 		${tableName}.filepath,
 		${tableName}.metadata,
@@ -124,20 +131,71 @@ export const getForWorldBoss = (params: { rank: string; }): Promise<RandomCardPr
 		${tableName}.character_id,
 		${tableName}.is_world_boss,
 		${tableName}.created_at,
+		${tableName}.shard_cost,
 		${characters}.name, ${characters}.type, ${characters}.stats, ${abilities}.name as abilityname
-	`)).from(tableName)
+	`)
+		)
+		.from(tableName)
 		.innerJoin(characters, `${tableName}.character_id`, `${characters}.id`)
 		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
-		.where({
-			is_world_boss: true,
-			has_event_ended: false 
-		})
-		.where({ rank: params.rank })
-		.then((res) => res[0]);
+		.where({ is_world_boss: true })
+		.where({ rank: params.rank });
+
+	if (typeof params.hasEventEnded === "boolean") {
+		query = query.where(`${tableName}.has_event_ended`, params.hasEventEnded);
+	}
+	if (typeof params.id === "object") {
+		query = query.whereIn(`${tableName}.id`, params.id);
+	} else if (typeof params.id === "number") {
+		query = query.where(`${tableName}.id`, params.id);
+	}
 
 	return query;
 };
 
 export const finishWbChallenge = async (cids: number[]) => {
-	return connection(tableName).whereIn("character_id", cids).update({ has_event_ended: true });
+	return connection(tableName)
+		.whereIn("character_id", cids)
+		.update({ has_event_ended: true });
+};
+
+export const getAllWorldBoss = (
+	filter: { fromDate: Date },
+	pagination = {
+		limit: 10,
+		offset: 0,
+	}
+): Promise<RandomCardProps[]> => {
+	const db = connection;
+	let query = db
+		.select(
+			db.raw(`
+		${tableName}.id,
+		${tableName}.filepath,
+		${tableName}.metadata,
+		${tableName}.rank,
+		${tableName}.character_id,
+		${tableName}.is_world_boss,
+		${tableName}.created_at,
+		${tableName}.shard_cost,
+		${characters}.name, ${characters}.type, ${characters}.stats, ${abilities}.name as abilityname,
+		count(1) over() as total_count
+	`)
+		)
+		.from(tableName)
+		.innerJoin(characters, `${tableName}.character_id`, `${characters}.id`)
+		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
+		.where({
+			is_world_boss: true,
+			has_event_ended: false,
+		})
+		.where({ rank: "platinum" })
+		.limit(pagination.limit)
+		.offset(pagination.offset);
+
+	if (filter.fromDate) {
+		query = query.where(`${tableName}.created_at`, ">=", filter.fromDate);
+	}
+
+	return query;
 };

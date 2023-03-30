@@ -526,3 +526,6 @@ export const WORLD_BOSS_HP_MULTIPLIER = 20;
 export const WORLD_BOSS_EXPIRES_IN_DAYS = 14;
 export const WORLD_BOSS_MANA_PER_BATTLE = 50;
 export const WORLD_BOSS_MIN_LEVEL = 12;
+
+export const WORLD_BOSS_MARKET_CARD_RANK = "immortal";
+export const WORLD_BOSS_MARKET_CARD_RANK_ID = 7;

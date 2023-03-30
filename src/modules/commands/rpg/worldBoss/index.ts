@@ -4,6 +4,7 @@ import loggers from "loggers";
 import { battleWB } from "./battle";
 import { viewWorldBossLB } from "./leaderboard";
 import { viewWorldBossPlayerLogs } from "./logs";
+import { worldBossShop } from "./shop";
 import { subcommands } from "./subcommands";
 import { viewWorldBoss } from "./view";
 
@@ -19,6 +20,8 @@ export const worldBossCommands = async (params: BaseProps) => {
 			viewWorldBossPlayerLogs(params);
 		} else if (cmd === "leaderboard") {
 			viewWorldBossLB(params);
+		} else if (cmd === "shop") {
+			worldBossShop(params);
 		}
 		return;
 	} catch (err) {

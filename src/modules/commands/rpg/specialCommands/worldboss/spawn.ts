@@ -49,8 +49,8 @@ export const spawnWorldBoss = async ({
 			);
 			return;
 		}
-		const card = await getWorldBossToSpawn({ rank: randomElementFromArray(computedBoss.rank), });
-		if (!card) {
+		const cards = await getWorldBossToSpawn({ rank: randomElementFromArray(computedBoss.rank), });
+		if (!cards || cards.length <= 0) {
 			loggers.error(
 				"spawnWorldBoss: ERROR: Unable to fetch world boss card. Is there a world boss card?",
 				{}
@@ -58,6 +58,7 @@ export const spawnWorldBoss = async ({
 			context.channel?.sendMessage("Unable to spawn world boss");
 			return;
 		}
+		const card = cards[0];
 		const raidBoss = {
 			...card,
 			character_level: WORLD_BOSS_LEVEL,
