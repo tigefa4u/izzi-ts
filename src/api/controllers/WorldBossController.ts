@@ -281,7 +281,7 @@ export const processWorldBossRewards = async (params: {
 				.flat()
 		);
 
-		const extraLoot = loot.default.find(
+		const extraLoot = loot.default.reverse().find(
 			(item) => item.threshold <= damagePercent
 		);
 
