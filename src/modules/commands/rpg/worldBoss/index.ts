@@ -21,7 +21,7 @@ export const worldBossCommands = async (params: BaseProps) => {
 		} else if (cmd === "leaderboard") {
 			viewWorldBossLB(params);
 		} else if (cmd === "shop") {
-			worldBossShop(params);
+			// worldBossShop(params);
 		}
 		return;
 	} catch (err) {

@@ -105,6 +105,7 @@ export type AbilityStackProps = StatStateProps &
     isBleeding?: boolean;
     bleedResetOnRound?: number;
     resistByFutureSightPercent?: number;
+    isLastStand?: boolean;
     abilityToResist?: {
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number;

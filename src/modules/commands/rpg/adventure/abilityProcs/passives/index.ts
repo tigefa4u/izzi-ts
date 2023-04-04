@@ -12,6 +12,7 @@ import {
 
 export * from "./heals";
 export * from "./elementals";
+export * from "./defensiveOffense";
 
 export const wrecker = ({
 	playerStats,

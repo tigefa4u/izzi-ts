@@ -13,6 +13,7 @@ export * from "./disablers";
 export * from "./critical";
 export * from "./breakers";
 export * from "../special";
+export * from "./defensiveOffense";
 
 export const dragonRage = ({
 	playerStats,

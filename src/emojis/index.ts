@@ -95,7 +95,9 @@ const emojis: MapProps = {
 	"staff of medana": emoji.staffofmedana,
 	"renewal taekwondo": emoji.renewaltaekwondo,
 	permit: emoji.permit,
-	gold: emoji.gold
+	gold: emoji.gold,
+	"defensive strike": emoji.defensiveStrike,
+	"last stand": emoji.lastStand
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

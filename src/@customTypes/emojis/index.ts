@@ -154,5 +154,7 @@ export type EmojiProps = {
 	dance: "<a:AEMJ_anime_dancing:856012313102516275>",
 	cooldown: ":hourglass:",
 	blush: "<a:AEMJ_IchikaBlush:961550202806890516>",
-	permit: ":ticket:"
+	permit: ":ticket:",
+	defensiveStrike: "<:defensiveStrike:1092650327150432327>",
+	lastStand: "<:lastStand:1092665946755317771>",
 }
