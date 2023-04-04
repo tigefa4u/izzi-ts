@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.integer("rank_id").references("ranks.rank_id").notNullable();
 		table.integer("sold_at_cost").notNullable();
 		table.jsonb("metadata");
+		table.index([ "character_id", "rank_id" ]);
 		table.timestamps(true, true);
 	}).then(() => knex.raw(knexfile.onUpdateTrigger("market_logs")));
 }
