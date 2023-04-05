@@ -11,9 +11,24 @@ export const logCommand = (author: AuthorProps, command: CommandProps, args: str
 			`command ${command.name} used by ${author.username} (${author.id}) ` +
             `-> bot: ${author.bot}, discriminator: ${author.discriminator} -> with arguments: ${JSON.stringify(args)}`
 		);
+
+		logCommandUsage(command.name, author.id, author.username);
 		logDailyActive(author.id, author.username);
 	} catch (err) {
 		loggers.error("message.logCommand: Unable to log command, ERROR", err);
+	}
+	return;
+};
+
+const logCommandUsage = (command: string, userId: string, username: string) => {
+	try {
+		GA4.customEvent("command_usage", {
+			category: "commands",
+			action: command,
+			label: `${userId}_${username}`
+		});
+	} catch (err) {
+		console.log(err);
 	}
 	return;
 };

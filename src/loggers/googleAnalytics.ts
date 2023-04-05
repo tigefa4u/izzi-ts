@@ -75,6 +75,15 @@ const GA4 = {
 			return;
 		}
 	},
+	customEvent: function (eventName: string, data: GA4EventProps) {
+		try {
+			if (!eventName) return;
+			this._reportAnalytics(eventName, data);
+		} catch (err) {
+			loggers.error("googleAnalytics.track: Failed", err);
+			return;
+		}
+	}
 };
 
 export default GA4;
