@@ -26,7 +26,19 @@ export const lastStand = ({
 	);
 	let damageDiff;
 	let abilityDamage;
+	let desc = "";
 	const strength = playerStats.totalStats.strength;
+	if (strength <= fiftyPercentHp && !playerStats.totalStats.isLastStand) {
+		let num = 10;
+		const hasMoreInt = compare(playerStats.totalStats.intelligence, opponentStats.totalStats.intelligence);
+		if (hasMoreInt) {
+			num = 12;
+		}
+		const percent = calcPercentRatio(num, card.rank);
+		const ratio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
+		playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
+		desc = `increasing **DEF** of all allies by __${percent}%__`;
+	}
 	if (strength <= twentyFivePercentHp && !playerStats.totalStats.isLastStand) {
 		const percent = calcPercentRatio(15, card.rank);
 		const damageDealt = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
@@ -45,31 +57,12 @@ export const lastStand = ({
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 
-		const desc = `dealing __${abilityDamage}__ damage to **${opponentStats.name}**`;
-		prepSendAbilityOrItemProcDescription({
-			playerStats,
-			enemyStats: opponentStats,
-			card,
-			message,
-			embed,
-			round,
-			isDescriptionOnly: false,
-			description: desc,
-			totalDamage: 0,
-			isPlayerFirst,
-			isItem: false,
-			simulation
-		}); 
-	} else if (strength <= fiftyPercentHp && !playerStats.totalStats.isLastStand) {
-		let num = 10;
-		const hasMoreInt = compare(playerStats.totalStats.intelligence, opponentStats.totalStats.intelligence);
-		if (hasMoreInt) {
-			num = 12;
-		}
-		const percent = calcPercentRatio(num, card.rank);
-		const ratio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
-		playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
-		const desc = `increasing **DEF** of all allies by __${percent}%__`;
+		desc = desc + `, as well as dealing __${abilityDamage}__ damage to **${opponentStats.name}**`;
+	}
+	if (!playerStats.totalStats.isLastStand) {
+		playerStats.totalStats.isLastStand = true;
+	}
+	if (desc !== "") {
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -84,9 +77,6 @@ export const lastStand = ({
 			isItem: false,
 			simulation
 		});
-	}
-	if (!playerStats.totalStats.isLastStand) {
-		playerStats.totalStats.isLastStand = true;
 	}
 	return {
 		playerStats,
