@@ -4,7 +4,7 @@ import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 
-export const lastStand = async ({
+export const lastStand = ({
 	playerStats,
 	opponentStats,
 	message,

@@ -3,7 +3,7 @@ import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 
-export const defensiveStrike = async ({
+export const defensiveStrike = ({
 	playerStats,
 	opponentStats,
 	message,
