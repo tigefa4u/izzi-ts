@@ -84,6 +84,8 @@ export type AbilityProcMapProps = {
     "dream eater": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "fighting spirit": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "harbinger of death": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "last stand": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "defensive strike": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 
 export type ItemProcMapProps = {
