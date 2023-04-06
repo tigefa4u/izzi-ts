@@ -59,13 +59,13 @@ function prepareLoot(
 	}
 	const baseLoot = prepareBaseLoot();
 	if (isEvent === true) {
-		result.bosses = 2;
+		result.bosses = 1;
 		result.loot.drop.event = baseLoot[difficulty].event.loot.drop;
 		result.level = coupleEventLevels[difficulty];
 		result.rank = baseLoot[difficulty].event.rank;
 		result.loot.gold = baseLoot[difficulty].event.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].event.loot.extraGold;
-		result.group_id = randomElementFromArray([ 1, 2, 3 ]);
+		// result.group_id = randomElementFromArray([ 1, 2, 3 ]);
 	} else if (isWorldBoss) {
 		result.bosses = 1;
 		result.loot.drop.worldBoss = baseLoot[difficulty].default.loot.worldBoss;
