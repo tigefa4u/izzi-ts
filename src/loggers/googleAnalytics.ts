@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GA4_API_SECRET, GA4_MEASUREMENT_ID } from "environment";
 import loggers from "loggers";
+import { getLoggerContext } from "./context";
 // import { GOOGLE_ANALYTICS4_PROPERTY_ID } from "environment";
 
 export type GA4EventProps = {
@@ -39,10 +40,11 @@ export type GA4EventProps = {
 const GA4 = {
 	_reportAnalytics: function (eventName: string, data: GA4EventProps) {
 		if (!GA4_MEASUREMENT_ID || !GA4_API_SECRET || !eventName || !data) return;
+		const ctx = getLoggerContext();
 		// eslint-disable-next-line max-len
 		const url = `https://google-analytics.com/mp/collect?measurement_id=${GA4_MEASUREMENT_ID}&api_secret=${GA4_API_SECRET}`;
 		const body = {
-			client_id: "dummy",
+			client_id: ctx.userTag || "dummy",
 			events: [
 				{
 					name: eventName,
