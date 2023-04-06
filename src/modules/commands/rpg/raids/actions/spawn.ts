@@ -170,7 +170,9 @@ export const createRaidBoss = async ({
 					params,
 					1
 				);
-				if (!card) return;
+				if (!card || card.length <= 0) {
+					return;
+				}
 				const raidBoss = card[0];
 				raidBoss.character_level = level;
 				return {
