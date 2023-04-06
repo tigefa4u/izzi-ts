@@ -35,7 +35,7 @@ export const lastStand = ({
 			num = 12;
 		}
 		const percent = calcPercentRatio(num, card.rank);
-		const ratio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
+		const ratio = getRelationalDiff(playerStats.totalStats.defense, percent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
 		desc = `increasing **DEF** of all allies by __${percent}%__`;
 	}
