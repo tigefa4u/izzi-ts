@@ -10,6 +10,7 @@ import { UserProps } from "@customTypes/users";
 import { createCollection } from "api/controllers/CollectionsController";
 import { deleteRaid, getRaid } from "api/controllers/RaidsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
@@ -137,7 +138,12 @@ export const processRaidLoot = async ({
 			)
 		);
 
-		if (!isEvent) {
+		let event = false;
+		const raidsDisabled = await Cache.get("disable-raids");
+		if (raidsDisabled) {
+			event = true;
+		}
+		if (!event) {
 			const options = {
 				author,
 				channel: {} as ChannelProp,
