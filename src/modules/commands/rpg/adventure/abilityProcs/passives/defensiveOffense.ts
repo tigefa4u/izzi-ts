@@ -41,7 +41,7 @@ export const lastStand = ({
 	}
 	if (strength <= twentyFivePercentHp && !playerStats.totalStats.isLastStand) {
 		const percent = calcPercentRatio(15, card.rank);
-		const damageDealt = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
+		const damageDealt = getRelationalDiff(playerStats.totalStats.defense, percent);
 
 		opponentStats.totalStats.strength = opponentStats.totalStats.strength - damageDealt;
 		abilityDamage = damageDealt;
