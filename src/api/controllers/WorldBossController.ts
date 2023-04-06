@@ -28,6 +28,7 @@ import { createEmbed } from "commons/embeds";
 import { setCooldown } from "modules/cooldowns";
 import { CrateProps } from "@customTypes/crates";
 import { RandomCardProps } from "@customTypes/cards";
+import { clone } from "utility";
 
 export const getAllWorldBossForMarket = async (
 	params = {},
@@ -280,8 +281,9 @@ export const processWorldBossRewards = async (params: {
 				})
 				.flat()
 		);
-
-		const extraLoot = loot.default.reverse().find(
+			
+		const clonedArr = clone(loot.default).reverse();
+		const extraLoot = clonedArr.find(
 			(item) => item.threshold <= damagePercent
 		);
 
