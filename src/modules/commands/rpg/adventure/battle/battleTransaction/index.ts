@@ -151,7 +151,7 @@ export const processBattleTransaction = async ({
 			const updateStr = `update users set ${manaConsumeRawStr} ${updateUserDataStr}
 		    where user_tag = '${author.id}' and mana >= ${manaToConsume}
 		    and is_banned = false returning *`;
-			loggers.info("battleTransaction.processBattleTransaction: user update transaction started" +
+			loggers.info("battleTransaction.processBattleTransaction: user update transaction started",
 		    " with raw query - " + updateStr);
 			const updatedUserObj = await trx.raw(updateStr).then((res) => res.rows[0]);
 			if (!updatedUserObj) {
@@ -159,8 +159,8 @@ export const processBattleTransaction = async ({
 				channel?.sendMessage(embed);
 				return trx.rollback();
 			}
-			loggers.info("battleTransaction.processBattleTransaction: user update completed " +
-            updatedUserObj);
+			loggers.info("battleTransaction.processBattleTransaction: user update completed ",
+				updatedUserObj);
 
 			const consoleButtons = [
 				{
