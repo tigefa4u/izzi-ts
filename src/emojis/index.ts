@@ -98,7 +98,7 @@ const emojis: MapProps = {
 	gold: emoji.gold,
 	"defensive strike": emoji.defensiveStrike,
 	"last stand": emoji.lastStand,
-	"agnus Scepter": emoji.agnusScepter,
+	"agnus scepter": emoji.agnusScepter,
 	"skull basher": emoji.skullBasher,
 	"vampire's blade": emoji.vampiresBlade,
 	leer: emoji.leer,
