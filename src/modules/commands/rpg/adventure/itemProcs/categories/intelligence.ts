@@ -306,7 +306,7 @@ export const agnusScepter = ({
 		const hasMoreHp = compare(playerStats.totalStats.strength, opponentStats.totalStats.strength);
 		let hpGain = AGNUS_SCEPTER_DEFAULT_HP_GAIN;
 		if (hasMoreHp) {
-			const diff = opponentStats.totalStats.strength - playerStats.totalStats.strength;
+			const diff = playerStats.totalStats.strength - opponentStats.totalStats.strength;
 			hpGain = getRelationalDiff(diff, 200);
 		}
 		if (hpGain > AGNUS_SCEPTER_MAX_HP_GAIN) {
