@@ -86,6 +86,8 @@ export type AbilityProcMapProps = {
     "harbinger of death": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "last stand": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "defensive strike": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "lightening shield": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    leer: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 
 export type ItemProcMapProps = {
@@ -104,4 +106,7 @@ export type ItemProcMapProps = {
     "lunar wand":(params: BattleProcessProps) => ItemProcReturnType | undefined;
     "farsight orb":(params: BattleProcessProps) => ItemProcReturnType | undefined;
     "staff of medana":(params: BattleProcessProps) => ItemProcReturnType | undefined;
+    "skull basher":(params: BattleProcessProps) => ItemProcReturnType | undefined;
+    "agnus scepter":(params: BattleProcessProps) => ItemProcReturnType | undefined;
+    "vampire's blade":(params: BattleProcessProps) => ItemProcReturnType | undefined;
 }

@@ -1,8 +1,10 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { updateCollection } from "api/controllers/CollectionsController";
 import transaction from "db/transaction";
+import { emojiMap } from "emojis";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { getRelationalDiff } from "helpers/battle";
 import { ranksMeta } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -332,5 +334,78 @@ export const krakenSlayer = ({
 			opponentStats,
 			basePlayerStats,
 		};
+	}
+};
+
+export const skullBasher = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	basePlayerStats,
+	simulation,
+}: BattleProcessProps) => {
+	if (!card || !card.itemStats) return;
+	else if (round === 1) {
+		playerStats.totalStats = processItemStats(
+			playerStats.totalStats,
+			card.itemStats
+		);
+		basePlayerStats.totalStats = playerStats.totalStats;
+		const desc = `and has gained __${card.itemStats.vitality}__ **ATK** ` +
+		"**Ability:** When the enemy **HP** drops below __10%__, increase the **ATK** of all allies by __95%__.";
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: true,
+			simulation,
+		});
+
+		return {
+			playerStats,
+			opponentStats,
+			basePlayerStats,
+		};
+	}
+	if (!opponentStats.totalStats.originalHp) return;
+	const hpRatio = Math.floor(opponentStats.totalStats.originalHp * (10 / 100));
+	if (opponentStats.totalStats.strength < hpRatio) {
+		const ratio = getRelationalDiff(playerStats.totalStats.vitality, 95);
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
+		const desc = `**${titleCase(card.itemname || "")}** ${emojiMap(card.itemname)} ` +
+		"is **Thirsty for Blood**, increasing **ATK** of all allies by __95%__";
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: true,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: true,
+			simulation,
+		});
+
+		return {
+			playerStats,
+			opponentStats,
+			basePlayerStats,
+		};	
 	}
 };

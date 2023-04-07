@@ -2,6 +2,8 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability, randomElementFromArray } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { compare, getRelationalDiff } from "helpers/battle";
+import { AGNUS_SCEPTER_DEFAULT_HP_GAIN, AGNUS_SCEPTER_MAX_HP_GAIN } from "helpers/constants";
 import { processItemStats } from "..";
 
 export const sapphiresStaff = ({
@@ -278,6 +280,66 @@ export const staffOfMedana = ({
 			playerStats,
 			opponentStats,
 			basePlayerStats,
+		};
+	}
+};
+
+export const agnusScepter = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	basePlayerStats,
+	simulation
+}: BattleProcessProps) => {
+	if (!card || !card.itemStats) return;
+	else if (round === 1) {
+		playerStats.totalStats = processItemStats(
+			playerStats.totalStats,
+			card.itemStats
+		);
+		basePlayerStats.totalStats = playerStats.totalStats;
+		const hasMoreHp = compare(playerStats.totalStats.strength, opponentStats.totalStats.strength);
+		let hpGain = AGNUS_SCEPTER_DEFAULT_HP_GAIN;
+		if (hasMoreHp) {
+			const diff = opponentStats.totalStats.strength - playerStats.totalStats.strength;
+			hpGain = getRelationalDiff(diff, 200);
+		}
+		if (hpGain > AGNUS_SCEPTER_MAX_HP_GAIN) {
+			hpGain = AGNUS_SCEPTER_DEFAULT_HP_GAIN;
+		}
+		if (!playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
+		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpGain;
+		playerStats.totalStats.strength = playerStats.totalStats.originalHp;
+		opponentStats.totalStats.originalHp = opponentStats.totalStats.originalHp - hpGain;
+		const desc = `and has gained __${card.itemStats.intelligence}__ **INT** ` +
+		`**Ability:** Increase max **HP** of all allies by __${hpGain}__, and ` +
+		"simultaneously reduce max **HP** of the enemy by the same amount.";
+		// "**Ability:** Gain max **HP** equal to __200%__ of the difference between the enemy and ally max **HP's**" +
+		// `, and simultaneously reduce their **HP** by the same amount up to __${AGNUS_SCEPTER_MAX_HP_GAIN}__ **HP**`;
+
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: true,
+			simulation
+		});
+
+		return {
+			playerStats,
+			basePlayerStats,
+			opponentStats
 		};
 	}
 };

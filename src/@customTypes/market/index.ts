@@ -15,3 +15,13 @@ export type IMarketProps = MarketProps &
   Pick<CardProps, "filepath" | "metadata">;
 
 export type MarketCreateProps = Omit<MarketProps, "id"> | Omit<MarketProps, "id">[];
+
+export type MarketLogProps = {
+  id: number;
+  character_id: number;
+  rank_id: number;
+  sold_at_cost: number;
+  metadata?: Record<string, unknown>;
+};
+
+export type MarketLogCreateProps = Omit<MarketLogProps, "id"> | Omit<MarketLogProps, "id">[];

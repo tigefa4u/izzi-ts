@@ -97,7 +97,12 @@ const emojis: MapProps = {
 	permit: emoji.permit,
 	gold: emoji.gold,
 	"defensive strike": emoji.defensiveStrike,
-	"last stand": emoji.lastStand
+	"last stand": emoji.lastStand,
+	"agnus Scepter": emoji.agnusScepter,
+	"skull basher": emoji.skullBasher,
+	"vampire's blade": emoji.vampiresBlade,
+	leer: emoji.leer,
+	"ligthening shield": emoji.lighteningShield,
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

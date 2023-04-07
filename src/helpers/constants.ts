@@ -529,3 +529,6 @@ export const WORLD_BOSS_MIN_LEVEL = 12;
 
 export const WORLD_BOSS_MARKET_CARD_RANK = "immortal";
 export const WORLD_BOSS_MARKET_CARD_RANK_ID = 7;
+
+export const AGNUS_SCEPTER_MAX_HP_GAIN = 2000;
+export const AGNUS_SCEPTER_DEFAULT_HP_GAIN = 1350;

@@ -37,6 +37,7 @@ type Stack = Pick<
   | "isLifestealProc"
   | "isRapid"
   | "isLastStand"
+  | "isLeer"
 >;
 function processStack(stats: Stack) {
 	[
@@ -55,7 +56,8 @@ function processStack(stats: Stack) {
 		"isHarbingerOfDeath",
 		"isLifestealProc",
 		"isRapid",
-		"isLastStand"
+		"isLastStand",
+		"isLeer"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -241,6 +243,7 @@ export const BattleProcess = async ({
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
 		abilityDamage,
+		isPlayerParanoid: playerStats.totalStats.isParanoid
 	};
 };
 

@@ -40,7 +40,9 @@ const AbilityProcMap: AbilityProcMapProps = {
 	dominator: activeAbilities.dominator,
 	"harbinger of death": activeAbilities.harbingerOfDeath,
 	"defensive strike": activeAbilities.defensiveStrike,
-	"last stand": passiveAbilities.lastStand
+	"last stand": passiveAbilities.lastStand,
+	leer: activeAbilities.leer,
+	"lightening shield": activeAbilities.lighteningShield
 };
 
 export default AbilityProcMap;

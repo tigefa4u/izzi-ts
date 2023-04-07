@@ -405,8 +405,10 @@ export const battleConfirmationInteraction = async ({
 	args,
 	invokeFunc,
 	command,
+	isEvent
 }: BaseProps & {
   invokeFunc: (params: BaseProps & { isEvent?: boolean; }) => void;
+  isEvent?: boolean;
 }) => {
 	try {
 		invokeFunc({
@@ -414,7 +416,8 @@ export const battleConfirmationInteraction = async ({
 			context,
 			options,
 			args,
-			command
+			command,
+			isEvent
 		});
 		return;
 		// let confirmEmbed = createEmbed(options.author, client)

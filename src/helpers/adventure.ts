@@ -242,7 +242,9 @@ function prepareAffectedDesc(playerStats: BattleStats) {
 		playerStats.totalStats.isPoisoned ? emoji.toxic : ""
 	} ${playerStats.totalStats.isEndure ? emoji.endurance : ""} ${
 		playerStats.totalStats.isStackTB ? emoji.timebomb : ""
-	} ${playerStats.totalStats.isBleeding ? emoji.bleed : ""}`;
+	} ${playerStats.totalStats.isBleeding ? emoji.bleed : ""} ${
+		playerStats.totalStats.isParanoid ? emoji.paranoid : ""
+	}`;
 
 	return desc;
 }

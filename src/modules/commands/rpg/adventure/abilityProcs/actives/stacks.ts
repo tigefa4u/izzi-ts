@@ -1,17 +1,14 @@
-import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
-import { CollectionCardInfoProps } from "@customTypes/collections";
+import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability, randomNumber } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { addTeamEffectiveness } from "helpers/adventure";
 import {
 	getPlayerDamageDealt,
 	getRelationalDiff,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
-import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const toxicScreen = ({
 	playerStats,
@@ -62,7 +59,7 @@ export const toxicScreen = ({
 				opponentStats.totalStats.surgePercent = 0;
 		}
 		desc =
-      `Inflicting a stack of **Poison** on ${opponentStats.name} decreasing ` +
+      `Inflicting a stack of **Poison** on **__${opponentStats.name}__** decreasing ` +
       `its **DEF** by __${percent}%__ as well as decreasing lifesteal affects by __${lifestealPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

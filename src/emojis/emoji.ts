@@ -159,6 +159,12 @@ const emoji: EmojiProps = {
 	permit: ":ticket:",
 	defensiveStrike: "<:defensiveStrike:1092650327150432327>",
 	lastStand: "<:lastStand:1092665946755317771>",
+	paranoid: "<:paranoid:1093645211755872286>",
+	lighteningShield: "<:lightningshield:1093590854758838282>",
+	leer: "<:leer:1093590848647745617>",
+	skullBasher: "<:skullbasher:1093583009514520696>",
+	vampiresBlade: "<:vampiresblade:1093583014698696744>",
+	agnusScepter: "<:agnusscepter:1093583006834372681>",
 };
 
 export default emoji;

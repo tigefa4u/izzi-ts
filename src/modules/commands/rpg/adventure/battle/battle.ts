@@ -563,6 +563,7 @@ async function simulatePlayerTurns({
 			isStunned: updatedStats.isPlayerStunned,
 			isAsleep: updatedStats.isPlayerAsleep,
 			isEvadeHit: updatedStats.isOpponentEvadeHit,
+			isParanoid: updatedStats.isPlayerParanoid
 		});
 		const desc = await simulateBattleDescription({
 			playerStats,
@@ -637,6 +638,7 @@ function updateBattleDesc({
 	isStunned,
 	isAsleep,
 	isEvadeHit,
+	isParanoid
 }: {
   turn: number;
   isPlayerFirst: boolean;
@@ -651,6 +653,7 @@ function updateBattleDesc({
   isEvadeHit?: boolean;
   isStunned?: boolean;
   isAsleep?: boolean;
+  isParanoid?: boolean;
 }) {
 	let desc = `${
 		turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`
@@ -669,6 +672,8 @@ function updateBattleDesc({
 		desc = `${desc} ${playerDesc} is **Drowsy** ${emoji.sleep}. It cannot attack!`;
 	} else if (isEvadeHit) {
 		desc = `${desc} ${enemyDesc} has **Evaded** ${emoji.evasion}, taking no damage!`;
+	} else if (isParanoid) {
+		desc = `${desc} ${enemyDesc} is **Paranoid** ${emoji.paranoid}! It cannot attack!`;
 	} else {
 		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
 			isCriticalHit
