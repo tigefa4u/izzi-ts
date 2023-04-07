@@ -258,26 +258,26 @@ export const purchaseCard = async ({
 	author,
 }: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
 	try {
-		const purchaseCooldown = `${author.id}-market-purchase`;
-		let purhchaseExceeded: any =
-      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
-		purhchaseExceeded = JSON.parse(purhchaseExceeded);
+		// const purchaseCooldown = `${author.id}-market-purchase`;
+		// 	let purhchaseExceeded: any =
+		//   (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
+		// 	purhchaseExceeded = JSON.parse(purhchaseExceeded);
 
-		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
-			const purchaseCD = await getCooldown(author.id, purchaseCooldown);
-			if (purchaseCD) {
-				context.channel?.sendMessage(
-					`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
-				);
-				sendCommandCDResponse(
-					context.channel,
-					purchaseCD,
-					author.id,
-					purchaseCooldown
-				);
-				return;
-			}
-		}
+		// 	if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
+		// 		const purchaseCD = await getCooldown(author.id, purchaseCooldown);
+		// 		if (purchaseCD) {
+		// 			context.channel?.sendMessage(
+		// 				`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
+		// 			);
+		// 			sendCommandCDResponse(
+		// 				context.channel,
+		// 				purchaseCD,
+		// 				author.id,
+		// 				purchaseCooldown
+		// 			);
+		// 			return;
+		// 		}
+		// 	}
 		const cooldownCommand = "purchase-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {

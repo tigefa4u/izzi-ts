@@ -149,7 +149,7 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 };
 
 export const ORB_INTEREST_RATE = 0.7;
-export const MARKET_COMMISSION = 0.08;
+export const MARKET_COMMISSION = 0.04;
 export const BASE_ORBS_COUNT = 20;
 export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
