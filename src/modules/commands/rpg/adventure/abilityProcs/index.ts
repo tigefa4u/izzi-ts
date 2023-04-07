@@ -42,7 +42,7 @@ const AbilityProcMap: AbilityProcMapProps = {
 	"defensive strike": activeAbilities.defensiveStrike,
 	"last stand": passiveAbilities.lastStand,
 	leer: activeAbilities.leer,
-	"lightening shield": activeAbilities.lighteningShield
+	"lightning shield": activeAbilities.lightningShield
 };
 
 export default AbilityProcMap;

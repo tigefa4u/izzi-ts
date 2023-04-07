@@ -108,7 +108,7 @@ export type AbilityStackProps = StatStateProps &
     isLastStand?: boolean;
     isLeer?: boolean;
     isParanoid?: boolean;
-    isLighteningShield?: boolean;
+    isLightningShield?: boolean;
     abilityToResist?: {
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number;

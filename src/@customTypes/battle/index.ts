@@ -86,7 +86,7 @@ export type AbilityProcMapProps = {
     "harbinger of death": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "last stand": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "defensive strike": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
-    "lightening shield": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    "lightning shield": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     leer: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 

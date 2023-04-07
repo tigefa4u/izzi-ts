@@ -102,7 +102,7 @@ const emojis: MapProps = {
 	"skull basher": emoji.skullBasher,
 	"vampire's blade": emoji.vampiresBlade,
 	leer: emoji.leer,
-	"lightening shield": emoji.lighteningShield,
+	"lightning shield": emoji.lightningShield,
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

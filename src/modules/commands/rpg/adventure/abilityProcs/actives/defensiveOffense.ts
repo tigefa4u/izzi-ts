@@ -72,7 +72,7 @@ export const defensiveStrike = ({
 	};
 };
 
-export const lighteningShield = ({
+export const lightningShield = ({
 	playerStats,
 	opponentStats,
 	message,
@@ -88,8 +88,8 @@ export const lighteningShield = ({
 	let abilityDamage;
 	// gain 30% DEF buff and reflect 10% damage based on enemy atk
 	// decrease acc and crit damage by 15%
-	if (round % 3 === 0 && !playerStats.totalStats.isLighteningShield) {
-		playerStats.totalStats.isLighteningShield = true;
+	if (round % 3 === 0 && !playerStats.totalStats.isLightningShield) {
+		playerStats.totalStats.isLightningShield = true;
 		const percent = calcPercentRatio(30, card.rank);
 		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defRatio;
