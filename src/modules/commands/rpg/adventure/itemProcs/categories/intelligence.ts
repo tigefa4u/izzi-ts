@@ -4,6 +4,7 @@ import { probability, randomElementFromArray } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff } from "helpers/battle";
 import { AGNUS_SCEPTER_DEFAULT_HP_GAIN, AGNUS_SCEPTER_MAX_HP_GAIN } from "helpers/constants";
+import { clone } from "utility";
 import { processItemStats } from "..";
 
 export const sapphiresStaff = ({
@@ -313,7 +314,6 @@ export const agnusScepter = ({
 		}
 		if (!playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpGain;
-		playerStats.totalStats.strength = playerStats.totalStats.originalHp;
 		opponentStats.totalStats.originalHp = opponentStats.totalStats.originalHp - hpGain;
 		const desc = `and has gained __${card.itemStats.intelligence}__ **INT** ` +
 		`**Ability:** Increase max **HP** of all allies by __${hpGain}__, and ` +
