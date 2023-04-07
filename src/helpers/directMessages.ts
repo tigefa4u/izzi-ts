@@ -18,8 +18,8 @@ export const DMUser = async (
 		loggers.error(
 			"helpers.directMessages.DMUser: Unable to DM User: " +
         authorId +
-        " Content: " +
-        JSON.stringify(content),
+        " Content: ",
+			content,
 			err
 		);
 	}
@@ -53,7 +53,7 @@ export const MessageGuildDefaultChannel = async (
 	} catch (err) {
 		loggers.error(
 			"helpers.directMessages.MessageGuildChannels: Unable to send messages: Content: " +
-        JSON.stringify(content),
+        	content,
 			err
 		);
 		return;

@@ -75,8 +75,8 @@ export const spawnWorldBoss = async ({
 		} as CollectionCardInfoProps;
 
 		loggers.info(
-			"worldBoss.spawn.spawnWorldBoss: Preparing boss stats for worldboss - " +
-        JSON.stringify(raidBoss)
+			"worldBoss.spawn.spawnWorldBoss: Preparing boss stats for worldboss - ",
+			raidBoss
 		);
 		const { raidStats, computedLoot } = await computeRaidBossStats({
 			raidBosses: [ raidBoss ],
@@ -105,7 +105,7 @@ export const spawnWorldBoss = async ({
 			context.channel?.sendMessage("Could not spawn World Boss!");
 			return;
 		}
-		loggers.info("Created world boss with data - " + JSON.stringify(raid));
+		loggers.info("Created world boss with data - ", raid);
 
 		context.channel?.sendMessage(
 			`**Level ${WORLD_BOSS_LEVEL}** __${titleCase(card.rank)}__ **${titleCase(

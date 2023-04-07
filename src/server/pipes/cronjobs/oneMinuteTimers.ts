@@ -48,7 +48,7 @@ function boot() {
 	initLoggerContext(async () => {
 		try {
 			setLoggerContext({
-				trackingId: generateUUID(10),
+				requestId: generateUUID(10),
 				userTag: "cronjob"
 			});
 			await Promise.all([ autoKick(), raidTimers() ]);

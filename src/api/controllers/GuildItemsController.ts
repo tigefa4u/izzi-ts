@@ -14,7 +14,7 @@ export const delGuildItems = async (params: {
   id?: number;
 }) => {
 	try {
-		loggers.info("Deleting guild items with: " + JSON.stringify(params));
+		loggers.info("Deleting guild items with: ", params);
 		return await GuildItems.del(params);
 	} catch (err) {
 		loggers.error(

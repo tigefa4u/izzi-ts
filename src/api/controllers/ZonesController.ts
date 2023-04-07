@@ -50,7 +50,7 @@ export const getAllZones = async (
 
 export const createOrUpdateZoneBackup = async (data: { user_tag: string; max_ruin: number; max_floor: number; }) => {
 	try {
-		loggers.info("Creating Zone Backup: " + JSON.stringify(data));
+		loggers.info("Creating Zone Backup: ", data);
 		return ZoneBackup.createOrUpdate(data);
 	} catch (err) {
 		loggers.error(

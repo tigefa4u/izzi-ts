@@ -89,8 +89,7 @@ export const getUserQuests = async (
 export const createUserQuest = async (data: UserQuestCreateProps) => {
 	try {
 		loggers.info(
-			"UserQuestsController.createUserQuest: creating with data: " +
-        JSON.stringify(data)
+			"UserQuestsController.createUserQuest: creating with data: ", data
 		);
 		return UserQuests.create(data);
 	} catch (err) {
@@ -106,8 +105,7 @@ export const getUserQuestByQuestid = async (params: {
 }) => {
 	try {
 		loggers.info(
-			"api.UserQuestsController.getUserQuestByQuestid: fetching data with query params - " +
-        JSON.stringify(params)
+			"api.UserQuestsController.getUserQuestByQuestid: fetching data with query params - ", params
 		);
 		return UserQuests.get({
 			quest_id: params.quest_id,
@@ -128,7 +126,7 @@ export const getUserQuestByType = async (params: {
   is_daily?: boolean;
 }) => {
 	try {
-		loggers.info("fetching user quest by type: " + JSON.stringify(params));
+		loggers.info("fetching user quest by type: ", params);
 		return UserQuests.getByQuestType(params);
 	} catch (err) {
 		loggers.error("api.UserQuestsController.getUserQuestByType: ERROR", err);
@@ -160,9 +158,8 @@ export const completeQuest = async (
 					);
 				}
 				loggers.info(
-					"UserQuestsController: [transaction] Updating user quest rewards with data: " +
-            JSON.stringify(questReward)
-				);
+					"UserQuestsController: [transaction] Updating user quest rewards with data: ",
+					questReward);
 
 				const data = {
 					user_tag: params.user_tag,
@@ -172,7 +169,7 @@ export const completeQuest = async (
 				};
 				loggers.info(
 					"UserQuestsController: [transaction] creating user quest with data: " +
-            JSON.stringify(data)
+            		data
 				);
 				const updatedObj = await trx("users")
 					.where({ user_tag: params.user_tag })
@@ -211,7 +208,7 @@ export const completeQuest = async (
 
 					loggers.info(
 						"UserQuestsController: [transaction] creating collection data - " +
-              JSON.stringify(collectionData)
+						collectionData
 					);
 
 					createdCollection = await trx("collections")

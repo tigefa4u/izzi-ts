@@ -185,14 +185,12 @@ export const desolator = ({
 						const updatedId = await trx.raw(`update collections set 
 						souls = souls + ${soulsToSeal} where id = ${card.id} returning id`);
 						if (!updatedId) {
-							loggers.info("could not add souls to cid: " + card.id);
-							loggers.info("card details - " + JSON.stringify(card));	
+							loggers.info("could not add souls to cid: ", card);	
 							return trx.rollback();
 						}
 						return trx.commit();
 					}).catch((err) => {
-						loggers.info("could not add souls to cid: " + card.id);
-						loggers.info("card details - " + JSON.stringify(card));
+						loggers.info("could not add souls to cid: ", card);
 					});
 					// updateCollection({ id: card.id }, { souls: card.souls });
 				}

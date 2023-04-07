@@ -79,8 +79,10 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 		collector?.on("collect", (buttonInteraction) => {
 			initLoggerContext(async () => {
 				setLoggerContext({
-					trackingId: generateUUID(10),
+					requestId: generateUUID(10),
 					userTag: buttonInteraction.user.id,
+					serverId: buttonInteraction.guild?.id,
+					channelId: buttonInteraction.channel?.id
 				});
 				buttonInteraction.deferUpdate();
 				const id = buttonInteraction.customId;
@@ -178,8 +180,10 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 		collector?.on("collect", (buttonInteraction) => {
 			initLoggerContext(async () => {
 				setLoggerContext({
-					trackingId: generateUUID(10),
+					requestId: generateUUID(10),
 					userTag: buttonInteraction.user.id,
+					serverId: buttonInteraction.guild?.id,
+					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(
@@ -259,8 +263,10 @@ export const collectableInteraction = async <P>(
 		collector?.on("collect", (buttonInteraction) => {
 			initLoggerContext(() => {
 				setLoggerContext({
-					trackingId: generateUUID(10),
+					requestId: generateUUID(10),
 					userTag: buttonInteraction.user.id,
+					serverId: buttonInteraction.guild?.id,
+					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(
@@ -352,8 +358,10 @@ export const customButtonInteraction = <P>(
 		collector?.on("collect", (buttonInteraction) => {
 			initLoggerContext(() => {
 				setLoggerContext({
-					trackingId: generateUUID(10),
+					requestId: generateUUID(10),
 					userTag: buttonInteraction.user.id,
+					serverId: buttonInteraction.guild?.id,
+					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
 				loggers.info(

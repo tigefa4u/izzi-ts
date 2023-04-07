@@ -10,7 +10,7 @@ const tableName = "world_boss_battles";
 const users = "users";
 
 export const create = async (data: CreateWorldBossBattleProps) => {
-	loggers.info("Creating world boss battle: " + JSON.stringify(data));
+	loggers.info("Creating world boss battle: ", data);
 	return connection(tableName).insert(data);
 };
 

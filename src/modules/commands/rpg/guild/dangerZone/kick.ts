@@ -20,7 +20,7 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 			return;
 		}
 		loggers.info("kickFromGuild: member being kicked by admin: " + author.id);
-		loggers.info("kickFromGuild: mentioned user found: " + JSON.stringify(mentionedUser));
+		loggers.info("kickFromGuild: mentioned user found: ", mentionedUser);
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
 		const validGuild = await verifyMemberPermissions({
@@ -32,7 +32,7 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 			extras: { user_id: user.id }
 		});
 		if (!validGuild) return;
-		loggers.info("kickFromGuild: guild details: " + JSON.stringify(validGuild));
+		loggers.info("kickFromGuild: guild details: ", validGuild);
 		const member = await getGuildMember({ user_id: mentionedUser.id });
 		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_ERROR_TITLE);

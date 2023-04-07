@@ -170,7 +170,7 @@ export const enchantCard = async ({
 		}
 		const computationTimer = loggers.startTimer("computation for cid: " + cardToEnchant.id);
 		loggers.info("computation started for cid: " + cardToEnchant.id);
-		loggers.info("computation started for card to enchant: " + JSON.stringify(cardToEnchant));
+		loggers.info("computation started for card to enchant: ", cardToEnchant);
 		const computed = await preComputeRequiredCards({
 			card: cardToEnchant,
 			...params,

@@ -27,8 +27,10 @@ export default async function () {
 						}
 						const member = lobby[k];
 						delete lobby[k];
-						loggers.info("pipes.autoKick: auto kicking member: " + JSON.stringify(member) +
-						" from raid: " + r.id);
+						loggers.info("pipes.autoKick: auto kicking member", {
+							raidId: r.id,
+							member
+						});
 						if (member.is_leader) {
 							keys = Object.keys(lobby).map(Number);
 							if (keys.length > 0) {
@@ -65,8 +67,10 @@ export default async function () {
 				// 	}
 				// }
 				if (canUpdateRaid) {
-					loggers.info("pipes.autoKick: updating raid lobby -> " + JSON.stringify(lobby) + 
-					" for raid: " + r.id);
+					loggers.info("pipes.autoKick: updating raid lobby -> ", {
+						raidId: r.id,
+						lobby
+					});
 					await updateRaid({ id: r.id }, { lobby });
 				}
 				return;

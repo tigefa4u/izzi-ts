@@ -88,7 +88,7 @@ export const createWorldBossBattle = async (
 	data: CreateWorldBossBattleProps
 ) => {
 	try {
-		loggers.info("Create world boss battle with data: " + JSON.stringify(data));
+		loggers.info("Create world boss battle with data: ", data);
 		return WorldBossBattles.create(data);
 	} catch (err) {
 		loggers.error(
@@ -144,7 +144,7 @@ export const getWorldBossBattleLb = async (params: { fromDate: Date }) => {
 export const createWorldBoss = async (data: RaidCreateProps) => {
 	try {
 		data.is_world_boss = true;
-		loggers.info("Creating world boss with data: " + JSON.stringify(data));
+		loggers.info("Creating world boss with data: ", data);
 		return Raids.create(data);
 	} catch (err) {
 		loggers.error(
@@ -337,7 +337,7 @@ export const processWorldBossRewards = async (params: {
 			try {
 				const bodyParams = {
 					gold: trx.raw(`gold + ${totalGoldLooted}`),
-					mana: trx.raw(`mana - ${WORLD_BOSS_MANA_PER_BATTLE}`),
+					dungeon_mana: trx.raw(`dungeon_mana - ${WORLD_BOSS_MANA_PER_BATTLE}`),
 				} as any;
 
 				if (soulsLooted > 0) {
@@ -345,15 +345,14 @@ export const processWorldBossRewards = async (params: {
 				}
 
 				loggers.info(
-					"[transaction] updating user with data: " +
-            JSON.stringify({
+					"[transaction] updating user with data: ", {
             	gold: totalGoldLooted,
-            	mana: WORLD_BOSS_MANA_PER_BATTLE,
-            })
+            	dgManaConsumed: WORLD_BOSS_MANA_PER_BATTLE,
+					}
 				);
 				const updatedObj = await trx("users")
 					.where({ user_tag: user.user_tag })
-					.where("mana", ">=", WORLD_BOSS_MANA_PER_BATTLE)
+					.where("dungeon_mana", ">=", WORLD_BOSS_MANA_PER_BATTLE)
 					.update(bodyParams)
 					.returning("*")
 					.then((res) => res[0]);
@@ -367,7 +366,8 @@ export const processWorldBossRewards = async (params: {
 					embed
 						.setTitle(DEFAULT_ERROR_TITLE)
 						.setDescription(
-							`Summoner **${user.username}**, You do not have sufficient mana to finish this battle.`
+							`Summoner **${user.username}**, You do not have sufficient **DG Mana** ` +
+							"to finish this battle."
 						);
 					channel?.sendMessage(embed);
 					trx.rollback();
@@ -423,13 +423,11 @@ export const processWorldBossRewards = async (params: {
 				}
 
 				loggers.info(
-					"[transaction] WB user update successful: data - " +
-            JSON.stringify(updatedObj)
+					"[transaction] WB user update successful: data - ", updatedObj
 				);
 
 				loggers.info(
-					"[transaction] WB Create Collections with data: " +
-            JSON.stringify(collectionData)
+					"[transaction] WB Create Collections with data: ", collectionData
 				);
 				const collectionDataCreated = await trx("collections").insert(
 					collectionData,
@@ -442,8 +440,7 @@ export const processWorldBossRewards = async (params: {
 					throw new Error("Unable to create Cards");
 				}
 				loggers.info(
-					"[transaction] WB collections created with data: " +
-            JSON.stringify(collectionDataCreated)
+					"[transaction] WB collections created with data: ", collectionDataCreated
 				);
 				const _worldBossBattleData = {
 					user_tag: user.user_tag,
@@ -453,8 +450,7 @@ export const processWorldBossRewards = async (params: {
 					boss_stats: raid.stats,
 				};
 				loggers.info(
-					"[transaction] Creating world boss battle with loot data: " +
-            JSON.stringify(_worldBossBattleData)
+					"[transaction] Creating world boss battle with loot data: ", _worldBossBattleData
 				);
 				await trx("world_boss_battles").insert(_worldBossBattleData);
 

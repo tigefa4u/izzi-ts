@@ -173,7 +173,8 @@ export const battleBoss = async ({
 			loggers.error(
 				`Unable to validate raid user: ${author.id} with id: ${
 					currentRaid.id
-				}, Raid -> ${JSON.stringify(currentRaid)}`,
+				}, Raid -> `,
+				currentRaid,
 				{}
 			);
 			return;

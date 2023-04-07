@@ -46,7 +46,7 @@ export const getAllGuildMembers = async (
 
 export const updateGuildMember = async (params: { id?: number; user_id?: number }, data: GuildMemberUpdateProps) => {
 	try {
-		loggers.info("Updating Guild Member with: " + JSON.stringify(data));
+		loggers.info("Updating Guild Member with: ", data);
 		return GuildMembers.update(params, data);
 	} catch (err) {
 		loggers.error("api.controller.GuildMembersController.updateGuildMember: ERROR", err);
@@ -56,7 +56,7 @@ export const updateGuildMember = async (params: { id?: number; user_id?: number 
 
 export const delGuildMember = async (params: { id: number }) => {
 	try {
-		loggers.info("Deleting Guild Member with: " + JSON.stringify(params));
+		loggers.info("Deleting Guild Member with: ", params);
 		return GuildMembers.del(params);
 	} catch (err) {
 		loggers.error("api.controller.GuildMembersController.delGuildMember: ERROR", err);
@@ -66,7 +66,7 @@ export const delGuildMember = async (params: { id: number }) => {
 
 export const delAllGuildMembers = async (params: { guild_id: number }) => {
 	try {
-		loggers.info("Deleting All Guild Members with: " + JSON.stringify(params));
+		loggers.info("Deleting All Guild Members with: ", params);
 		return GuildMembers.del(params);
 	} catch (err) {
 		loggers.error("api.controller.GuildMembersController.delAllGuildMembers: ERROR", err);
@@ -76,7 +76,7 @@ export const delAllGuildMembers = async (params: { guild_id: number }) => {
 
 export const createGuildMember = async (data: GuildMemberCreateProps | GuildMemberCreateProps[]) => {
 	try {
-		loggers.info("Creating Guild Member with: " + JSON.stringify(data));
+		loggers.info("Creating Guild Member with: ", data);
 		return GuildMembers.create(data);
 	} catch (err) {
 		loggers.error("api.controller.GuildMembersController.createGuildMember: ERROR", err);

@@ -71,8 +71,7 @@ const handleCommandInteraction = async (client: Client, context: CommandInteract
 		const args = [ command.name, ...prepareArgsFromInteraction(command.name, context) ];
 		const isValid = await checkUserBanned(context, client, context.user, command.name);
 		if (!isValid) return;
-		loggers.info(`Interaction Command ${command.name} invoked by uid: ${context.user.id} with args: ` +
-		JSON.stringify(args));
+		loggers.info(`Interaction Command ${command.name} invoked by uid: ${context.user.id} with args: `, args);
 		commandCategory[command?.type as keyof CommandCategoryProps]({
 			client,
 			context,

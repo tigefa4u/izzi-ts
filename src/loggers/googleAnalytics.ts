@@ -52,12 +52,11 @@ const GA4 = {
 				},
 			],
 		};
-		const bodyParams = JSON.stringify(body);
 		loggers.info(
-			"googleAnalytics._reportAnalytics: sending data - " + bodyParams
+			"googleAnalytics._reportAnalytics: sending data - ", body
 		);
 		axios
-			.post(url, bodyParams)
+			.post(url, JSON.stringify(body))
 			.then(() => loggers.info("googleAnalytics._reportAnalytics: completed"))
 			.catch((err) =>
 				loggers.error("googleAnalytics._reportAnalytics: ERROR", err)

@@ -166,7 +166,7 @@ export const prepareFloorFodder = ({
 			is_on_cooldown: false,
 			is_tradable: true,
 		};
-		loggers.info(`prepareFloorFodder: returning ${multiplier}x cards -> ${JSON.stringify(options)}`);
+		loggers.info(`prepareFloorFodder: returning ${multiplier}x cards ->`, options);
 		const bodyParams: CollectionCreateProps[] = Array(multiplier)
 			.fill(options)
 			.map((item) => item);

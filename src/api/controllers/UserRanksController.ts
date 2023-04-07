@@ -33,7 +33,10 @@ export const updateUserRank = async (
 	data: Partial<Omit<UserRankProps, "id">>
 ) => {
 	try {
-		loggers.info("Updating user ranks: " + JSON.stringify(params) + " Data: " + JSON.stringify(data));
+		loggers.info("Updating user ranks: ", {
+			params,
+			data
+		});
 		return UserRanks.update(params, data);
 	} catch (err) {
 		loggers.error(

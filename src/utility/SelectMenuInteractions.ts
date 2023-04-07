@@ -36,8 +36,10 @@ export const selectionInteraction = async <P>(
 			if (!interaction.isSelectMenu()) return;
 			initLoggerContext(() => {
 				setLoggerContext({
-					trackingId: generateUUID(10),
-					userTag: interaction.user.id
+					requestId: generateUUID(10),
+					userTag: interaction.user.id,
+					serverId: interaction.guild?.id,
+					channelId: interaction.channel?.id
 				});
 			});
 			await interaction.deferUpdate();

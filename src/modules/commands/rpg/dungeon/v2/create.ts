@@ -57,7 +57,7 @@ export const createDGTeam = async ({ args, client, options, context }: BaseProps
 		}
 		const dgTeam = await getDGTeam(author.id);
 		if (dgTeam) {
-			loggers.info(`dungeon.v2.create.createDGTeam: existing team found: ${JSON.stringify(dgTeam)}`);
+			loggers.info("dungeon.v2.create.createDGTeam: existing team found: ", dgTeam);
 			loggers.info("dungeon.v2.create.createDGTeam: updating existing team name to: " + name);
 			await updateDGTeam(author.id, {
 				team: {

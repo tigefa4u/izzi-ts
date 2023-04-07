@@ -37,7 +37,7 @@ export const createCollection: (
 ) {
 	try {
 		if (!data) return;
-		loggers.info("creating collection with data: " + JSON.stringify(data));
+		loggers.info("creating collection with data: ", data);
 		return Collections.create(data);
 	} catch (err) {
 		loggers.error(
@@ -116,12 +116,10 @@ export const updateCollection = async (
 	data: CollectionUpdateProps
 ): Promise<number | undefined> => {
 	try {
-		loggers.info(
-			"Updating Collection with: " +
-        JSON.stringify(params) +
-        " Data: " +
-        JSON.stringify(data)
-		);
+		loggers.info("Updating Collection with: ", {
+			params,
+			data 
+		});
 		return Collections.update(params, data);
 	} catch (err) {
 		loggers.error(
@@ -259,7 +257,7 @@ export const deleteCollection = async (
 	params: Pick<CollectionParams, "id" | "ids">
 ) => {
 	try {
-		loggers.info("Deleting collections with: " + JSON.stringify(params));
+		loggers.info("Deleting collections with: ", params);
 		return Collections.destroy(params);
 	} catch (err) {
 		loggers.error(
@@ -272,7 +270,7 @@ export const deleteCollection = async (
 
 export const verifyCollectionsById = async (params: { user_id: number; ids: number[] }) => {
 	try {
-		loggers.info("Verifying collections with: " + JSON.stringify(params));
+		loggers.info("Verifying collections with: ", params);
 		return Collections.verifyIds(params);
 	} catch (err) {
 		loggers.error(

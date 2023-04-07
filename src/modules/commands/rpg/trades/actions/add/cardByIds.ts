@@ -84,7 +84,7 @@ export const addCardByIds = async ({
 				name: coll.name,
 			}));
 		if (arr.length > 0) {
-			loggers.info("adding cards to trade: " + JSON.stringify(arr));
+			loggers.info("adding cards to trade: ", arr);
 		}
 		trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
 		const refetchQueue = await getTradeQueue(tradeId);

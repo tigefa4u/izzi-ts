@@ -176,7 +176,7 @@ export const findDuplicateCollectionInTeamsAndUpdate = async (
 				return meta;
 			});
 			loggers.info(
-				"Duplicate collections found in array: " + JSON.stringify(teamMetadata)
+				"Duplicate collections found in array: ", teamMetadata
 			);
 			if (Object.keys(teamMetadata).length > 0) {
 				if (teamId !== team.id) {

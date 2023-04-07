@@ -11,7 +11,7 @@ import { clone } from "utility";
 import * as Users from "../models/Users";
 
 async function hydrateUserCache(data: UserProps) {
-	loggers.info("Hydrating user cache: " + JSON.stringify(data));
+	loggers.info("Hydrating user cache: ", data);
 	const key = "user::" + data.user_tag;
 	await Cache.set(key, JSON.stringify(data));
 }
@@ -153,8 +153,10 @@ export const updateRPGUser: (
 	try {
 		const result = await updateUser(params, data, options);
 		loggers.info(
-			"api.controllers.UsersController.updateRPGUser: updating user " +
-        JSON.stringify(params) + JSON.stringify(data)
+			"api.controllers.UsersController.updateRPGUser: updating user ", {
+				params,
+				data 
+			}
 		);
 		// if (options?.hydrateCache) {
 		// 	const cacheHydrationData = await prepareCacheHydrationData(params, data);

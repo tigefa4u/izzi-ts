@@ -59,13 +59,13 @@ async function startUserJourney(author: AuthorProps) {
 		is_tradable: true
 	};
 	loggers.info(
-		"modules.commands.rpg.profile.startJourney: New User created: " +
-      JSON.stringify(newUser)
+		"modules.commands.rpg.profile.startJourney: New User created: ",
+		newUser
 	);
 	await createCollection(collectionBodyParams);
 	loggers.info(
-		"modules.commands.rpg.profile.startJourney: New User starter card: " +
-      JSON.stringify(collectionBodyParams)
+		"modules.commands.rpg.profile.startJourney: New User starter card: ",
+		collectionBodyParams
 	);
 	return cardDetails;
 }

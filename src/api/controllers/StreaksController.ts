@@ -14,7 +14,7 @@ export const getUserStreaks = async (params: { user_tag: string; }) => {
 
 export const createUserStreak = async (data: StreakCreateProps) => {
 	try {
-		loggers.info("StreaksController.createUserStreak: creating streak with data: " + JSON.stringify(data));
+		loggers.info("StreaksController.createUserStreak: creating streak with data: ", data);
 		return Streaks.create(data);
 	} catch (err) {
 		loggers.error("api.StreaksController.createUserStreak: ERROR", err);
@@ -24,8 +24,7 @@ export const createUserStreak = async (data: StreakCreateProps) => {
 
 export const updateUserStreak = async (params: { user_tag: string; }, data: StreakUpdateProps) => {
 	try {
-		loggers.info("StreaksController.updateUserStreak: updating for user: " + params.user_tag);
-		loggers.info("StreaksController.updateUserStreak: updating streak with data: " + JSON.stringify(data));
+		loggers.info("StreaksController.updateUserStreak: updating for user: " + params.user_tag, { data });
 		return Streaks.update(params, data);
 	} catch (err) {
 		loggers.error("api.StreaksController.updateUserStreak: ERROR", err);

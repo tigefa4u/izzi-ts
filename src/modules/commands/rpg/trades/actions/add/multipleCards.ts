@@ -55,9 +55,7 @@ const addCardsToTrade = async ({
 	const trader = tradeQueue[author.id];
 	trader.queue = [ ...new Set([ ...trader.queue, ...arr ]) ];
 	loggers.info(
-		`Trade Queue for user: ${trader.user_tag} Queue: ${JSON.stringify(
-			trader.queue
-		)}`
+		`Trade Queue for user: ${trader.user_tag} Queue:`, trader.queue
 	);
 	const refetchQueue = await getTradeQueue(tradeId);
 	if (!refetchQueue) {
@@ -112,8 +110,8 @@ const handleCharacterSelect = async (
 		queryOptions.name = character.name;
 		queryOptions.isExactMatch = true;
 		loggers.info("trades.actions.add.multipleCards.handleCharacterSelect: " +
-		"fetching collections with query params: " +
-		JSON.stringify(queryOptions));
+		"fetching collections with query params: ",
+		queryOptions);
 		const collections = await getCollection(queryOptions);
 		const embed = createEmbed(options.author, options.client).setTitle(
 			DEFAULT_ERROR_TITLE
@@ -210,8 +208,8 @@ export const addMultipleCards = async ({
 				return;
 			}
 			if (characters.length > 1 && params.name) {
-				loggers.info("addMultipleCards: multiple characters found for query params: " + JSON.stringify(params));
-				loggers.info("addMultipleCards: multiple characters found " + JSON.stringify(characters));
+				loggers.info("addMultipleCards: multiple characters found for query params: ", params);
+				loggers.info("addMultipleCards: multiple characters found ", characters);
 				if (characters.length > 20) characters.splice(0, 20);
 				const selectMenuOptions = {
 					menuOptions: characters.map((c) => ({

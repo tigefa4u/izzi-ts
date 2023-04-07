@@ -160,7 +160,7 @@ export const processBattleTransaction = async ({
 				return trx.rollback();
 			}
 			loggers.info("battleTransaction.processBattleTransaction: user update completed " +
-            JSON.stringify(updatedUserObj));
+            updatedUserObj);
 
 			const consoleButtons = [
 				{
@@ -181,8 +181,8 @@ export const processBattleTransaction = async ({
 					multiplier
 				});
 				if (!fodders) {
-					loggers.info("processBattleTransaction: could not prepare fodder for uid: " + author.id +
-                    "enemy - " + JSON.stringify(enemyCard));
+					loggers.error("processBattleTransaction: could not prepare fodder for uid: " + author.id +
+                    "enemy - ", enemyCard);
 					channel?.sendMessage(`Summoner **${author.username}**, we were unable to process your battle. ` +
                     "Please try again later.");
 					return trx.rollback();

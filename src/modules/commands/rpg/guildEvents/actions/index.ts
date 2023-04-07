@@ -87,11 +87,11 @@ export const setPrefix = async ({
 			(res) => res?.ADMINISTRATOR
 		);
 		loggers.info(
-			"modules.commands.rpg.guildEvents.actions.setPrefix: validating administrator permissions - " +
-        JSON.stringify({
+			"modules.commands.rpg.guildEvents.actions.setPrefix: validating administrator permissions - ",
+			{
         	author,
         	isAdmin,
-        })
+			}
 		);
 		if (!isAdmin) {
 			context.channel?.sendMessage(

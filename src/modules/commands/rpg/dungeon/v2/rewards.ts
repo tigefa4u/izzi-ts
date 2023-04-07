@@ -24,8 +24,7 @@ const fetchAndUpdateDgLog = async (
         uid
 		);
 		loggers.info(
-			"dungeon.v2.rewards.fetchAndUpdateDgLog: updating with log data: " +
-        JSON.stringify(log)
+			"dungeon.v2.rewards.fetchAndUpdateDgLog: updating with log data: ", log
 		);
 		const dgTeam = await getDGTeam(uid);
 		if (!dgTeam && showError) {
@@ -86,14 +85,14 @@ export const processBattleOutcome = async ({
 		}
 		const promises = [];
 		loggers.info(
-			"dungeon.v2.rewards.processBattleOutcome: processing dg outcome for user: " +
-        JSON.stringify({
+			"dungeon.v2.rewards.processBattleOutcome: processing dg outcome for user: ",
+			{
         	author,
         	userRank,
         	opponentId,
         	isOpponentBot: result.isBot,
         	isVictory: result.isVictory,
-        })
+			}
 		);
 		if (result.isVictory) {
 			outcomeDesc = `Congratulations summoner **${author.username}**, You ` +

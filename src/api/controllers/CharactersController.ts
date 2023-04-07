@@ -33,8 +33,8 @@ export const getCharacters: (
 		return Characters.get(params);
 	} catch (err) {
 		loggers.error(
-			"api.controllers.getCharacters: ERROR for params:- " +
-        JSON.stringify(params),
+			"api.controllers.getCharacters: ERROR for params:- ",
+			params,
 			err
 		);
 		return [];

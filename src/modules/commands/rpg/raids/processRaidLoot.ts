@@ -120,8 +120,8 @@ export const processRaidLoot = async ({
 		await createCollection(collections);
 
 		loggers.info(
-			"raid.processRaidLoot: Distributing raid loot rewards: " +
-        JSON.stringify(allRewards)
+			"raid.processRaidLoot: Distributing raid loot rewards: ",
+			allRewards
 		);
 
 		allRewards.map((reward) =>

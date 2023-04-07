@@ -42,7 +42,7 @@ export const getMarketCollection = async (params: { is_on_market: boolean, colle
 
 export const delFromMarket = async (params: { id?: number; collection_ids?: number | number[] }) => {
 	try {
-		loggers.info("Deleting card from market: " + JSON.stringify(params));
+		loggers.info("Deleting card from market: ", params);
 		return Markets.del(params);
 	} catch (err) {
 		loggers.error("api.controllers.MarketsController.delFromMarket: ERROR", err);

@@ -10,8 +10,10 @@ import { LOGGER_CONTEXT } from "helpers/constants";
 const ctx = createNamespace(LOGGER_CONTEXT);
 
 interface LoggerContext {
-  trackingId: string;
+  requestId: string;
   userTag: string;
+  serverId?: string;
+  channelId?: string;
 }
 
 export const getLoggerContext = (): LoggerContext =>

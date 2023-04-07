@@ -2,7 +2,6 @@ import { createLogger, transports, format } from "winston";
 import "winston-daily-rotate-file";
 import { LoggingWinston } from "@google-cloud/logging-winston";
 import { GCP_PROJECT_ID, GCP_RESOURCE_PREFIX } from "environment";
-import { getLoggerContext } from "./context";
 
 const cloudLogger = new LoggingWinston({
 	projectId: GCP_PROJECT_ID,
@@ -82,38 +81,6 @@ const apiRequestResponseTransporter = new transports.DailyRotateFile({
 	)
 });
 
-const winstonDebugLogger = createLogger({
-	transports: [ 
-	// debugTransporter, 
-		cloudLogger ] 
-});
-
-const winstonErrorLogger = createLogger({
-	transports: [
-		// errorTransporter,
-		cloudLogger
-		// new transports.File({
-		// 	filename: "logs/error.log",
-		// 	level: "error",
-		// 	format: format.combine(
-		// 		format.errors({ stack: true }),
-		// 		format.timestamp(),
-		// 		format.json()
-		// 	),
-		// }),
-		// new transports.File({
-		// 	filename: "logs/info.log",
-		// 	level: "info",
-		// 	format: format.json()
-		// }),
-		// new transports.File({
-		// 	filename: "logs/warn.log",
-		// 	level: "warn",
-		// 	format: format.json(),
-		// })
-	],
-});
-
 const winstonAPILogger = createLogger({
 	transports: [
 		// apiRequestResponseTransporter,
@@ -140,10 +107,12 @@ const winstonAPILogger = createLogger({
 	],
 });
 
-const winstonInfoLogger = createLogger({
+const logger = createLogger({
+	format: format.combine(format.timestamp(), format.json()),
 	transports: [
+		// new transports.Console(),
+		cloudLogger
 		// infoTransporter,
-		cloudLogger
 		// new transports.File({
 		// 	filename: "logs/info.log",
 		// 	level: "info",
@@ -152,42 +121,4 @@ const winstonInfoLogger = createLogger({
 	]
 });
 
-const winstonTimerLogger = createLogger({
-	transports: [
-		// timerTransporter,
-		cloudLogger
-		// new transports.File({
-		// 	filename: "logs/info.log",
-		// 	level: "info",
-		// 	format: format.json()
-		// }),
-	]
-});
-
-const error = (error: any) => {
-	winstonErrorLogger.error(error, { labels: getLoggerContext() });
-};
-
-const info = (info: string) => {
-	winstonInfoLogger.info(info, { labels: getLoggerContext() });
-};
-
-const logTime = (info: string) => {
-	winstonTimerLogger.info(info, { labels: getLoggerContext() });
-};
-
-const logApi = (info: string) => {
-	winstonAPILogger.info(info, { labels: getLoggerContext() });
-};
-
-const debug = (debug: string) => {
-	winstonDebugLogger.info(debug, { labels: getLoggerContext() });
-};
-
-export default {
-	error,
-	info,
-	logTime,
-	logApi,
-	debug
-};
+export default logger;

@@ -7,7 +7,7 @@ import * as Raids from "../models/Raids";
 
 export const createRaid = async (data: RaidCreateProps) => {
 	try {
-		loggers.info("Creating Raid boss: " + JSON.stringify(data));
+		loggers.info("Creating Raid boss: ", data);
 		return Raids.create(data);
 	} catch (err) {
 		loggers.error(
@@ -20,7 +20,10 @@ export const createRaid = async (data: RaidCreateProps) => {
 
 export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps) => {
 	try {
-		loggers.info("Updating raid: " + JSON.stringify(params) + " " + JSON.stringify(data));
+		loggers.info("Updating raid", {
+			params,
+			data
+		});
 		return Raids.update(params, data);
 	} catch (err) {
 		loggers.error(
@@ -33,7 +36,10 @@ export const updateRaid = async (params: { id: number; }, data: RaidUpdateProps)
 
 export const updateRaidEnergy = async (params: { id: number; }, data: RaidLobbyProps) => {
 	try {
-		loggers.info("Refilling raid energy: " + JSON.stringify(params) + " Lobby: " + JSON.stringify(data));
+		loggers.info("Refilling raid energy: ", {
+			params,
+			data
+		});
 		return Raids.refillEnergy({
 			id: params.id,
 			data 
@@ -53,7 +59,11 @@ export const updateLobby = async ({ raid_id, user_id, data }: {
     data: RaidLobbyProps[0];
 }) => {
 	try {
-		loggers.info("Updating raid lobby: " + `Raid ID: ${raid_id} > user_id: ${user_id} > ${JSON.stringify(data)}`);
+		loggers.info("Updating raid lobby: ", {
+			raid_id,
+			user_id,
+			data
+		});
 		return Raids.updateLobby({
 			raid_id,
 			user_id,

@@ -9,7 +9,7 @@ export const logCommand = (author: AuthorProps, command: CommandProps, args: str
 	try {
 		loggers.info(
 			`command ${command.name} used by ${author.username} (${author.id}) ` +
-            `-> bot: ${author.bot}, discriminator: ${author.discriminator} -> with arguments: ${JSON.stringify(args)}`
+            `-> bot: ${author.bot}, discriminator: ${author.discriminator} -> with arguments: ${args.join(", ")}`
 		);
 
 		logCommandUsage(command.name, author.id, author.username);

@@ -21,8 +21,8 @@ export const processRaidMvpQuest = async <ET extends {
 		const mvp = getLobbyMvp(lobby);
 		if (!mvp) return;
 		const member = lobby[mvp as keyof RaidLobbyProps];
-		loggers.info("quests.functions.raidMvp.processRaidMvp: mvp found - " +
-        JSON.stringify(member));
+		loggers.info("quests.functions.raidMvp.processRaidMvp: mvp found - ",
+			member);
 
 		const user = await getRPGUser({ user_tag: member.user_tag });
 		if (!user) return;

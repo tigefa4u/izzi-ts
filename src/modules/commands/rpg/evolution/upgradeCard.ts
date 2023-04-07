@@ -151,7 +151,7 @@ const validateAndUpgradeCard = async (
 				if (!updatedObj) {
 					throw "Unable to update";
 				}
-				loggers.info("upgradeCard: successfully upgraded card - " + JSON.stringify(updatedObj));
+				loggers.info("upgradeCard: successfully upgraded card - ", updatedObj);
 				channel?.sendMessage(embed);
 				return trx.commit();
 			} catch (err) {

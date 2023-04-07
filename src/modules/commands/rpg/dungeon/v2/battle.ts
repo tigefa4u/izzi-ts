@@ -163,7 +163,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
 			if (!opponentUser) {
 				loggers.info("dungeon.v2.battle.dungeonBattle: opponent user not found: " + 
-                JSON.stringify(randomOpponent));
+                randomOpponent);
 				context.channel?.sendMessage("We could not prepare your opponent. Please contact support.");
 				return;
 			}
@@ -175,7 +175,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			});
 			if (!opponent) {
 				loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 
-                JSON.stringify(randomOpponent));
+                randomOpponent);
 				await updateDGTeam(opponentUser.user_tag, {
 					team: {
 						...randomOpponent.team,
@@ -244,7 +244,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 					context.channel?.sendMessage(embed);
 					return trx.rollback();
 				}
-				loggers.info("Dungeon mana update successful for uid: " + author.id + " " + JSON.stringify(updatedObj));
+				loggers.info("Dungeon mana update successful for uid: " + author.id, updatedObj);
 				loggers.info("dungeon.v2.battle.dungeonBattle: battle outcome processing started... uid " + author.id);
 				if (!opponent) {
 					result.isBot = true;

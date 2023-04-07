@@ -132,12 +132,10 @@ async function verifyAndProcessSacrifice(
 		const promises = [];
 		// delete card from market and team
 		await delFromMarket({ collection_ids: [ cardToConsume.id ] }).then(async () => {
-			loggers.info(
-				"Sacrifice card: " +
-          JSON.stringify(cardToConsume) +
-          " Upgrade card: " +
-          JSON.stringify(card)
-			);
+			loggers.info("Sacrifice card: ", {
+				cardToConsume,
+				upgradeCard: card
+			});
 			promises.push(
 				deleteCollection({ id: cardToConsume.id }),
 				updateCollection({ id: card.id }, { souls: reqSouls })

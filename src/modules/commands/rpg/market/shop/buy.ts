@@ -106,15 +106,14 @@ async function notifySeller(
 		})
 	]);
 	loggers.info(
-		"Notifying seller of Market Purchase: " +
-      JSON.stringify({
+		"Notifying seller of Market Purchase: ", {
       	seller: seller.user_tag,
       	buyer: buyer.user_tag,
       	totalCost,
       	price: marketCard.price,
       	marketId: marketCard.id,
       	collectionId: marketCard.collection_id
-      })
+		}
 	);
 
 	const key = "anonymous-market-purchase::" + buyer.user_tag;
@@ -178,26 +177,26 @@ async function validateAndPurchaseCard(
 	}
 	if (options?.isConfirm) {
 		if (!OWNER_DISCORDID) return;
-		const purchaseCooldown = `${params.author.id}-market-purchase`;
-		let purhchaseExceeded: any =
-      (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
-		purhchaseExceeded = JSON.parse(purhchaseExceeded);
+		// 	const purchaseCooldown = `${params.author.id}-market-purchase`;
+		// 	let purhchaseExceeded: any =
+		//   (await Cache.get(purchaseCooldown)) || "{ \"purchased\": 0 }";
+		// 	purhchaseExceeded = JSON.parse(purhchaseExceeded);
 
-		if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
-			const purchaseCD = await getCooldown(params.author.id, purchaseCooldown);
-			if (purchaseCD) {
-				params.channel?.sendMessage(
-					`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
-				);
-				sendCommandCDResponse(
-					params.channel,
-					purchaseCD,
-					params.author.id,
-					purchaseCooldown
-				);
-				return;
-			}
-		}
+		// 	if (purhchaseExceeded.purchased >= MARKET_PURCHASE_LIMIT) {
+		// 		const purchaseCD = await getCooldown(params.author.id, purchaseCooldown);
+		// 		if (purchaseCD) {
+		// 			params.channel?.sendMessage(
+		// 				`You can purchase up to __${MARKET_PURCHASE_LIMIT}__ cards per day from the Global Market.`
+		// 			);
+		// 			sendCommandCDResponse(
+		// 				params.channel,
+		// 				purchaseCD,
+		// 				params.author.id,
+		// 				purchaseCooldown
+		// 			);
+		// 			return;
+		// 		}
+		// 	}
 		const dealer = await getRPGUser({ user_tag: OWNER_DISCORDID });
 		if (!dealer) {
 			params.channel?.sendMessage("ERROR!");
@@ -227,19 +226,26 @@ async function validateAndPurchaseCard(
 			}
 		);
 		await delFromMarket({ id: marketCard.id });
-		const dt = new Date();
+		// const dt = new Date();
 		// await Cache.set("card-cd::" + marketCard.collection_id, JSON.stringify({
 		// 	timestamp: dt,
 		// 	cooldownEndsAt: dt.setHours(dt.getHours() + 4)
 		// }));
 		// Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
 		notifyBuyer(params.channel, marketCard);
-		const count = purhchaseExceeded.purchased + 1;
-		if (count >= MARKET_PURCHASE_LIMIT) {
-			setCooldown(params.author.id, purchaseCooldown, 60 * 60 * 24);
-		}
-		Cache.set(purchaseCooldown, JSON.stringify({ purchased: count }));
-		Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24);
+
+		//////////////////////////////////////////////
+		//											//
+		//		Market Purchase Limit disabled		//
+		//											//
+		//////////////////////////////////////////////
+
+		// const count = purhchaseExceeded.purchased + 1;
+		// if (count >= MARKET_PURCHASE_LIMIT) {
+		// 	setCooldown(params.author.id, purchaseCooldown, 60 * 60 * 24);
+		// }
+		// Cache.set(purchaseCooldown, JSON.stringify({ purchased: count }));
+		// Cache.expire && Cache.expire(purchaseCooldown, 60 * 60 * 24);
 		return;
 	}
 	return marketCard;

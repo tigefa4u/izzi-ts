@@ -90,8 +90,8 @@ export const upgradeGuildBeyond150 = async ({
 				[statToUpgrade as any]:
           Math.round((incVal + Number.EPSILON) * 100) / 100,
 			});
-			loggers.info("guilds.upgrades.beyond150.upgradeGuildBeyond150: upgrading guild with data -> " + 
-            JSON.stringify(validGuild.guild));
+			loggers.info("guilds.upgrades.beyond150.upgradeGuildBeyond150: upgrading guild with data -> ",
+				validGuild.guild);
 			await updateGuild({ id: validGuild.guild.id }, {
 				guild_level: validGuild.guild.guild_level,
 				guild_stats: validGuild.guild.guild_stats

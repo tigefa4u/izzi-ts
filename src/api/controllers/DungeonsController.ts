@@ -4,8 +4,8 @@ import * as Dungeons from "../models/Dungeons";
 
 export const createDGTeam = async (data: DungeonCreateProps) => {
 	try {
-		loggers.info("api.controllers.DungeonsController.createDGTeam: creating DG Team with data " + 
-        JSON.stringify(data));
+		loggers.info("api.controllers.DungeonsController.createDGTeam: creating DG Team with data ", 
+			data);
 		return Dungeons.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.DungeonsController.createDGTeam: ERROR", err);
@@ -15,9 +15,8 @@ export const createDGTeam = async (data: DungeonCreateProps) => {
 
 export const updateDGTeam = async (user_tag: string, data: DungeonUpdateProps) => {
 	try {
-		loggers.info(`api.controllers.DungeonsController.updateDGTeam: " +
-        "updating DG Team for user ${user_tag} with data ` + 
-        JSON.stringify(data));
+		loggers.info("api.controllers.DungeonsController.updateDGTeam: ", 
+			data);
 		return Dungeons.update(user_tag, data);
 	} catch (err) {
 		loggers.error("api.controllers.DungeonsController.updateDGTeam: ERROR", err);

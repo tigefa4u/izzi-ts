@@ -78,8 +78,8 @@ export const updateReferral = async (
 export const createReferral = async (data: ReferralCreateProps) => {
 	try {
 		loggers.info(
-			"api.controllers.ReferralsController.createReferral: creating referral with data -> " +
-        JSON.stringify(data)
+			"api.controllers.ReferralsController.createReferral: creating referral with data -> ",
+			data
 		);
 		return Referrals.create(data);
 	} catch (err) {

@@ -102,7 +102,7 @@ export const dropCollectables = async ({
 				return;
 			}
 			const cardToDrop = card[0] as CharacterCanvasProps;
-			loggers.info("Card Drop Spawned: " + JSON.stringify(cardToDrop));
+			loggers.info("Card Drop Spawned: ", cardToDrop);
 			let sentMessage: Message;
 			const canvas = createSingleCanvas(cardToDrop, true);
 			if (!canvas) {

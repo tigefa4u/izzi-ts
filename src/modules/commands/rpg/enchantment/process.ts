@@ -32,7 +32,7 @@ export async function prepareRankAndFetchCards({
 	let uniqueCards = [ ...new Set(accumulator) ];
 	if (forceExit || reqExp <= 0) {
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards: line: 33 -> data " + JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line: 33 -> data ", uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
@@ -71,8 +71,8 @@ export async function prepareRankAndFetchCards({
 	if (!result) {
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards: line 76 -> data " +
-		JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line 76 -> data ",
+			uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
@@ -91,7 +91,7 @@ export async function prepareRankAndFetchCards({
 		totalXpGain = reqExp;
 		reqExp = 0;
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards: line: 93 -> data " + JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line: 93 -> data ", uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
@@ -124,13 +124,13 @@ export async function prepareRankAndFetchCards({
           );
 
 				loggers.info(
-					"prepareInteration() new Data: " +
-            JSON.stringify({
-            	newRank,
-            	newCondition,
-            	newStashRank,
-            	newStashCondition,
-            })
+					"prepareInteration() new Data: ",
+					{
+						newRank,
+						newCondition,
+						newStashRank,
+						newStashCondition,
+					}
 				);
 				const initialPayload = preparePayload(
 					newRank || "silver",
@@ -197,8 +197,8 @@ export async function prepareRankAndFetchCards({
 				totalXpGain = totalXpGain - Math.abs(reqExp);
 				uniqueCards = [ ...new Set(accumulator) ];
 				loggers.info(
-					"enchantment.process.prepareRankAndFetchCards: line: 193 -> data " +
-					JSON.stringify(uniqueCards)
+					"enchantment.process.prepareRankAndFetchCards: line: 193 -> data ",
+					uniqueCards
 				);
 				return {
 					accumulator: uniqueCards,
@@ -220,8 +220,8 @@ export async function prepareRankAndFetchCards({
 		}
 		uniqueCards = [ ...new Set(accumulator) ];
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCards: line: 203 -> data " +
-        JSON.stringify(uniqueCards)
+			"enchantment.process.prepareRankAndFetchCards: line: 203 -> data ",
+			uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
@@ -250,7 +250,7 @@ async function fetchRequiredCards({
 		exclude_character_ids
 	} as CollectionParams & { limit: number };
 
-	loggers.info("fetchRequiredCards: fetching data with params - " + JSON.stringify(params));
+	loggers.info("fetchRequiredCards: fetching data with params - ", params);
 	const collections = await getCollection(params);
 	if (!collections) {
 		return;

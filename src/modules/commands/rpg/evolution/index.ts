@@ -102,20 +102,17 @@ async function verifyAndProcessEvolution(
 				"Failed to fetch Power Level for RANK ID: " + cardToEvolve.rank_id
 			);
 		}
-		loggers.info(
-			"Evolving card: " +
-        JSON.stringify(cardToEvolve) +
-        " to rank: " +
-        newRankPL.rank +
-        " RANKID: " +
-        newRankPL.rank_id
-		);
+		loggers.info("Evolving card:", {
+			cardToEvolve,
+			toRank: newRankPL.rank,
+			rankId: newRankPL.rank_id
+		});
 		cardToEvolve.rank_id = cardToEvolve.rank_id + 1;
 		const prevRank = cardToEvolve.rank;
 		cardToEvolve.rank = newRankPL.rank;
 		user.gold = user.gold - cost;
 		cardToEvolve.souls = cardToEvolve.souls - reqSouls;
-		loggers.info("Evolving card: after data update -> " + JSON.stringify(cardToEvolve));
+		loggers.info("Evolving card: after data update -> ", cardToEvolve);
 		await Promise.all([
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			updateCollection(

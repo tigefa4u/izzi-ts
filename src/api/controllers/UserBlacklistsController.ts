@@ -13,7 +13,7 @@ export const getUserBlacklist = async (params: { user_tag: string; }) => {
 
 export const createUserBlacklist = async (data: UserBlacklistCreateProps) => {
 	try {
-		loggers.info("Creating user blacklist: " + JSON.stringify(data));
+		loggers.info("Creating user blacklist: ", data);
 		return UserBlacklist.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.createUserBlacklist: ERROR", err);
@@ -23,10 +23,10 @@ export const createUserBlacklist = async (data: UserBlacklistCreateProps) => {
 
 export const updateUserBlacklist = async (params: {user_tag: string;}, data: UserBlacklistUpdateProps) => {
 	try {
-		loggers.info("Updating user blacklist with data: " + JSON.stringify({
+		loggers.info("Updating user blacklist with data: ", {
 			params,
 			data
-		}));
+		});
 		return UserBlacklist.update(params.user_tag, data);
 	} catch (err) {
 		loggers.error("api.controllers.updateUserBlacklist: ERROR", err);

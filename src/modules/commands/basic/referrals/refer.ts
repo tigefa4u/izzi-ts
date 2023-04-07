@@ -93,8 +93,8 @@ export const useReferrals = async ({
 				rewardEmbed.setDescription("There are currently no referral rewards.");
 			} else {
 				if (!mentionedUser) {
-					loggers.info("referralCard.refer: Unable to find user with mentionId: " 
-					+ mentionId + " card created: " + JSON.stringify(card));
+					loggers.error("referralCard.refer: Unable to find user with mentionId: " 
+					+ mentionId + " card created: ", card);
 				}
 				await createCollection({
 					character_id: card.character_id,

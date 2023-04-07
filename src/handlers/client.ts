@@ -44,8 +44,10 @@ export const handleClientEvents = (client: Client) => {
 		if (cannotProcessContext) return;
 		initLoggerContext(() => {
 			setLoggerContext({
-				trackingId: generateUUID(10),
-				userTag: context.author.id
+				requestId: generateUUID(10),
+				userTag: context.author.id,
+				serverId: context.guild?.id,
+				channelId: context.channel.id
 			});
 			handleMessage(client, context, { hasPermissions });
 		});

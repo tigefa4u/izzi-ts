@@ -16,10 +16,10 @@ export const getGuild = async (params: GuildParams) => {
 
 export const updateGuild = async (params: GuildParams, data: GuildUpdateProps) => {
 	try {
-		loggers.info("api.controllers.GuildsController.updateGuild: updating guild => " + JSON.stringify({
+		loggers.info("api.controllers.GuildsController.updateGuild: updating guild => ", {
 			data,
 			params
-		}));
+		});
 		return Guilds.update(params, data);
 	} catch (err) {
 		loggers.error("api.controllers.GuildsController.updateGuild: ERROR", err);
@@ -39,7 +39,7 @@ export const deleGuild = async (params: { id: number }) => {
 
 export const createGuild = async (data: GuildCreateProps) => {
 	try {
-		loggers.info("Creating new Guild with: " + JSON.stringify(data));
+		loggers.info("Creating new Guild with: ", data);
 		return Guilds.create(data);
 	} catch (err) {
 		loggers.error("api.controllers.GuildsController.createGuild: ERROR", err);
@@ -77,7 +77,10 @@ export const disbandAndBackupGuild = async ({ guild }: { guild: GuildProps; }) =
 			is_banned: guild.is_banned,
 			max_members: guild.max_members,
 		};
-		loggers.info("Disbanding guild with guild ID: " + guild.guild_id + " details -> " + JSON.stringify(guild));
+		loggers.info("Disbanding guild with guild ID: ", {
+			guildId: guild.guild_id,
+			guild
+		});
 		return Promise.all([ delAllGuildMembers({ guild_id: guild.id }),
 			delGuildItems({ guild_id: guild.id }),
 			updateGuild(

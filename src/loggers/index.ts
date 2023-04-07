@@ -1,28 +1,68 @@
 import winstonLogger from "./winston";
+import safeStringify from "fast-safe-stringify";
+import { getLoggerContext } from "./context";
 
-const error = (errMessage: string, err: unknown) => {
-	let errorMessage: string | undefined = "Unknown Error";
-	if (err instanceof Error) {
-		errorMessage = err.stack;
+type A = (string | number | Record<string, unknown> | Error)[]
+
+const prepareLogObject = (array: A[]) => {
+	const objects = {};
+	const arrays: A[] = [];
+	const errors: string[] = [];
+	array.map((item) => {
+		if (item instanceof Error) {
+			errors.push(safeStringify(item, Object.getOwnPropertyNames(item) as any));
+		} else if (Array.isArray(item)) {
+			arrays.push(item);
+		} else if (typeof item === "object") {
+			Object.assign(objects, item);
+		}
+	});
+	const logString = array.filter((a) => typeof a === "string").join(", ");
+	if (arrays.length > 0) {
+		Object.assign(objects, { arrays });
 	}
-	// console.error(errMessage, errorMessage);
-	winstonLogger.error(errMessage + JSON.stringify(errorMessage));
+	if (errors.length > 0) {
+		Object.assign(objects, { errors });
+	}
+	return {
+		objects,
+		logString
+	};
 };
 
-const info = (infoMessage: string) => {
-	// console.info(infoMessage);
-	winstonLogger.info(infoMessage);
+const sendLog = (level: string, ...args: any[]) => {
+	const { logString, objects = {} } = prepareLogObject(args);
+	Object.assign(objects, { labels: getLoggerContext() });
+	if (level === "error") {
+		winstonLogger.error(logString, objects);
+	} else if (level === "info") {
+		winstonLogger.info(logString, objects);
+	} else if (level === "debug") {
+		winstonLogger.debug(logString, objects);
+	} else if (level === "warn") {
+		winstonLogger.warn(logString, objects);
+	}
+};
+
+const error = (...args: any[]) => {
+	sendLog("error", ...args);
+};
+
+const info = (...args: any[]) => {
+	sendLog("info", ...args);
 };
 
 const debug = (...args: any[]) => {
-	// console.log(args.join(", "));
-	winstonLogger.debug(args.map((value) => typeof value !== "string" ? JSON.stringify(value) : value).join(", "));
+	sendLog("debug", ...args);
+};
+
+const warn = (...args: any[]) => {
+	sendLog("warn", ...args);
 };
 
 const timerify = (...args: (string | number)[]) => {
 	const log = args.join(" -> ");
-	// console.log(log);
-	winstonLogger.logTime(log);
+	sendLog("info", log);
 };
 
 const startTimer = (message?: string) => {
@@ -65,5 +105,6 @@ export default {
 	startTimer,
 	endTimer,
 	logApi,
-	debug
+	debug,
+	warn
 };
