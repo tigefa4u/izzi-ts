@@ -24,6 +24,7 @@ import { getRandomCard } from "api/controllers/CardsController";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { starterGuide } from "./guide";
 import { help } from "modules/commands/basic";
+import GA4 from "loggers/googleAnalytics";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -35,6 +36,11 @@ async function startUserJourney(author: AuthorProps) {
 	if (!newUser) {
 		throw new Error("Unable to create new user");
 	}
+	GA4.customEvent("start_journey", {
+		category: "users",
+		action: "start",
+		label: `${newUser.user_tag}_${newUser.username}`
+	});
 	loggers.info("modules.commands.rpg.profile.startJourney: Journey started");
 	const card = await getRandomCard(
 		{

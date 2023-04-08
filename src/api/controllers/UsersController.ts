@@ -81,7 +81,7 @@ export const updateUser: (
 				);
 			}
 		}
-		return await Users.update(params, data);
+		return Users.update(params, data);
 	} catch (err) {
 		loggers.error(
 			"api.controllers.UsersController.updateUser: ERROR",
