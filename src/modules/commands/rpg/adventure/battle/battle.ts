@@ -673,7 +673,7 @@ function updateBattleDesc({
 	} else if (isEvadeHit) {
 		desc = `${desc} ${enemyDesc} has **Evaded** ${emoji.evasion}, taking no damage!`;
 	} else if (isParanoid) {
-		desc = `${desc} ${enemyDesc} is **Paranoid** ${emoji.paranoid}! It cannot attack!`;
+		desc = `${desc} ${playerDesc} is **Paranoid** ${emoji.paranoid}! It cannot attack!`;
 	} else {
 		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
 			isCriticalHit
