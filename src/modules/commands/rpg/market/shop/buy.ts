@@ -8,6 +8,7 @@ import { BaseProps } from "@customTypes/command";
 import { IMarketProps } from "@customTypes/market";
 import { UserProps } from "@customTypes/users";
 import { updateCollection } from "api/controllers/CollectionsController";
+import { createMarketLog } from "api/controllers/MarketLogsController";
 import { delFromMarket } from "api/controllers/MarketsController";
 import {
 	getRPGUser,
@@ -25,6 +26,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
+	MARKET_LOG_MIN_COLLECTION_ID_DIGITS,
 	MARKET_PURCHASE_LIMIT,
 	QUEST_TYPES,
 } from "helpers/constants";
@@ -81,7 +83,7 @@ async function notifySeller(
 	marketCard: IMarketProps,
 	client: Client
 ) {
-	const [ totalCost ]: [number, void] = await Promise.all([
+	const [ totalCost ] = await Promise.all([
 		processPurchase(
 			buyer,
 			dealer,
@@ -105,6 +107,23 @@ async function notifySeller(
 			type: QUEST_TYPES.MARKET
 		})
 	]);
+	if (marketCard.collection_id.toString().length >= MARKET_LOG_MIN_COLLECTION_ID_DIGITS) {
+		await createMarketLog({
+			character_id: marketCard.character_id,
+			rank_id: marketCard.rank_id,
+			sold_at_cost: totalCost,
+			metadata: {
+				soldBy: {
+					userTag: seller.user_tag,
+					username: seller.username
+				},
+				boughtBy: {
+					userTag: buyer.user_tag,
+					username: buyer.username
+				}
+			}
+		});
+	}
 	loggers.info(
 		"Notifying seller of Market Purchase: ", {
       	seller: seller.user_tag,

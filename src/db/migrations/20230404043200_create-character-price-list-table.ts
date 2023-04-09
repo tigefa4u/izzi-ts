@@ -9,6 +9,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.integer("average_market_price").defaultTo(0);
 		table.jsonb("metadata");
 		table.index([ "character_id", "rank_id" ]);
+		table.unique([ "character_id", "rank_id" ]);
 		table.timestamps(true, true);
 	}).then(() => knex.raw(knexfile.onUpdateTrigger("character_price_lists")));
 }

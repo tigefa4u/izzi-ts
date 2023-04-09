@@ -53,3 +53,8 @@ export type DungeonOpponentProps = DungeonProps & {
     rank: string;
     rank_id: number;
 };
+
+export type DungeonBanProps = {
+    itemBans?: { id: number; name: string; }[];
+    abilityBans?: { id: number; name: string; }[];
+}

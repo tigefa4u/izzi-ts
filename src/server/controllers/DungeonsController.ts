@@ -26,6 +26,54 @@ export const concludeOrStartDungeons = async (req: any, res: any) => {
 	}
 };
 
+/**
+ * Example
+ * {
+    "abilityBans": [{"id": 1, "name": "harbinger of death"}, 
+	{ "id": 8, "name": "leer" }]
+}
+ * @param req
+ * @param res 
+ * @returns 
+ */
+export const setDgBans = async (req: any, res: any) => {
+	try {
+		// fetch all dg teams and reset
+		const itemBans = req.body.itemBans || [];
+		const abilityBans = req.body.abilityBans || [];
+		if (itemBans.length <= 0 && abilityBans.length <= 0) {
+			await Cache.del("dg-bans");
+			return success(res, { message: "DG Bans are reset" });
+		}
+		const object = {};
+		if (itemBans.length > 0) {
+			Object.assign(object, { itemBans });
+		}
+		if (abilityBans.length > 0) {
+			Object.assign(object, { abilityBans });
+		}
+		await Cache.set("dg-bans", JSON.stringify(object));
+		return success(res, { message: "DG Bans are set" });
+	} catch (err: any) {
+		return res.status(500).send({
+			error: true,
+			message: err.message
+		});
+	}
+};
+
+export const getDgBans = async (req: any, res: any) => {
+	try {
+		const item = await Cache.get("dg-bans");
+		return success(res, item ? JSON.parse(item) : {});
+	} catch (err: any) {
+		return res.status(500).send({
+			error: true,
+			message: err.message
+		});
+	}
+};
+
 const crates: any = {
 	premium: {
 		category: "premium",

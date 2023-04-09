@@ -1,6 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
+import { showDgBans } from "./bans";
 import { dungeonBattle } from "./battle";
 import { viewDGBattleLog } from "./battleLog";
 import { createDGTeam } from "./create";
@@ -31,6 +32,8 @@ export const dungeonFunc = async (params: BaseProps) => {
 			viewDGBattleLog(params);
 		} else if (cmd === "equip") {
 			equipDGItem(params);
+		} else if (cmd === "bans") {
+			showDgBans(params);
 		}
 		return;
 	} catch (err) {

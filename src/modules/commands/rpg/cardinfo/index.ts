@@ -6,12 +6,16 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
-import { overallStats, prepareStatsDesc } from "helpers";
+import { numericWithComma, overallStats, prepareStatsDesc } from "helpers";
 import { getFloorsByCharacterId } from "api/controllers/StagesController";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
-import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, ranksMeta } from "helpers/constants";
+import {
+	CONSOLE_BUTTONS,
+	DEFAULT_ERROR_TITLE,
+	ranksMeta,
+} from "helpers/constants";
 import { AuthorProps, ChannelProp, FilterProps } from "@customTypes";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import {
@@ -21,7 +25,10 @@ import {
 import { clone, groupByKey } from "utility";
 import { PageProps } from "@customTypes/pagination";
 import { getCharacterCardByRank } from "api/controllers/CardsController";
-import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
+import {
+	customButtonInteraction,
+	paginatorInteraction,
+} from "utility/ButtonInteractions";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { showCardSkins } from "./skinInfo";
@@ -29,8 +36,11 @@ import { CustomButtonInteractionParams } from "@customTypes/button";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
+import emoji from "emojis/emoji";
+import { getCharacterPriceList } from "api/controllers/CharacterPriceListsController";
+import { RanksMetaProps } from "helpers/helperTypes";
 
-async function prepareCinfoDetails(
+function prepareCinfoDetails(
 	embed: MessageEmbed,
 	characterInfo: CharacterCardProps,
 	location?: NormalizeFloorProps
@@ -42,6 +52,7 @@ async function prepareCinfoDetails(
 		cardCanvas.createJPEGStream(),
 		"cinfo.jpg"
 	);
+
 	const statsPrep = {
 		...characterInfo.stats,
 		abilityname: characterInfo.abilityname,
@@ -51,7 +62,9 @@ async function prepareCinfoDetails(
 	embed
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
-			`**Series:** ${titleCase(characterInfo.series.trim())}\n**Card Copies:** ${
+			`**Series:** ${titleCase(
+				characterInfo.series.trim()
+			)}\n**Card Copies:** ${
 				characterInfo.copies
 			}\n**Element Type:** ${titleCase(characterInfo.type)} ${
 				elementTypeEmoji ? elementTypeEmoji : ""
@@ -70,7 +83,11 @@ async function prepareCinfoDetails(
 			}\n**RANK:** ${titleCase(characterInfo.rank)}\n${prepareStatsDesc(
 				statsPrep,
 				characterInfo.rank
-			)}`
+			)}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
+				characterInfo.averageMarketPrice
+					? `__${numericWithComma(characterInfo.averageMarketPrice)}__ Gold ${emoji.gold}`
+					: "N/A"
+			} (Low digit cards can be sold for higher price)`
 		)
 		.setImage("attachment://cinfo.jpg")
 		.attachFiles([ attachment ]);
@@ -135,7 +152,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 				author: options.author,
 				extras: {
 					cards: charaInfo,
-					filterParams: { rank: params.rank } 
+					filterParams: { rank: params.rank },
 				},
 			},
 			handleCharacterSelect
@@ -148,33 +165,44 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.cardinfo.cinfo: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.cardinfo.cinfo: ERROR", err);
 		return;
 	}
 };
 
 async function handleCharacterSelect(
-	options: SelectMenuCallbackParams<{ cards: CharacterCardProps[]; filterParams?: { rank?: string; } }>,
+	options: SelectMenuCallbackParams<{
+    cards: CharacterCardProps[];
+    filterParams?: { rank?: string };
+  }>,
 	value: string
 ) {
 	if (!options.extras?.cards) return;
 	const cardsMeta = groupByKey(options.extras.cards, "name");
 	const character = cardsMeta[value][0];
-	showCharacterDetails(options.author, character, options.channel, options.client, options.extras.filterParams);
+	showCharacterDetails(
+		options.author,
+		character,
+		options.channel,
+		options.client,
+		options.extras.filterParams
+	);
 	return;
 }
 
 const handleJumpToFloor = async ({
-	client, channel, user_tag, id, message, location
-}: CustomButtonInteractionParams & { location: NormalizeFloorProps; }) => {
+	client,
+	channel,
+	user_tag,
+	id,
+	message,
+	location,
+}: CustomButtonInteractionParams & { location: NormalizeFloorProps }) => {
 	if (id !== CONSOLE_BUTTONS.JUMP_TO_FLOOR.id) return;
 	const [ author, user, zoneDetails ] = await Promise.all([
 		client.users.fetch(user_tag),
 		getRPGUser({ user_tag }),
-		getZoneByLocationId({ location_id: location.zone })
+		getZoneByLocationId({ location_id: location.zone }),
 	]);
 	if (!user) {
 		channel?.sendMessage(
@@ -184,14 +212,16 @@ const handleJumpToFloor = async ({
 		return;
 	}
 	if (!zoneDetails) {
-		channel?.sendMessage("We could not find the zone you were looking for. Please contact support.");
+		channel?.sendMessage(
+			"We could not find the zone you were looking for. Please contact support."
+		);
 		return;
 	}
 	const options = {
 		context: { channel } as BaseProps["context"],
 		options: { author },
 		args: [ `${location.floors[0]}` ],
-		client
+		client,
 	};
 
 	if (location.zone > user.max_ruin) {
@@ -199,28 +229,34 @@ const handleJumpToFloor = async ({
 			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this zone yet!`
 		);
 		return;
-	} else if (location.floors[0] > user.max_ruin_floor && location.zone === user.max_ruin) {
+	} else if (
+		location.floors[0] > user.max_ruin_floor &&
+    location.zone === user.max_ruin
+	) {
 		channel?.sendMessage(
 			`${DEFAULT_ERROR_TITLE} Summoner **${author.username}**, you have not unlocked this floor yet!`
 		);
 		return;
 	}
-	await updateRPGUser({ user_tag: author.id }, {
-		ruin: location.zone,
-		max_floor: zoneDetails.max_floor 
-	});
+	await updateRPGUser(
+		{ user_tag: author.id },
+		{
+			ruin: location.zone,
+			max_floor: zoneDetails.max_floor,
+		}
+	);
 	floor(options);
 	return;
 };
 
 /**
  * Main function that invokes card info details
- * @param author 
- * @param character 
- * @param channel 
- * @param client 
- * @param filterParams 
- * @returns 
+ * @param author
+ * @param character
+ * @param channel
+ * @param client
+ * @param filterParams
+ * @returns
  */
 async function showCharacterDetails(
 	author: AuthorProps,
@@ -246,7 +282,9 @@ async function showCharacterDetails(
 	};
 	if (filterParams?.rank) {
 		const ranks = Object.keys(ranksMeta);
-		const idx = ranks.findIndex((r) => r.includes(filterParams.rank || "silver"));
+		const idx = ranks.findIndex((r) =>
+			r.includes(filterParams.rank || "silver")
+		);
 		if (idx > 0) {
 			pageFilters.currentPage = idx + 1;
 		} else {
@@ -262,7 +300,7 @@ async function showCharacterDetails(
 		async (data, opts) => {
 			if (data) {
 				params.refetchCard = true;
-				embed = await prepareCinfoDetails(embed, data.data, location);
+				embed = prepareCinfoDetails(embed, data.data, location);
 				embed.setHideConsoleButtons(true);
 			} else {
 				embed.setDescription("Unable to show character information.");
@@ -284,9 +322,9 @@ async function showCharacterDetails(
 					label: CONSOLE_BUTTONS.JUMP_TO_FLOOR.label,
 					params: {
 						id: CONSOLE_BUTTONS.JUMP_TO_FLOOR.id,
-						location 
-					}
-				}
+						location,
+					},
+				},
 			],
 			author.id,
 			handleJumpToFloor,
@@ -309,7 +347,7 @@ async function showCharacterDetails(
 		author,
 		channel,
 		character,
-		client
+		client,
 	});
 	return;
 }
@@ -326,10 +364,16 @@ const fetchCharacterInfoMeta = async (
 	const rank = ranks.slice(filter.currentPage - 1, filter.currentPage)[0];
 	const clonedCharacter = clone(params.character);
 	if (params.refetchCard) {
-		const card = await getCharacterCardByRank({
-			rank,
-			character_id: params.character.id,
-		});
+		const [ card, characterPriceList ] = await Promise.all([
+			getCharacterCardByRank({
+				rank,
+				character_id: params.character.id,
+			}),
+			getCharacterPriceList({
+				characterId: params.character.id,
+				rankId: ranksMeta[rank as keyof RanksMetaProps].rank_id
+			})
+		]);
 		if (!card) {
 			loggers.error(
 				"cardinfo.fetchCharacterInfoMeta: " +
@@ -353,6 +397,7 @@ const fetchCharacterInfoMeta = async (
 			stats: clonedCharacter.stats,
 		});
 		clonedCharacter.stats = stats.totalStats;
+		clonedCharacter.averageMarketPrice = characterPriceList?.average_market_price;
 	}
 	if (rank === "silver") {
 		clonedCharacter.stats = params.character.stats;

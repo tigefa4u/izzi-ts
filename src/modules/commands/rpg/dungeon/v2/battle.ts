@@ -1,7 +1,9 @@
 import { BattleStats } from "@customTypes/adventure";
 import { BaseProps } from "@customTypes/command";
+import { DungeonBanProps } from "@customTypes/dungeon";
 import { TeamProps } from "@customTypes/teams";
 import { UserRankProps } from "@customTypes/userRanks";
+import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getDGTeam, getRandomDGOpponent, updateDGTeam } from "api/controllers/DungeonsController";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { createUserRank, getUserRank } from "api/controllers/UserRanksController";
@@ -30,7 +32,7 @@ const spawnDGBoss = async (userRank?: UserRankProps) => {
 	const enemyStats = await prepareSkewedCollectionsForBattle({
 		collections: dungeonBoss,
 		id: "Dungeon Boss",
-		name: "XeneX's Dungeon Boss"
+		name: "XeneX's Dungeon Boss [BOT]"
 	});
 	enemyStats.isBot = true;
 	return enemyStats;
@@ -46,7 +48,15 @@ export const dungeonBattle = async (params: BaseProps) => {
 export const invokeDungeonBattle = async ({ context, options, client }: BaseProps) => {
 	try {
 		const author = options.author;
-		const seasonEnd = await Cache.get("dg-season-end");
+		const [ seasonEnd, bans ] = await Promise.all([
+			Cache.get("dg-season-end"),
+			Cache.get("dg-bans")
+		]);
+
+		let dungeonBans = {} as DungeonBanProps;
+		if (bans) {
+			dungeonBans = JSON.parse(bans);
+		}
 		if (seasonEnd) {
 			context.channel?.sendMessage("Ranked Dungeon battles have Ended.");
 			return;
@@ -94,11 +104,20 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		]);
 		if (dgTeam && blackList && blackList.length > 0) {
 			// dgTeam.metadata.isValid = false;
-			embed.setTitle("Warning :warning:").setDescription(
-				"You have been blacklisted and cannot participate in DG Ranked Challenge. Please contact support."
-			);
-			context.channel?.sendMessage(embed);
-			// return;
+			if (dgTeam.metadata.isValid) {
+				await updateDGTeam(author.id, {
+					metadata: {
+						...dgTeam.team.metadata,
+						isValid: false
+					}
+				});
+			}
+			const warningEmbed = createEmbed(author, client)
+				.setTitle("Warning :warning:").setDescription(
+					"You have been blacklisted and cannot participate in DG Ranked Challenge. Please contact support."
+				);
+			context.channel?.sendMessage(warningEmbed);
+			return;
 		}
 		if (!dgTeam?.team) {
 			embed.setDescription(`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
@@ -113,6 +132,46 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 
 			context.channel?.sendMessage(embed);
 			return; 
+		}
+		if (dungeonBans.itemBans || dungeonBans.abilityBans) {
+			// const collections = await getCollectionById({ ids: [] });
+			const bannedItems = (dungeonBans.itemBans || []).map((i) => i.name);
+			const bannedAbilities = (dungeonBans.abilityBans || []).map((i) => i.name);
+			let hasBannedAbilities = false;
+			if (dungeonBans.abilityBans) {
+				const cids: number[] = [];
+				dgTeam.team.metadata.map((m) => {
+					if (m.collection_id) cids.push(m.collection_id);
+				});
+				const collections = await getCollectionById({
+					ids: cids,
+					user_id: user.id 
+				});
+				if (collections) {
+					const itemFound = collections.find((c) => bannedAbilities.includes(c.abilityname));
+					if (itemFound) hasBannedAbilities = true;
+				}
+			}
+			const hasBannedItems = dgTeam.team.metadata.find(async (meta) => {
+				if (meta.itemName && bannedItems.includes(meta.itemName)) {
+					return true;
+				}
+				return false;
+			});
+			if (hasBannedItems || hasBannedAbilities) {
+				await updateDGTeam(author.id, {
+					metadata: {
+						...dgTeam.team.metadata,
+						isValid: false
+					}
+				});
+				embed.setTitle(DEFAULT_ERROR_TITLE)
+					.setDescription(`Summoner **${author.username}**, Your DG Team has Banned Items or Abilities.` +
+				" Set a valid Team to Battle!");
+	
+				context.channel?.sendMessage(embed);
+				return;
+			}
 		}
 		let userRank = _userRank;
 		if (!userRank) {
@@ -155,10 +214,10 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		 */
 		if (!randomOpponent) {
 			// spawn boss
-			// opponent = await spawnDGBoss(userRank);
-			embed.setDescription("We could not find other players in your rank. Please try again later");
-			context.channel?.sendMessage(embed);
-			return;
+			opponent = await spawnDGBoss(userRank);
+			// embed.setDescription("We could not find other players in your rank. Please try again later");
+			// context.channel?.sendMessage(embed);
+			// return;
 		} else {
 			const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
 			if (!opponentUser) {

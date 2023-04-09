@@ -50,7 +50,8 @@ export const getAll = async (
 	let query = db
 		.select(
 			db.raw(`${tableName}.*, ${collections}.rank, ${characters}.name, ${abilities}.name as abilityname,
-			${collections}.souls, ${characters}.type, ${collections}.character_level`)
+			${collections}.souls, ${characters}.type, ${collections}.character_level, ${collections}.character_id,
+			${collections}.rank_id`)
 		)
 		.from(tableName)
 		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)
@@ -121,8 +122,8 @@ export const getMarketCollection = async (params: {
 	const query = db
 		.select(
 			db.raw(`${tableName}.*, ${collections}.rank, ${characters}.name, ${abilities}.name as abilityname,
-			${collections}.souls, ${characters}.type, ${collections}.character_level,
-			${cards}.filepath, ${cards}.metadata`)
+			${collections}.souls, ${characters}.type, ${collections}.character_level, ${collections}.character_id,
+			${cards}.filepath, ${cards}.metadata, ${collections}.rank_id`)
 		)
 		.from(tableName)
 		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)
@@ -151,9 +152,9 @@ export const del = async (params: { id?: number; collection_ids?: number | numbe
 		}
 	}
 
-	return await query.del();
+	return query.del();
 };
 
 export const create = async (data: MarketCreateProps) => {
-	return await connection(tableName).insert(data);
+	return connection(tableName).insert(data);
 };

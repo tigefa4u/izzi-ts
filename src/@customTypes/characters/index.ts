@@ -34,7 +34,7 @@ type IgnoreCharacterProps = "created_at" | "updated_at" | "passive_id" | "stats"
 
 export type CharacterParams = Omit<Partial<CharacterProps>, IgnoreCharacterProps>
 
-export type CharacterCardProps = CharacterDetailsProps & CardProps;
+export type CharacterCardProps = CharacterDetailsProps & CardProps & { averageMarketPrice?: number; };
 
 export type CharacterPriceListProps = {
     id: number;

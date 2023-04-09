@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { probability, randomNumber } from "helpers";
+import { numericWithComma, probability, randomNumber } from "helpers";
 import { BET_LIMIT, GAMBLE_EMOJIS } from "helpers/constants";
 import loggers from "loggers";
 
@@ -33,7 +33,7 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 		const betAmount = parseInt(args.shift() || "0");
 		if (isNaN(betAmount) || betAmount <= 0 || betAmount > BET_LIMIT) {
 			context.channel?.sendMessage(
-				`Invalid Bet amount. You cannot bet more than __${BET_LIMIT}__ gold ${emoji.gold}`
+				`Invalid Bet amount. You cannot bet more than __${numericWithComma(BET_LIMIT)}__ gold ${emoji.gold}`
 			);
 			return;
 		}
@@ -52,7 +52,8 @@ export const bet = async ({ context, args = [], options }: BaseProps) => {
 			embed
 				.setTitle("Success!")
 				.setDescription(
-					`It was **${flipString}!**\n\ncongratulations! ${emoji.celebration} you won __${winAmount}__g`
+					`It was **${flipString}!**\n\ncongratulations! ${emoji.celebration} ` +
+					`you won __${numericWithComma(winAmount)}__ gold ${emoji.gold}`
 				)
 				.setThumbnail(GAMBLE_EMOJIS.win);
 		} else {

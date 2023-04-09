@@ -38,6 +38,7 @@ type Stack = Pick<
   | "isRapid"
   | "isLastStand"
   | "isLeer"
+  | "isLightningShield"
 >;
 function processStack(stats: Stack) {
 	[
@@ -57,7 +58,8 @@ function processStack(stats: Stack) {
 		"isLifestealProc",
 		"isRapid",
 		"isLastStand",
-		"isLeer"
+		"isLeer",
+		"isLightningShield"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -90,6 +92,7 @@ function processUnableToAttack<T extends BattleStats>(
 	return (
 		playerStats.totalStats.isAsleep ||
     playerStats.totalStats.isStunned ||
+	playerStats.totalStats.isParanoid ||
     (allowProcOnEvadeHit === true &&
     opponentStats.totalStats.isEvadeHit === true
     	? false
