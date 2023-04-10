@@ -14,6 +14,7 @@ async function hydrateUserCache(data: UserProps) {
 	loggers.info("Hydrating user cache: ", data);
 	const key = "user::" + data.user_tag;
 	await Cache.set(key, JSON.stringify(data));
+	if (Cache.expire) await Cache.expire(key, 60 * 60 * 24);
 }
 
 async function prepareCacheHydrationData(
