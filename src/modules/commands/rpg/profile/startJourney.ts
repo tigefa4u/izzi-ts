@@ -25,6 +25,7 @@ import { customButtonInteraction } from "utility/ButtonInteractions";
 import { starterGuide } from "./guide";
 import { help } from "modules/commands/basic";
 import GA4 from "loggers/googleAnalytics";
+import { DMUser } from "helpers/directMessages";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -76,10 +77,14 @@ async function startUserJourney(author: AuthorProps) {
 	return cardDetails;
 }
 
-export const start: (params: BaseProps) => void = async ({
+export const start: (params: BaseProps & { extras?: { bypass: boolean; dmUser: boolean; } }) => void = async ({
 	context,
 	client,
 	options,
+	extras = {
+		bypass: false,
+		dmUser: false 
+	}
 }) => {
 	try {
 		const author = options.author;
@@ -96,7 +101,7 @@ export const start: (params: BaseProps) => void = async ({
 		}
 
 		const isAccountValid = validateAccountCreatedAt(author);
-		if (!isAccountValid) {
+		if (!isAccountValid && !extras.bypass) {
 			embed.setDescription(
 				"Your discord account must be atleast 60 days old, in order to start your journey in the Xenverse!"
 			);
@@ -180,8 +185,12 @@ export const start: (params: BaseProps) => void = async ({
 		if (buttons) {
 			embed.setButtons(buttons);
 		}
-	
-		context.channel?.sendMessage(embed);
+		
+		if (extras?.dmUser) {
+			DMUser(client, embed, author.id);
+		} else {
+			context.channel?.sendMessage(embed);
+		}
 		return;
 	} catch (err) {
 		loggers.error(

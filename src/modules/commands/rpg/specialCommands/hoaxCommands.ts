@@ -9,6 +9,7 @@ import { ranksMeta } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { RanksMetaProps } from "helpers/helperTypes";
 import loggers from "loggers";
+import { start } from "modules/commands/rpg/profile/startJourney";
 
 export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
 	try {
@@ -129,6 +130,35 @@ export const addWorldBossDamage = async ({ options, client, context, args }: Bas
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 	} catch (err) {
 		loggers.error("specialCommands.addWorldBossDamage: ERROR", err);
+		return;
+	}
+};
+
+export const forceStartJourney = async (params: BaseProps) => {
+	try {
+		const { args, client, context } = params;
+		if (params.options.author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("You are not allowed to execute this command.");
+			return;
+		}
+		const id = args.shift();
+		if (!id) return;
+		const _author = await client.users.fetch(id);
+		if (!_author) {
+			context.channel?.sendMessage("Invalid user id");
+			return;
+		}
+		params.options.author = _author;
+		start({
+			...params,
+			extras: {
+				bypass: true,
+				dmUser: true 
+			}
+		});
+		return;
+	} catch (err) {
+		loggers.error("hoaxCommands.forceStartJourney: ERROR", err);
 		return;
 	}
 };

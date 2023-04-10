@@ -10,6 +10,7 @@ import {
 	updateCollection,
 } from "api/controllers/CollectionsController";
 import { createMarketCard } from "api/controllers/MarketsController";
+import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -17,6 +18,7 @@ import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
+	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
 	MARKET_PRICE_CAP,
@@ -84,12 +86,14 @@ async function validateAndSellCard(
 		}
 		const characterInfo = charaInfo[0];
 		if (options?.isConfirm) {
-			await updateCollection({ id: cardToBeSold.id }, { is_on_market: true });
-			await createMarketCard({
-				user_id: cardToBeSold.user_id,
-				collection_id: cardToBeSold.id,
-				price: params.extras?.price || 1000,
-			});
+			await Promise.all([
+				updateCollection({ id: cardToBeSold.id }, { is_on_market: true }),
+				createMarketCard({
+					user_id: cardToBeSold.user_id,
+					collection_id: cardToBeSold.id,
+					price: params.extras?.price || 1000,
+				})
+			]);
 			const desc = `You have successfully posted your __${titleCase(
 				cardToBeSold.rank
 			)}__ **Level ${cardToBeSold.character_level} ${titleCase(
@@ -134,6 +138,15 @@ export const sellCard = async ({
 			context.channel?.sendMessage(
 				"You can use this command again after a minute."
 			);
+			return;
+		}
+		const userBlacklisted = await getUserBlacklist({ user_tag: author.id });
+		if (userBlacklisted && userBlacklisted.length > 0) {
+			const blackListEmbed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE)
+				.setDescription(`Summoner **${author.username}**, You have been ` +
+				"blacklisted and cannot use the Global Market. Please contact support to appeal.");
+
+			context.channel?.sendMessage(blackListEmbed);
 			return;
 		}
 		const id = Number(args.shift());

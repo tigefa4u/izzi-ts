@@ -3,7 +3,9 @@ import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { sort } from "../sorting";
 import { makeAWishHelp } from "./help";
-import { addRaidDamage, addWorldBossDamage, setCharacterLevel, setCharacterRank } from "./hoaxCommands";
+import {
+	addRaidDamage, addWorldBossDamage, forceStartJourney, setCharacterLevel, setCharacterRank 
+} from "./hoaxCommands";
 import { spawnWorldBoss } from "./worldboss/spawn";
 import { specialWish } from "./specialWish";
 import { subcommands } from "./subcommands";
@@ -55,6 +57,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "wsend") {
 				sendSpawnMessage(params);
+				return;
+			} else if (subcommand === "force-start") {
+				forceStartJourney(params);
 				return;
 			}
 		}

@@ -9,7 +9,7 @@ export type GA4EventProps = {
   action?: string;
   label?: string;
   value?: number;
-  items?: any[];
+  items?: { item_id: string | number; name: string; }[];
 };
 // const trackEvent = async ({ category, action, label, value }: GAEventProps) => {
 // 	try {
@@ -76,7 +76,7 @@ const GA4 = {
 			return;
 		}
 	},
-	customEvent: function (eventName: string, data: GA4EventProps) {
+	customEvent: function (eventName: string, data: GA4EventProps & Record<string, unknown>) {
 		try {
 			if (!eventName) return;
 			this._reportAnalytics(eventName, data);

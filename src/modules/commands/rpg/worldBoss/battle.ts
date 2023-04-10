@@ -47,6 +47,7 @@ import { DMUser, PublishMessageToAllGuilds } from "helpers/directMessages";
 import { prepareRaidBossBase } from "helpers/raid";
 import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
+import GA4 from "loggers/googleAnalytics";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { getTTL } from "modules/cooldowns/channels";
 import { titleCase } from "title-case";
@@ -171,6 +172,11 @@ export const battleWB = async ({
 			multiplier,
 		});
 		clearCooldown(author.id, "mana-battle");
+		GA4.customEvent("battle", {
+			category: "world_boss",
+			label: author.id,
+			action: "battle"
+		});
 		if (!result) {
 			context.channel?.sendMessage(
 				"Unable to process battle, please try again later"

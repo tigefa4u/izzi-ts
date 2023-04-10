@@ -31,4 +31,7 @@ export const subcommands = [ {
 }, {
 	name: "wsend",
 	alias: []
+}, {
+	name: "force-start",
+	alias: [ "ustart" ]
 } ];

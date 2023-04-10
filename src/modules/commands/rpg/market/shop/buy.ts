@@ -32,6 +32,7 @@ import {
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
+import GA4 from "loggers/googleAnalytics";
 import {
 	clearCooldown,
 	getCooldown,
@@ -124,6 +125,18 @@ async function notifySeller(
 			}
 		});
 	}
+	GA4.customEvent("market_purchase", {
+		category: "market",
+		label: buyer.user_tag,
+		items: [ {
+			item_id: marketCard.collection_id,
+			name: marketCard.name
+		} ],
+		seller: seller.user_tag,
+		buyer: buyer.user_tag,
+		value: totalCost,
+		currency: "IG"
+	});
 	loggers.info(
 		"Notifying seller of Market Purchase: ", {
       	seller: seller.user_tag,
