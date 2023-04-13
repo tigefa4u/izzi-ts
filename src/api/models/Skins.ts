@@ -40,8 +40,9 @@ export const transformation = {
 export const get = async (params: Partial<Pick<SkinProps, "name" | "id">>): Promise<SkinProps[]> => {
 	const db = connection;
 	let query = db
-		.select("*")
-		.from(tableName);
+		.select("id", "name", "filepath", "is_difficulty", "character_id", "price", "metadata")
+		.from(tableName)
+		.where({ is_deleted: false });
 
 	if (params.id) {
 		query = query.where(`${tableName}.id`, params.id);
@@ -55,8 +56,9 @@ export const get = async (params: Partial<Pick<SkinProps, "name" | "id">>): Prom
 export const getByCharacterId = async (params: { character_id: number | number[]; }): Promise<SkinProps[]> => {
 	if (!params.character_id) return [];
 	const db = connection;
-	let query = db.select("*")
-		.from(tableName);
+	let query =	db.select("id", "name", "filepath", "is_difficulty", "character_id", "price", "metadata")
+		.from(tableName)
+		.where({ is_deleted: false });
 
 	if (typeof params.character_id === "object") {
 		query = query.whereIn(`${tableName}.character_id`, params.character_id);

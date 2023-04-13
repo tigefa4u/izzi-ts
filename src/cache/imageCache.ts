@@ -7,7 +7,7 @@ let cache: Map<string, {
 }> = new Map();
 setInterval(() => {
 	for (const [ key, val ] of cache.entries()) {
-		if (val.time < Date.now() - (1000 * 60 * 60)) { // last used more than 1 hour ago
+		if (val.time < Date.now() - (1000 * 60 * 30)) { // last used more than 1 hour ago
 			cache.delete(key);
 		}
 	}

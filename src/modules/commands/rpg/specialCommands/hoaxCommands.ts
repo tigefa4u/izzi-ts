@@ -156,6 +156,7 @@ export const forceStartJourney = async (params: BaseProps) => {
 				dmUser: true 
 			}
 		});
+		context.channel?.sendMessage("Player account created");
 		return;
 	} catch (err) {
 		loggers.error("hoaxCommands.forceStartJourney: ERROR", err);
