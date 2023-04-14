@@ -90,6 +90,10 @@ export const createLBEmbedList = (
 							: order === "zone"
 								? ":map:"
 								: emoji.up
+					} ${
+						order === "zone" ?
+							`Reached **[${new Date(array[obj.index]["reached_max_ruin_at"]).toLocaleDateString()}]**`
+							: ""
 					}`,
 				}
 			);

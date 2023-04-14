@@ -56,7 +56,7 @@ const baseLoot = (): any => ({
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(18000, 25000),
-				extraGold: randomNumber(16000, 18000),
+				extraGold: randomNumber(19000, 20000),
 				drop: { shard: randomNumber(10, 14), }
 			}
 		}
@@ -114,7 +114,7 @@ const baseLoot = (): any => ({
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(25000, 32000),
-				extraGold: randomNumber(20000, 22000),
+				extraGold: randomNumber(18000, 18999),
 				drop: {
 					shard: randomNumber(15, 18),
 					orbs: randomNumber(2, 3),
@@ -175,7 +175,7 @@ const baseLoot = (): any => ({
 						rank_id: 6,
 						number: 1,
 						rate: 15,
-						threshold: 5,
+						threshold: 2.5,
 						extraGold: randomNumber(8000, 9000),
 						souls: 10,
 						crates: crates.legendary,
@@ -185,7 +185,7 @@ const baseLoot = (): any => ({
 						rank_id: 7,
 						number: 1,
 						rate: 25,
-						threshold: 15,
+						threshold: 5,
 						extraGold: randomNumber(10000, 15000),
 						souls: 15,
 						crates: crates.legendary,
@@ -195,7 +195,7 @@ const baseLoot = (): any => ({
 						rank_id: 8,
 						number: 1,
 						rate: 25,
-						threshold: 25,
+						threshold: 15,
 						extraGold: randomNumber(15000, 20000),
 						souls: 30,
 						crates: crates.premium,
@@ -209,7 +209,7 @@ const baseLoot = (): any => ({
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(32000, 40000),
-				extraGold: randomNumber(25000, 27000),
+				extraGold: randomNumber(16000, 17999),
 				drop: {
 					shard: randomNumber(20, 32),
 					orbs: randomNumber(3, 4),
@@ -276,7 +276,7 @@ const baseLoot = (): any => ({
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
 				gold: randomNumber(40000, 48000),
-				extraGold: randomNumber(29000, 30000),
+				extraGold: randomNumber(15000, 15999),
 				drop: {
 					shard: randomNumber(27, 40),
 					orbs: randomNumber(3, 5),
