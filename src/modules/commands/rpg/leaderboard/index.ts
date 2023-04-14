@@ -83,8 +83,8 @@ export const leaderboard = async ({
 };
 
 function prepareUrl(lb: string, order: string) {
-	const base = "http://localhost:5011/api/v1/ums";
-	// const base = `${API_DOMAIN}/api/v1/ums`;
+	// const base = "http://localhost:5011/api/v1/ums";
+	const base = `${API_DOMAIN}/api/v1/ums`;
 	const url = `/leaderboards/${lb}?per_page=10&order=${order}`;
 	return base + url;
 }
