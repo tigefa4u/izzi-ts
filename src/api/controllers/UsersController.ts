@@ -5,6 +5,7 @@ import {
 	UserUpdateProps,
 } from "@customTypes/users";
 import Cache from "cache";
+import { parsePremiumUsername } from "helpers";
 import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants";
 import loggers from "loggers";
 import { clone } from "utility";
@@ -104,7 +105,10 @@ export const getRPGUser: (
 		if (options?.cached) {
 			const result = await Cache.get(key);
 			if (result) {
-				return JSON.parse(result);
+				const is_premium = await Users.getIsPremium({ user_tag: params.user_tag });
+				const data = JSON.parse(result);
+				if (!is_premium) data.username = parsePremiumUsername(data.username);
+				return data;
 			}
 		}
 		const user = await getUser(params);
@@ -116,6 +120,7 @@ export const getRPGUser: (
 			return;
 		}
 		if (!options?.ignoreBannedUser && user.is_banned) {
+			Cache.del(key);
 			return;
 		} else if (user.is_banned) {
 			Cache.del(key);
@@ -126,7 +131,7 @@ export const getRPGUser: (
 				JSON.stringify({
 					id: user.id,
 					user_tag: user.user_tag,
-					username: user.username,
+					username: parsePremiumUsername(user.username),
 					voted_at: user.voted_at,
 					vote_streak: user.vote_streak,
 					selected_team_id: user.selected_team_id
@@ -235,4 +240,17 @@ export const getAllUsers = async (params: { is_premium?: boolean; is_mini_premiu
 		);
 		return;
 	}	
+};
+
+/**
+ * Fetch the users who have voted in the last 12 hrs
+ * This method is used to send vote reminders
+ */
+export const getUsersWhoVoted = async () => {
+	try {
+		return Users.getUsersWhoVoted();
+	} catch (err) {
+		loggers.error("UsersController.getUsersWhoVoted: ERROR", err);
+		return;
+	}
 };

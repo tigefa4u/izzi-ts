@@ -44,7 +44,7 @@ async function getDMChannelID(recipient_id: string) {
 
 export const DMUserViaApi = async (
 	user_tag: string,
-	content: { content: string }
+	content: { content?: string; embeds?: MessageEmbed[]; }
 ) => {
 	if (content) {
 		const dmChannelId = await getDMChannelID(user_tag);

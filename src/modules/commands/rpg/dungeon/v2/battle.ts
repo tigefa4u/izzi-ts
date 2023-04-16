@@ -204,7 +204,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		let opponent: BattleStats | undefined, opponentTeanName = "";
+		let opponent: BattleStats | undefined, opponentTeamName = "";
 		const randomOpponent = await getRandomDGOpponent({
 			exclude_tag: author.id,
 			rank_id: userRank?.rank_id || 1
@@ -247,7 +247,8 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				});
 				opponent = await spawnDGBoss(userRank);
 			} else {
-				opponentTeanName = `Team ${randomOpponent.username} ${emojiMap(randomOpponent.rank || "duke")}`;
+				opponent.name = `Team ${randomOpponent.username}`;
+				opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
 				opponent.username = randomOpponent.username;
 			}
 		}
@@ -256,7 +257,8 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage("We could not prepare your battle. Please contact support.");
 			return;
 		}
-		const playerTeamName = `Team ${author.username} ${emojiMap(userRank?.rank || "duke")}`;
+		playerStats.name = `Team ${author.username}`;
+		const playerTeamName = `${playerStats.name} ${emojiMap(userRank?.rank || "duke")}`;
 		const _effectiveness = addTeamEffectiveness({
 			cards: playerStats.cards,
 			enemyCards: opponent.cards,
@@ -272,7 +274,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context,
 			playerStats,
 			enemyStats: opponent,
-			title: `__Ranked Battle Challenge ${playerTeamName} vs ${opponentTeanName || opponent.name}__`,
+			title: `__Ranked Battle Challenge ${playerTeamName} vs ${opponentTeamName || opponent.name}__`,
 			isRaid: false,
 			options: { hideVisualBattle: false }
 		});

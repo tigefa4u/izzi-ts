@@ -102,7 +102,12 @@ export const transformation = {
 export const get: (
   params: UserParams
 ) => Promise<UserProps[] | undefined> = async (params) => {
-	return await connection.select("*").from(tableName).where(params);
+	return connection.select("*").from(tableName).where(params);
+};
+
+export const getIsPremium = (params: UserParams): Promise<boolean> => {
+	return connection.select("is_premium").from(tableName).where(params)
+		.then((res) => res[0].is_premium);
 };
 
 export const create: (data: UserCreateProps) => Promise<UserProps> = async (
@@ -150,4 +155,22 @@ export const startTransaction = async (cb: (trx: Knex.Transaction) => void) => {
 	}).catch(err => {
 		throw err;
 	});
+};
+
+export const getUsersWhoVoted = async (): Promise<UserProps[]> => {
+	const db = connection;
+	const fromDate = new Date();
+	fromDate.setHours(fromDate.getHours() - 12);
+	fromDate.setMinutes(fromDate.getMinutes() - 3);
+	
+	const toDate = new Date();
+	toDate.setHours(toDate.getHours() - 12);
+	return db.select("user_tag", "username", "voted_at")
+		.from(tableName)
+		.where({
+			is_deleted: false,
+			is_banned: false,
+			is_active: true 
+		})
+		.whereBetween("voted_at", [ new Date(fromDate), new Date(toDate) ]);
 };

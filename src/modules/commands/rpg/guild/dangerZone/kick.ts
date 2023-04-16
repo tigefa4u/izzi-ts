@@ -14,7 +14,10 @@ export const kickFromGuild = async ({ context, client, args, options }: BaseProp
 		const id = args.shift();
 		if (!id) return;
 		const mentionId = getIdFromMentionedString(id);
-		const mentionedUser = await getRPGUser({ user_tag: mentionId }, { cached: true });
+		const mentionedUser = await getRPGUser({ user_tag: mentionId }, {
+			cached: true,
+			ignoreBannedUser: true 
+		});
 		if (!mentionedUser) {
 			context.channel?.sendMessage("We are not able to find this user, please contact support");
 			return;

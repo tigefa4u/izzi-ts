@@ -7,7 +7,7 @@ export default async function () {
 	try {
 		const raids = await getAllRaids();
 		if (!raids) return;
-		const hour = 1000 * 60 * 90;
+		const hour = 1000 * 60 * 60;
 		await Promise.all(
 			raids.map(async (r) => {
 				if (!r.is_start) {
