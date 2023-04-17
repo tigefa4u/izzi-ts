@@ -2,13 +2,11 @@ import {
 	CharacterCanvasProps,
 	SingleCanvasReturnType,
 } from "@customTypes/canvas";
-import { CardMetadataProps } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import Cache from "cache";
 import * as ImageCache from "cache/imageCache";
 import { createCanvas, loadImage, Canvas, Image } from "canvas";
 import loggers from "loggers";
-import { CANVAS_DEFAULTS, elementTypeColors, ranksMeta } from "./constants";
+import { CANVAS_DEFAULTS } from "./constants";
 
 export const createSingleCanvas: (
   card: Pick<
@@ -97,6 +95,54 @@ export const createSingleCanvas: (
 	}
 };
 
+const _fetchAndSaveToCache = async (path: string, width: number, height: number) => {
+	// load the path and draw on canvas to convert it into
+	// buffer to be stored in disk cache
+	const canvas = createCanvas(width, height);
+	const ctx = canvas.getContext("2d");
+
+	const data = await loadImage(path).catch((err) => {
+		loggers.error(
+			"canvas.createBattleCanvas._fetchAndSaveToCache: ERROR Unable to load filepath -> " +
+			  path,
+			err
+		);
+		throw err;
+	});
+	ctx.drawImage(data, 0, 0);
+	const blob = canvas.toBuffer("image/jpeg");
+	ImageCache.setImage(path, blob);
+
+	// return the loaded Image to be drawn in the wrapper ctx
+	return data;
+};
+
+async function _loadFromCache(path: string): Promise<undefined | {
+	image: Image;
+	time: number;
+}> {
+	const result = ImageCache.getImage(path);
+	if (!result) {
+		return;
+	}
+	loggers.info("BATTLE_CANVAS_CACHE_HIT: ", path);
+	const buffer = Buffer.from(result.image);
+
+	// load the buffer to be drawn on canvas
+	const img = await loadImage(buffer).catch((err) => {
+		loggers.error(
+			"canvas.createBattleCanvas._loadFromCache: ERROR Unable to load filepath -> " +
+			  path,
+			err
+		);
+		throw err;
+	});
+	return {
+		image: img,
+		time: result.time
+	};
+}
+
 export const createBattleCanvas = async (
 	cards: (
     | Pick<
@@ -121,15 +167,12 @@ export const createBattleCanvas = async (
 	ctx.fillStyle = "#2f3136";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	if (!extras?.isSingleRow) {
-		const cachedBg = ImageCache.getImage("battle-bg") || {} as {
-			image: Image;
-			time: number;
-		};
-		let bgPath = cachedBg.image;
+		const path = "./assets/images/background.jpeg";
+		const cachedBg = await _loadFromCache(path);
+		let bgPath = cachedBg?.image;
 		if (!bgPath) {
-			bgPath = await loadImage("./assets/images/background.jpeg");
+			bgPath = await _fetchAndSaveToCache(path, canvas.width, canvas.height);
 		}
-		ImageCache.setImage("battle-bg", bgPath);
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
 	}
 	try {
@@ -161,25 +204,14 @@ export const createBattleCanvas = async (
 						filepath = card.metadata.assets[version].filepath;
 					}
 					startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const cachedImage = ImageCache.getImage(filepath) || {} as {
-						image: Image;
-						time: number;
-					};
+					const cachedImage = await _loadFromCache(filepath);
 					let image = cachedImage?.image;
 					if (!image) {
 						startImageTimer.message = startImageTimer.message + " -> loading image from url";
-						image = await loadImage(filepath).catch((err) => {
-							loggers.error(
-								"canvas.createBattleCanvas: ERROR Unable to load filepath -> " +
-                  				filepath,
-								err
-							);
-							throw err;
-						});
+						image = await _fetchAndSaveToCache(filepath, canvas.width / 3, dh);
 					} else {
 						startImageTimer.message = startImageTimer.message + " -> loading from cache";
 					}
-					ImageCache.setImage(filepath, image);
 					loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
