@@ -177,7 +177,7 @@ const baseLoot = (): any => ({
 						rate: 15,
 						threshold: 2.5,
 						extraGold: randomNumber(8000, 9000),
-						souls: 10,
+						souls: 5,
 						crates: crates.legendary,
 						crateDropRate: 5
 					}, {
@@ -185,9 +185,9 @@ const baseLoot = (): any => ({
 						rank_id: 7,
 						number: 1,
 						rate: 25,
-						threshold: 5,
+						threshold: 10,
 						extraGold: randomNumber(10000, 15000),
-						souls: 15,
+						souls: 9,
 						crates: crates.legendary,
 						crateDropRate: 10
 					}, {
@@ -195,9 +195,9 @@ const baseLoot = (): any => ({
 						rank_id: 8,
 						number: 1,
 						rate: 25,
-						threshold: 15,
+						threshold: 18,
 						extraGold: randomNumber(15000, 20000),
-						souls: 30,
+						souls: 15,
 						crates: crates.premium,
 						crateDropRate: 15
 					} ],
