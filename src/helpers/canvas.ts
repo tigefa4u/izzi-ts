@@ -14,10 +14,7 @@ export const createSingleCanvas: (
     "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank" | "metadata"
   >,
   isNotStar: boolean
-) => SingleCanvasReturnType | undefined = function (
-	card,
-	isNotStar = false
-) {
+) => SingleCanvasReturnType | undefined = function (card, isNotStar = false) {
 	try {
 		// load precomputed images directly
 		let filepath = card.filepath;
@@ -95,7 +92,12 @@ export const createSingleCanvas: (
 	}
 };
 
-const _fetchAndSaveToCache = async (path: string, width: number, height: number) => {
+const _fetchAndSaveToCache = async (
+	path: string,
+	width: number,
+	height: number,
+	extras: { isSingleRow?: boolean }
+) => {
 	// load the path and draw on canvas to convert it into
 	// buffer to be stored in disk cache
 	const canvas = createCanvas(width, height);
@@ -104,24 +106,31 @@ const _fetchAndSaveToCache = async (path: string, width: number, height: number)
 	const data = await loadImage(path).catch((err) => {
 		loggers.error(
 			"canvas.createBattleCanvas._fetchAndSaveToCache: ERROR Unable to load filepath -> " +
-			  path,
+        path,
 			err
 		);
 		throw err;
 	});
 	ctx.drawImage(data, 0, 0);
 	const blob = canvas.toBuffer("image/jpeg");
-	ImageCache.setImage(path, blob);
+	ImageCache.setImage(
+		`${extras.isSingleRow ? `single-row-${path}` : path}`,
+		blob,
+		{ path }
+	);
 
 	// return the loaded Image to be drawn in the wrapper ctx
 	return data;
 };
 
-async function _loadFromCache(path: string): Promise<undefined | {
-	image: Image;
-	time: number;
-}> {
-	const result = ImageCache.getImage(path);
+async function _loadFromCache(path: string, extras: { isSingleRow?: boolean; }): Promise<
+  | undefined
+  | {
+      image: Image;
+      time: number;
+    }
+> {
+	const result = ImageCache.getImage(`${extras.isSingleRow ? `single-row-${path}` : path}`);
 	if (!result) {
 		return;
 	}
@@ -132,14 +141,14 @@ async function _loadFromCache(path: string): Promise<undefined | {
 	const img = await loadImage(buffer).catch((err) => {
 		loggers.error(
 			"canvas.createBattleCanvas._loadFromCache: ERROR Unable to load filepath -> " +
-			  path,
+        path,
 			err
 		);
 		throw err;
 	});
 	return {
 		image: img,
-		time: result.time
+		time: result.time,
 	};
 }
 
@@ -154,7 +163,7 @@ export const createBattleCanvas = async (
 	extras?: {
     isSingleRow: boolean;
     version?: "small" | "medium" | "default";
-	isRaid?: boolean;
+    isRaid?: boolean;
   }
 ): Promise<Canvas | undefined> => {
 	if (!Array.isArray(cards)) return;
@@ -168,10 +177,11 @@ export const createBattleCanvas = async (
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	if (!extras?.isSingleRow) {
 		const path = "./assets/images/background.jpeg";
-		const cachedBg = await _loadFromCache(path);
+		const cachedBg = await _loadFromCache(path, { isSingleRow: extras?.isSingleRow });
 		let bgPath = cachedBg?.image;
 		if (!bgPath) {
-			bgPath = await _fetchAndSaveToCache(path, canvas.width, canvas.height);
+			bgPath = await _fetchAndSaveToCache(path, canvas.width, canvas.height, 
+				{ isSingleRow: extras?.isSingleRow, });
 		}
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
 	}
@@ -204,13 +214,16 @@ export const createBattleCanvas = async (
 						filepath = card.metadata.assets[version].filepath;
 					}
 					startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const cachedImage = await _loadFromCache(filepath);
+					const cachedImage = await _loadFromCache(filepath, { isSingleRow: extras?.isSingleRow });
 					let image = cachedImage?.image;
 					if (!image) {
-						startImageTimer.message = startImageTimer.message + " -> loading image from url";
-						image = await _fetchAndSaveToCache(filepath, canvas.width / 3, dh);
+						startImageTimer.message =
+              startImageTimer.message + " -> loading image from url";
+						image = await _fetchAndSaveToCache(filepath, canvas.width / 3, dh, 
+							{ isSingleRow: extras?.isSingleRow, });
 					} else {
-						startImageTimer.message = startImageTimer.message + " -> loading from cache";
+						startImageTimer.message =
+              startImageTimer.message + " -> loading from cache";
 					}
 					loggers.endTimer(startImageTimer);
 					return {
@@ -240,13 +253,7 @@ export const createBattleCanvas = async (
 				// if (!extras?.isSingleRow && i >= 3 && cards[i - 1] && extras?.isRaid) {
 				// 	dx = canvas.width / 3 * (i % 3) + (canvas.width / 6);
 				// }
-				ctx.drawImage(
-					images[card.id].image,
-					dx,
-					dy,
-					canvas.width / 3,
-					dh
-				);
+				ctx.drawImage(images[card.id].image, dx, dy, canvas.width / 3, dh);
 
 				// 	const starIconPosition = extras?.isSingleRow
 				// 		? dh - 150

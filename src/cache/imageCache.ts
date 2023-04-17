@@ -27,12 +27,13 @@ export const getImage = (id: string) => {
 	}
 };
 
-export const setImage = (id: string, image: Buffer) => {
+export const setImage = (id: string, image: Buffer, extras = {}) => {
 	try {
 		return disk.insert({
 			id,
 			image,
-			time: Date.now()
+			time: Date.now(),
+			...extras
 		});
 	} catch (err) {
 		loggers.error("imageCache.setImage: FAILED for ID: " + id, err);
