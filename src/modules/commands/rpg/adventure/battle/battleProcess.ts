@@ -231,7 +231,11 @@ export const BattleProcess = async ({
 	// Directly add ability damage to total damage
 	// will cause visual bug
 	// damageDealt = damageDealt + (abilityDamage || 0);
-
+	let isPlayerParanoid = false;
+	if (playerStats.totalStats.isParanoid) {
+		isPlayerParanoid = true;
+		playerStats.totalStats.isParanoid = false;
+	}
 	return {
 		damageDiff,
 		opponentStats,
@@ -246,7 +250,7 @@ export const BattleProcess = async ({
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
 		abilityDamage,
-		isPlayerParanoid: playerStats.totalStats.isParanoid
+		isPlayerParanoid
 	};
 };
 
