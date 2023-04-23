@@ -19,10 +19,10 @@ export const subcommands = [
 		name: "reset",
 		alias: []
 	},
-	{
-		name: "remove",
-		alias: [ "rm" ]
-	},
+	// {
+	// 	name: "remove",
+	// 	alias: [ "rm" ]
+	// },
 	{
 		name: "battle-log",
 		alias: [ "log", "logs" ]
