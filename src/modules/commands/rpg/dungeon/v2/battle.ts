@@ -152,7 +152,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 					if (itemFound) hasBannedAbilities = true;
 				}
 			}
-			const hasBannedItems = dgTeam.team.metadata.find(async (meta) => {
+			const hasBannedItems = dgTeam.team.metadata.find((meta) => {
 				if (meta.itemName && bannedItems.includes(meta.itemName)) {
 					return true;
 				}
