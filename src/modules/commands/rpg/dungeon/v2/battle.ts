@@ -167,7 +167,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				});
 				embed.setTitle(DEFAULT_ERROR_TITLE)
 					.setDescription(`Summoner **${author.username}**, Your DG Team has Banned Items or Abilities.` +
-				" Set a valid Team to Battle!");
+				" Set a valid Team to Battle!\n\nUse ``iz dg bans`` to view all banned abilities and items.");
 	
 				context.channel?.sendMessage(embed);
 				return;
