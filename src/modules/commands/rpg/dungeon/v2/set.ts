@@ -57,7 +57,7 @@ export const setDGTeam = async ({
 			return;
 		}
 		const collection = collections[0];
-		const idx = dgTeam.team.metadata.findIndex((m) => m.collection_id === collection.id);
+		const idx = dgTeam.team.metadata.findIndex((m) => m?.collection_id === collection.id);
 		if (idx >= 0) {
 			dgTeam.team.metadata[idx].collection_id = null;
 		}
