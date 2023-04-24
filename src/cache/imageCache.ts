@@ -16,7 +16,7 @@ import loggers from "loggers";
 const tableName = "imagecache";
 const dbname = "imagecache";
 const disk = new DiskStorage(dbname, tableName);
-disk.createTable([ "id string", "image blob", "time timestamp" ]);
+disk.createTable([ "id string", "image blob", "metadata blob", "time timestamp" ]);
 
 export const getImage = (id: string) => {
 	try {
@@ -33,7 +33,7 @@ export const setImage = (id: string, image: Buffer, extras = {}) => {
 			id,
 			image,
 			time: Date.now(),
-			...extras
+			// metadata: extras
 		});
 	} catch (err) {
 		loggers.error("imageCache.setImage: FAILED for ID: " + id, err);

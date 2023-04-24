@@ -116,7 +116,7 @@ const _fetchAndSaveToCache = async (
 	ImageCache.setImage(
 		`${extras.isSingleRow ? `single-row-${path}` : path}`,
 		blob,
-		{ path }
+		// { path }
 	);
 
 	// return the loaded Image to be drawn in the wrapper ctx
