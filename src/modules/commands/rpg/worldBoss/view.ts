@@ -55,7 +55,7 @@ export const prepareWorldBossDesc = async ({
 	} else {
 		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, {
 			isSingleRow: true,
-			version: "default",
+			version: "medium",
 		});
 	}
 	const startsInDt = new Date(currentRaid.created_at || "");

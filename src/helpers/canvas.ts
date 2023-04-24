@@ -111,7 +111,7 @@ const _fetchAndSaveToCache = async (
 		);
 		throw err;
 	});
-	ctx.drawImage(data, 0, 0);
+	ctx.drawImage(data, 0, 0, width, height);
 	const blob = canvas.toBuffer("image/jpeg");
 	ImageCache.setImage(
 		`${extras.isSingleRow ? `single-row-${path}` : path}`,
@@ -141,7 +141,7 @@ async function _loadFromCache(path: string, extras: { isSingleRow?: boolean; }):
 	const img = await loadImage(buffer).catch((err) => {
 		loggers.error(
 			"canvas.createBattleCanvas._loadFromCache: ERROR Unable to load filepath -> " +
-        path,
+	    path,
 			err
 		);
 		throw err;
