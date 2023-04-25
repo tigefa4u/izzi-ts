@@ -29,6 +29,15 @@ export const dgTeamReady = async ({ client, context, options }: BaseProps) => {
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		const isTeamValid = dgTeam.team.metadata.filter((m) => m?.collection_id);
+
+		if (isTeamValid.length <= 0) {
+			embed.setDescription(`Summoner **${author.username}**, You do not have a valid DG Team! ` +
+            "Use ``iz dg set <#id> <#position>`` to set a card onto your team");
+
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		if (dungeonBans.itemBans || dungeonBans.abilityBans) {
 			// const collections = await getCollectionById({ ids: [] });
 			const bannedItems = (dungeonBans.itemBans || []).map((i) => i.name);
