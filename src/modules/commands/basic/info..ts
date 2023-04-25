@@ -100,12 +100,16 @@ export const donate = async ({
 		if (donation?.length > 0) {
 			const total = donation.reduce((acc, r) => acc + r.amount, 0);
 			const [ str1, str2 ] = command.description.split("! [");
+			let extraPerksText = ".";
+			if (total >= 100) {
+				extraPerksText = ", and you're eligible for the **Ascended Role.**";
+			} else if (total >= 500) {
+				extraPerksText = ", and you're eligible for the **Exclusive Role.**";
+			} else if (total >= 1000) {
+				extraPerksText = ", and you're eligible for the **Ultimate 1k Role and 1 Xenex Card.**";
+			}
 			const newEmbed = createEmbed(options.author, client).setDescription(
-				`${str1}! You have spent a total of __$${total}__ so far${
-					total >= 100
-						? ", and you're eligible for the **Ascended** Role."
-						: "."
-				}`
+				`${str1}! You have spent a total of __$${total.toPrecision(2)}__ so far${extraPerksText}`
 			);
 			DMUser(client, newEmbed, options.author.id);
 		}
