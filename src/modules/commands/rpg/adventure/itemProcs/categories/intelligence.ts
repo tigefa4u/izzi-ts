@@ -68,7 +68,7 @@ export const sapphiresStaff = ({
 		}
 		const sleepChance = [ 25, 100 ];
 		const sleeps = [ true, false ];
-		if (sleeps[probability(sleepChance)] && !opponentStats.totalStats.isAsleep) {
+		if (sleeps[probability(sleepChance)] && !opponentStats.totalStats.isAsleep && round % 3 === 0) {
 			playerStats.totalStats.previousRound = round;
 			opponentStats.totalStats.isAsleep = true;
 			prepSendAbilityOrItemProcDescription({
