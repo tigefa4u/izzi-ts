@@ -127,8 +127,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			return;
 		} else if (!dgTeam.metadata.isValid) {
 			embed.setDescription(`Summoner **${author.username}**, Your DG Team is not ready to battle! ` +
-            "Set a card into your DG Team " +
-            "using ``iz dg set <#ID> <position #>``");
+            "Use ``iz dg ready`` to participate in DG Battles!");
 
 			context.channel?.sendMessage(embed);
 			return; 
