@@ -53,7 +53,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			Cache.get("dg-bans")
 		]);
 
-		let dungeonBans = {} as DungeonBanProps;
+		let dungeonBans: DungeonBanProps = {};
 		if (bans) {
 			dungeonBans = JSON.parse(bans);
 		}
@@ -107,7 +107,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			if (dgTeam.metadata.isValid) {
 				await updateDGTeam(author.id, {
 					metadata: {
-						...dgTeam.team.metadata,
+						...dgTeam.metadata,
 						isValid: false
 					}
 				});
@@ -161,7 +161,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			if (hasBannedItems || hasBannedAbilities) {
 				await updateDGTeam(author.id, {
 					metadata: {
-						...dgTeam.team.metadata,
+						...dgTeam.metadata,
 						isValid: false
 					}
 				});

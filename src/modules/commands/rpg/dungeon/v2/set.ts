@@ -69,13 +69,7 @@ export const setDGTeam = async ({
 				position: posi
 			};
 		}
-		await updateDGTeam(author.id, {
-			team: dgTeam.team,
-			metadata: {
-				...dgTeam.metadata,
-				isValid: true
-			} 
-		});
+		await updateDGTeam(author.id, { team: dgTeam.team, });
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(

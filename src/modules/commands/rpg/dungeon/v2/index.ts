@@ -6,6 +6,7 @@ import { dungeonBattle } from "./battle";
 import { viewDGBattleLog } from "./battleLog";
 import { createDGTeam } from "./create";
 import { equipDGItem } from "./equipItem";
+import { dgTeamReady } from "./ready";
 import { removeDGTeam } from "./remove";
 import { resetDGTeam } from "./reset";
 import { setDGTeam } from "./set";
@@ -34,6 +35,8 @@ export const dungeonFunc = async (params: BaseProps) => {
 			equipDGItem(params);
 		} else if (cmd === "bans") {
 			showDgBans(params);
+		} else if (cmd === "ready") {
+			dgTeamReady(params);
 		}
 		return;
 	} catch (err) {

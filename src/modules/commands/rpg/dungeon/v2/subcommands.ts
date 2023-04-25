@@ -34,5 +34,9 @@ export const subcommands = [
 	{
 		name: "bans",
 		alias: []
+	},
+	{
+		name: "ready",
+		alias: []
 	}
 ];
