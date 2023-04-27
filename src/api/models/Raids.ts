@@ -173,12 +173,16 @@ export const getRaids = (
 	// All the filter data is concatinated into one column for easy query
 	if (Object.keys(filters).length > 0) {
 		Object.keys(filters).forEach((key) => {
-			if (![ "name", "rank", "type", "difficulty" ].includes(key)) return;
+			if (![ "name", "rank", "type" ].includes(key)) return;
 			const item = filters[key as keyof FilterProps];
 			if (typeof item === "object") {
 				query = query.where(`${tableName}.filter_data`, "~*", `${item.join("|")}.*`);
 			}
 		});
+	}
+	if (filters.difficulty && typeof filters.difficulty === "object") {
+		const difficulty = filters.difficulty[0];
+		query = query.whereRaw(`${tableName}.stats ->> 'difficulty' ilike '%${difficulty}%'`);
 	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
