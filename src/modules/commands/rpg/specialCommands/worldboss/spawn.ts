@@ -100,6 +100,7 @@ export const spawnWorldBoss = async ({
 			is_start: false,
 			is_world_boss: true,
 			is_event: false,
+			filter_data: `${raidBoss.name}, ${raidBoss.type}, ${raidBoss.rank}, ${raidStats.difficulty.toLowerCase()}`
 		});
 		if (!raid) {
 			context.channel?.sendMessage("Could not spawn World Boss!");

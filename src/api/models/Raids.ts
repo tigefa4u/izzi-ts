@@ -57,6 +57,12 @@ export const transformation = {
 		columnName: "is_world_boss",
 		default: false
 	},
+	filterData: {
+		type: "string",
+		columnName: "filter_data"
+		// This column contains all boss names, ranks, difficulty, type
+		// to make query easier and straightforward
+	},
 	createdAt: {
 		type: "timestamp",
 		columnName: "created_at",
@@ -156,45 +162,24 @@ export const getRaids = (
 	}
 ): Promise<RaidProps[]> => {
 	const db = connection;
-	const raidAlias = "raidalias";
-	let queryStr = `${tableName}.*`;
-	if (Object.keys(filters).length > 0) {
-		queryStr = `distinct on (${tableName}.id) json_array_elements(${tableName}.raid_boss), ${tableName}.*`;
-	}
 
-	let query = db.select(db.raw(queryStr)).from(tableName);
-
-	query = query
+	let query = db.select(db.raw(`${tableName}.*, count(1) over() as total_count`))
+		.from(tableName)
 		.where(`${tableName}.is_start`, false)
 		.where(`${tableName}.is_private`, false)
 		.where(`${tableName}.is_event`, filters.isEvent ? filters.isEvent : false)
-		.where(`${tableName}.is_world_boss`, false)
-		.as(raidAlias);
+		.where(`${tableName}.is_world_boss`, false);
 
-	let aliasString = raidAlias;
-	Object.keys(filters).forEach(async (key) => {
-		if (![ "name", "rank", "type", "difficulty" ].includes(key)) return;
-
-		const item = filters[key as keyof FilterProps];
-		if (typeof item !== "object") return;
-		const newalias = aliasString + "_" + key;
-		query = db
-			.select(db.raw(`${aliasString}.*`))
-			.from(query)
-			.whereRaw(
-				`${
-					key === "difficulty"
-						? `${aliasString}.stats::json`
-						: `${aliasString}.json_array_elements`
-				} ->> '${key}' ~* '${item?.map((i) => i).join("|")}'`
-			)
-			.as(newalias);
-		aliasString = newalias;
-	});
-
-	query = db
-		.select(db.raw(`${aliasString}.*, count(*) over() as total_count`))
-		.from(query);
+	// All the filter data is concatinated into one column for easy query
+	if (Object.keys(filters).length > 0) {
+		Object.keys(filters).forEach((key) => {
+			if (![ "name", "rank", "type", "difficulty" ].includes(key)) return;
+			const item = filters[key as keyof FilterProps];
+			if (typeof item === "object") {
+				query = query.where(`${tableName}.filter_data`, "~*", `${item.join("|")}.*`);
+			}
+		});
+	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
 

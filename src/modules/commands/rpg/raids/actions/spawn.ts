@@ -56,14 +56,14 @@ const raidDivisions = {
 		name: "D2",
 		min: 9000,
 		max: 13000,
-		rate: randomNumber(2, 3)
+		rate: randomNumber(2, 3),
 	},
 	d1: {
 		name: "D1",
 		min: 13000,
 		max: 30000,
-		rate: randomNumber(4, 5)
-	}
+		rate: randomNumber(4, 5),
+	},
 };
 
 const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
@@ -87,10 +87,10 @@ const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
 
 export const computeRaidBossStats = async ({
 	raidBosses,
-	computedBoss
+	computedBoss,
 }: {
-	raidBosses: CollectionCardInfoProps[];
-	computedBoss: C["computedBoss"];
+  raidBosses: CollectionCardInfoProps[];
+  computedBoss: C["computedBoss"];
 }) => {
 	const stats = await prepareTotalOverallStats({
 		collections: clone(raidBosses),
@@ -113,7 +113,10 @@ export const computeRaidBossStats = async ({
 	);
 
 	const totalBossLevel: number = reducedLevel.character_level;
-	const computedLoot = calculateDropRateByPL(stats.totalPowerLevel, computedBoss.loot);
+	const computedLoot = calculateDropRateByPL(
+		stats.totalPowerLevel,
+		computedBoss.loot
+	);
 
 	const raidStats = {
 		battle_stats: {
@@ -124,14 +127,16 @@ export const computeRaidBossStats = async ({
 		},
 		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
 		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		difficulty: `${computedBoss.difficulty}${computedLoot.division ? ` ${computedLoot.division}` : ""}`,
+		difficulty: `${computedBoss.difficulty}${
+			computedLoot.division ? ` ${computedLoot.division}` : ""
+		}`,
 		timestamp: dt.setHours(dt.getHours() + 1),
-		rawDifficulty: computedBoss.difficulty
+		rawDifficulty: computedBoss.difficulty,
 	} as RaidStatsProps;
 
 	return {
 		raidStats,
-		computedLoot 
+		computedLoot,
 	};
 };
 
@@ -166,10 +171,7 @@ export const createRaidBoss = async ({
 						params.group_with = computedBoss.group_id;
 					}
 				}
-				const card = await getRandomCard(
-					params,
-					1
-				);
+				const card = await getRandomCard(params, 1);
 				if (!card || card.length <= 0) {
 					return;
 				}
@@ -187,14 +189,14 @@ export const createRaidBoss = async ({
 					souls: 1,
 					rank_id: 0,
 					is_on_cooldown: false,
-					is_tradable: true
+					is_tradable: true,
 				};
 			})
 	)) as CollectionCardInfoProps[];
 
 	const { raidStats, computedLoot } = await computeRaidBossStats({
 		raidBosses,
-		computedBoss
+		computedBoss,
 	});
 	const raid = await createRaid({
 		stats: raidStats,
@@ -204,6 +206,9 @@ export const createRaidBoss = async ({
 		is_private: isPrivate,
 		raid_boss: JSON.stringify(raidBosses),
 		loot: computedLoot,
+		filter_data: `${raidBosses.map(
+			(b) => `${b.name}, ${b.rank}, ${b.type}`
+		)}, ${raidStats.difficulty.toLowerCase()}`,
 	});
 	loggers.info("Created Raid with data -> ", raid);
 	return {
@@ -223,7 +228,7 @@ export const spawnRaid = async ({
 		const author = options.author;
 		const [ user, rconfig ] = await Promise.all([
 			getRPGUser({ user_tag: author.id }),
-			Cache.get("rconfig::" + author.id)
+			Cache.get("rconfig::" + author.id),
 		]);
 		if (!user) return;
 		const currentRaid = await getUserRaidLobby({ user_id: user.id });
@@ -273,8 +278,11 @@ export const spawnRaid = async ({
           "to be able to spawn or join __high level(Hard / Immortal)__ Raids."
 			);
 			return;
-		} else if (user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
-			IMMORTAL_RAIDS.includes(difficulty) && !isEvent) {
+		} else if (
+			user.level < MIN_LEVEL_FOR_HIGH_RAIDS &&
+      IMMORTAL_RAIDS.includes(difficulty) &&
+      !isEvent
+		) {
 			context.channel?.sendMessage(
 				`You must be atleast level __${MIN_LEVEL_FOR_HIGH_RAIDS}__ ` +
           "to be able to spawn or join __Immortal__ Raids."
@@ -376,10 +384,7 @@ export const spawnRaid = async ({
 		DMUser(client, embed, author.id);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.raids.actions.spawnRaid: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.raids.actions.spawnRaid: ERROR", err);
 		return;
 	}
 };
