@@ -109,7 +109,7 @@ export const donate = async ({
 				extraPerksText = ", and you're eligible for the **Ultimate 1k Role and 1 Xenex Card.**";
 			}
 			const newEmbed = createEmbed(options.author, client).setDescription(
-				`${str1}! You have spent a total of __$${total.toPrecision(2)}__ so far${extraPerksText}`
+				`${str1}! You have spent a total of __$${total.toFixed(2)}__ so far${extraPerksText}`
 			);
 			DMUser(client, newEmbed, options.author.id);
 		}
