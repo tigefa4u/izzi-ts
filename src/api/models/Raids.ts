@@ -168,7 +168,8 @@ export const getRaids = (
 		.where(`${tableName}.is_start`, false)
 		.where(`${tableName}.is_private`, false)
 		.where(`${tableName}.is_event`, filters.isEvent ? filters.isEvent : false)
-		.where(`${tableName}.is_world_boss`, false);
+		.where(`${tableName}.is_world_boss`, false)
+		.orderBy(`${tableName}.id`, "desc");
 
 	// All the filter data is concatinated into one column for easy query
 	if (Object.keys(filters).length > 0) {
