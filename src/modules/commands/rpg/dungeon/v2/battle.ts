@@ -20,6 +20,7 @@ import {
 import { prepareSkewedCollectionsForBattle, prepareTeamForBattle } from "helpers/teams";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { clone, groupByKey } from "utility";
 import { battleConfirmationInteraction } from "utility/ButtonInteractions";
 import { prepareDungeonBoss } from "..";
 import { simulateBattle } from "../../adventure/battle/battle";
@@ -43,6 +44,24 @@ export const dungeonBattle = async (params: BaseProps) => {
 		...params,
 		invokeFunc: invokeDungeonBattle
 	});
+};
+
+const dedupItems = (playerStats: any) => {
+	const result = clone(playerStats);
+	const validCards = result.cards.filter((c: any) => typeof c === "object");
+	const itemsEquipped = groupByKey(validCards, "item_id");
+	const duplicateItems = Object.keys(itemsEquipped).filter((k) => itemsEquipped[k].length > 1);
+	
+	// duplicateItems will always either be of length 1 or 0 because only 3 items can be equipped.
+	if (duplicateItems.length > 0) {
+		const duplicateItemId = Number(duplicateItems[0]);
+		const idx = result.cards.findIndex((c: any) => c?.item_id === duplicateItemId);
+		if (idx >= 0) {
+			delete result.cards[idx]?.itemname;
+			delete result.cards[idx].item_id;
+		}
+	}
+	return result;
 };
 
 export const invokeDungeonBattle = async ({ context, options, client }: BaseProps) => {
@@ -186,7 +205,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			});
 		}
 
-		const playerStats = await prepareTeamForBattle({
+		let playerStats = await prepareTeamForBattle({
 			team: dgTeam.team as TeamProps,
 			user_id: user.id,
 			id: author.id,
@@ -203,6 +222,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		playerStats = dedupItems(playerStats);
 		let opponent: BattleStats | undefined, opponentTeamName = "";
 		const randomOpponent = await getRandomDGOpponent({
 			exclude_tag: author.id,
@@ -249,6 +269,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				opponent.name = `Team ${randomOpponent.username}`;
 				opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
 				opponent.username = randomOpponent.username;
+				opponent = dedupItems(opponent);
 			}
 		}
 

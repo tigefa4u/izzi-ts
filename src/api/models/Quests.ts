@@ -32,9 +32,9 @@ export const transformation = {
 		columnName: "is_daily",
 		defaultsTo: false,
 	},
-	isSpecial: {
+	isPremium: {
 		type: "boolean",
-		columnName: "is_special",
+		columnName: "is_premium",
 		defaultsTo: false,
 	},
 	parentId: {
@@ -71,7 +71,7 @@ export const getByid = async (params: QuestParams): Promise<QuestProps[]> => {
 			"min_level",
 			"max_level",
 			"is_daily",
-			"is_special",
+			"is_premium",
 			"parent_id",
 			"metadata",
 			"type",
@@ -113,7 +113,7 @@ export const getByUserLevel = async (
             ${tableName}.min_level,
             ${tableName}.max_level,
             ${tableName}.is_daily,
-            ${tableName}.is_special,
+            ${tableName}.is_premium,
             ${tableName}.parent_id,
             ${tableName}.type,
             ${tableName}.criteria,

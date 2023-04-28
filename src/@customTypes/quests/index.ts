@@ -48,7 +48,7 @@ export type QuestProps = {
   min_level: number;
   max_level: number;
   is_daily: boolean;
-  is_special: boolean;
+  is_premium: boolean;
   parent_id?: number;
   metadata?: Record<string, unknown>;
   type: QuestTypes;
@@ -58,7 +58,7 @@ export type QuestProps = {
 };
 
 type CP = Omit<QuestProps, "id" | "is_deleted" | "created_at" | "updated_at"> &
-  Partial<Pick<QuestProps, "is_daily" | "is_special">>;
+  Partial<Pick<QuestProps, "is_daily" | "is_premium">>;
 export type QuestCreateProps = CP | CP[];
 
 export type QuestUpdateProps = Partial<QuestProps>;
