@@ -485,7 +485,7 @@ export const MAX_REFERRAL_REWARD_POINTS = 20;
 export const MAX_MANA_GAIN = 420;
 // max level for this mana is 187
 
-export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpg";
+export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpeg";
 export const MIN_LEVEL_FOR_REFERRAL = 6;
 
 // Ability cap in %

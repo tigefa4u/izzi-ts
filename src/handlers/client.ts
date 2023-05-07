@@ -87,7 +87,7 @@ export const handleClient = (client: Client) => {
 			// client.musicQueue = new Map();
 			// erelajs for streaming music from lavalink service
 			if (client?.shard?.ids.includes(0)) {
-				// client.user.setAvatar("./izzi.jpeg")
+				client.user?.setAvatar("./izzi.jpeg");
 				console.log(`Logged in as ${client?.user?.tag}!`);
 				loggers.info(`Logged in as ${client?.user?.tag}`);
 				// setInterval(async () => {
