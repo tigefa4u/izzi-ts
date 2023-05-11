@@ -115,6 +115,7 @@ export const getCollectionById = async (params: {
   user_id: number;
   ids?: number[];
   user_tag?: string;
+  isDungeon?: boolean;
 }) => {
 	try {
 		let skinArr: undefined | SkinProps[];
@@ -158,7 +159,9 @@ export const getCollectionById = async (params: {
 						}
 					}
 					let itemOptions = {};
-					if (data.item_id) {
+					
+					// Do not fetch the item equipped on card for dg
+					if (data.item_id && !params.isDungeon) {
 						const item = await getItemById({ id: data.item_id });
 						if (item) {
 							itemOptions = {
