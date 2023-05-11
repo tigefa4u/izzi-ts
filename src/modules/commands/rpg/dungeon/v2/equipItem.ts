@@ -1,7 +1,5 @@
-import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { DungeonProps } from "@customTypes/dungeon";
-import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getCollection } from "api/controllers/CollectionsController";
 import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
 import { getItemById } from "api/controllers/ItemsController";
@@ -61,11 +59,6 @@ export const equipDGItem = async ({ context, options, client, args }: BaseProps)
 				cids.push(m.collection_id);
 			}
 		});
-		const collections = await getCollectionById({
-			ids: cids,
-			user_id: user.id
-		});
-		if (!collections) return;
 		const item = await getItemById({ id: itemInCollection[0].item_id });
 		if (!item) {
 			loggers.info("item not found for ID: " + itemInCollection[0].item_id);
@@ -73,17 +66,6 @@ export const equipDGItem = async ({ context, options, client, args }: BaseProps)
 			return;
 		}
 		const itemId = item.id;
-		const collectionsMeta = collections.reduce((acc, r) => {
-			acc[r.item_id] = r;
-			return acc;
-		}, {} as { [key: number]: CollectionCardInfoProps });
-		if (collectionsMeta[itemId]) {
-			context.channel?.sendMessage(
-				`**${titleCase(item.name || "")}** ${emojiMap(item.name)} is already ` +
-                "equipped by one of the cards in this team."
-			);
-			return;
-		}
 		const index = team.metadata.findIndex((t) => t.item_id === itemId);
 		if (index >= 0) {
 			team.metadata[index].item_id = null;
