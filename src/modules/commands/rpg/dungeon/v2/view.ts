@@ -58,7 +58,7 @@ export const viewDGTeam = async ({ context, options, client }: BaseProps) => {
 				const teamPosition = dgTeam.team.metadata
 					.filter(Boolean)
 					.sort((a) => a.position);
-				desc = prepareTeamDescription(totalOverallStats, teamPosition);
+				desc = prepareTeamDescription(totalOverallStats, teamPosition, true);
 			}
 		}
 

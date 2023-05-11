@@ -57,7 +57,7 @@ const prepareItemStats = ({
 };
 
 export const prepareTotalOverallStats = async (
-	params: PrepareTotalOverallStats
+	params: PrepareTotalOverallStats & { isDungeon?: boolean; }
 ): Promise<
   | {
       totalOverallStats: OverallStatsProps;
@@ -66,7 +66,7 @@ export const prepareTotalOverallStats = async (
     }
   | undefined
 > => {
-	const { collections } = params;
+	const { collections, isDungeon = false } = params;
 	const result = await Promise.all(
 		collections
 			.map(async (c) => {
@@ -80,10 +80,12 @@ export const prepareTotalOverallStats = async (
 					guildStats: params.guildStats,
 				});
 				c.stats = baseStats;
-				c.itemStats = prepareItemStats({
-					itemStats: c.itemStats,
-					guildItemStats: params.itemStats,
-				}) as CharacterStatProps;
+				if (!isDungeon) {
+					c.itemStats = prepareItemStats({
+						itemStats: c.itemStats,
+						guildItemStats: params.itemStats,
+					}) as CharacterStatProps;
+				}
 				return total;
 			})
 			.filter(Boolean)
@@ -215,12 +217,14 @@ export const prepareTeamForBattle = async ({
 	team,
 	user_id,
 	id,
-	canAddGuildStats
+	canAddGuildStats,
+	isDungeon = false
 }: {
   team: TeamProps;
   user_id: number;
   id: string; // user tag (make sure)
   canAddGuildStats: boolean;
+  isDungeon?: boolean;
 }) => {
 	const ids = team.metadata.filter(Boolean).map((m) => Number(m.collection_id));
 
@@ -262,9 +266,11 @@ export const prepareSkewedCollectionsForBattle = async ({
 	name = "",
 	guildStats,
 	itemStats,
+	isDungeon = false
 }: PrepareSkewedCollectionsForBattleProps & {
   guildStats?: GuildStatProps;
   itemStats?: GuildStatProps;
+  isDungeon?: boolean;
 }) => {
 	if (team) {
 		const tempCollectionsMeta = reorderObjectKey(collections, "id");
@@ -274,7 +280,7 @@ export const prepareSkewedCollectionsForBattle = async ({
 			if (idx >= 0) {
 				collections[idx].name = collections[idx].metadata?.nickname || collections[idx].name;
 			}
-			if (card && !card.item_id && m.item_id) {
+			if ((card && !card.item_id && m.item_id) || (isDungeon && m.item_id)) {
 				if (idx >= 0) {
 					const item = await getItemById({ id: m.item_id });
 					if (item) {
@@ -295,6 +301,7 @@ export const prepareSkewedCollectionsForBattle = async ({
 		isBattle: true,
 		guildStats: clone(guildStats),
 		itemStats: clone(itemStats),
+		isDungeon
 	});
 	if (!totalStats) {
 		throw new Error("Unable to calculate total stats");

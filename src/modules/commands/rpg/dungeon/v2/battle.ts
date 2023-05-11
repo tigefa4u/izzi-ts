@@ -209,7 +209,8 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			team: dgTeam.team as TeamProps,
 			user_id: user.id,
 			id: author.id,
-			canAddGuildStats: false
+			canAddGuildStats: false,
+			isDungeon: true
 		});
 		if (!playerStats) {
 			embed.setDescription("You do not have a valid DG Team, Please reset your team using ``iz dg reset``");
@@ -249,7 +250,8 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				team: randomOpponent.team as TeamProps,
 				user_id: opponentUser.id,
 				id: randomOpponent.user_tag,
-				canAddGuildStats: false
+				canAddGuildStats: false,
+				isDungeon: true
 			});
 			if (!opponent) {
 				loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 

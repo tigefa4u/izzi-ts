@@ -164,7 +164,7 @@ export async function showTeam({
 			desc,
 		};
 	}
-	const desc = prepareTeamDescription(totalOverallStats, teamPosition);	
+	const desc = prepareTeamDescription(totalOverallStats, teamPosition, false);	
 	return {
 		title: `Team ${name}`,
 		desc,
@@ -174,6 +174,7 @@ export async function showTeam({
 export const prepareTeamDescription = (
 	totalOverallStats: any,
 	teamPosition: TeamMeta[],
+	isDungeon = false
 ) => {
 	const {
 		collections,
@@ -188,6 +189,20 @@ export const prepareTeamDescription = (
 			const card = collections.filter((c: any) => c.id === item.collection_id)[0];
 			if (!card) {
 				item.collection_id = null;
+			}
+			if (isDungeon) {
+				return `__Position #${item.position}__\n${
+					item.collection_id
+						? `**${titleCase(card.metadata?.nickname || card.name)} ${emojiMap(
+							card.type
+						)} ${emojiMap(item.item_id && item.itemName ? item.itemName : ""
+						)}**\n__${titleCase(card.rank)}__ | Level ${card.character_level}`
+						: `Not Assigned | ${
+							item.itemName && item.item_id
+								? emojiMap(item.itemName)
+								: "Not Equipped"
+						}`
+				}`;
 			}
 			return `__Position #${item.position}__\n${
 				item.collection_id
