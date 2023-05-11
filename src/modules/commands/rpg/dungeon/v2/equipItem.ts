@@ -1,5 +1,6 @@
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
+import { DungeonProps } from "@customTypes/dungeon";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getCollection } from "api/controllers/CollectionsController";
 import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
@@ -94,12 +95,19 @@ export const equipDGItem = async ({ context, options, client, args }: BaseProps)
 			item_id: itemId,
 			itemName: item.name
 		};
-		await updateDGTeam(author.id, {
+		const updateObject: Partial<DungeonProps> = {
 			team: {
 				...team,
 				metadata: team.metadata
 			}
-		});
+		};
+		if (dgTeam.metadata?.isValid) {
+			updateObject.metadata = {
+				...(dgTeam.metadata || {}),
+				isValid: false
+			};
+		}
+		await updateDGTeam(author.id, updateObject);
 		context.channel?.sendMessage(
 			`Successfully assigned __${titleCase(item.name || "")}__ ` +
             `${emojiMap(item.name)} to __Position #${posi}__`

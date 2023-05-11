@@ -1,6 +1,10 @@
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
-import { CONSOLE_BUTTONS, ENERGY_PER_ATTACK, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
+import {
+	CONSOLE_BUTTONS,
+	ENERGY_PER_ATTACK,
+	HIDE_VISUAL_BATTLE_ARG,
+} from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";
@@ -30,7 +34,10 @@ import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { numericWithComma } from "helpers";
-import { battleConfirmationInteraction, customButtonInteraction } from "utility/ButtonInteractions";
+import {
+	battleConfirmationInteraction,
+	customButtonInteraction,
+} from "utility/ButtonInteractions";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import Cache from "cache";
 import { eventActions } from "../events";
@@ -42,7 +49,7 @@ import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 export const battleRaidBoss = async (params: BaseProps) => {
 	return battleConfirmationInteraction({
 		...params,
-		invokeFunc: battleBoss
+		invokeFunc: battleBoss,
 	});
 };
 
@@ -52,7 +59,8 @@ export const battleBoss = async ({
 	client,
 	isEvent,
 	args,
-}: any) => { // has to be type RaidActionProps
+}: any) => {
+	// has to be type RaidActionProps
 	try {
 		const author = options.author;
 		let inBattle = await getCooldown(
@@ -98,7 +106,7 @@ export const battleBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
 		}
@@ -154,7 +162,7 @@ export const battleBoss = async ({
 			title: `__${isEvent ? "Event" : "Raid"} Boss Battle__`,
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
-			multiplier
+			multiplier,
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {
@@ -171,9 +179,7 @@ export const battleBoss = async ({
           currentRaid.id
 			);
 			loggers.error(
-				`Unable to validate raid user: ${author.id} with id: ${
-					currentRaid.id
-				}, Raid -> `,
+				`Unable to validate raid user: ${author.id} with id: ${currentRaid.id}, Raid -> `,
 				currentRaid,
 				{}
 			);
@@ -197,6 +203,8 @@ export const battleBoss = async ({
 				Math.ceil(result.totalDamage * 1.35) * multiplier
 			);
 			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
+			if (result.totalDamage > updateObj.stats.remaining_strength)
+				result.totalDamage = updateObj.stats.remaining_strength;
 			const updatedLobby = await consumeEnergy(
 				updateObj.id,
 				user.id,
@@ -240,14 +248,20 @@ export const battleBoss = async ({
 };
 
 const handleButtonClick = async ({
-	id, channel, client, user_tag, message, simulation, attachments
+	id,
+	channel,
+	client,
+	user_tag,
+	message,
+	simulation,
+	attachments,
 }: CustomButtonInteractionParams & {
-	simulation?: Simulation;
-	attachments?: (CollectionCardInfoProps | undefined)[];
+  simulation?: Simulation;
+  attachments?: (CollectionCardInfoProps | undefined)[];
 }) => {
 	const [ author, disableRaids ] = await Promise.all([
 		client.users.fetch(user_tag),
-		Cache.get("disable-raids")
+		Cache.get("disable-raids"),
 	]);
 	let isEvent = false;
 	if (disableRaids) isEvent = true;
@@ -256,7 +270,7 @@ const handleButtonClick = async ({
 		context: { channel } as BaseProps["context"],
 		args: [ "bt" ],
 		options: { author },
-		client
+		client,
 	};
 	if (id === CONSOLE_BUTTONS.RAID_BATTLE.id) {
 		if (isEvent) {
@@ -271,7 +285,7 @@ const handleButtonClick = async ({
 			authorId: author.id,
 			attachments,
 			channel,
-			isRaid: true
+			isRaid: true,
 		});
 	}
 	return;
@@ -328,9 +342,9 @@ async function processRaidResult({
 				author.username
 			}, You have dealt:**\n\n**__${numericWithComma(
 				result.totalDamage || 0
-			)}__** Damage to ${
-				isEvent ? "Event" : "Raid"
-			} Boss${result.soulGainText ? `\n${result.soulGainText}` : ""}\n\n**${numericWithComma(
+			)}__** Damage to ${isEvent ? "Event" : "Raid"} Boss${
+				result.soulGainText ? `\n${result.soulGainText}` : ""
+			}\n\n**${numericWithComma(
 				updateObj.stats.remaining_strength
 			)} / ${numericWithComma(updateObj.stats.original_strength)} ${
 				emoji.hp
@@ -344,16 +358,16 @@ async function processRaidResult({
 		[
 			{
 				label: CONSOLE_BUTTONS.RAID_BATTLE.label,
-				params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id }
+				params: { id: CONSOLE_BUTTONS.RAID_BATTLE.id },
 			},
 			{
 				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
 				params: {
 					id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id,
 					simulation: result.simulation,
-					attachments: result.attachments 
-				}
-			}
+					attachments: result.attachments,
+				},
+			},
 		],
 		author.id,
 		handleButtonClick,

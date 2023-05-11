@@ -1,4 +1,5 @@
 import { BaseProps } from "@customTypes/command";
+import { DungeonProps } from "@customTypes/dungeon";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -57,7 +58,9 @@ export const setDGTeam = async ({
 			return;
 		}
 		const collection = collections[0];
-		const idx = dgTeam.team.metadata.findIndex((m) => m?.collection_id === collection.id);
+		const idx = dgTeam.team.metadata.findIndex(
+			(m) => m?.collection_id === collection.id
+		);
 		if (idx >= 0) {
 			dgTeam.team.metadata[idx].collection_id = null;
 		}
@@ -66,16 +69,25 @@ export const setDGTeam = async ({
 		} else {
 			dgTeam.team.metadata[posi - 1] = {
 				collection_id: collection.id,
-				position: posi
+				position: posi,
 			};
 		}
-		await updateDGTeam(author.id, { team: dgTeam.team, });
+		const updateObject: Partial<DungeonProps> = { team: dgTeam.team };
+		if (dgTeam.metadata?.isValid) {
+			updateObject.metadata = {
+				...(dgTeam.metadata || {}),
+				isValid: false,
+			};
+		}
+		await updateDGTeam(author.id, updateObject);
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`Successfully set **Level ${collection.character_level}** __${titleCase(
 					collection.rank
-				)}__ **${titleCase(collection.name)}** to __Position #${posi}__`
+				)}__ **${titleCase(collection.name)}** to __Position #${posi}__${
+					updateObject.metadata?.isValid ? "" : "\n\nUse ``dg ready`` to participate in Dungeon Battles."
+				}`
 			);
 
 		context.channel?.sendMessage(embed);
