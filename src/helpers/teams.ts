@@ -254,7 +254,8 @@ export const prepareTeamForBattle = async ({
 		id,
 		name: `Team ${team.name}`,
 		guildStats: guildStats,
-		itemStats
+		itemStats,
+		isDungeon
 	});
 };
 
@@ -265,9 +266,11 @@ export const prepareSkewedCollectionsForBattle = async ({
 	name = "",
 	guildStats,
 	itemStats,
+	isDungeon
 }: PrepareSkewedCollectionsForBattleProps & {
   guildStats?: GuildStatProps;
   itemStats?: GuildStatProps;
+  isDungeon?: boolean;
 }) => {
 	if (team) {
 		const tempCollectionsMeta = reorderObjectKey(collections, "id");
@@ -277,7 +280,7 @@ export const prepareSkewedCollectionsForBattle = async ({
 			if (idx >= 0) {
 				collections[idx].name = collections[idx].metadata?.nickname || collections[idx].name;
 			}
-			if (card && !card.item_id && m.item_id) {
+			if ((card && !card.item_id && m.item_id) || (isDungeon && m.item_id)) {
 				if (idx >= 0) {
 					const item = await getItemById({ id: m.item_id });
 					if (item) {
