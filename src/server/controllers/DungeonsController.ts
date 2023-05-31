@@ -85,7 +85,7 @@ const crates: any = {
 				exclusive: 20,
 				ultimate: 7 
 			},
-			numberOfCards: randomNumber(1, 3),
+			numberOfCards: 5,
 			orbs: randomNumber(150, 300)
 		},
 		is_on_market: false,
@@ -100,7 +100,7 @@ const crates: any = {
 				immortal: 15,
 				exclusive: 5
 			},
-			numberOfCards: randomNumber(1, 3),
+			numberOfCards: 3,
 			orbs: randomNumber(100, 200)
 		},
 		is_on_market: false,
@@ -110,11 +110,10 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				diamond: 40,
-				legend: 50,
-				divine: 10
+				diamond: 50,
+				legend: 50
 			},
-			numberOfCards: 10 
+			numberOfCards: 2
 		},
 		is_on_market: false,
 	}
