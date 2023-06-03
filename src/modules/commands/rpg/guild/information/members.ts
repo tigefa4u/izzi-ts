@@ -11,7 +11,7 @@ import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 
-export const viewMembers = async ({ context, client, options }: BaseProps) => {
+export const viewMembers = async ({ context, client, options, args }: BaseProps) => {
 	try {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
@@ -25,8 +25,14 @@ export const viewMembers = async ({ context, client, options }: BaseProps) => {
 			extras: { user_id: user.id }
 		});
 		if (!validGuild) return;
+		let page = 1;
+		if (args[0] && args[0] === "-pg" && args[1]) {
+			page = Number(args[1] || 1);
+			if (isNaN(page)) page = 1;
+		}
 		const thumbnail = context.guild?.iconURL() || client.user?.displayAvatarURL();
 		const filter = clone(PAGE_FILTER);
+		filter.currentPage = page;
 		const params = { guild_id: validGuild.guild.id };
 		let embed = createEmbed()
 			.setThumbnail(thumbnail || "");

@@ -5,6 +5,7 @@ import { paginatorFunc } from "api/controllers/PagingController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
+import { generateUUID } from "helpers";
 import { recreateBattleEmbed } from "helpers/battle";
 import { createBattleCanvas } from "helpers/canvas";
 import loggers from "loggers";
@@ -76,9 +77,16 @@ export const viewBattleLogs = async ({
 				allDescriptions.push(lastDesc);
 			}
 		}
+		const battleLogId = generateUUID(5);
+
+		loggers.info(`Battle log ${battleLogId}`, {
+			battleLogId,
+			battleLog: allDescriptions
+		});
 		const embed = createEmbed()
 			.setTitle(`__${simulation.title.replaceAll("_", "")} Battle Logs__`)
-			.setDescription(allDescriptions[0]);
+			.setDescription(allDescriptions[0])
+			.setFooter({ text: `Battle Log ID: ${battleLogId}`, });
 
 		const canvas = await createBattleCanvas(attachments, {
 			isSingleRow: false,
@@ -115,7 +123,7 @@ export const viewBattleLogs = async ({
     			newEmbed = recreateBattleEmbed(
     				embed.title || "",
     				data?.data.join("\n")
-    			);
+    			).setFooter({ text: `Battle Log ID: ${battleLogId}`, });
     		}
     		if (opts?.isDelete && sentMessage) {
     			sentMessage.deleteMessage();
