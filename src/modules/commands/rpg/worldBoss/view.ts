@@ -8,7 +8,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { getRemainingTimer } from "helpers";
+import { getRemainingTimer, numericWithComma } from "helpers";
 import { createBattleCanvas, createSingleCanvas } from "helpers/canvas";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
 import loggers from "loggers";
@@ -30,7 +30,7 @@ const _prepareLoot = (raid: RaidProps) => {
     `\n\n**__Extra Rewards per Battle [Per Threshold]__**\n${raid.loot.drop.worldBoss?.default
     	.map((item) => {
     		return (
-    			`**__${item.threshold}% Threshold__**\n__${item.extraGold}__ Gold ${emoji.gold}` +
+    			`**__${item.threshold}% Threshold__**\n__${numericWithComma(item.extraGold)}__ Gold ${emoji.gold}` +
                 `\n__${item.souls}x__ Souls ${emoji.soul}` +
           `\n__${item.number}x__ ${titleCase(item.rank)} of **${bosses}** (At ${
           	item.rate
