@@ -11,7 +11,8 @@ async function flushBattleCooldowns() {
 			"*floors::ch-*",
 			// "*zone::*",
 			// "*stage::*",
-			"*in-battle*"
+			"*in-battle*",
+			"*worldboss-attack*"
 		].map(async (key) => {
 			const keys = Cache.keys && (await Cache.keys(key));
 			return keys || "";
