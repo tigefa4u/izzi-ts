@@ -120,10 +120,10 @@ export const battleWB = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		if (user.dungeon_mana < WORLD_BOSS_MANA_PER_BATTLE) {
+		if (user.mana < WORLD_BOSS_MANA_PER_BATTLE) {
 			embed.setDescription(
 				`Summoner **${author.username}**, You do not have sufficient ` +
-          `**DG Mana** to Attack! **__[${user.dungeon_mana} / ${WORLD_BOSS_MANA_PER_BATTLE}]__**`
+          `**Mana** to Attack! **__[${user.mana} / ${WORLD_BOSS_MANA_PER_BATTLE}]__**`
 			);
 			context.channel?.sendMessage(embed);
 			return;

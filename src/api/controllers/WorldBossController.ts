@@ -337,7 +337,7 @@ export const processWorldBossRewards = async (params: {
 			try {
 				const bodyParams = {
 					gold: trx.raw(`gold + ${totalGoldLooted}`),
-					dungeon_mana: trx.raw(`dungeon_mana - ${WORLD_BOSS_MANA_PER_BATTLE}`),
+					mana: trx.raw(`mana - ${WORLD_BOSS_MANA_PER_BATTLE}`),
 				} as any;
 
 				if (soulsLooted > 0) {
@@ -352,7 +352,7 @@ export const processWorldBossRewards = async (params: {
 				);
 				const updatedObj = await trx("users")
 					.where({ user_tag: user.user_tag })
-					.where("dungeon_mana", ">=", WORLD_BOSS_MANA_PER_BATTLE)
+					.where("mana", ">=", WORLD_BOSS_MANA_PER_BATTLE)
 					.update(bodyParams)
 					.returning("*")
 					.then((res) => res[0]);
@@ -366,7 +366,7 @@ export const processWorldBossRewards = async (params: {
 					embed
 						.setTitle(DEFAULT_ERROR_TITLE)
 						.setDescription(
-							`Summoner **${user.username}**, You do not have sufficient **DG Mana** ` +
+							`Summoner **${user.username}**, You do not have sufficient **Mana** ` +
 							"to finish this battle."
 						);
 					channel?.sendMessage(embed);
