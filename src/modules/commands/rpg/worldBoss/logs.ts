@@ -58,7 +58,7 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 
 		const fivePercentThresDmg = {
 			name: "Total damage required for __2.5%__ Threshold",
-			num: Math.floor(originalHp * .25)
+			num: Math.floor(originalHp * .025)
 		};
 		const fifteenPercentThresDmg = {
 			name: "Total damage required for __10%__ Threshold",
