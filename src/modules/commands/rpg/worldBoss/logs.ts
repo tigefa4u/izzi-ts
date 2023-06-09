@@ -54,7 +54,7 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 		]);
 		const totalDamage = Number(sum || 0);
 		const originalHp = raid.stats.original_strength;
-		const threshold = Math.floor((totalDamage / originalHp) * 100);
+		const threshold = (totalDamage / originalHp) * 100;
 
 		const fivePercentThresDmg = {
 			name: "Total damage required for __2.5%__ Threshold",
@@ -77,7 +77,7 @@ export const viewWorldBossPlayerLogs = async ({ client, context, options }: Base
 		embed.setTitle("World Boss Attack Logs")
 			.setDescription("Your latest 5 Attack logs are shown below." + 
             `\n**Total Damage Dealt:** __${numericWithComma(totalDamage)}__` +
-            `\n**Damage Threshold:** __${threshold}%__` +
+            `\n**Damage Threshold:** __${threshold.toFixed(2)}%__` +
             `\n${[ fivePercentThresDmg, fifteenPercentThresDmg, twentyFivePercentThresDmg ].map(({ num, name }) => {
             	return `**${name}:** __${numericWithComma(num)}__`;
             }).join("\n")}` + ttlDesc)
