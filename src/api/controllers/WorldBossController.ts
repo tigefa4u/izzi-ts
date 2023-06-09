@@ -234,9 +234,7 @@ export const processWorldBossRewards = async (params: {
 		});
 		const _totalDamage = Number(sum || 0) + damageDealt;
 
-		const damagePercent = Math.floor(
-			(_totalDamage / raid.stats.original_strength) * 100
-		);
+		const damagePercent = (_totalDamage / raid.stats.original_strength) * 100;
 
 		let totalGoldLooted = loot.gold;
 		const attackerRewards = { gold: loot.gold } as Record<string, any>;
@@ -284,7 +282,7 @@ export const processWorldBossRewards = async (params: {
 			
 		const clonedArr = clone(loot.default).reverse();
 		const extraLoot = clonedArr.find(
-			(item) => item.threshold <= damagePercent
+			(item) => item.threshold <= Number(damagePercent.toFixed(2))
 		);
 
 		let soulsLooted = 0;
