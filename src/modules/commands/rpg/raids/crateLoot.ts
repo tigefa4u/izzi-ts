@@ -11,7 +11,7 @@ export const crates = {
 				exclusive: 20,
 				ultimate: 7 
 			},
-			numberOfCards: randomNumber(1, 3),
+			numberOfCards: randomNumber(3, 5),
 			orbs: randomNumber(150, 300)
 		},
 		is_on_market: false,
@@ -26,7 +26,7 @@ export const crates = {
 				immortal: 15,
 				exclusive: 5
 			},
-			numberOfCards: randomNumber(1, 3),
+			numberOfCards: randomNumber(2, 3),
 			orbs: randomNumber(100, 200)
 		},
 		is_on_market: false,
@@ -40,7 +40,7 @@ export const crates = {
 				legend: 50,
 				divine: 10
 			},
-			numberOfCards: 10 
+			numberOfCards: randomNumber(1, 2)
 		},
 		is_on_market: false,
 	}
