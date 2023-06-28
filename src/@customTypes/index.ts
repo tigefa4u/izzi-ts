@@ -57,6 +57,7 @@ export type XPGainPerRankProps = {
     immortal: number;
     exclusive: number;
     ultimate: number;
+    prestige: number;
 }
 
 export type AssetImageProps = {

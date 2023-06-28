@@ -1,0 +1,18 @@
+# fly.toml app configuration file generated for izzi-test-bot on 2023-06-26T14:51:27+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "izzi-test-bot"
+primary_region = "ewr"
+
+[[mounts]]
+  source = "data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 0

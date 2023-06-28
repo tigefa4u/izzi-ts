@@ -146,6 +146,7 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 	immortal: 500,
 	exclusive: 800,
 	ultimate: 800,
+	prestige: 1000
 };
 
 export const ORB_INTEREST_RATE = 0.7;

@@ -68,24 +68,32 @@ export const getPlayerDamageDealt = (
 		isCriticalHit,
 		effective,
 		criticalDamage: critDamage,
+		defense,
+		intelligence,
+		dexterity
 	} = playerTotalStats;
-	const { defense } = enemyTotalStats;
+	const { defense: enemyDef } = enemyTotalStats;
 	const modifiers =
     (isCriticalHit ? (critDamage > 1 ? critDamage : 1.5) : 1) *
     // accuracy *
     (effective ? effective : 1) *
     randomNumber(0.87, 1, true); // This was 0.85 before
 	let atk = clone(Math.floor(vitality));
-	let def = clone(Math.floor(defense));
+	let def = clone(Math.floor(enemyDef));
 	atk = atk + Math.floor(playerTotalStats.intelligence * (6 / 100)); // prev - 6 (35)
 	def = def + Math.floor(enemyTotalStats.intelligence * (10 / 100)); // prev - 10 (40)
 	// let damage = Math.round(
-	//   0.5 * vitality * (vitality / defense) * modifiers + 1
+	//   0.5 * vitality * (vitality / enemyDef) * modifiers + 1
 	// );
-	// testing
-	// let damage = Math.floor((1 + (vitality * 0.01)) * (vitality/Math.max(1, defense)) * modifiers * 100);
-	let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers);
-	// if (damage <= 0) damage = randomNumber(300, 500);
+
+	// testing - calculate a baseDamage
+	// To calculate baseDamage - consider the average PL of the player excluding HP
+	const sum = vitality + defense + intelligence + dexterity;
+	let baseDamage = Math.floor(sum / 4); // 4 because 4 stats are considered
+	if (baseDamage < 100) baseDamage = 100;
+
+	let damage = Math.floor((atk / (atk + def)) * baseDamage * modifiers);
+	if (damage < 20) damage = randomNumber(80, 250);
 
 	// True damage reduction
 	// for Bone Plating

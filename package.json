@@ -22,28 +22,23 @@
   "author": "HoaX7",
   "license": "ISC",
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.2.16",
     "@types/better-sqlite3": "^7.4.2",
     "@types/cls-hooked": "^4.3.3",
     "@types/express": "^4.17.13",
     "@types/lodash": "^4.14.178",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
-    "cls-hooked": "^4.2.2",
     "cross-env": "^7.0.3",
-    "dotenv": "^10.0.0",
     "eslint": "^8.1.0",
-    "nanoid": "^3.3.4",
     "nodemon": "^2.0.14",
-    "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.5",
-    "winston": "^3.3.3"
+    "@types/node": "^17.0.13"
   },
   "dependencies": {
     "@google-cloud/logging-winston": "^5.1.7",
-    "@hoax7/memory_cache": "^1.0.15",
+    "@hoax7/memory_cache": "^1.0.18",
     "@top-gg/sdk": "^3.1.2",
-    "@types/node": "^17.0.13",
     "axios": "^0.24.0",
     "better-sqlite3": "^7.4.6",
     "canvas": "^2.8.0",
@@ -55,6 +50,12 @@
     "lodash": "^4.17.21",
     "pg": "^8.7.1",
     "title-case": "^3.0.3",
-    "winston-daily-rotate-file": "^4.6.1"
+    "winston-daily-rotate-file": "^4.6.1",
+    "typescript": "^4.5.5",
+    "winston": "^3.3.3",
+    "ts-node": "^10.4.0",
+    "cls-hooked": "^4.2.2",
+    "nanoid": "^3.3.4",
+    "dotenv": "^10.0.0"
   }
 }
