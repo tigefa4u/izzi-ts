@@ -132,7 +132,9 @@ const prepareConsoleDescription = async (
     	user.dungeon_mana
     } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}${
     	tagTeamPlayer
-    		? `\n**:raised_hands: Teammate | Points:** <@${tagTeamPlayer.teammate}> | ${tagTeamPlayer.points}`
+    		? `\n**:raised_hands: Teammate | Points:** <@${
+    			tagTeamPlayer.teammate
+    		}> | ${numericWithComma(tagTeamPlayer.points || 0)}`
     		: ""
     }`;
 
@@ -203,13 +205,10 @@ export const prepareAndSendConsoleMenu = async ({
 	if (tagTeam) {
 		tagTeamPlayer = {
 			...tagTeam.players[author.id],
-			points: tagTeam.points
+			points: tagTeam.points,
 		};
 	}
-	const desc = await prepareConsoleDescription(
-		user,
-		tagTeamPlayer
-	);
+	const desc = await prepareConsoleDescription(user, tagTeamPlayer);
 	const embed = createEmbed(author, client)
 		.setTitle("Console Menu " + emoji.crossedswords)
 		.setDescription(desc)
