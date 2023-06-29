@@ -29,7 +29,7 @@ import { TagTeamPlayerProps } from "@customTypes/teams/tagTeams";
 
 const prepareConsoleDescription = async (
 	user: UserProps,
-	tagTeamPlayer?: TagTeamPlayerProps
+	tagTeamPlayer?: TagTeamPlayerProps & { points: number }
 ) => {
 	const anonymousMarketPurchaseKey =
     "anonymous-market-purchase::" + user.user_tag;
@@ -131,7 +131,9 @@ const prepareConsoleDescription = async (
     } DG Mana:** ${
     	user.dungeon_mana
     } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}${
-    	tagTeamPlayer ? `\n**:raised_hands: Teammate:** <@${tagTeamPlayer.teammate}>` : ""
+    	tagTeamPlayer
+    		? `\n**:raised_hands: Teammate | Points:** <@${tagTeamPlayer.teammate}> | ${tagTeamPlayer.points}`
+    		: ""
     }`;
 
 	return desc;
@@ -197,7 +199,17 @@ export const prepareAndSendConsoleMenu = async ({
 		);
 		return;
 	}
-	const desc = await prepareConsoleDescription(user, tagTeam?.players[author.id]);
+	let tagTeamPlayer;
+	if (tagTeam) {
+		tagTeamPlayer = {
+			...tagTeam.players[author.id],
+			points: tagTeam.points
+		};
+	}
+	const desc = await prepareConsoleDescription(
+		user,
+		tagTeamPlayer
+	);
 	const embed = createEmbed(author, client)
 		.setTitle("Console Menu " + emoji.crossedswords)
 		.setDescription(desc)
