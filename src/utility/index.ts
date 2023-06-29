@@ -33,3 +33,13 @@ export const isEmptyValue = (val = {}) => {
 
 export const isInt = (n: number) => Number(n) === n && n % 1 === 0;
 export const isFloat = (n: number) => Number(n) === n && n % 1 !== 0;
+
+export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+	year: "2-digit",
+	month: "short",
+	day: "numeric",
+};
+export const toLocaleDate = (data: string | number) => new Date(data).toLocaleDateString(
+	"en-us",
+	DATE_OPTIONS
+);

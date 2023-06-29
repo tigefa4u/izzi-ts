@@ -9,7 +9,8 @@ import { parsePremiumUsername } from "helpers";
 
 export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) => {
 	const embed = new MessageEmbed();
-	embed.setColor(EMBED_DEFAULT_COLOR);
+	embed.setColor(EMBED_DEFAULT_COLOR)
+		.setTimestamp();
 	if (author) {
 		const params = { name: parsePremiumUsername(author.username), } as EmbedAuthorData;
 		if (author.displayAvatarURL) {

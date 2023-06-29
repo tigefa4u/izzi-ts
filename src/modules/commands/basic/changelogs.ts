@@ -1,44 +1,97 @@
+import { ChangeLogProps } from "@customTypes/changelogs";
 import { BaseProps } from "@customTypes/command";
+import { PageProps } from "@customTypes/pagination";
+import { getChangeLogs } from "api/controllers/ChangeLogsController";
+import { paginatorFunc } from "api/controllers/PagingController";
 import { createEmbed } from "commons/embeds";
-import { GUIDE_DOCS } from "environment";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { Message } from "discord.js";
+import emoji from "emojis/emoji";
+import { DOT } from "helpers/constants";
 import loggers from "loggers";
-import { customButtonInteraction } from "utility/ButtonInteractions";
+import { clone, toLocaleDate } from "utility";
+import { paginatorInteraction, } from "utility/ButtonInteractions";
 
-export const viewChangeLogs = ({ context, options, client }: BaseProps) => {
+export const viewChangeLogs = async ({
+	context,
+	options,
+	client,
+}: BaseProps) => {
 	try {
 		const author = options.author;
-		const embed = createEmbed(author, client).setTitle("Change Logs")
-			.setDescription("View a detailed description of Patch notes and updates on izzi.");
 
-		const buttons = customButtonInteraction(
-			context.channel,
-			[
-				{
-					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
-					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
-					style: "LINK",
-					url: `${GUIDE_DOCS}/change-logs`
-				}
-			],
-			author.id,
-			() => {
-				return;
-			},
-			() => {
-				return;
-			},
-			true,
-			10
-		);
-
-		if (buttons) {
-			embed.setButtons(buttons).setHideConsoleButtons(true);
+		const result = await getChangeLogs();
+		if (!result) {
+			context.channel?.sendMessage(
+				"There are currently no change logs available, come back later."
+			);
+			return;
 		}
-		context.channel?.sendMessage(embed);
+
+		let embed = createEmbed(author, client)
+			.setTitle(`${emoji.crossedswords} Change Logs ${emoji.crossedswords}`)
+			.setDescription(
+				"View a detailed description of Patch notes and updates on izzi."
+			);
+
+		const filter: PageProps = clone({
+			currentPage: 1,
+			perPage: 1,
+		});
+
+		let sentMessage: Message;
+		const buttons = await paginatorInteraction<
+      { array: ChangeLogProps[] },
+      ChangeLogProps[],
+      { totalCount: number; totalPages: number }
+    >(
+    	context.channel,
+    	author.id,
+    	{ array: result },
+    	filter,
+    	paginatorFunc,
+    	(data, options) => {
+    		if (data) {
+    			const res = data.data[0];
+    			embed = createEmbed(author, client)
+    				.setTitle(
+    					`${emoji.crossedswords} Change Logs ${emoji.crossedswords}`
+    				)
+    				.setDescription(
+    					`**${res.name} ${DOT} ${toLocaleDate(
+    						new Date(res.created_at).getTime()
+    					)}**` + `\n\n${res.description}`
+    				)
+    				.setHideConsoleButtons(true)
+    				.setFooter({
+    					text: `Page ${data.metadata.currentPage} / ${result.length}`,
+    					iconURL: author.displayAvatarURL()
+    				})
+    				.setTimestamp();
+    		}
+    		if (options?.isDelete && sentMessage) {
+    			sentMessage.deleteMessage();
+    		} else if (options?.isEdit && sentMessage) {
+    			sentMessage.editMessage(embed);
+    		}
+    	},
+    	{
+    		totalCount: result.length,
+    		totalPages: result.length,
+    	}
+    );
+
+		if (!buttons) return;
+		embed.setButtons(buttons);
+		const msg = await context.channel?.sendMessage(embed);
+		if (msg) {
+			sentMessage = msg;
+		}
 		return;
 	} catch (err) {
-		loggers.error("modules.commands.basic.changelogs.viewChangeLogs: ERROR", err);
+		loggers.error(
+			"modules.commands.basic.changelogs.viewChangeLogs: ERROR",
+			err
+		);
 		return;
 	}
 };
