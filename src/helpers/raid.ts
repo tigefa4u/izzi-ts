@@ -15,7 +15,7 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 				// 	stats[stat as keyof CharacterStatProps] * 3
 				// ),
 				[stat]: Math.round(
-					totalStats[stat as keyof CharacterStatProps]
+					stats[stat as keyof CharacterStatProps]
 				)
 			});
 		}
