@@ -30,5 +30,9 @@ export const subcommands = [
 	{
 		name: "equip",
 		alias: [ "eq" ]
+	},
+	{
+		name: "dungeon-battle",
+		alias: [ "dg" ]
 	}
 ];

@@ -254,3 +254,12 @@ export const getUsersWhoVoted = async () => {
 		return;
 	}
 };
+
+export const getUserLevel = async (id: number) => {
+	try {
+		return Users.getLevel(id);
+	} catch (err) {
+		loggers.error("UsersController.getUserLevel: ERROR", err);
+		return;	
+	}
+};

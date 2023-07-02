@@ -8,6 +8,7 @@
     "start": "node -r dotenv/config lib/server/shard.js",
     "dev": "cross-env NODE_PATH=src/ ts-node-dev -r dotenv/config src/server/shard.ts",
     "flush:cooldown": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/index.ts",
+    "flush:skins": "INVOKE=true ts-node -r dotenv/config src/server/autoClear/skin.ts",
     "test:redis": "ts-node -r dotenv/config src/server/testRedisConnection.ts",
     "cronjob": "ts-node -r dotenv/config src/server/pipes/cronjob.ts",
     "start:server": "ts-node -r dotenv/config src/server/app.ts",

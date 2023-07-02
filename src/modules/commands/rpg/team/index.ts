@@ -16,6 +16,7 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import { teamBattle } from "./actions/battle";
+import { teamDGBattle } from "./actions/battle/dungeon";
 import { createTeam } from "./actions/create";
 import { equipTeamItem } from "./actions/equip";
 import { removeTeam } from "./actions/remove";
@@ -25,8 +26,9 @@ import { setTeam } from "./actions/set";
 import { viewTeam } from "./actions/view";
 import { subcommands } from "./subcommands";
 
-export const team = async ({ client, context, options, args }: BaseProps) => {
+export const team = async (funcParams: BaseProps) => {
 	try {
+		const { client, context, options, args } = funcParams;
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
@@ -61,6 +63,8 @@ export const team = async ({ client, context, options, args }: BaseProps) => {
 			resetTeam(params);
 		} else if (subcommand === "equip") {
 			equipTeamItem(params);
+		} else if (subcommand === "dungeon-battle") {
+			teamDGBattle(params);
 		}
 		return;
 	} catch (err) {

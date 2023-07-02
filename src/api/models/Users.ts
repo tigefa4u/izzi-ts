@@ -106,7 +106,10 @@ export const get: (
 };
 
 export const getIsPremium = (params: UserParams): Promise<boolean> => {
-	return connection.select("is_premium").from(tableName).where(params)
+	return connection
+		.select("is_premium")
+		.from(tableName)
+		.where(params)
 		.then((res) => res[0].is_premium);
 };
 
@@ -125,9 +128,10 @@ export const update: (
 	if (data.gold && data.gold > MAX_GOLD_THRESHOLD) {
 		delete data.gold;
 		if (params.user_tag) {
-			const message = "Your Gold has reached max threshold " +
-			`__${MAX_GOLD_THRESHOLD}__ ${emoji.gold} and will not be updated`;
-			DMUserViaApi(params.user_tag, { content: message, });
+			const message =
+        "Your Gold has reached max threshold " +
+        `__${MAX_GOLD_THRESHOLD}__ ${emoji.gold} and will not be updated`;
+			DMUserViaApi(params.user_tag, { content: message });
 		}
 	}
 	if (isEmptyValue(data)) return;
@@ -150,11 +154,13 @@ export const getPlayerCount = async (
 
 export const startTransaction = async (cb: (trx: Knex.Transaction) => void) => {
 	const db = connection;
-	return db.transaction((trx) => {
-		return cb(trx);
-	}).catch(err => {
-		throw err;
-	});
+	return db
+		.transaction((trx) => {
+			return cb(trx);
+		})
+		.catch((err) => {
+			throw err;
+		});
 };
 
 export const getUsersWhoVoted = async (): Promise<UserProps[]> => {
@@ -162,15 +168,23 @@ export const getUsersWhoVoted = async (): Promise<UserProps[]> => {
 	const fromDate = new Date();
 	fromDate.setHours(fromDate.getHours() - 12);
 	fromDate.setMinutes(fromDate.getMinutes() - 3);
-	
+
 	const toDate = new Date();
 	toDate.setHours(toDate.getHours() - 12);
-	return db.select("user_tag", "username", "voted_at")
+	return db
+		.select("user_tag", "username", "voted_at")
 		.from(tableName)
 		.where({
 			is_deleted: false,
 			is_banned: false,
-			is_active: true 
+			is_active: true,
 		})
 		.whereBetween("voted_at", [ new Date(fromDate), new Date(toDate) ]);
 };
+
+export const getLevel = async (id: number): Promise<{ level: number }> =>
+	connection
+		.select("level")
+		.from(tableName)
+		.where({ id })
+		.then((res) => res[0]);
