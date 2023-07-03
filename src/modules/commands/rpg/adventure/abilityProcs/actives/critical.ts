@@ -24,30 +24,23 @@ export const pointBlank = ({
 		if (!basePlayerStats.totalStats.tempPB)
 			basePlayerStats.totalStats.tempPB = 1;
 		const pbPercent = calcPercentRatio(30, card.rank);
-		const crit =
-      basePlayerStats.totalStats.critical *
-      ((basePlayerStats.totalStats.tempPB * pbPercent) / 100);
-		basePlayerStats.totalStats.tempPB++;
-		playerStats.totalStats.critical = basePlayerStats.totalStats.critical + crit;
-		if (!basePlayerStats.totalStats.tempAccPB) basePlayerStats.totalStats.tempAccPB = 1;
+		const crit = basePlayerStats.totalStats.critical * (pbPercent / 100);
+		playerStats.totalStats.critical = playerStats.totalStats.critical + Number(crit.toFixed(2));
 		const accPercent = calcPercentRatio(35, card.rank);
-		const accuracy =
-      basePlayerStats.totalStats.accuracy *
-      ((basePlayerStats.totalStats.tempAccPB * accPercent) / 100);
-		playerStats.totalStats.accuracy =
-		basePlayerStats.totalStats.accuracy + accuracy;
+		const accuracy = basePlayerStats.totalStats.accuracy * (accPercent / 100);
+		playerStats.totalStats.accuracy = playerStats.totalStats.accuracy + Number(accuracy.toFixed(2));
+		if (isNaN(playerStats.totalStats.accuracy)) {
+			playerStats.totalStats.accuracy = 1;
+		}
+		if (isNaN(playerStats.totalStats.critical)) {
+			playerStats.totalStats.critical = 1;
+		}
 
-		if (!basePlayerStats.totalStats.tempAtkPB) basePlayerStats.totalStats.tempAtkPB = 1;
 		const atkPercent = calcPercentRatio(20, card.rank);
 		const atk = getRelationalDiff(basePlayerStats.totalStats.vitality, atkPercent);
-		//   basePlayerStats.totalStats.vitality *
-		//   ((basePlayerStats.totalStats.tempAtkPB * atkPercent) / 100);
 
-		playerStats.totalStats.vitality =
-		playerStats.totalStats.vitality + atk;
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + atk;
 
-		basePlayerStats.totalStats.tempAtkPB = basePlayerStats.totalStats.tempAtkPB + 1;
-		basePlayerStats.totalStats.tempAccPB = basePlayerStats.totalStats.tempAccPB + 1;
 		const desc = `Increasing **CRIT Chances** by __${pbPercent}%__ as well as ` +
         `increasing its **ATK** by __${atkPercent}%__ and **ACC** by __${accPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
