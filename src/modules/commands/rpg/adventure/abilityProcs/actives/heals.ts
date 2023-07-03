@@ -74,17 +74,11 @@ export const revitalize = ({
 		if (restorePoints >= playerStats.totalStats.originalHp)
 			restorePoints = playerStats.totalStats.originalHp;
 		playerStats.totalStats.strength = restorePoints;
-		if (!basePlayerStats.totalStats.vitalityTemp) basePlayerStats.totalStats.vitalityTemp = 1;
-		playerStats.totalStats.vitality =
-        playerStats.totalStats.vitality - (card.stats.vitalityInc || card.stats.vitality);
+		// Use the same for all abilities that buff stats
+		// buff stats from base stats
 		const incPercent = calcPercentRatio(8, card.rank);
-		const ratio =
-    playerStats.totalStats.vitality *
-    ((basePlayerStats.totalStats.vitalityTemp * incPercent) / 100);
-		basePlayerStats.totalStats.vitalityTemp = basePlayerStats.totalStats.vitalityTemp + 1;
-		const inc = card.stats.vitality + ratio;
-		card.stats.vitalityInc = inc;
-		playerStats.totalStats.vitality = playerStats.totalStats.vitality + inc;
+		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, incPercent);
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		const damageDiff = relativeDiff(
 			playerStats.totalStats.strength,
 			playerStats.totalStats.originalHp
