@@ -99,24 +99,21 @@ export const precision = ({
 		);
 		const num = hasMoreInt ? 2 : 3;
 		playerStats.totalStats.critNum = playerStats.totalStats.critNum + num;
-		if (!basePlayerStats.totalStats.criticalTemp)
-			basePlayerStats.totalStats.criticalTemp = 1;
+		
 		const percent = calcPercentRatio(40, card.rank);
-		const crit =
-      basePlayerStats.totalStats.critical *
-      ((basePlayerStats.totalStats.criticalTemp * percent) / 100);
-		basePlayerStats.totalStats.criticalTemp++;
-		playerStats.totalStats.critical =
-      basePlayerStats.totalStats.critical + crit;
-		if (!basePlayerStats.totalStats.critDamageTemp)
-			basePlayerStats.totalStats.critDamageTemp = 1;
+		const crit = basePlayerStats.totalStats.critical * (percent / 100);
+
+		playerStats.totalStats.critical = playerStats.totalStats.critical + Number(crit.toFixed(2));
+		if (isNaN(playerStats.totalStats.critical)) {
+			playerStats.totalStats.critical = 1;
+		}
+
 		const critPercent = calcPercentRatio(18, card.rank);
-		const critDamage =
-      basePlayerStats.totalStats.criticalDamage *
-      ((basePlayerStats.totalStats.critDamageTemp * critPercent) / 100);
-		basePlayerStats.totalStats.critDamageTemp++;
-		playerStats.totalStats.criticalDamage =
-      basePlayerStats.totalStats.criticalDamage + critDamage;
+		const critDamage = basePlayerStats.totalStats.criticalDamage * (critPercent / 100);
+		playerStats.totalStats.criticalDamage = playerStats.totalStats.criticalDamage + Number(critDamage.toFixed(2));
+		if (isNaN(playerStats.totalStats.criticalDamage)) {
+			playerStats.totalStats.criticalDamage = 1;
+		}
 		const desc = "The **CRIT Damage** of all allies is increased to " +
         `__${playerStats.totalStats.criticalDamage.toFixed(
         	2
@@ -165,23 +162,17 @@ export const presenceOfMind = ({
 		const temp = compare(playerStats.totalStats.dexterity, opponentStats.totalStats.dexterity);
 		const num = temp ? 2 : 3;
 		playerStats.totalStats.pomNum = playerStats.totalStats.pomNum + num;
-		if (!basePlayerStats.totalStats.tempPOM) basePlayerStats.totalStats.tempPOM = 1;
 		const accPercent = calcPercentRatio(25, card.rank);
-		const acc =
-    basePlayerStats.totalStats.accuracy *
-    ((basePlayerStats.totalStats.tempPOM * accPercent) / 100);
-		basePlayerStats.totalStats.tempPOM++;
-		playerStats.totalStats.accuracy = basePlayerStats.totalStats.accuracy + acc;
+		const acc = basePlayerStats.totalStats.accuracy * (accPercent / 100);
+		playerStats.totalStats.accuracy = playerStats.totalStats.accuracy + acc;
+
 		const dexPercent = calcPercentRatio(14, card.rank);
 		const dex = opponentStats.totalStats.dexterity * (dexPercent / 100);
 		opponentStats.totalStats.dexterity = Math.floor(opponentStats.totalStats.dexterity - dex);
-		if (!basePlayerStats.totalStats.tempCritPOM) basePlayerStats.totalStats.tempCritPOM = 1;
+
 		const critPercent = calcPercentRatio(20, card.rank);
-		const crit =
-        basePlayerStats.totalStats.critical *
-    ((basePlayerStats.totalStats.tempCritPOM * critPercent) / 100);
-		basePlayerStats.totalStats.tempCritPOM++;
-		playerStats.totalStats.critical = basePlayerStats.totalStats.critical + crit;
+		const crit = basePlayerStats.totalStats.critical * (critPercent / 100);
+		playerStats.totalStats.critical = playerStats.totalStats.critical + crit;
 		desc = `Decreasing ${opponentStats.name}'s **SPD** by __${dexPercent}%__ as well as increasing the ` +
         `**ACC** of all allies by __${accPercent}%__ and has also gained a **CRIT Chance** of __${critPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
@@ -197,7 +188,7 @@ export const presenceOfMind = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation
-		}); 
+		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isPOM) playerStats.totalStats.isPOM = false;
 	return {
