@@ -46,11 +46,14 @@ import { BaseProps } from "@customTypes/command";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 
-export const battleRaidBoss = async (params: BaseProps) => {
-	return battleConfirmationInteraction({
-		...params,
-		invokeFunc: battleBoss,
-	});
+export const battleRaidBoss = async (params: BaseProps & {
+	callback?: (raidId: number) => void;
+}) => {
+	return battleBoss(params);
+	// return battleConfirmationInteraction({
+	// 	...params,
+	// 	invokeFunc: battleBoss,
+	// });
 };
 
 export const battleBoss = async ({
@@ -59,6 +62,7 @@ export const battleBoss = async ({
 	client,
 	isEvent,
 	args,
+	callback
 }: any) => {
 	// has to be type RaidActionProps
 	try {
@@ -237,6 +241,7 @@ export const battleBoss = async ({
 				channel: context.channel,
 			}),
 		]);
+		if (typeof callback === "function") callback(updateObj.id);
 		return;
 	} catch (err) {
 		loggers.error(

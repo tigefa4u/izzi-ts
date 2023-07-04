@@ -14,6 +14,7 @@ import { raidParty } from "../actions/party";
 import { memberReady } from "../actions/ready";
 import { spawnRaid } from "../actions/spawn";
 import { startRaid } from "../actions/start";
+import { tagTeamBattle } from "../actions/tagBattle";
 import { toggleLobbyType } from "../actions/toggleLobbyType";
 import { viewRaid } from "../actions/view";
 import { voteKickMember } from "../actions/votekick";
@@ -86,6 +87,8 @@ export const eventActions = async ({
 			battleRaidBoss(params);
 		} else if (subcommand === "mlead") {
 			makeLeader(params);
+		} else if (subcommand === "tag-battle") {
+			tagTeamBattle(params);
 		}
 	} catch (err) {
 		loggers.error(

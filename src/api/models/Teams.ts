@@ -25,17 +25,17 @@ export const transformation = {
 };
 
 export const get = async (params: Partial<TeamUpdateParams>): Promise<TeamProps[]> => {
-	return await connection(tableName).where(params);
+	return connection(tableName).where(params);
 };
 
 export const update = async (params: TeamUpdateParams, data: Partial<TeamUpdateData>) => {
-	return await connection(tableName).where(params).update(data);
+	return connection(tableName).where(params).update(data);
 };
 
 export const create = async (data: TeamCreateProps) => {
-	return await connection(tableName).insert(data);
+	return connection(tableName).insert(data);
 };
 
 export const del = async (params: TeamUpdateParams) => {
-	return await connection(tableName).where(params).del();
+	return connection(tableName).where(params).del();
 };

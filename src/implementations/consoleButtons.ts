@@ -24,8 +24,13 @@ import { hourly } from "modules/commands/rpg/resource";
 import { help } from "modules/commands/basic";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 import { ChannelProp } from "@customTypes";
+import { GetTagTeamPlayer } from "api/controllers/TagTeamsController";
+import { TagTeamPlayerProps } from "@customTypes/teams/tagTeams";
 
-const prepareConsoleDescription = async (user: UserProps) => {
+const prepareConsoleDescription = async (
+	user: UserProps,
+	tagTeamPlayer?: TagTeamPlayerProps & { points: number }
+) => {
 	const anonymousMarketPurchaseKey =
     "anonymous-market-purchase::" + user.user_tag;
 	const [ hourlyTTl, lotteryTTl, disableRaids, anonymousMarketPurchase ] =
@@ -125,7 +130,13 @@ const prepareConsoleDescription = async (user: UserProps) => {
     	emoji.crossedswords
     } DG Mana:** ${
     	user.dungeon_mana
-    } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}`;
+    } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}${
+    	tagTeamPlayer
+    		? `\n**:raised_hands: Teammate | Points:** <@${
+    			tagTeamPlayer.teammate
+    		}> | ${numericWithComma(tagTeamPlayer.points || 0)}`
+    		: ""
+    }`;
 
 	return desc;
 };
@@ -178,9 +189,10 @@ export const prepareAndSendConsoleMenu = async ({
 	user_tag,
 	client,
 }: CustomButtonInteractionParams) => {
-	const [ author, user ] = await Promise.all([
+	const [ author, user, tagTeam ] = await Promise.all([
 		client.users.fetch(user_tag),
 		getRPGUser({ user_tag }),
+		GetTagTeamPlayer({ user_tag }),
 	]);
 	if (!user) {
 		channel?.sendMessage(
@@ -189,7 +201,14 @@ export const prepareAndSendConsoleMenu = async ({
 		);
 		return;
 	}
-	const desc = await prepareConsoleDescription(user);
+	let tagTeamPlayer;
+	if (tagTeam) {
+		tagTeamPlayer = {
+			...tagTeam.players[author.id],
+			points: tagTeam.points,
+		};
+	}
+	const desc = await prepareConsoleDescription(user, tagTeamPlayer);
 	const embed = createEmbed(author, client)
 		.setTitle("Console Menu " + emoji.crossedswords)
 		.setDescription(desc)

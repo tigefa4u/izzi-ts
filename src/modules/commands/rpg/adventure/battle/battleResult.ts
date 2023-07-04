@@ -229,7 +229,7 @@ async function processFloorWin({
 		rankReward = "platinum";
 		rankId = 3;
 	} else if (user.max_ruin >= 100) {
-		goldReward = randomNumber(210, 500);
+		goldReward = randomNumber(210, 300);
 		rankReward = "platinum";
 		rankId = 3;
 	}
