@@ -107,33 +107,17 @@ export const predator = ({
 	if (round % 2 === 0 && !playerStats.totalStats.isPred) {
 		playerStats.totalStats.isPred = true;
 		const temp = randomElementFromArray([ "vitality", "defense" ]);
-		if (!basePlayerStats.totalStats[`${temp}TempPred`])
-			basePlayerStats.totalStats[`${temp}TempPred`] = 1;
-		playerStats.totalStats[temp] =
-      playerStats.totalStats[temp] -
-      (card.stats[`${temp}Gain`] || card.stats[temp]);
 		const percent = calcPercentRatio(20, card.rank);
 		const relDiff = getRelationalDiff(
 			basePlayerStats.totalStats[temp],
-			basePlayerStats.totalStats[`${temp}TempPred`] * percent
+			percent
 		);
-		basePlayerStats.totalStats[`${temp}TempPred`] =
-      basePlayerStats.totalStats[`${temp}TempPred`] + 1;
-		// Object.assign(basePlayerStats, {
-		//   [basePlayerStats[`${temp}TempPred`]]:
-		//     basePlayerStats[`${temp}TempPred`],
-		// });
-		const gain = card.stats[temp] + relDiff;
-		card.stats[`${temp}Gain`] = gain;
-		playerStats.totalStats[temp] = playerStats.totalStats[temp] + gain;
-		if (!basePlayerStats.totalStats.predDex)
-			basePlayerStats.totalStats.predDex = 1;
+		playerStats.totalStats[temp] = playerStats.totalStats[temp] + relDiff;
+
 		const dexPercent = calcPercentRatio(10, card.rank);
-		const dexPer =
-      basePlayerStats.totalStats.dexterity *
-      ((basePlayerStats.totalStats.predDex * dexPercent) / 100);
-		playerStats.totalStats.dexterity =
-      basePlayerStats.totalStats.dexterity + dexPer;
+		const dexPer = getRelationalDiff(basePlayerStats.totalStats.dexterity, dexPercent);
+
+		playerStats.totalStats.dexterity = playerStats.totalStats.dexterity + dexPer;
 		const desc = `Increasing **${
 			temp === "vitality" ? "ATK" : temp.toUpperCase()
 		}** by __${percent}%__, and has also gained __${dexPercent}%__ **SPD**`;
@@ -167,6 +151,8 @@ export const bonePlating = ({
 	isPlayerFirst,
 	card,
 	simulation,
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	/**
@@ -186,11 +172,10 @@ export const bonePlating = ({
 			"bone plating": { percent: percent + bonePlatePercent },
 		};
 		const relDiff = getRelationalDiff(
-			opponentStats.totalStats.vitality,
+			baseEnemyStats.totalStats.vitality,
 			percent
 		);
-		opponentStats.totalStats.vitality =
-      opponentStats.totalStats.vitality - relDiff;
+		opponentStats.totalStats.vitality = opponentStats.totalStats.vitality - relDiff;
 		const desc =
       `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
       "Ally **Endurance** will reduce by __8%__ every 3rd round.";

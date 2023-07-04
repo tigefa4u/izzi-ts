@@ -22,6 +22,7 @@ export const exhaust = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.exhNum) {
@@ -67,11 +68,11 @@ export const exhaust = ({
 		const temp = randomElementFromArray([ "dexterity", "intelligence" ]);
 		const percent = calcPercentRatio(25, card.rank);
 		const relDiff = getRelationalDiff(
-			opponentStats.totalStats[temp as keyof CharacterStatProps],
+			baseEnemyStats.totalStats[temp as keyof CharacterStatProps],
 			percent
 		);
 		const buffDiff = getRelationalDiff(
-			playerStats.totalStats[temp as keyof CharacterStatProps],
+			basePlayerStats.totalStats[temp as keyof CharacterStatProps],
 			percent
 		);
 		playerStats.totalStats[temp as keyof CharacterStatProps] =
@@ -119,6 +120,7 @@ export const rapidFire = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// decrease the enemies defense by __10%__.
@@ -177,7 +179,7 @@ export const rapidFire = ({
 		}
 		if (round % 3 === 0) {
 			const percent = calcPercentRatio(10, card.rank);
-			const defPer = getRelationalDiff(opponentStats.totalStats.defense, percent);
+			const defPer = getRelationalDiff(baseEnemyStats.totalStats.defense, percent);
 			opponentStats.totalStats.defense =
 		  opponentStats.totalStats.defense - defPer;
 		  if (canDealDamage) {
@@ -236,12 +238,12 @@ export const dominator = ({
 		const num = hasMoreInt ? 2 : 3;
 		playerStats.totalStats.domNum = playerStats.totalStats.domNum + num;
 		const percent = calcPercentRatio(14, card.rank);
-		const ratio = getRelationalDiff(opponentStats.totalStats.vitality, percent);
+		const ratio = getRelationalDiff(baseEnemyStats.totalStats.vitality, percent);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
 		const decPercent = calcPercentRatio(3, card.rank);
 		const decRatio = getRelationalDiff(
-			opponentStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence,
 			decPercent
 		);
 		opponentStats.totalStats.intelligence =
@@ -289,6 +291,7 @@ export const crusher = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
@@ -296,9 +299,9 @@ export const crusher = ({
 		playerStats.totalStats.isUseCrusher = true;
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(25, card.rank);
-		const ratio = getRelationalDiff(opponentStats.totalStats.vitality, percent);
+		const ratio = getRelationalDiff(baseEnemyStats.totalStats.vitality, percent);
 		const defDecratio = getRelationalDiff(
-			opponentStats.totalStats.defense,
+			baseEnemyStats.totalStats.defense,
 			percent
 		);
 		opponentStats.totalStats.vitality =
@@ -344,7 +347,7 @@ export const crusher = ({
 		) {
 			inc = 6;
 		}
-		const rel = getRelationalDiff(opponentStats.totalStats.vitality, inc);
+		const rel = getRelationalDiff(baseEnemyStats.totalStats.vitality, inc);
 		opponentStats.totalStats.vitality = opponentStats.totalStats.vitality + rel;
 	}
 	return {

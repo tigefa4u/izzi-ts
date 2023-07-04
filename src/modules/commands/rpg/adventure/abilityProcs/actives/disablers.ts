@@ -1,13 +1,10 @@
-import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
-import { CollectionCardInfoProps } from "@customTypes/collections";
+import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { addTeamEffectiveness } from "helpers/adventure";
 import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 import { titleCase } from "title-case";
-import { getElementalEffectiveStatus } from "../../battle/battle";
 
 export const electrocute = ({
 	playerStats,
@@ -245,7 +242,7 @@ export const misdirection = ({
 		let desc;
 		const tempPercent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
-			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence,
 			tempPercent
 		);
 		playerStats.totalStats.intelligence =

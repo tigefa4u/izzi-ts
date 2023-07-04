@@ -12,7 +12,9 @@ export const leer = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (opponentStats.totalStats.isParanoid) {
@@ -23,8 +25,8 @@ export const leer = ({
 		playerStats.totalStats.isLeer = true;
 		opponentStats.totalStats.isParanoid = true;
 		const percent = calcPercentRatio(25, card.rank);
-		const defRatio = getRelationalDiff(opponentStats.totalStats.defense, percent);
-		const intRation = getRelationalDiff(opponentStats.totalStats.intelligence, percent);
+		const defRatio = getRelationalDiff(baseEnemyStats.totalStats.defense, percent);
+		const intRation = getRelationalDiff(baseEnemyStats.totalStats.intelligence, percent);
 		opponentStats.totalStats.defense = opponentStats.totalStats.defense - defRatio;
 		opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - intRation;
 

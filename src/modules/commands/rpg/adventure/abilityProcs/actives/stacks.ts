@@ -19,6 +19,7 @@ export const toxicScreen = ({
 	isPlayerFirst,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict a stack of poison on all enemies decreasing their defense by __20__%
@@ -32,7 +33,7 @@ export const toxicScreen = ({
 		opponentStats.totalStats.isPoisoned = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const relDiff = getRelationalDiff(
-			opponentStats.totalStats.defense,
+			baseEnemyStats.totalStats.defense,
 			percent
 		);
 		opponentStats.totalStats.defense =
@@ -230,6 +231,7 @@ export const blizzard = ({
 	isPlayerFirst,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
@@ -247,7 +249,7 @@ export const blizzard = ({
 		playerStats.totalStats.isBlizzard = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const dexDiff = getRelationalDiff(
-			opponentStats.totalStats.dexterity,
+			baseEnemyStats.totalStats.dexterity,
 			percent
 		);
 		opponentStats.totalStats.dexterity =

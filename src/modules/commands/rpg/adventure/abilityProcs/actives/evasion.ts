@@ -22,12 +22,10 @@ export const evasion = ({
 	if (round % 2 === 0 && !playerStats.totalStats.isUseEvasion) {
 		playerStats.totalStats.isUseEvasion = true;
 		playerStats.totalStats.previousRound = round;
-		if (!basePlayerStats.totalStats.evasionTemp) basePlayerStats.totalStats.evasionTemp = 1;
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio =
-        basePlayerStats.totalStats.evasion * ((basePlayerStats.totalStats.evasionTemp * percent) / 100);
-		basePlayerStats.totalStats.evasionTemp++;
-		playerStats.totalStats.evasion = basePlayerStats.totalStats.evasion + ratio;
+        basePlayerStats.totalStats.evasion * (percent / 100);
+		playerStats.totalStats.evasion = playerStats.totalStats.evasion + ratio;
 		const desc = `increasing its **Evasion Chance** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

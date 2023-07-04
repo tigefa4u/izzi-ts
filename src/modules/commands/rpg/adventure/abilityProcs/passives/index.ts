@@ -90,28 +90,11 @@ export const berserk = ({
 		playerStats.totalStats.isBerserk = true;
 		playerStats.totalStats.previousRound = round;
 		const temp = randomElementFromArray([ "vitality", "defense", "critical" ]);
-		if (!basePlayerStats.totalStats[`${temp}Temp`])
-			basePlayerStats.totalStats[`${temp}Temp`] = 1;
-		if (temp !== "critical") {
-			playerStats.totalStats[temp] =
-        playerStats.totalStats[temp] -
-        (card.stats[`${temp}Inc`] || card.stats[temp]);
-		}
+		
 		const percent = calcPercentRatio(20, card.rank);
 
-		const ratio =
-      card.stats[temp] *
-      ((basePlayerStats.totalStats[`${temp}Temp`] * percent) / 100);
-		basePlayerStats.totalStats[`${temp}Temp`] =
-      basePlayerStats.totalStats[`${temp}Temp`] + 1;
-		// Object.assign(basePlayerStats, {
-		//   [`${temp}Temp`]: basePlayerStats[`${temp}Temp`],
-		// });
-		const inc = card.stats[temp] + ratio;
-		if (temp !== "critical") {
-			card.stats[`${temp}Inc`] = inc;
-		}
-		playerStats.totalStats[temp] = playerStats.totalStats[temp] + inc;
+		const ratio = card.stats[temp] * (percent / 100);
+		playerStats.totalStats[temp] = playerStats.totalStats[temp] + Number(ratio.toFixed(2));
 		const desc = `increasing it's **${
 			temp === "vitality" ? "ATK" : temp === "defense" ? "DEF" : "CRIT Chance"
 		}** by __${percent}%__`;
@@ -158,17 +141,14 @@ export const fightingSpirit = ({
 	) {
 		playerStats.totalStats.isSpirit = true;
 		const percent = calcPercentRatio(15, card.rank);
-		if (!basePlayerStats.totalStats.fs) basePlayerStats.totalStats.fs = 1;
-		const incPercent = basePlayerStats.totalStats.fs * percent;
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
-			incPercent
+			percent
 		);
 		const defIncRation = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
-			incPercent
+			percent
 		);
-		basePlayerStats.totalStats.fs++;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defIncRation;
 		const desc = `increasing **ATK** and **DEF** of all allies by __${percent}%__`;

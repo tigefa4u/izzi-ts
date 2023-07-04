@@ -100,22 +100,13 @@ export const elementalStrike = ({
 			opponentStats.totalStats.originalHp
 		);
 		const incPercent = calcPercentRatio(25, card.rank);
-		if (!basePlayerStats.totalStats.tempEle) {
-			basePlayerStats.totalStats.tempEle = 1;
-		}
-		playerStats.totalStats.intelligence =
-      playerStats.totalStats.intelligence -
-      (card.stats.tempEleInc || card.stats.intelligence);
 
 		const intRelDiff = getRelationalDiff(
 			card.stats.intelligence,
-			basePlayerStats.totalStats.tempEle * incPercent
+			incPercent
 		);
-		basePlayerStats.totalStats.tempEle = basePlayerStats.totalStats.tempEle + 1;
-		const eleInc = card.stats.intelligence + intRelDiff;
-		playerStats.totalStats.intelligence =
-      playerStats.totalStats.intelligence + eleInc;
-		card.stats.tempEleInc = eleInc;
+		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + intRelDiff;
+
 		if (damageDiff < 0) damageDiff = 0;
 
 		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
@@ -184,7 +175,7 @@ export const spellBook = ({
 		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
 		// proc every round [PSV]
 		const percent = calcPercentRatio(8, card.rank);
-		let ratio = getRelationalDiff(playerStats.totalStats.dexterity, percent);
+		let ratio = getRelationalDiff(basePlayerStats.totalStats.dexterity, percent);
 		if (temp === "strength") {
 			const hpDiff =
         playerStats.totalStats.originalHp - playerStats.totalStats.strength;
@@ -395,32 +386,21 @@ export const eclipse = ({
 	if (round % 3 === 0 && !playerStats.totalStats.isEclipse) {
 		playerStats.totalStats.isEclipse = true;
 		playerStats.totalStats.previousRound = round;
-		if (!basePlayerStats.totalStats.eclipse)
-			basePlayerStats.totalStats.eclipse = 1;
+
 		// inc atk of the card instead of the whole team
-		playerStats.totalStats.intelligence =
-      playerStats.totalStats.intelligence -
-      (card.stats.eclipse || card.stats.intelligence);
 		const percent = calcPercentRatio(30, card.rank);
 		const relDiff = getRelationalDiff(
 			card.stats.intelligence,
-			basePlayerStats.totalStats.eclipse * percent
+			percent
 		);
-		// const relDiff = getRelationalDiff(basePlayerStats.vitality, (basePlayerStats.rage * 50));
-		basePlayerStats.totalStats.eclipse++;
-		const inc = card.stats.intelligence + relDiff;
-		card.stats.eclipse = inc;
-		playerStats.totalStats.intelligence =
-      playerStats.totalStats.intelligence + inc;
-		if (!basePlayerStats.totalStats.ddef) basePlayerStats.totalStats.ddef = 1;
+
+		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + relDiff;
 		const ddPercent = calcPercentRatio(20, card.rank);
 		const defDiff = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
-			basePlayerStats.totalStats.ddef * ddPercent
+			ddPercent
 		);
-		basePlayerStats.totalStats.ddef++;
-		playerStats.totalStats.defense =
-      basePlayerStats.totalStats.defense + defDiff;
+		playerStats.totalStats.defense = playerStats.totalStats.defense + defDiff;
 
 		const resistPercent = calcPercentRatio(80, card.rank);
 		if (playerStats.totalStats.abilityToResist?.misdirection) {

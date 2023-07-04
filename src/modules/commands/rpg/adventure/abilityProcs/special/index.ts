@@ -15,7 +15,8 @@ export const harbingerOfDeath = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	basePlayerStats
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
@@ -78,7 +79,7 @@ export const harbingerOfDeath = ({
 			// );
 			// opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
-			const statGain = getRelationalDiff(playerStats.totalStats[key], percent);
+			const statGain = getRelationalDiff(basePlayerStats.totalStats[key], percent);
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
 		const desc = "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +

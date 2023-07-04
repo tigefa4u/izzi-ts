@@ -13,7 +13,8 @@ export const lifesteal = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase life steal by __25%__ and buff ATK by 10%.
@@ -22,7 +23,7 @@ export const lifesteal = ({
 		playerStats.totalStats.isLifestealProc = true;
 		const percent = calcPercentRatio(25, card.rank);
 		const atkPercent = calcPercentRatio(10, card.rank);
-		const ratio = getRelationalDiff(playerStats.totalStats.vitality, atkPercent);
+		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, atkPercent);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		playerStats.totalStats.lifestealPercent = playerStats.totalStats.lifestealPercent
 			? playerStats.totalStats.lifestealPercent + percent
@@ -131,19 +132,16 @@ export const guardian = ({
 			calcPercentRatio(15, card.rank),
 			calcPercentRatio(17, card.rank),
 		]);
-		if (!basePlayerStats.totalStats.tempGuardianCount)
-			basePlayerStats.totalStats.tempGuardianCount = 1;
 		const ratio = getRelationalDiff(
-			basePlayerStats.totalStats.defense,
-			perRatio * basePlayerStats.totalStats.tempGuardianCount
+			playerStats.totalStats.defense,
+			perRatio
 		);
-		basePlayerStats.totalStats.tempGuardianCount++;
 		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
 		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
 			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
 		}
-		playerStats.totalStats.defense = basePlayerStats.totalStats.defense + ratio;
+		playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
 		const desc = `restores __${ratio}__ ${emoji.heal} **HP**, and also increases ` +
         `the **DEF** of all allies by __${perRatio}%__`;
 		damageDiff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);

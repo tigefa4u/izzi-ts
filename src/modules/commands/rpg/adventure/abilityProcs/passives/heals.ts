@@ -14,6 +14,7 @@ export const surge = ({
 	card,
 	simulation,
 	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -41,7 +42,7 @@ export const surge = ({
 
 		const defBuffPercent = calcPercentRatio(8, card.rank);
 		const defIncreaseRatio = getRelationalDiff(
-			playerStats.totalStats.defense,
+			basePlayerStats.totalStats.defense,
 			defBuffPercent
 		);
 		playerStats.totalStats.defense =
