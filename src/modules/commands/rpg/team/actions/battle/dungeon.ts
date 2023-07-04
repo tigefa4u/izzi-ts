@@ -19,8 +19,16 @@ import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
 
 const spawnDGBoss = async (level: number, id: string) => {
-	let rank_id = 5 - (level % 5);
-	if (rank_id <= 0) rank_id = 3;
+	let rank_id = 1;
+	if (level >= 70) {
+		rank_id = 5;
+	} else if (level >= 40) {
+		rank_id = 4;
+	} else if (level >= 20) {
+		rank_id = 3;
+	} else if (level >= 10) {
+		rank_id = 2;
+	}
 	const allDGRanks = reducedComputedLevels();
 	const dungeonBoss = await prepareDungeonBoss({
 		division: 3,
