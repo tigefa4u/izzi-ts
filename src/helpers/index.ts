@@ -335,7 +335,7 @@ export const overallStats = (params: {
 				});
 				Object.assign(totalStats, {
 					[`${stat}Bonus`]: Math.ceil(
-						stats[stat as keyof CharacterStatProps] *
+						totalStats[stat as keyof CharacterStatProps] *
               (guildStats[stat as keyof GuildStatProps] / 100)
 					),
 				});
