@@ -33,8 +33,11 @@ export const addCardByIds = async ({
 			channel?.sendMessage(embed);
 			return;
 		}
-		const ids = args
-			.shift()
+
+		// This is needed to accomodate the format
+		// 1, 2, 3 and 1,2,3
+		const ids = args.join(",")
+			?.replace(/,,/g, ",")
 			?.split(",")
 			.map((i) => Number(i.trim()));
 		if (!ids || !ids.every(Number)) return;

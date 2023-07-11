@@ -66,12 +66,15 @@ export const prepareTotalOverallStats = async (
     }
   | undefined
 > => {
-	const { collections } = params;
+	const { collections, capCharacterMaxLevel } = params;
 	const result = await Promise.all(
 		collections
 			.map(async (c) => {
 				const powerLevel = await getPowerLevelByRank({ rank: c.rank });
 				if (!powerLevel) return {} as OverallStatsProps;
+				if (capCharacterMaxLevel && c.character_level > powerLevel.max_level) {
+					c.character_level = powerLevel.max_level;
+				}
 				const { totalStats: total, baseStats } = overallStats({
 					stats: c.stats,
 					character_level: c.character_level,
@@ -216,13 +219,15 @@ export const prepareTeamForBattle = async ({
 	user_id,
 	id,
 	canAddGuildStats,
-	isDungeon = false
+	isDungeon = false,
+	capCharacterMaxLevel = false
 }: {
   team: TeamProps;
   user_id: number;
   id: string; // user tag (make sure)
   canAddGuildStats: boolean;
   isDungeon?: boolean;
+  capCharacterMaxLevel?: boolean;
 }) => {
 	const ids = team.metadata.filter(Boolean).map((m) => Number(m.collection_id));
 
@@ -255,7 +260,8 @@ export const prepareTeamForBattle = async ({
 		name: `Team ${team.name}`,
 		guildStats: guildStats,
 		itemStats,
-		isDungeon
+		isDungeon,
+		capCharacterMaxLevel
 	});
 };
 
@@ -266,11 +272,13 @@ export const prepareSkewedCollectionsForBattle = async ({
 	name = "",
 	guildStats,
 	itemStats,
-	isDungeon
+	isDungeon,
+	capCharacterMaxLevel = false
 }: PrepareSkewedCollectionsForBattleProps & {
   guildStats?: GuildStatProps;
   itemStats?: GuildStatProps;
   isDungeon?: boolean;
+  capCharacterMaxLevel?: boolean;
 }) => {
 	if (team) {
 		const tempCollectionsMeta = reorderObjectKey(collections, "id");
@@ -300,7 +308,8 @@ export const prepareSkewedCollectionsForBattle = async ({
 		collections: clone(collections),
 		isBattle: true,
 		guildStats: clone(guildStats),
-		itemStats: clone(itemStats)
+		itemStats: clone(itemStats),
+		capCharacterMaxLevel
 	});
 	if (!totalStats) {
 		throw new Error("Unable to calculate total stats");
@@ -345,7 +354,8 @@ export const validateAndPrepareTeam = async (
 	user_tag: string,
 	selected_team_id: number,
 	channel: ChannelProp,
-	canAddGuildStats = true
+	canAddGuildStats = true,
+	capCharacterMaxLevel = false
 ) => {
 	const team = await getTeamById({
 		user_id: user_id,
@@ -361,7 +371,8 @@ export const validateAndPrepareTeam = async (
 		team,
 		user_id: user_id,
 		id: user_tag,
-		canAddGuildStats
+		canAddGuildStats,
+		capCharacterMaxLevel
 	});
 	if (!playerTeamStats) {
 		channel?.sendMessage(

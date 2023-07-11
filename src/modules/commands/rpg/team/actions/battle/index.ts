@@ -62,20 +62,24 @@ async function confirmAndBattle(
 		}
 		const key = "tourney::" + context.guild?.id;
 		const canDisableGuildStats = await Cache.get(key);
+
+		// If tourney mode is enabled cap character level to max level
 		const [ playerStats, opponentStats ] = await Promise.all([
 			validateAndPrepareTeam(
 				user.id,
 				user.user_tag,
 				user.selected_team_id,
 				params.channel,
-				canDisableGuildStats ? false : true
+				canDisableGuildStats ? false : true,
+				canDisableGuildStats ? true : false
 			),
 			validateAndPrepareTeam(
 				mentionedUser.id,
 				mentionedUser.user_tag,
 				mentionedUser.selected_team_id,
 				params.channel,
-				canDisableGuildStats ? false : true
+				canDisableGuildStats ? false : true,
+				canDisableGuildStats ? true : false
 			),
 		]);
 		if (!playerStats) {
