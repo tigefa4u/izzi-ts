@@ -128,6 +128,9 @@ export type CommandProps = {
 			description: string;
 		};
 	};
+	metadata?: {
+		image_url?: string;
+	};
 }
 
 export type CommandCategoryProps = {

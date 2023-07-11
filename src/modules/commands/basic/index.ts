@@ -39,6 +39,10 @@ function prepareSingleCommandEmbed(client: Client, command: CommandProps) {
 			).replace(/\\n/g, "\n")
 		);
 
+	if (command.metadata?.image_url) {
+		embed.setImage(command.metadata.image_url);
+	}
+
 	return embed;
 }
 
