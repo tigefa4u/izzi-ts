@@ -32,6 +32,7 @@ export type PrepareTotalOverallStats = {
   isBattle: boolean;
   guildStats?: GuildStatProps;
   itemStats?: GuildStatProps;
+  capCharacterMaxLevel?: boolean;
 };
 
 export type PrepareSkewedCollectionsForBattleProps = {

@@ -17,6 +17,10 @@ export const checkUserBanned = async (
 		ignoreBannedUser: true,
 		cached: false 
 	});
+
+	// After discord made the weird decission to make the username weird
+	// use the username that is stored in izzi
+ 
 	const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 	if (command !== "start" && !user) {
 		embed.setDescription(
@@ -41,7 +45,9 @@ export const checkUserBanned = async (
 		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
 	}
 	if (user?.is_premium) {
-		author.username = `${emoji.premium} ${author.username}`;
+		author.username = `${emoji.premium} ${user.username}`;
+	} else if (user) {
+		author.username = user.username;
 	}
 	return true;
 };
