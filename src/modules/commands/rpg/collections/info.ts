@@ -152,7 +152,11 @@ export const getCardInfo = async ({
 				prepareInfoDescription(infoData, overAllStatData.totalStats)
 			)
 			.setImage("attachment://info.jpg")
-			.attachFiles([ attachment ]);
+			.attachFiles([ attachment ])
+			.setFooter({
+				text: "The stats shown includes guild stats bonus",
+				iconURL: author.displayAvatarURL()
+			});
 
 		const buttons = customButtonInteraction(
 			context.channel,
