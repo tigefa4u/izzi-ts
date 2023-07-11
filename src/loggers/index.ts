@@ -45,18 +45,18 @@ const sendLog = (level: string, ...args: any[]) => {
 };
 
 const error = (...args: any[]) => {
-	console.log(...args);
-	// sendLog("error", ...args);
+	// console.log(...args);
+	sendLog("error", ...args);
 };
 
 const info = (...args: any[]) => {
-	// sendLog("info", ...args);
-	console.log(...args);
+	sendLog("info", ...args);
+	// console.log(...args);
 };
 
 const debug = (...args: any[]) => {
-	console.debug(args.join(" -> "));
-	// sendLog("debug", ...args);
+	// console.debug(args.join(" -> "));
+	sendLog("debug", ...args);
 };
 
 const warn = (...args: any[]) => {

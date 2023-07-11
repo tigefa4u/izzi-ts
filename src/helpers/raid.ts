@@ -11,12 +11,9 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 	Object.keys(stats).map((stat) => {
 		if (![ "critical", "accuracy", "precision", "evasion", "strength", "originalHp" ].includes(stat)) {
 			Object.assign(totalStats, {
-				// [stat]: Math.round(
-				// 	stats[stat as keyof CharacterStatProps] * 3
-				// ),
 				[stat]: Math.round(
-					stats[stat as keyof CharacterStatProps]
-				)
+					stats[stat as keyof CharacterStatProps] * 3
+				),
 			});
 		}
 	});

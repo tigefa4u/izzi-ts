@@ -43,25 +43,25 @@ const handleMessage = async (client: Client, context: Message, { hasPermissions 
 				prefix = BOT_PREFIX;
 			}
 		}
-		// if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id && hasPermissions) {
-		// 	context.channel?.sendMessage(
-		// 		`The prefix on this server is \`\`${prefix}\`\`. ` +
-		// 		`Use \`\`${prefix} ge prefix <prefix>\`\` to change the server prefix.`
-		// 	);
-		// 	return;
-		// }
-		if (botId !== BOT_PREFIX) return;
-		// if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
-		// 	if (context.guild?.id) {
-		// 		dropCollectables({
-		// 			client,
-		// 			author: context.author,
-		// 			guild: context.guild,
-		// 			channel: context.channel,
-		// 		});
-		// 	}
-		// 	return;
-		// }
+		if (botId === DISCORD_CLIENT_ID && !args[1] && context.guild?.id && hasPermissions) {
+			context.channel?.sendMessage(
+				`The prefix on this server is \`\`${prefix}\`\`. ` +
+				`Use \`\`${prefix} ge prefix <prefix>\`\` to change the server prefix.`
+			);
+			return;
+		}
+		// if (botId !== BOT_PREFIX) return;
+		if (!(botId === prefix || botId === DISCORD_CLIENT_ID || botId === BOT_PREFIX) || !args[1]) {
+			if (context.guild?.id) {
+				dropCollectables({
+					client,
+					author: context.author,
+					guild: context.guild,
+					channel: context.channel,
+				});
+			}
+			return;
+		}
 		if (!hasPermissions) return;
 		const channelCD = await getChannelCooldown(
 			context.channel.id,
