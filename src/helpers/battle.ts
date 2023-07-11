@@ -88,6 +88,7 @@ export const getPlayerDamageDealt = (
 
 	// testing - calculate a baseDamage
 	// To calculate baseDamage - consider the average PL of the player excluding HP
+	// Maybe consider base stats for base damage - makes more sense
 	const sum = vitality + defense + intelligence + dexterity;
 	let baseDamage = Math.floor(sum / 4); // 4 because 4 stats are considered
 	if (baseDamage < 100) baseDamage = 100;
