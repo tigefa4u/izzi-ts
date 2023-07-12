@@ -26,4 +26,4 @@ export const transformation = {
 };
 
 export const get = async (): Promise<ChangeLogProps[]> => connection(tableName)
-	.where({ is_deleted: false }).limit(2);
+	.where({ is_deleted: false }).limit(5).orderBy("created_at", "desc");
