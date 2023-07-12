@@ -113,7 +113,7 @@ function capStatBuff(x1: number, x2: number) {
 function capStatDeBuff(x1: number, x2: number) {
 	const maxDebuff = Math.ceil((ABILITY_DEBUFF_MAX_PERCENT / 100) * x2);
 	if (x1 < maxDebuff) {
-		return x2;
+		return maxDebuff;
 	}
 	return x1;
 }
