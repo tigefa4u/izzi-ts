@@ -125,8 +125,8 @@ export const computeRaidBossStats = async ({
 			power_level: stats.totalPowerLevel,
 			stats: stats.totalOverallStats,
 		},
-		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
-		original_strength: stats.totalOverallStats.strength * (totalBossLevel * 2),
+		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel),
+		original_strength: stats.totalOverallStats.strength * (totalBossLevel),
 		difficulty: `${computedBoss.difficulty}${
 			computedLoot.division ? ` ${computedLoot.division}` : ""
 		}`,
