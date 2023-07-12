@@ -14,9 +14,6 @@ export const subcommands = [ {
 	name: "reset",
 	alias: []
 }, {
-	name: "tourney",
-	alias: []
-}, {
 	name: "abilityping",
 	alias: [ "aping" ]
 }, {

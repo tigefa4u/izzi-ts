@@ -109,6 +109,7 @@ export type CommandMapProps = {
 	customcard: (params: BaseProps) => void;
 	quest: (params: BaseProps) => void;
 	worldboss: (params: BaseProps) => void;
+	tournament: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

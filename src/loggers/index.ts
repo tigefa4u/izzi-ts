@@ -32,16 +32,17 @@ const prepareLogObject = (array: A[]) => {
 
 const sendLog = (level: string, ...args: any[]) => {
 	const { logString, objects = {} } = prepareLogObject(args);
-	Object.assign(objects, { labels: getLoggerContext() });
-	if (level === "error") {
-		winstonLogger.error(logString, objects);
-	} else if (level === "info") {
-		winstonLogger.info(logString, objects);
-	} else if (level === "debug") {
-		winstonLogger.debug(logString, objects);
-	} else if (level === "warn") {
-		winstonLogger.warn(logString, objects);
-	}
+	console.log(logString, objects);
+	// Object.assign(objects, { labels: getLoggerContext() });
+	// if (level === "error") {
+	// 	winstonLogger.error(logString, objects);
+	// } else if (level === "info") {
+	// 	winstonLogger.info(logString, objects);
+	// } else if (level === "debug") {
+	// 	winstonLogger.debug(logString, objects);
+	// } else if (level === "warn") {
+	// 	winstonLogger.warn(logString, objects);
+	// }
 };
 
 const error = (...args: any[]) => {
