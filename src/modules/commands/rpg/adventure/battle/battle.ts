@@ -434,17 +434,15 @@ function boostRaidBoss({
 	round,
 }: Pick<PrepareBattleDescriptionProps, "enemyStats"> & { round: number }) {
 	if (!enemyStats.totalStats.critical) enemyStats.totalStats.critical = 1;
-	const incRatio = enemyStats.totalStats.critical * ((5 * round) / 100);
-	enemyStats.totalStats.critical = enemyStats.totalStats.critical + incRatio;
-	const critDmgRatio =
-    enemyStats.totalStats.criticalDamage * ((3 * round) / 100);
+	enemyStats.totalStats.critical = enemyStats.totalStats.critical + .25;
+	if (!enemyStats.totalStats.criticalDamage) enemyStats.totalStats.criticalDamage = 1;
 	enemyStats.totalStats.criticalDamage =
-    enemyStats.totalStats.criticalDamage + critDmgRatio;
+    enemyStats.totalStats.criticalDamage + .25;
 	return {
 		enemyStats,
 		desc:
       `**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
-      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time!",
+      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__25%__**!",
 	};
 }
 

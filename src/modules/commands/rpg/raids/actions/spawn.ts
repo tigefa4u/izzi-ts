@@ -54,13 +54,13 @@ type C = {
 const raidDivisions = {
 	d2: {
 		name: "D2",
-		min: 8000,
-		max: 10000,
+		min: 5000,
+		max: 8500,
 		rate: randomNumber(2, 3),
 	},
 	d1: {
 		name: "D1",
-		min: 10001,
+		min: 8501,
 		max: 30000,
 		rate: randomNumber(4, 5),
 	},
