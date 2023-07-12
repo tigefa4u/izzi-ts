@@ -12,6 +12,7 @@ import {
 } from "helpers/battle";
 import {
 	ABILITY_BUFF_MAX_PERCENT,
+	ABILITY_DEBUFF_MAX_PERCENT,
 	HARBINGER_OF_DEATH_PROC_ROUND,
 } from "helpers/constants";
 import { clone } from "utility";
@@ -109,6 +110,14 @@ function capStatBuff(x1: number, x2: number) {
 	return x1;
 }
 
+function capStatDeBuff(x1: number, x2: number) {
+	const maxDebuff = Math.ceil((ABILITY_DEBUFF_MAX_PERCENT / 100) * x2);
+	if (x1 < maxDebuff) {
+		return x2;
+	}
+	return x1;
+}
+
 type B = BattleStats["totalStats"];
 function processStatBuffCap(stats: B, baseStats: B) {
 	stats.vitality = capStatBuff(stats.vitality, baseStats.vitality);
@@ -118,6 +127,20 @@ function processStatBuffCap(stats: B, baseStats: B) {
 		baseStats.intelligence
 	);
 	stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
+	return stats;
+}
+
+function processStatDeBuffCap(stats: B, baseStats: B) {
+	stats.vitality = capStatDeBuff(stats.vitality, baseStats.vitality);
+	stats.defense = capStatDeBuff(stats.defense, baseStats.defense);
+	stats.intelligence = capStatDeBuff(
+		stats.intelligence,
+		baseStats.intelligence
+	);
+	stats.dexterity = capStatDeBuff(stats.dexterity, baseStats.dexterity);
+	if (stats.effective <= 0) stats.effective = 1;
+	if (stats.accuracy <= 0) stats.accuracy = 1;
+	if (stats.critical <= 0) stats.critical = 1;
 	return stats;
 }
 
@@ -165,6 +188,12 @@ export const BattleProcess = async ({
 	// 	playerStats.totalStats,
 	// 	isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
 	// );
+
+	// This logic makes sure that stats do not drop below 10% of base stats
+	playerStats.totalStats = processStatDeBuffCap(
+		playerStats.totalStats,
+		isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
+	);
 
 	// Reset rapid fire bonus damage percent
 	// if player is unable to attack
