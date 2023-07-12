@@ -5,7 +5,7 @@ const baseLoot = (): any => ({
 	e: {
 		default: {
 			bosses: 1,
-			level: [ 210, 360 ],
+			level: [ 110, 200 ],
 			rank: [ "silver" ],
 			loot: {
 				gold: randomNumber(18000, 20000),
@@ -64,7 +64,7 @@ const baseLoot = (): any => ({
 	m: {
 		default: {
 			bosses: 1,
-			level: [ 450, 900 ],
+			level: [ 200, 350 ],
 			rank: [ "silver" ],
 			loot: {
 				gold: randomNumber(21000, 25000),
@@ -103,7 +103,7 @@ const baseLoot = (): any => ({
 					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 2,
+						rate: 2.25,
 						number: 1,
 					},
 				],
@@ -124,7 +124,8 @@ const baseLoot = (): any => ({
 	},
 	h: {
 		default: {
-			level: [ 280, 400 ],
+			bosses: 2,
+			level: [ 350, 500 ],
 			rank: [ "platinum" ],
 			loot: {
 				gold: randomNumber(26000, 30000),
@@ -219,7 +220,7 @@ const baseLoot = (): any => ({
 	},
 	i: {
 		default: {
-			level: [ 400, 700 ],
+			level: [ 400, 650 ],
 			rank: [ "gold", "diamond", "platinum", "legend", "divine" ],
 			loot: {
 				gold: randomNumber(31000, 35000),

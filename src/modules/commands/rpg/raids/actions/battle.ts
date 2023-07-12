@@ -45,6 +45,7 @@ import { raidActions } from "..";
 import { BaseProps } from "@customTypes/command";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
+import { HIGH_LVL_RAIDS_SINGLE_BT_CAP, LOW_LVL_RAIDS, LOW_LVL_RAIDS_SINGLE_BT_CAP } from "helpers/raidConstants";
 
 export const battleRaidBoss = async (params: BaseProps & {
 	callback?: (raidId: number) => void;
@@ -154,9 +155,15 @@ export const battleBoss = async ({
 			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
 		}
 
+		const lobbySize = Object.keys(currentRaid.lobby).length;
+		// Fromula: 7.5 - size = 2.5
+		let capPerLobbySize = HIGH_LVL_RAIDS_SINGLE_BT_CAP - (lobbySize - 1);
+		if (LOW_LVL_RAIDS.includes(currentRaid.stats.rawDifficulty.toLowerCase())) {
+			capPerLobbySize = LOW_LVL_RAIDS_SINGLE_BT_CAP;
+		}
 		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
-			currentRaid.stats.original_strength * ((multiplier * 10) / 100)
+			currentRaid.stats.original_strength * ((multiplier * capPerLobbySize) / 100)
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({

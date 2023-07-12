@@ -54,13 +54,13 @@ type C = {
 const raidDivisions = {
 	d2: {
 		name: "D2",
-		min: 9000,
-		max: 13000,
+		min: 8000,
+		max: 10000,
 		rate: randomNumber(2, 3),
 	},
 	d1: {
 		name: "D1",
-		min: 13000,
+		min: 10001,
 		max: 30000,
 		rate: randomNumber(4, 5),
 	},
@@ -161,8 +161,8 @@ export const createRaidBoss = async ({
 					is_logo: false,
 					rank,
 					is_event: isEvent,
-					// is_random: true,
-					// character_id: i === 0 ? 573 : i === 1 ? 969 : 740
+					is_random: true,
+					// character_id: i === 0 ? 1158 : i === 1 ? 532 : 686
 				};
 				if (isEvent) {
 					if (i === 0) {
