@@ -1,6 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
-import { calcPercentRatio } from "helpers/ability";
+import { calcPercentRatio, statRelationMap } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 
@@ -14,7 +15,7 @@ export const surge = ({
 	card,
 	simulation,
 	baseEnemyStats,
-	basePlayerStats
+	basePlayerStats,
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -65,7 +66,10 @@ export const surge = ({
 			isItem: false,
 			simulation,
 		});
-	} else if (playerStats.totalStats.strength > perStr && playerStats.totalStats.isSurge) {
+	} else if (
+		playerStats.totalStats.strength > perStr &&
+    playerStats.totalStats.isSurge
+	) {
 		playerStats.totalStats.isSurge = false;
 		opponentStats.totalStats.isBleeding = false;
 	}
@@ -87,7 +91,9 @@ export const surge = ({
 			percent
 		);
 		abilityDamage = bleedDamage + defenseDiff;
-		const abilityDamageCap = Math.floor((playerStats.totalStats.originalHp) * ((playerStats.isBot ? 1 : 50) / 100));
+		const abilityDamageCap = Math.floor(
+			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
+		);
 		if (abilityDamage > abilityDamageCap) abilityDamage = abilityDamageCap;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
@@ -160,8 +166,10 @@ export const chronobreak = ({
 	isPlayerFirst,
 	card,
 	simulation,
+	basePlayerStats,
 }: BattleProcessProps) => {
 	// tempora rewind restoring hp and enemy is caught in time dialation taking 20% damage
+	// if the stat is lower than basestat, reset it to base stat
 	if (
 		!card ||
     !playerStats.totalStats.originalHp ||
@@ -207,9 +215,18 @@ export const chronobreak = ({
 		);
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
-
+		let resetStat = "";
+		[ "vitality", "dexterity", "defense", "intelligence" ].map((stat, i) => {
+			const key = stat as keyof CharacterStatProps;
+			if (playerStats.totalStats[key] < basePlayerStats.totalStats[key]) {
+				playerStats.totalStats[key] = basePlayerStats.totalStats[key];
+				resetStat += `${statRelationMap[key]}${i !== 3 ? ", " : ""}`;
+			}
+		});
 		const desc =
-      `causing a temporal rewind restoring __${restoredHp}__ **HP**. ` +
+      `causing a temporal rewind restoring __${restoredHp}__ **HP**${
+      	resetStat ? ` as well as restoring **${resetStat}** stats` : ""
+      }. ` +
       `${opponentStats.name} is struck by **Time Dilation** taking __${abilityDamage}__ Damage.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
