@@ -125,7 +125,7 @@ const baseLoot = (): any => ({
 	h: {
 		default: {
 			bosses: 3,
-			level: [ 200, 320 ],
+			level: [ 200, 350 ],
 			rank: [ "platinum" ],
 			loot: {
 				gold: randomNumber(26000, 30000),
