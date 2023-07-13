@@ -19,7 +19,7 @@ export const pointBlank = ({
 	/**
 	 * Increase acc & atk (20%)
 	 */
-	if (round % 2 === 0 && !playerStats.totalStats.isPB) {
+	if (round % 3 === 0 && !playerStats.totalStats.isPB) {
 		playerStats.totalStats.isPB = true;
 		if (!basePlayerStats.totalStats.tempPB)
 			basePlayerStats.totalStats.tempPB = 1;
@@ -58,7 +58,7 @@ export const pointBlank = ({
 			simulation
 		}); 
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isPB)
+	if (round % 3 === 1 && playerStats.totalStats.isPB)
 		playerStats.totalStats.isPB = false;
 	return {
 		playerStats,

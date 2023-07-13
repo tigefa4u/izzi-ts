@@ -116,11 +116,11 @@ const prepareConsoleDescription = async (
     		: `${remainingHours} hours ${remainingMins} mins ${remainingSec} secs`
     }\n**:watch: Hourly**: ${
     	hourlyTTlToMin > 0 && hourlyTTlToSec >= 0
-    		? `${hourlyTTlToMin} mins ${hourlyTTlToSec} secs`
+    		? `${hourlyTTlToMin - 1} mins ${hourlyTTlToSec} secs`
     		: "Ready"
     }\n**:tickets: Lottery:** ${
     	lotteryTTlToMin > 0 && lotteryTTlToSec >= 0
-    		? `${lotteryTTlToMin} mins ${lotteryTTlToSec} secs`
+    		? `${lotteryTTlToMin - 1} mins ${lotteryTTlToSec} secs`
     		: "Ready"
     }\n**:alarm_clock: Vote:** ${
     	isVoteReady

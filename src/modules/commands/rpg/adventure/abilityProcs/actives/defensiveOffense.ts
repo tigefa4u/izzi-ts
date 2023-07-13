@@ -20,13 +20,13 @@ export const defensiveStrike = ({
 	let damageDiff;
 	let abilityDamage;
 	if (round % 3 === 0) {
-		let num = 10;
+		let num = 20;
 		const hasMoreSpeed = compare(
 			playerStats.totalStats.dexterity,
 			opponentStats.totalStats.dexterity
 		);
 		if (!hasMoreSpeed) {
-			num = 12;
+			num = 23;
 		}
 		const percent = calcPercentRatio(num, card.rank);
 		const damageDealt = getRelationalDiff(

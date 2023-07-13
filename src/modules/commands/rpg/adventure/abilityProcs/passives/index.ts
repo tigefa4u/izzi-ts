@@ -27,14 +27,14 @@ export const wrecker = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Rework - wrecker should buff all team atk
-	// 'At the start of the match increase your __ATK__ by __50%__. Your attack decreases by 6% each turn.'
+	// 'At the start of the match increase your __ATK__ by __90%__. Your attack decreases by 8% each turn.'
 	if (round === 1 && !playerStats.totalStats.isWrecker) {
 		playerStats.totalStats.isWrecker = true;
 		card.isUseWreckerPassive = true;
 		// 	playerStats.totalStats.vitality =
 		//   playerStats.totalStats.vitality - card.stats.vitality;
-		const percent = calcPercentRatio(60, card.rank);
-		const percentDec = calcPercentRatio(6, card.rank);
+		const percent = calcPercentRatio(90, card.rank);
+		const percentDec = calcPercentRatio(8, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, percent);
 		// const atkInc = card.stats.vitality + ratio;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
@@ -56,7 +56,7 @@ export const wrecker = ({
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
-			const inc = calcPercentRatio(5, card.rank);
+			const inc = calcPercentRatio(8, card.rank);
 			const decRatio = getRelationalDiff(basePlayerStats.totalStats.vitality, inc);
 			playerStats.totalStats.vitality =
         playerStats.totalStats.vitality - decRatio;
@@ -93,7 +93,7 @@ export const berserk = ({
 		
 		const percent = calcPercentRatio(20, card.rank);
 
-		const ratio = card.stats[temp] * (percent / 100);
+		const ratio = basePlayerStats.totalStats[temp] * (percent / 100);
 		playerStats.totalStats[temp] = playerStats.totalStats[temp] + Number(ratio.toFixed(2));
 		const desc = `increasing it's **${
 			temp === "vitality" ? "ATK" : temp === "defense" ? "DEF" : "CRIT Chance"
@@ -133,14 +133,14 @@ export const fightingSpirit = ({
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// cap at 150%
 	// boost atk & def, more like bulkup
-	// while your hp is low increase the **ATK** and **DEF** of all allies by __15%__
+	// while your hp is low increase the **ATK** and **DEF** of all allies by __20%__
 	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (30 / 100));
 	if (
 		playerStats.totalStats.strength <= hpRatio &&
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(15, card.rank);
+		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
 			percent

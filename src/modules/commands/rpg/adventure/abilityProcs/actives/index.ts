@@ -29,9 +29,9 @@ export const dragonRage = ({
 }: any) => {
 	if (!card) return;
 	// "While your health is below 35% lower your **INT** by __10%__ and increase your **ATK** by __35__% (OLD)
-	// Increase **ATK** of all allies by __15%__ as well as decreasing their **DEF** by __6%__
+	// Increase **ATK** of all allies by __25%__ as well as decreasing their **DEF** by __6%__
 	// const hpRatio = Math.floor((playerStats.originalHp * 35) / 100);
-	if (round % 3 === 0 && !playerStats.totalStats.isRage) {
+	if (round % 2 === 0 && !playerStats.totalStats.isRage) {
 		playerStats.totalStats.isRage = true;
 		let desc = "";
 		const operations: any = {
@@ -42,10 +42,10 @@ export const dragonRage = ({
 		[
 			{
 				name: "vitality",
-				num: 14,
+				num: 25,
 				op: "+",
 				desc: `Increasing the **ATK** of all allies by __${calcPercentRatio(
-					14,
+					25,
 					card.rank
 				)}%__`,
 			},
@@ -103,18 +103,19 @@ export const predator = ({
 	simulation,
 }: any) => {
 	if (!card) return;
-	// Increase the **ATK/DEF** by __20%__ as well as increasing its **SPD** by __10%__
-	if (round % 2 === 0 && !playerStats.totalStats.isPred) {
+	// Increase the **ATK/DEF** by __10%__ as well as increasing its **SPD** by __15%__
+	// proc every round upto r10
+	if (round <= 10 && !playerStats.totalStats.isPred) {
 		playerStats.totalStats.isPred = true;
 		const temp = randomElementFromArray([ "vitality", "defense" ]);
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(10, card.rank);
 		const relDiff = getRelationalDiff(
 			basePlayerStats.totalStats[temp],
 			percent
 		);
 		playerStats.totalStats[temp] = playerStats.totalStats[temp] + relDiff;
 
-		const dexPercent = calcPercentRatio(10, card.rank);
+		const dexPercent = calcPercentRatio(15, card.rank);
 		const dexPer = getRelationalDiff(basePlayerStats.totalStats.dexterity, dexPercent);
 
 		playerStats.totalStats.dexterity = playerStats.totalStats.dexterity + dexPer;
@@ -229,30 +230,14 @@ export const killerInstincts = ({
 	// increasing your **SPD** by __30%__, also gain __5%__ evasion chances.
 	if (round % 2 === 0 && !playerStats.totalStats.isKiller) {
 		playerStats.totalStats.isKiller = true;
-		const tempRandom = "dexterity";
 		const incPercent = calcPercentRatio(30, card.rank);
-		[ "intelligence", tempRandom ].map((temp) => {
-			if (!basePlayerStats.totalStats[`${temp}Temp`])
-				basePlayerStats.totalStats[`${temp}Temp`] = 1;
-			playerStats.totalStats[temp] =
-        playerStats.totalStats[temp] -
-        (card.stats[`${temp}Inc`] || card.stats[temp]);
-			const ratio =
-        card.stats[temp] *
-        ((basePlayerStats.totalStats[`${temp}Temp`] * incPercent) / 100);
-			basePlayerStats.totalStats[`${temp}Temp`] =
-        basePlayerStats.totalStats[`${temp}Temp`] + 1;
-			const inc = card.stats[temp] + ratio;
-			playerStats.totalStats[temp] = playerStats.totalStats[temp] + inc;
+		[ "intelligence", "dexterity" ].map((temp) => {
+			const ratio = basePlayerStats.totalStats[temp] * (incPercent / 100);
+			playerStats.totalStats[temp] = playerStats.totalStats[temp] + ratio;
 		});
 
-		if (!basePlayerStats.totalStats.evasionTemp)
-			basePlayerStats.totalStats.evasionTemp = 1;
 		const evaPercent = calcPercentRatio(5, card.rank);
-		const evaRatio =
-      basePlayerStats.totalStats.evasion *
-      ((basePlayerStats.totalStats.evasionTemp * evaPercent) / 100);
-		basePlayerStats.totalStats.evasionTemp++;
+		const evaRatio = basePlayerStats.totalStats.evasion * (evaPercent / 100);
 		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 
 		const desc =
@@ -344,22 +329,12 @@ export const futureSight = ({
 	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);
-		const relDiff = getRelationalDiff(card.stats.intelligence, percent);
-		playerStats.totalStats.intelligenceTemp =
-      (playerStats.totalStats.intelligenceTemp || 0) + 1;
-		playerStats.totalStats.intelligence =
-      playerStats.totalStats.intelligence +
-      relDiff * playerStats.totalStats.intelligenceTemp;
-		if (!basePlayerStats.totalStats.evasionTemp)
-			basePlayerStats.totalStats.evasionTemp = 1;
+		const relDiff = getRelationalDiff(basePlayerStats.totalStats.intelligence, percent);
+		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + relDiff;
 
 		const evaPercent = calcPercentRatio(15, card.rank);
-		const evaRatio =
-      basePlayerStats.totalStats.evasion *
-      ((basePlayerStats.totalStats.evasionTemp * evaPercent) / 100);
-		basePlayerStats.totalStats.evasionTemp++;
-		playerStats.totalStats.evasion =
-      basePlayerStats.totalStats.evasion + evaRatio;
+		const evaRatio = basePlayerStats.totalStats.evasion * (evaPercent / 100);
+		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 		const desc =
       `increasing **INT** of all allies by __${percent}%__ as well as increasing ` +
       `**Evasion Chances** by __${evaPercent}%__`;

@@ -390,7 +390,7 @@ export const eclipse = ({
 		// inc atk of the card instead of the whole team
 		const percent = calcPercentRatio(30, card.rank);
 		const relDiff = getRelationalDiff(
-			card.stats.intelligence,
+			basePlayerStats.totalStats.intelligence,
 			percent
 		);
 

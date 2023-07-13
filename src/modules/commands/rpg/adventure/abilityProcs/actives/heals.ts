@@ -77,7 +77,7 @@ export const revitalize = ({
 		playerStats.totalStats.strength = restorePoints;
 		// Use the same for all abilities that buff stats
 		// buff stats from base stats
-		const incPercent = calcPercentRatio(8, card.rank);
+		const incPercent = calcPercentRatio(10, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, incPercent);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		const damageDiff = relativeDiff(
@@ -136,12 +136,16 @@ export const guardian = ({
 			playerStats.totalStats.defense,
 			perRatio
 		);
+		const defInc = getRelationalDiff(
+			basePlayerStats.totalStats.defense,
+			perRatio
+		);
 		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
 		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
 			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
 		}
-		playerStats.totalStats.defense = playerStats.totalStats.defense + ratio;
+		playerStats.totalStats.defense = playerStats.totalStats.defense + defInc;
 		const desc = `restores __${ratio}__ ${emoji.heal} **HP**, and also increases ` +
         `the **DEF** of all allies by __${perRatio}%__`;
 		damageDiff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
