@@ -45,9 +45,7 @@ export const checkUserBanned = async (
 		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
 	}
 	if (user?.is_premium) {
-		author.username = `${emoji.premium} ${user.username}`;
-	} else if (user) {
-		author.username = user.username;
+		author.username = `${emoji.premium} ${author.username}`;
 	}
 	return true;
 };
