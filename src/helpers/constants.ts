@@ -538,3 +538,8 @@ export const AGNUS_SCEPTER_DEFAULT_HP_GAIN = 1350;
 export const MARKET_LOG_MIN_COLLECTION_ID_DIGITS = 7;
 
 export const TEAM_POINTS_PER_TASK = 1;
+
+export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donator Role**\n$100+ - **Ascended Role**" +
+"\n$500+ - **Exclusive Role**" +
+"\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+"\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
