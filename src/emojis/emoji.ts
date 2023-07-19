@@ -165,6 +165,8 @@ const emoji: EmojiProps = {
 	skullBasher: "<:skullbasher:1093583009514520696>",
 	vampiresBlade: "<:vampiresblade:1093583014698696744>",
 	agnusScepter: "<:agnusscepter:1093583006834372681>",
+	skull2: ":skull_crossbones:",
+	criticalDamage: "<:critical_damage:1131283172735332405>",
 };
 
 export default emoji;

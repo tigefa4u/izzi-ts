@@ -10,6 +10,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Client, MessageSelectOptionData } from "discord.js";
 import { emojiMap } from "emojis";
+import emoji from "emojis/emoji";
 import { filterSubCommands } from "helpers/subcommands";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
@@ -224,19 +225,19 @@ export const prepareTeamDescription = (
 					}`
 			}`;
 		})
-		.join("\n\n")}\n\n**__Total Stats__**\n\n**Team HP:** ${
+		.join("\n\n")}\n\n**__Total Stats__**\n\n**${emoji.hp} Team HP:** ${
 		totalTeamStats.strength
 	}${
 		totalTeamStats.strengthBonus ? ` (+${totalTeamStats.strengthBonus})` : ""
-	}\n**Team ATK:** ${totalTeamStats.vitality}${
+	}\n**${emoji.crossedswords} Team ATK:** ${totalTeamStats.vitality}${
 		totalTeamStats.vitalityBonus ? ` (+${totalTeamStats.vitalityBonus})` : ""
-	}\n**Team DEF:** ${totalTeamStats.defense}${
+	}\n**${emoji.shield2} Team DEF:** ${totalTeamStats.defense}${
 		totalTeamStats.defenseBonus ? ` (+${totalTeamStats.defenseBonus})` : ""
-	}\n**Team INT:** ${totalTeamStats.intelligence}${
+	}\n**${emoji.radiobutton} Team INT:** ${totalTeamStats.intelligence}${
 		totalTeamStats.intelligenceBonus
 			? ` (+${totalTeamStats.intelligenceBonus})`
 			: ""
-	}\n**Team SPD:** ${totalTeamStats.dexterity}${
+	}\n**${emoji.dash} Team SPD:** ${totalTeamStats.dexterity}${
 		totalTeamStats.dexterityBonus ? ` (+${totalTeamStats.dexterityBonus})` : ""
 	}\n\n**Power Level:** ${totalTeamPowerLevel}`;
 

@@ -10,7 +10,7 @@ import { GuildStatProps } from "@customTypes/guilds";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { overallStats } from "helpers";
+import { overallStats, prepareStatsDesc } from "helpers";
 import loggers from "loggers";
 import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
@@ -167,10 +167,7 @@ export const addEffectiveness = ({
 			}
 		}
 	} catch (err) {
-		loggers.error(
-			"helpers.adventure.addEffectiveness: ERROR",
-			err
-		);
+		loggers.error("helpers.adventure.addEffectiveness: ERROR", err);
 	}
 	return playerStats;
 };
@@ -180,10 +177,24 @@ export const prepareBattleDesc = ({
 	enemyStats,
 	description = "",
 }: PrepareBattleDescriptionProps) => {
+	const desc = `${showBattleDesc(playerStats, enemyStats)}\n\n${showBattleDesc(
+		enemyStats,
+		playerStats
+	)}\n\n${description}`;
+
+	return desc;
+};
+
+function showStatsDesc(stats: BattleStats["totalStats"]) {
+	const desc =
+    `${emoji.crossedswords} \`${stats.vitality}\` ${emoji.shield2} \`${stats.defense}\` ` +
+    `${emoji.radiobutton} \`${stats.intelligence}\` ${emoji.dash} \`${stats.dexterity}\` ` +
+	`${emoji.criticalDamage} \`${stats.criticalDamage}\``;
+	return desc;
+}
+
+function showBattleDesc(playerStats: BattleStats, enemyStats: BattleStats) {
 	const filterPlayerCards = playerStats.cards.filter(
-		Boolean
-	) as CollectionCardInfoProps[];
-	const filterEnemyCards = enemyStats.cards.filter(
 		Boolean
 	) as CollectionCardInfoProps[];
 	const desc = `**${playerStats.name}**\nElement Type: ${filterPlayerCards
@@ -197,43 +208,25 @@ export const prepareBattleDesc = ({
 			: ""
 	}\n${
 		filterPlayerCards.length === 1
-			? `Rank: ${Array(ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].size)
+			? `Rank: ${Array(
+				ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].size
+			)
 				.fill(":star:")
 				.map((i) => i)
 				.join("")}\n`
 			: ""
-	}Level: ${playerStats.totalStats.character_level}\n**${
-		playerStats.totalStats.strength
-	} / ${playerStats.totalStats.originalHp} ${emoji.hp}${prepareAffectedDesc(
-		playerStats
-	)}**\n${playerStats.totalStats.health.map((i) => i).join("")}\n\n**${
-		enemyStats.name
-	}**\nElement Type: ${filterEnemyCards
-		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
-		.join(" ")}${
-		playerStats.totalStats.effective < 1
-			? `\nEffectiveness: ${getElementalEffectiveStatus(
-				playerStats.totalStats.effective,
-				true
-			)}`
-			: ""
-	}\n${
-		filterEnemyCards.length === 1
-			? `Rank: ${Array(ranksMeta[filterEnemyCards[0].rank as keyof RanksMetaProps].size)
-				.fill(":star:")
-				.map((i) => i)
-				.join("")}\n`
-			: ""
-	}Level: ${enemyStats.totalStats.character_level}\n**${
-		enemyStats.totalStats.strength
-	} / ${enemyStats.totalStats.originalHp} ${emoji.hp} ${prepareAffectedDesc(
-		enemyStats
-	)}**\n${enemyStats.totalStats.health
+	}Level: ${playerStats.totalStats.character_level}\n${showStatsDesc(
+		playerStats.totalStats
+	)}\n**${playerStats.totalStats.strength} / ${
+		playerStats.totalStats.originalHp
+	} ${
+		playerStats.totalStats.strength <= 0 ? emoji.skull2 : emoji.hp
+	}${prepareAffectedDesc(playerStats)}**\n${playerStats.totalStats.health
 		.map((i) => i)
-		.join("")}\n\n${description}`;
+		.join("")}`;
 
 	return desc;
-};
+}
 
 function prepareAffectedDesc(playerStats: BattleStats) {
 	const desc = `${playerStats.totalStats.isStunned ? emoji.stun : ""} ${
