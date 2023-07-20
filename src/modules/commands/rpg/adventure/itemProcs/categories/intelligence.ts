@@ -16,7 +16,8 @@ export const sapphiresStaff = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -40,7 +41,9 @@ export const sapphiresStaff = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 
 	} else {
@@ -62,7 +65,9 @@ export const sapphiresStaff = ({
 					totalDamage: 0,
 					isPlayerFirst,
 					isItem: false,
-					simulation
+					simulation,
+					baseEnemyStats,
+					basePlayerStats
 				});
 			}
 		}
@@ -83,7 +88,9 @@ export const sapphiresStaff = ({
 				totalDamage: 0,
 				isPlayerFirst,
 				isItem: true,
-				simulation
+				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			}); 
 		}
 	}
@@ -103,7 +110,8 @@ export const seekersArmguard = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -130,7 +138,9 @@ export const seekersArmguard = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -149,7 +159,8 @@ export const farsightOrb = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -173,7 +184,9 @@ export const farsightOrb = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 2 === 0 && opponentStats.totalStats.critical > 1) {
@@ -196,7 +209,8 @@ export const lunarWand = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -222,7 +236,9 @@ export const lunarWand = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 
 		return {
@@ -242,7 +258,8 @@ export const staffOfMedana = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -274,7 +291,9 @@ export const staffOfMedana = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 
 		return {
@@ -294,7 +313,8 @@ export const agnusScepter = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -333,7 +353,9 @@ export const agnusScepter = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 
 		return {

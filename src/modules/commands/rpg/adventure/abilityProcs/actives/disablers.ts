@@ -16,6 +16,7 @@ export const electrocute = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.electrocute) {
@@ -41,6 +42,8 @@ export const electrocute = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 			return {
 				playerStats,
@@ -113,6 +116,8 @@ export const electrocute = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -133,6 +138,7 @@ export const sleep = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	let desc,
 		isResist = false;
@@ -155,6 +161,8 @@ export const sleep = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 		}
 	}
@@ -184,6 +192,8 @@ export const sleep = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -202,6 +212,7 @@ export const misdirection = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.misdirection) {
@@ -227,6 +238,8 @@ export const misdirection = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 			return {
 				playerStats,
@@ -287,6 +300,8 @@ export const misdirection = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -307,6 +322,7 @@ export const restriction = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	let desc,
@@ -363,6 +379,8 @@ export const restriction = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 4 === 0 && opponentStats.totalStats.isRestrictResisted) {
@@ -383,6 +401,8 @@ export const restriction = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

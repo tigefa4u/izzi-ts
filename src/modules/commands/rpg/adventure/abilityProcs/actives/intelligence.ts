@@ -46,6 +46,8 @@ export const leer = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

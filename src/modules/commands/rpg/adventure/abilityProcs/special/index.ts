@@ -16,7 +16,8 @@ export const harbingerOfDeath = ({
 	isPlayerFirst,
 	card,
 	simulation,
-	basePlayerStats
+	basePlayerStats,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
@@ -97,7 +98,9 @@ export const harbingerOfDeath = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (playerStats.totalStats.isHarbingerOfDeath && opponentStats.totalStats.canEvadeHarbingerOfDeath) {
@@ -117,7 +120,9 @@ export const harbingerOfDeath = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

@@ -3,7 +3,7 @@ import { AbilityProcDescriptionProps } from "@customTypes/battle";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { titleCase } from "title-case";
-import { simulateBattleDescription } from "./battle";
+import { processStatDeBuffCap, simulateBattleDescription } from "./battle";
 
 export const prepSendAbilityOrItemProcDescription = async ({
 	round,
@@ -12,11 +12,11 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	card,
 	playerStats,
 	enemyStats,
-	message,
-	embed,
 	isPlayerFirst,
 	isItem,
-	simulation
+	simulation,
+	basePlayerStats,
+	baseEnemyStats
 }: AbilityProcDescriptionProps & { simulation: Simulation; }) => {
 	if (card?.metadata?.nickname) card.name = card.metadata.nickname;
 	const emotename = (isItem ? card?.itemname : card?.abilityname) || "";
@@ -29,6 +29,16 @@ export const prepSendAbilityOrItemProcDescription = async ({
 		)}** ${isItem ? "is equipped with" : "uses"} __${titleCase(emotename)}__ ${emojiMap(emotename)} ${description}`;
 	}
 
+	// The actual values are fixed in 'battleProcess' file
+	// this is for visual fix if the stats are negative
+	playerStats.totalStats = processStatDeBuffCap(
+		playerStats.totalStats,
+		basePlayerStats.totalStats
+	);
+	enemyStats.totalStats = processStatDeBuffCap(
+		enemyStats.totalStats,
+		baseEnemyStats.totalStats
+	);
 	const desc = await simulateBattleDescription({
 		playerStats: isPlayerFirst ? playerStats : enemyStats,
 		enemyStats: isPlayerFirst ? enemyStats : playerStats,

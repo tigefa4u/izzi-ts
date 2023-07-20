@@ -14,6 +14,7 @@ export const lastStand = ({
 	card,
 	simulation,
 	basePlayerStats,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	// if your HP is below 25% deal 15% Damage based on your DEF, if below 50% gain 20% DEF
@@ -75,7 +76,9 @@ export const lastStand = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

@@ -29,6 +29,8 @@ export type AbilityProcDescriptionProps = PrepareBattleDescriptionProps & {
     message?: Message;
     embed?: MessageEmbed;
     isItem?: boolean;
+    basePlayerStats: BattleStats;
+    baseEnemyStats: BattleStats;
 }
 
 export type AbilityProcReturnType = {

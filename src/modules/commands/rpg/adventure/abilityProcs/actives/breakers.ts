@@ -50,6 +50,8 @@ export const exhaust = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
@@ -100,6 +102,8 @@ export const exhaust = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isExhaust)
@@ -202,6 +206,8 @@ export const rapidFire = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -222,6 +228,7 @@ export const dominator = ({
 	baseEnemyStats,
 	card,
 	simulation,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 2;
@@ -270,6 +277,8 @@ export const dominator = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isDominator) {
@@ -333,6 +342,8 @@ export const crusher = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			basePlayerStats,
+			baseEnemyStats
 		});
 	}
 	if (round % 4 === 0 && playerStats.totalStats.isUseCrusher)

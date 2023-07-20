@@ -16,6 +16,7 @@ export const bloodthirster = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -44,6 +45,8 @@ export const bloodthirster = ({
 			isPlayerFirst,
 			isItem: true,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 
 		return {
@@ -64,6 +67,7 @@ export const vampiresBlade = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	if (round === 1) {
@@ -93,6 +97,8 @@ export const vampiresBlade = ({
 			isPlayerFirst,
 			isItem: true,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 		return {
 			playerStats,
@@ -124,6 +130,8 @@ export const vampiresBlade = ({
 				isPlayerFirst,
 				isItem: true,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 			return {
 				playerStats,

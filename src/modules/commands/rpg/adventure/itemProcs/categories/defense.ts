@@ -13,7 +13,8 @@ export const blackCleaver = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -39,7 +40,9 @@ export const blackCleaver = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	const ratio = getRelationalDiff(opponentStats.totalStats.defense, 4);
@@ -61,7 +64,8 @@ export const thornmail = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -87,7 +91,9 @@ export const thornmail = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	let damageDiff, itemDamage;
@@ -122,7 +128,9 @@ export const thornmail = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 
@@ -144,7 +152,8 @@ export const guardianAngel = ({
 	isPlayerFirst,
 	card,
 	basePlayerStats,
-	simulation
+	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -167,7 +176,9 @@ export const guardianAngel = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: true,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (playerStats.totalStats.isBleeding) {

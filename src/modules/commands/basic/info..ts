@@ -9,6 +9,7 @@ import {
 	OFFICIAL_SERVER_LINK,
 	XENEX_VOTE_LINK,
 } from "environment";
+import { DONATOR_PERKS_MESSAGE } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 
@@ -100,16 +101,8 @@ export const donate = async ({
 		if (donation?.length > 0) {
 			const total = donation.reduce((acc, r) => acc + r.amount, 0);
 			const [ str1, str2 ] = command.description.split("! [");
-			let extraPerksText = ".";
-			if (total >= 100) {
-				extraPerksText = ", and you're eligible for the **Ascended Role.**";
-			} else if (total >= 500) {
-				extraPerksText = ", and you're eligible for the **Exclusive Role.**";
-			} else if (total >= 1000) {
-				extraPerksText = ", and you're eligible for the **Ultimate 1k Role and 1 Xenex Card.**";
-			}
 			const newEmbed = createEmbed(options.author, client).setDescription(
-				`${str1}! You have spent a total of __$${total.toFixed(2)}__ so far${extraPerksText}`
+				`${str1}! You have spent a total of __$${total.toFixed(2)}__ so far.${DONATOR_PERKS_MESSAGE}`
 			);
 			DMUser(client, newEmbed, options.author.id);
 		}

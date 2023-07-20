@@ -19,7 +19,8 @@ export const toxicScreen = ({
 	isPlayerFirst,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict a stack of poison on all enemies decreasing their defense by __20__%
@@ -75,6 +76,8 @@ export const toxicScreen = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
@@ -115,6 +118,8 @@ export const toxicScreen = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 		}
 	}
@@ -139,6 +144,8 @@ export const timeBomb = ({
 	isPlayerFirst,
 	card,
 	simulation,
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
@@ -164,6 +171,8 @@ export const timeBomb = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isTB)
@@ -211,6 +220,8 @@ export const timeBomb = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 		}
 	}
@@ -231,7 +242,8 @@ export const blizzard = ({
 	isPlayerFirst,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
@@ -274,6 +286,8 @@ export const blizzard = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	let damageDiff;
@@ -320,6 +334,8 @@ export const blizzard = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -340,6 +356,7 @@ export const frost = ({
 	card,
 	baseEnemyStats,
 	simulation,
+	basePlayerStats,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Inflict all enemies with a stack of frost causing your next attack to deal __15%__
@@ -388,6 +405,8 @@ export const frost = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 2 === 1 && playerStats.totalStats.isFrost)
@@ -442,6 +461,8 @@ export const frost = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

@@ -26,6 +26,7 @@ export const dragonRage = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card) return;
 	// "While your health is below 35% lower your **INT** by __10%__ and increase your **ATK** by __35__% (OLD)
@@ -83,6 +84,8 @@ export const dragonRage = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -101,6 +104,7 @@ export const predator = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card) return;
 	// Increase the **ATK/DEF** by __10%__ as well as increasing its **SPD** by __15%__
@@ -135,6 +139,8 @@ export const predator = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -193,6 +199,8 @@ export const bonePlating = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (
@@ -223,6 +231,7 @@ export const killerInstincts = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card) return;
 	// need to change
@@ -256,6 +265,8 @@ export const killerInstincts = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -291,6 +302,7 @@ export const futureSight = ({
 	card,
 	basePlayerStats,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	/**
@@ -321,6 +333,8 @@ export const futureSight = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 
@@ -351,6 +365,8 @@ export const futureSight = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

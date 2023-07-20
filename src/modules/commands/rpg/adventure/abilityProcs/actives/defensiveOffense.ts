@@ -13,6 +13,7 @@ export const defensiveStrike = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal 10% (12% if less speed) damage based on your defense
@@ -62,6 +63,8 @@ export const defensiveStrike = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -82,6 +85,7 @@ export const lightningShield = ({
 	card,
 	simulation,
 	basePlayerStats,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let damageDiff;
@@ -131,6 +135,8 @@ export const lightningShield = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		}); 
 	}
 	return {

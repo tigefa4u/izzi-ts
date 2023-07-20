@@ -65,6 +65,8 @@ export const surge = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	} else if (
 		playerStats.totalStats.strength > perStr &&
@@ -125,6 +127,8 @@ export const surge = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (
@@ -146,6 +150,8 @@ export const surge = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 
@@ -167,6 +173,7 @@ export const chronobreak = ({
 	card,
 	simulation,
 	basePlayerStats,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	// tempora rewind restoring hp and enemy is caught in time dialation taking 20% damage
 	// if the stat is lower than basestat, reset it to base stat
@@ -241,6 +248,8 @@ export const chronobreak = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	if (round % 2 === 0) {

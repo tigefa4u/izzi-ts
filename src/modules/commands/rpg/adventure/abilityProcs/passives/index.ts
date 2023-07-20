@@ -23,7 +23,8 @@ export const wrecker = ({
 	isPlayerFirst,
 	card,
 	simulation,
-	basePlayerStats
+	basePlayerStats,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Rework - wrecker should buff all team atk
@@ -52,7 +53,9 @@ export const wrecker = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
@@ -79,7 +82,8 @@ export const berserk = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card) return;
 	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __20%__
@@ -110,7 +114,9 @@ export const berserk = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -128,7 +134,8 @@ export const fightingSpirit = ({
 	isPlayerFirst,
 	basePlayerStats,
 	card,
-	simulation
+	simulation,
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// cap at 150%
@@ -164,7 +171,9 @@ export const fightingSpirit = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -181,7 +190,9 @@ export const dreamEater = ({
 	round,
 	isPlayerFirst,
 	card,
-	simulation
+	simulation,
+	baseEnemyStats,
+	basePlayerStats
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -240,7 +251,9 @@ export const dreamEater = ({
 			totalDamage: 0,
 			isPlayerFirst,
 			isItem: false,
-			simulation
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

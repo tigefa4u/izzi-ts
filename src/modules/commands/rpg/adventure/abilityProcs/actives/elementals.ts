@@ -25,6 +25,7 @@ export const elementalStrike = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal __45%__ magic damage based on your **INT** as well as buffing your **INT** by __25%__
@@ -53,6 +54,8 @@ export const elementalStrike = ({
 				isPlayerFirst,
 				isItem: false,
 				simulation,
+				baseEnemyStats,
+				basePlayerStats
 			});
 			return {
 				playerStats,
@@ -137,6 +140,8 @@ export const elementalStrike = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -157,6 +162,7 @@ export const spellBook = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -280,6 +286,8 @@ export const spellBook = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -301,6 +309,7 @@ export const tornado = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -352,6 +361,8 @@ export const tornado = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {
@@ -372,6 +383,7 @@ export const eclipse = ({
 	basePlayerStats,
 	card,
 	simulation,
+	baseEnemyStats
 }: any) => {
 	if (!card) return;
 	playerStats.totalStats.previousRound
@@ -432,6 +444,8 @@ export const eclipse = ({
 			isPlayerFirst,
 			isItem: false,
 			simulation,
+			baseEnemyStats,
+			basePlayerStats
 		});
 	}
 	return {

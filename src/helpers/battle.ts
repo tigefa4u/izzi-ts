@@ -13,11 +13,54 @@ import gt from "lodash/gt";
 import loggers from "loggers";
 import { clone } from "utility";
 import { prepareBattleDesc } from "./adventure";
-import { BATTLE_TYPES, MANA_PER_BATTLE } from "./constants";
+import { ABILITY_BUFF_MAX_PERCENT, ABILITY_DEBUFF_MAX_PERCENT, BATTLE_TYPES, MANA_PER_BATTLE } from "./constants";
 
 export const compare = (x1: number, x2: number) => {
 	return gt(x1, x2);
 };
+
+function capStatBuff(x1: number, x2: number) {
+	const maxBuff = Math.ceil((ABILITY_BUFF_MAX_PERCENT / 100) * x2);
+	const buffCap = x2 + maxBuff;
+	if (x1 > buffCap) {
+		return Math.ceil(buffCap);
+	}
+	return x1;
+}
+
+function capStatDeBuff(x1: number, x2: number) {
+	const maxDebuff = Math.ceil((ABILITY_DEBUFF_MAX_PERCENT / 100) * x2);
+	if (x1 < maxDebuff) {
+		return maxDebuff;
+	}
+	return x1;
+}
+
+type B = BattleStats["totalStats"];
+export function processStatBuffCap(stats: B, baseStats: B) {
+	stats.vitality = capStatBuff(stats.vitality, baseStats.vitality);
+	stats.defense = capStatBuff(stats.defense, baseStats.defense);
+	stats.intelligence = capStatBuff(
+		stats.intelligence,
+		baseStats.intelligence
+	);
+	stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
+	return stats;
+}
+
+export function processStatDeBuffCap(stats: B, baseStats: B) {
+	stats.vitality = capStatDeBuff(stats.vitality, baseStats.vitality);
+	stats.defense = capStatDeBuff(stats.defense, baseStats.defense);
+	stats.intelligence = capStatDeBuff(
+		stats.intelligence,
+		baseStats.intelligence
+	);
+	stats.dexterity = capStatDeBuff(stats.dexterity, baseStats.dexterity);
+	if (stats.effective <= 0) stats.effective = 1;
+	if (stats.accuracy <= 0) stats.accuracy = 1;
+	if (stats.critical <= 0) stats.critical = 1;
+	return stats;
+}
 
 export const simulateBattleDescription = async ({
 	playerStats,
