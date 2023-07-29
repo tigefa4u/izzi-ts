@@ -51,7 +51,7 @@ export const prepareWorldBossDesc = async ({
 }: P) => {
 	let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 	if (currentRaid.raid_boss.length === 1) {
-		bossCanvas = createSingleCanvas(currentRaid.raid_boss[0], false);
+		bossCanvas = await createSingleCanvas(currentRaid.raid_boss[0], false);
 	} else {
 		bossCanvas = await createBattleCanvas(currentRaid.raid_boss, {
 			isSingleRow: true,

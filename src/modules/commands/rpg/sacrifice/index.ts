@@ -155,7 +155,7 @@ async function verifyAndProcessSacrifice(
 			)
 		);
 		await Promise.all(promises);
-		const canvas = createSingleCanvas(cardCanvas, false);
+		const canvas = await createSingleCanvas(cardCanvas, false);
 		if (!canvas) {
 			params.channel?.sendMessage(
 				"Your card has absorbed souls! " +

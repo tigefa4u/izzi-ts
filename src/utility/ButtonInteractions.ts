@@ -17,6 +17,7 @@ import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
+import { isAsyncFunction } from "util/types";
 import { clone } from "utility";
 
 export const paginatorInteraction: <P, T, O = Record<string, never>>(
@@ -73,7 +74,11 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 			max: extras?.maxClicks || 11,
 		});
 		let result = await fetch(params, pageFilter, options);
-		callback(result);
+		if (isAsyncFunction(callback)) {
+			await callback(result);
+		} else {
+			callback(result);
+		}
 		const totalPages = result?.metadata.totalPages || 0;
 
 		collector?.on("collect", (buttonInteraction) => {
@@ -91,7 +96,11 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 				);
 				switch (id) {
 					case binLabel: {
-						callback(null, { isDelete: true });
+						if (isAsyncFunction(callback)) {
+							await callback(null, { isDelete: true });
+						} else {
+							callback(null, { isDelete: true });
+						}
 						return;
 					}
 					case nextLabel: {
@@ -108,7 +117,11 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 				if (pageFilter.currentPage > totalPages) return;
 				if (pageFilter.currentPage < 1) return;
 				result = await fetch(params, pageFilter, options);
-				callback(result, { isEdit: true });
+				if (isAsyncFunction(callback)) {
+					await callback(result, { isEdit: true });
+				} else {
+					callback(result, { isEdit: true });
+				}
 			});
 			return;
 		});

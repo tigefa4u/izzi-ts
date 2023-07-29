@@ -104,7 +104,7 @@ export const dropCollectables = async ({
 			const cardToDrop = card[0] as CharacterCanvasProps;
 			loggers.info("Card Drop Spawned: ", cardToDrop);
 			let sentMessage: Message;
-			const canvas = createSingleCanvas(cardToDrop, true);
+			const canvas = await createSingleCanvas(cardToDrop, true);
 			if (!canvas) {
 				throw new Error(
 					"Failed to create canvas for: " + JSON.stringify(cardToDrop)

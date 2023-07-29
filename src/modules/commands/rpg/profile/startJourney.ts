@@ -110,7 +110,7 @@ export const start: (params: BaseProps & { extras?: { bypass: boolean; dmUser: b
 		}
 		const cardDetails = await startUserJourney(author);
 		if (!cardDetails) return;
-		const canvas = createSingleCanvas(cardDetails, false);
+		const canvas = await createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",
 			"card.jpg"

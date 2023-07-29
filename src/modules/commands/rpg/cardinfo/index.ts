@@ -40,13 +40,13 @@ import emoji from "emojis/emoji";
 import { getCharacterPriceList } from "api/controllers/CharacterPriceListsController";
 import { RanksMetaProps } from "helpers/helperTypes";
 
-function prepareCinfoDetails(
+async function prepareCinfoDetails(
 	embed: MessageEmbed,
 	characterInfo: CharacterCardProps,
 	location?: NormalizeFloorProps
 ) {
 	const elementTypeEmoji = emojiMap(characterInfo?.type);
-	const cardCanvas = createSingleCanvas(characterInfo, true);
+	const cardCanvas = await createSingleCanvas(characterInfo, true);
 	if (!cardCanvas) throw "Unable to create canvas";
 	const attachment = createAttachment(
 		cardCanvas.createJPEGStream(),
@@ -300,7 +300,7 @@ async function showCharacterDetails(
 		async (data, opts) => {
 			if (data) {
 				params.refetchCard = true;
-				embed = prepareCinfoDetails(embed, data.data, location);
+				embed = await prepareCinfoDetails(embed, data.data, location);
 				embed.setHideConsoleButtons(true);
 			} else {
 				embed.setDescription("Unable to show character information.");

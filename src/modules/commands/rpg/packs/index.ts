@@ -61,7 +61,7 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 			updateRPGUser({ user_tag: author.id }, { gold: user.gold }),
 			createCollection(collections),
 		]);
-		const canvas = createSingleCanvas(cardDetails, false);
+		const canvas = await createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(
 			canvas?.createJPEGStream() || "",
 			"card.jpg"

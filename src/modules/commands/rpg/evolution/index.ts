@@ -127,7 +127,7 @@ async function verifyAndProcessEvolution(
 				}
 			),
 		]);
-		const canvas = createSingleCanvas(cardCanvas, false);
+		const canvas = await createSingleCanvas(cardCanvas, false);
 		if (!canvas) {
 			params.channel?.sendMessage(
 				"Your card has Evolved! " +

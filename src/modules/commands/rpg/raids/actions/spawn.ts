@@ -326,7 +326,7 @@ export const spawnRaid = async ({
 			);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (raidBosses.length === 1) {
-			bossCanvas = createSingleCanvas(raidBosses[0], false);
+			bossCanvas = await createSingleCanvas(raidBosses[0], false);
 		} else {
 			bossCanvas = await createBattleCanvas(raidBosses, {
 				isSingleRow: true,
