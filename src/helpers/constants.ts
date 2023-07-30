@@ -28,45 +28,54 @@ export const ranksMeta: RanksMetaProps = {
 		size: 1,
 		rank_id: 1,
 		color: "#b6c7be",
+		emoji: "bronzestar"
 	},
 	gold: {
 		size: 2,
 		rank_id: 2,
 		color: "#c89e50",
+		emoji: "bronzestar"
 	},
 	platinum: {
 		size: 3,
 		rank_id: 3,
 		color: "#298077",
+		emoji: "bronzestar"
 	},
 	diamond: {
-		size: 4,
+		size: 1,
 		rank_id: 4,
 		color: "#73c0d3",
+		emoji: "silverstar"
 	},
 	legend: {
-		size: 5,
+		size: 2,
 		rank_id: 5,
 		color: "#c11b17",
+		emoji: "silverstar"
 	},
 	divine: {
-		size: 6,
+		size: 3,
 		rank_id: 6,
 		color: "#c35817",
+		emoji: "silverstar"
 	},
 	immortal: {
-		size: 7,
+		size: 1,
 		rank_id: 7,
 		color: "#b641c4",
+		emoji: "goldstar"
 	},
 	exclusive: {
-		size: 8,
+		size: 2,
 		rank_id: 8,
+		emoji: "goldstar"
 	},
 	ultimate: {
-		size: 9,
+		size: 3,
 		rank_id: 9,
-		max_level: 70
+		max_level: 70,
+		emoji: "goldstar"
 	},
 };
 
@@ -542,4 +551,6 @@ export const TEAM_POINTS_PER_TASK = 1;
 export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donator Role**\n$100+ - **Ascended Role**" +
 "\n$500+ - **Exclusive Role**" +
 "\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+"\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+"\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone.**" +
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";

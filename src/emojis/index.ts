@@ -103,6 +103,11 @@ const emojis: MapProps = {
 	"vampire's blade": emoji.vampiresBlade,
 	leer: emoji.leer,
 	"lightning shield": emoji.lightningShield,
+	goldstar: emoji.goldstar,
+	silverstar: emoji.silverstar,
+	bronzestar: emoji.bronzestar,
+	skull2: emoji.skull2,
+	criticalDamage: emoji.criticalDamage,
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

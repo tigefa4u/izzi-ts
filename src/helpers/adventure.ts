@@ -211,7 +211,7 @@ function showBattleDesc(playerStats: BattleStats, enemyStats: BattleStats) {
 			? `Rank: ${Array(
 				ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].size
 			)
-				.fill(":star:")
+				.fill(emojiMap(ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].emoji))
 				.map((i) => i)
 				.join("")}\n`
 			: ""

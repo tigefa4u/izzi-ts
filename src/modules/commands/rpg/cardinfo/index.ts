@@ -46,7 +46,7 @@ async function prepareCinfoDetails(
 	location?: NormalizeFloorProps
 ) {
 	const elementTypeEmoji = emojiMap(characterInfo?.type);
-	const cardCanvas = await createSingleCanvas(characterInfo, true);
+	const cardCanvas = await createSingleCanvas(characterInfo, false);
 	if (!cardCanvas) throw "Unable to create canvas";
 	const attachment = createAttachment(
 		cardCanvas.createJPEGStream(),

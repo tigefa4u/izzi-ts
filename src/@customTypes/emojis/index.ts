@@ -165,4 +165,7 @@ export type EmojiProps = {
 	agnusScepter: "<:agnusscepter:1093583006834372681>",
 	skull2: ":skull_crossbones:",
 	criticalDamage: "<:critical_damage:1131283172735332405>",
+	goldstar: "<:goldstar:1135091594140332123>",
+	silverstar: "<:silverstar:1135091583096737812>",
+	bronzestar: "<:bronzestar:1135091588519968818>",
 }

@@ -85,8 +85,8 @@ export const dropCollectables = async ({
 				channel 
 			});
 			if (!dropChannel) return;
-			const cardTypes = [ "silver", "gold", "platinum", "diamond" ];
-			const probablilities = [ 20, 15, 10, 0.5 ];
+			const cardTypes = [ "silver", "gold", "platinum", "diamond", "immortal" ];
+			const probablilities = [ 20, 15, 10, 0.5, 0.1 ];
 			const rank = cardTypes[probability(probablilities)];
 			const card = await getRandomCard(
 				{
@@ -116,10 +116,10 @@ export const dropCollectables = async ({
 			);
 			const embed = createEmbed(author, client)
 				.setTitle("Random Card")
-				.setDescription("_A wild card has appeared._")
+				.setDescription("_A wild card has appeared._\nGet a chance to claim an **Immortal** card.")
 				.attachFiles([ attachment ])
 				.setImage("attachment://claim.jpg")
-				.setFooter({ text: "Click on claim to claim this card" })
+				.setFooter({ text: "Click on claim to add this card to your inventory" })
 				.setHideConsoleButtons(true);
 
 			const buttons = await collectableInteraction(

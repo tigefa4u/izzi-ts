@@ -16,6 +16,7 @@ export type RanksMetaProps = {
     rank_id: number;
     color?: string;
     max_level?: number;
+    emoji: string;
   };
 };
 

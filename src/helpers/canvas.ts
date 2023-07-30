@@ -39,9 +39,33 @@ export const createSingleCanvas: (
 
 			loggers.info(`[Path] loading filepath -> ${filepath}`);
 		}
-		console.log("loaded", image);
+		// console.log("loaded", image);
+
+		/**
+		 * This will show an image `claim now` hiding the stars.
+		 * And is only used for card drops
+		 */
+		let claimNowImage: Image;
+		const imgW = 180;
+		const imgH = 48;
+		if (isNotStar) {
+			const claimNowPath = "./assets/images/claim-now-gradient.png";
+			const claimNowText = await _loadFromCache(claimNowPath, { prefix: "" });
+			let claimNowImage = claimNowText?.image;
+			if (!claimNowImage) {
+				claimNowImage = await _fetchAndSaveToCache(claimNowPath, imgW, imgH, { prefix: "" });
+			}
+		}
+
 		return new Promise((resolve) => {
 			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+			if (isNotStar && claimNowImage) {
+				// to center on X axis
+				const dx = (canvas.width / 2) - (imgW / 2);
+				const dy = canvas.height - 100;
+				ctx.drawImage(claimNowImage, dx, dy, imgW, imgH);
+			}
 			resolve(canvas);
 			// return {
 			// 	createJPEGStream() {
