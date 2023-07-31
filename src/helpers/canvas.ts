@@ -8,77 +8,6 @@ import { createCanvas, loadImage, Canvas, Image } from "canvas";
 import loggers from "loggers";
 import { CANVAS_DEFAULTS } from "./constants";
 
-export const createSingleCanvas: (
-  card: Pick<
-    CharacterCanvasProps,
-    "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank" | "metadata"
-  >,
-  isNotStar: boolean
-) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
-	try {
-		// load precomputed images directly
-		let filepath = card.filepath;
-		if (card.metadata?.assets) {
-			filepath = card.metadata.assets.medium.filepath;
-		}
-
-		const canvas = createCanvas(
-			CANVAS_DEFAULTS.cardWidth,
-			CANVAS_DEFAULTS.cardHeight
-		);
-		const ctx = canvas.getContext("2d");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = "#2f3136";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image" });
-		let image = cachedImage?.image;
-		if (!image) {
-			image = await _fetchAndSaveToCache(filepath, canvas.width, canvas.height, 
-				{ prefix: "single-image", });
-
-			loggers.info(`[Path] loading filepath -> ${filepath}`);
-		}
-		// console.log("loaded", image);
-
-		/**
-		 * This will show an image `claim now` hiding the stars.
-		 * And is only used for card drops
-		 */
-		let claimNowImage: Image;
-		const imgW = 180;
-		const imgH = 48;
-		if (isNotStar) {
-			const claimNowPath = "./assets/images/claim-now-gradient.png";
-			const claimNowText = await _loadFromCache(claimNowPath, { prefix: "" });
-			let claimNowImage = claimNowText?.image;
-			if (!claimNowImage) {
-				claimNowImage = await _fetchAndSaveToCache(claimNowPath, imgW, imgH, { prefix: "" });
-			}
-		}
-
-		return new Promise((resolve) => {
-			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-			if (isNotStar && claimNowImage) {
-				// to center on X axis
-				const dx = (canvas.width / 2) - (imgW / 2);
-				const dy = canvas.height - 100;
-				ctx.drawImage(claimNowImage, dx, dy, imgW, imgH);
-			}
-			resolve(canvas);
-			// return {
-			// 	createJPEGStream() {
-			// 		return filepath;
-			// 	},
-			// };
-		});
-	} catch (err) {
-		loggers.error("helpers.canvas.createSingleCanvas: ERROR", err);
-		return;
-	}
-};
-
 const _fetchAndSaveToCache = async (
 	path: string,
 	width: number,
@@ -98,6 +27,8 @@ const _fetchAndSaveToCache = async (
 		);
 		throw err;
 	});
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	ctx.drawImage(data, 0, 0, width, height);
 	const blob = canvas.toBuffer("image/jpeg");
 	ImageCache.setImage(
@@ -138,6 +69,77 @@ async function _loadFromCache(path: string, extras: { prefix?: string; }): Promi
 		time: result.time,
 	};
 }
+
+export const createSingleCanvas: (
+  card: Pick<
+    CharacterCanvasProps,
+    "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank" | "metadata"
+  >,
+  isNotStar: boolean
+) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
+	try {
+		// load precomputed images directly
+		let filepath = card.filepath;
+		if (card.metadata?.assets) {
+			filepath = card.metadata.assets.medium.filepath;
+		}
+
+		const canvas = createCanvas(
+			CANVAS_DEFAULTS.cardWidth,
+			CANVAS_DEFAULTS.cardHeight
+		);
+		const ctx = canvas.getContext("2d");
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = "#2f3136";
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image" });
+		let image = cachedImage?.image;
+		if (!image) {
+			image = await _fetchAndSaveToCache(filepath, canvas.width, canvas.height, 
+				{ prefix: "single-image", });
+
+			loggers.info(`[Path] loading filepath -> ${filepath}`);
+		}
+		// console.log("loaded", image);
+
+		/**
+		 * This will show an image `claim now` hiding the stars.
+		 * And is only used for card drops
+		 */
+		let claimNowImage: Image | undefined = undefined;
+		const imgW = 180;
+		const imgH = 48;
+		if (isNotStar) {
+			const claimNowPath = "./assets/images/claim-now-rect.png";
+			const claimNowText = await _loadFromCache(claimNowPath, { prefix: "" });
+			claimNowImage = claimNowText?.image;
+			if (!claimNowImage) {
+				claimNowImage = await _fetchAndSaveToCache(claimNowPath, imgW, imgH, { prefix: "" });
+			}
+		}
+
+		return new Promise((resolve) => {
+			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+			if (isNotStar && claimNowImage) {
+				// to center on X axis
+				const dx = (canvas.width / 2) - (imgW / 2);
+				const dy = canvas.height - 100;
+				ctx.drawImage(claimNowImage, dx, dy, imgW, imgH);
+			}
+			resolve(canvas);
+			// return {
+			// 	createJPEGStream() {
+			// 		return filepath;
+			// 	},
+			// };
+		});
+	} catch (err) {
+		loggers.error("helpers.canvas.createSingleCanvas: ERROR", err);
+		return;
+	}
+};
 
 export const createBattleCanvas = async (
 	cards: (

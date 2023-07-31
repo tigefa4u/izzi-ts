@@ -9,12 +9,26 @@ import loggers from "loggers";
 export const status = async ({ context, client, options }: BaseProps) => {
 	try {
 		const author = options.author;
-		if (!OWNER_DISCORDID || (author.id !== OWNER_DISCORDID && author.id !== "476049957904711682")) return;
+		if (
+			!OWNER_DISCORDID ||
+      (author.id !== OWNER_DISCORDID && author.id !== "476049957904711682")
+		)
+			return;
 		const embed = createEmbed(author, client);
 		const playerCount = await getTotalPlayers();
 		if (!playerCount) return;
-		const totalPlayers = playerCount.find(p => p.status === "total")?.count || "0";
-		const activePlayers = playerCount.find(p => p.status === "active")?.count || "0";
+		const totalPlayers =
+      playerCount.find((p) => p.status === "total")?.count || "0";
+		const activePlayers =
+      playerCount.find((p) => p.status === "active")?.count || "0";
+		const shardStatus = client.ws.shards;
+
+		// const shardRes = await client.shard?.broadcastEval((cl) => [
+		// 	cl.shard?.ids,
+		// 	cl.ws.status,
+		// 	cl.ws.ping,
+		// 	cl.guilds.cache.size,
+		// ]);
 		const owner = await client.users.fetch(OWNER_DISCORDID);
 		owner.username = parsePremiumUsername(owner.username);
 		embed
@@ -27,8 +41,11 @@ export const status = async ({ context, client, options }: BaseProps) => {
 				},
 				{
 					name: ":globe_with_meridians: Servers",
-					value: `serving ${await client.shard?.fetchClientValues("guilds.cache.size")
-						.then((res: unknown[]) => res.reduce((a: any, b: any) => a + b, 0))} servers`,
+					value: `serving ${await client.shard
+						?.fetchClientValues("guilds.cache.size")
+						.then((res: unknown[]) =>
+							res.reduce((a: any, b: any) => a + b, 0)
+						)} servers`,
 					inline: true,
 				},
 				{
@@ -50,16 +67,18 @@ export const status = async ({ context, client, options }: BaseProps) => {
 					name: "Created At",
 					value: new Date(client.user?.createdAt || Date.now()).toDateString(),
 					inline: true,
-				}
+				},
 			])
-			.setFooter({ text: `developed by: ${owner.username}#${owner.discriminator}` });
+			.setDescription(
+				`\`\`\`${shardStatus
+					.map((s) => `Shard ID: ${s.id} ws: ${s.ping} status: ${s.status}`)
+					.join("\n")}\`\`\``
+			)
+			.setFooter({ text: `developed by: ${owner.username}#${owner.discriminator}`, });
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.basic.botStatus.status: ERROR",
-			err
-		);
+		loggers.error("modules.commands.basic.botStatus.status: ERROR", err);
 		return;
 	}
 };
