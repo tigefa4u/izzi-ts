@@ -21,14 +21,13 @@ export const status = async ({ context, client, options }: BaseProps) => {
       playerCount.find((p) => p.status === "total")?.count || "0";
 		const activePlayers =
       playerCount.find((p) => p.status === "active")?.count || "0";
-		const shardStatus = client.ws.shards;
 
-		// const shardRes = await client.shard?.broadcastEval((cl) => [
-		// 	cl.shard?.ids,
-		// 	cl.ws.status,
-		// 	cl.ws.ping,
-		// 	cl.guilds.cache.size,
-		// ]);
+		const shardStatus = await client.shard?.broadcastEval((cl) => [
+			cl.shard?.ids,
+			cl.ws.ping,
+			cl.ws.status,
+			cl.guilds.cache.size,
+		]);
 		const owner = await client.users.fetch(OWNER_DISCORDID);
 		owner.username = parsePremiumUsername(owner.username);
 		embed
@@ -71,7 +70,7 @@ export const status = async ({ context, client, options }: BaseProps) => {
 			])
 			.setDescription(
 				`\`\`\`${shardStatus
-					.map((s) => `Shard ID: ${s.id} ws: ${s.ping} status: ${s.status}`)
+					?.map((s) => `Shard ID: ${s[0]} ws: ${s[1]} status: ${s[2]} guild count: ${s[3]}`)
 					.join("\n")}\`\`\``
 			)
 			.setFooter({ text: `developed by: ${owner.username}#${owner.discriminator}`, });
