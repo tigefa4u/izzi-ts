@@ -108,13 +108,14 @@ export const battleBoss = async ({
 			context.channel?.sendMessage("Unable to attack, please report");
 			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
 		}
-		if (attacker.energy < ENERGY_PER_ATTACK) {
-			context.channel?.sendMessage(
-				`Summoner **${attacker.username}**, ` +
-          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
-			);
-			return;
-		}
+		// TESTING
+		// if (attacker.energy < ENERGY_PER_ATTACK) {
+		// 	context.channel?.sendMessage(
+		// 		`Summoner **${attacker.username}**, ` +
+		//   `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+		// 	);
+		// 	return;
+		// }
 
 		const playerStats = await validateAndPrepareTeam(
 			user.id,
@@ -152,7 +153,10 @@ export const battleBoss = async ({
 		const paramArgs = (args[0] || "").toLowerCase();
 		if (paramArgs === "all") {
 			args.shift();
-			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
+			// multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
+
+			// TESTING
+			multiplier = 2;
 		}
 
 		// wasn't viable - players dont want to spend 30mins - 1 hour raiding
@@ -199,12 +203,13 @@ export const battleBoss = async ({
 			);
 			return;
 		}
-		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
-			context.channel?.sendMessage(
-				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
-			);
-			return;
-		}
+		// TESTING
+		// if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+		// 	context.channel?.sendMessage(
+		// 		`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
+		// 	);
+		// 	return;
+		// }
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			await consumeEnergy(updateObj.id, user.id, multiplier, 0);

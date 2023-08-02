@@ -151,6 +151,8 @@ export type BattleStats = {
       character_level: number;
       isCriticalHit?: boolean;
       isEvadeHit?: boolean;
+      energy: string[];
+      dpr: number; // in calculated percentage (0.06)
     };
   totalDamage?: number;
   isVictory?: boolean;

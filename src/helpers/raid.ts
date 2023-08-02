@@ -2,8 +2,10 @@ import { OverallStatsProps } from "@customTypes";
 import { BattleStats } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
-import { updateRaid, updateRaidEnergy } from "api/controllers/RaidsController";
-import { prepareHPBar } from "./adventure";
+import { updateRaidEnergy } from "api/controllers/RaidsController";
+import { clone } from "utility";
+import { prepareEnergyBar, prepareHPBar } from "./adventure";
+import { DEFAULT_DPR } from "./constants";
 
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 	const stats = raid.stats.battle_stats.stats;
@@ -12,7 +14,8 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 		if (![ "critical", "accuracy", "precision", "evasion", "strength", "originalHp" ].includes(stat)) {
 			Object.assign(totalStats, {
 				[stat]: Math.round(
-					stats[stat as keyof CharacterStatProps] * 3
+					// stats[stat as keyof CharacterStatProps] * 3
+					stats[stat as keyof CharacterStatProps]
 				),
 			});
 		}
@@ -24,6 +27,8 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 			character_level: raid.stats.battle_stats.boss_level,
 			criticalDamage: 1,
 			effective: 1,
+			energy: prepareEnergyBar(),
+			dpr: clone(DEFAULT_DPR)
 		},
 		id: "boss",
 		cards: (isEvent || raid.raid_boss.length === 1) ? [ undefined, raid.raid_boss[0], undefined ] : raid.raid_boss,

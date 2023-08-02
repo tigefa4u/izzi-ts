@@ -1,6 +1,6 @@
 import { ConfirmationInteractionOptions, ConfirmationInteractionParams } from "@customTypes";
 import { RaidActionProps, RaidLobbyProps, RaidProps } from "@customTypes/raids";
-import { updateRaid } from "api/controllers/RaidsController";
+import { deleteRaid, updateRaid } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -36,6 +36,9 @@ const processRaidLeave = async (currentRaid: RaidProps, user_id: number) => {
 	if (Object.keys(lobby).length <= 0 && currentRaid.is_start === false) {
 		currentRaid.is_private = false;
 		Object.assign(body, { is_private: currentRaid.is_private });
+
+		// TESTING
+		await deleteRaid({ id: currentRaid.id });
 	}
 	await updateRaid({ id: currentRaid.id }, body);
 };

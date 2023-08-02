@@ -3,7 +3,7 @@ import emoji from "emojis/emoji";
 import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff } from "helpers/battle";
+import { getRelationalDiff, processEnergyBar } from "helpers/battle";
 
 export * from "./stacks";
 export * from "./heals";
@@ -232,25 +232,35 @@ export const killerInstincts = ({
 	basePlayerStats,
 	simulation,
 	baseEnemyStats
-}: any) => {
+}: BattleProcessProps) => {
 	if (!card) return;
 	// need to change
 	// Cast an aura of killer instincts increasing **INT** your by __30%__ as well as
 	// increasing your **SPD** by __30%__, also gain __5%__ evasion chances.
-	if (round % 2 === 0 && !playerStats.totalStats.isKiller) {
+
+	// rework - buff dpr by 22%
+	if (round % 3 === 0 && !playerStats.totalStats.isKiller) {
 		playerStats.totalStats.isKiller = true;
 		const incPercent = calcPercentRatio(30, card.rank);
-		[ "intelligence", "dexterity" ].map((temp) => {
-			const ratio = basePlayerStats.totalStats[temp] * (incPercent / 100);
-			playerStats.totalStats[temp] = playerStats.totalStats[temp] + ratio;
+		const ratio = basePlayerStats.totalStats.dexterity * (incPercent / 100);
+		playerStats.totalStats.dexterity = playerStats.totalStats.dexterity + ratio;
+
+		const dprPercent = calcPercentRatio(15, card.rank);
+		const dprRatio = (dprPercent / 100);
+		playerStats.totalStats.dpr = playerStats.totalStats.dpr + dprRatio;
+		const playerEnergy = processEnergyBar({
+			dpr: playerStats.totalStats.dpr,
+			energy: playerStats.totalStats.energy
 		});
+		playerStats.totalStats.dpr = playerEnergy.dpr;
+		playerStats.totalStats.energy = playerEnergy.energy;
 
 		const evaPercent = calcPercentRatio(5, card.rank);
 		const evaRatio = basePlayerStats.totalStats.evasion * (evaPercent / 100);
 		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 
 		const desc =
-      `increasing **INT** by __${incPercent}%__ as well as increasing **SPD** by __${incPercent}%__, ` +
+      `increasing **DPR** by __${dprPercent}%__ as well as increasing **SPD** by __${incPercent}%__, ` +
       `And has also increased its evasion chances by __${evaPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

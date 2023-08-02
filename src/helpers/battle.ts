@@ -6,14 +6,16 @@ import {
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { Client, Message, MessageEmbed } from "discord.js";
+import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import gt from "lodash/gt";
 import loggers from "loggers";
 import { clone } from "utility";
 import { prepareBattleDesc } from "./adventure";
-import { ABILITY_BUFF_MAX_PERCENT, ABILITY_DEBUFF_MAX_PERCENT, BATTLE_TYPES, MANA_PER_BATTLE } from "./constants";
+import {
+	ABILITY_BUFF_MAX_PERCENT, ABILITY_DEBUFF_MAX_PERCENT, BATTLE_TYPES, DPR_MAX_BUFF, MANA_PER_BATTLE 
+} from "./constants";
 
 export const compare = (x1: number, x2: number) => {
 	return gt(x1, x2);
@@ -120,8 +122,17 @@ export const getPlayerDamageDealt = (
     randomNumber(0.87, 1, true); // This was 0.85 before
 	let atk = clone(Math.floor(vitality));
 	let def = clone(Math.floor(defense));
-	atk = atk + Math.floor(playerTotalStats.intelligence * (6 / 100)); // prev - 6 (35)
-	def = def + Math.floor(enemyTotalStats.intelligence * (10 / 100)); // prev - 10 (40)
+
+
+	/**
+	 * Rework: INT based damage buff
+	 * Use DPR (damage per round) to deal additional damage
+	 * based on INT. DPR is already in %
+	 */
+	if (playerTotalStats.dpr <= 0) playerTotalStats.dpr = 0;
+	if (enemyTotalStats.dpr <= 0) enemyTotalStats.dpr = 0;
+	atk = atk + Math.floor(playerTotalStats.intelligence * Number(playerTotalStats.dpr.toFixed(2))); // prev - 6 (35)
+	def = def + Math.floor(enemyTotalStats.intelligence * Number(enemyTotalStats.dpr.toFixed(2))); // prev - 10 (40)
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
@@ -146,6 +157,36 @@ export const relativeDiff = (
 	originalHp: number,
 	customHp = 12
 ) => Math.ceil(customHp * (updatedHp / originalHp));
+
+export const processEnergyBar = (playerTotalStats: Pick<BattleStats["totalStats"], "energy" | "dpr">) => {
+	if (playerTotalStats.dpr > DPR_MAX_BUFF) {
+		playerTotalStats.dpr = DPR_MAX_BUFF;
+	}
+	const dpr = playerTotalStats.dpr;
+	if (dpr <= 0) {
+		playerTotalStats.energy = Array(playerTotalStats.energy.length).fill(emoji.dprrunner2);
+		playerTotalStats.energy[0] = emoji.dprrunner1;
+		playerTotalStats.energy[playerTotalStats.energy.length - 1] = emoji.dprrunner3;
+	} else {
+		let relativeDiff = Math.ceil(playerTotalStats.energy.length * dpr);
+		if (relativeDiff > playerTotalStats.energy.length) relativeDiff = playerTotalStats.energy.length;
+		let res = Array(relativeDiff).fill(emoji.dpr2);
+		res[0] = emoji.dpr1;
+		const emptyEnergyDiff = playerTotalStats.energy.length - res.length;
+		if (emptyEnergyDiff <= 0) {
+			res[res.length - 1] = emoji.dpr3;
+		} else if (emptyEnergyDiff === 1) {
+			res.push(emoji.e3);
+		} else if (emptyEnergyDiff > 1) {
+			const result = Array(emptyEnergyDiff).fill(emoji.dprrunner2);
+			result[result.length - 1] = emoji.dprrunner3;
+			res = [ ...res, ...result ];
+		}
+
+		playerTotalStats.energy = res;
+	}
+	return playerTotalStats;
+};
 
 export const processHpBar = (
 	playerTotalStats: Pick<BattleStats["totalStats"], "health" | "strength">,

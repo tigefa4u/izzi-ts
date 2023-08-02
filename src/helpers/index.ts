@@ -125,15 +125,15 @@ type T = {
   [key: string]: number;
 };
 const baseStatsRatioPercent: T = {
-	silver: 40,
-	gold: 60,
-	platinum: 80,
-	diamond: 100,
-	legend: 120,
-	divine: 140,
-	immortal: 160,
-	exclusive: 180,
-	ultimate: 200,
+	silver: 10,
+	gold: 20,
+	platinum: 30,
+	diamond: 40,
+	legend: 50,
+	divine: 60,
+	immortal: 70,
+	exclusive: 80,
+	ultimate: 90,
 };
 
 export const baseStatRatio = (stat: number, rank: string) =>
@@ -356,7 +356,8 @@ export const overallStats = (params: {
 				} else {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 3
+							totalStats[stat as keyof CharacterStatProps]
+							// totalStats[stat as keyof CharacterStatProps] * 3
 						),
 					});
 				}

@@ -14,7 +14,7 @@ import { overallStats, prepareStatsDesc } from "helpers";
 import loggers from "loggers";
 import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
-import { ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
+import { DEFAULT_DPR, ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
 import { RanksMetaProps } from "./helperTypes";
 
 export const prepareHPBar = (num = 12) => {
@@ -26,6 +26,18 @@ export const prepareHPBar = (num = 12) => {
 	}
 
 	return health;
+};
+
+// DPR bar (Damage per round) acts as energy to
+// increase the bonus % added based on INT
+export const prepareEnergyBar = (num = 12) => {
+	const energy = [];
+	for (let i = 0; i < num; i++) {
+		if (i === 0) energy.push(emoji.dpr1);
+		if (i === num - 1) energy.push(emoji.dprrunner3);
+		else energy.push(emoji.dprrunner2);
+	}
+	return energy;
 };
 
 export const preparePlayerStats = async ({
@@ -59,6 +71,8 @@ export const preparePlayerStats = async ({
 		criticalDamage: 1,
 		effective: 1,
 		character_level: characterLevel,
+		energy: prepareEnergyBar(),
+		dpr: clone(DEFAULT_DPR),
 		...result.totalStats,
 	} as BattleStats["totalStats"];
 
@@ -223,7 +237,7 @@ function showBattleDesc(playerStats: BattleStats, enemyStats: BattleStats) {
 		playerStats.totalStats.strength <= 0 ? emoji.skull2 : emoji.hp
 	}${prepareAffectedDesc(playerStats)}**\n${playerStats.totalStats.health
 		.map((i) => i)
-		.join("")}`;
+		.join("")}\n${playerStats.totalStats.energy.map((i) => i).join("")}`;
 
 	return desc;
 }

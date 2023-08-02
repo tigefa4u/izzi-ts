@@ -15,9 +15,10 @@ import { getTeamById, updateTeam } from "api/controllers/TeamsController";
 import { overallStats } from "helpers";
 import loggers from "loggers";
 import { clone, isEmptyValue, reorderObjectKey } from "utility";
-import { prepareHPBar } from "./adventure";
+import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { getItemById } from "api/controllers/ItemsController";
+import { DEFAULT_DPR } from "./constants";
 
 const prepareItemStats = ({
 	itemStats,
@@ -342,6 +343,8 @@ export const prepareSkewedCollectionsForBattle = async ({
 			character_level: skewed.character_level,
 			criticalDamage: 1,
 			effective: 1,
+			dpr: clone(DEFAULT_DPR),
+			energy: prepareEnergyBar()
 		},
 		id,
 		cards: battleCards,

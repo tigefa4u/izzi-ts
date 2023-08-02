@@ -1,7 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { compare, getRelationalDiff } from "helpers/battle";
+import { compare, getRelationalDiff, processEnergyBar } from "helpers/battle";
 
 export const pointBlank = ({
 	playerStats,
@@ -155,6 +155,8 @@ export const presenceOfMind = ({
 	if (!card) return;
 	// Increase the accuracy of all allies by __25%__ as well as decreasing the SPD of enemies 
 	// by __14%__ and gain a crit chance of __20%__.
+
+	// rework - buff dpr by 18%
 	let desc;
 	if (!playerStats.totalStats.pomNum) playerStats.totalStats.pomNum = 2;
 	if (round % playerStats.totalStats.pomNum === 0 && !playerStats.totalStats.isPOM) {
@@ -169,6 +171,16 @@ export const presenceOfMind = ({
 		const dexPercent = calcPercentRatio(14, card.rank);
 		const dex = opponentStats.totalStats.dexterity * (dexPercent / 100);
 		opponentStats.totalStats.dexterity = Math.floor(opponentStats.totalStats.dexterity - dex);
+
+		const dprPercent = calcPercentRatio(8, card.rank);
+		playerStats.totalStats.dpr = playerStats.totalStats.dpr + (dprPercent / 100);
+		const playerEnergy = processEnergyBar({
+			dpr: playerStats.totalStats.dpr,
+			energy: playerStats.totalStats.energy
+		});
+
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
 
 		const critPercent = calcPercentRatio(20, card.rank);
 		const crit = basePlayerStats.totalStats.critical * (critPercent / 100);

@@ -7,11 +7,14 @@ import {
 import { calcPercentRatio } from "helpers/ability";
 import {
 	getPlayerDamageDealt,
+	processEnergyBar,
 	processHpBar,
 	processStatDeBuffCap,
 	relativeDiff,
 } from "helpers/battle";
-import { HARBINGER_OF_DEATH_PROC_ROUND, } from "helpers/constants";
+import {
+	DEFAULT_DPR_GAIN, DEFAULT_DPR_LOSS, DPR_GAIN_ON_EVADE, DPR_MAX_BUFF, HARBINGER_OF_DEATH_PROC_ROUND, 
+} from "helpers/constants";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
@@ -98,6 +101,12 @@ function processUnableToAttack<T extends BattleStats>(
 	);
 }
 
+// Not more than 125%
+const capDPRBuff = (num: number) => {
+	if (num > DPR_MAX_BUFF) return DPR_MAX_BUFF;
+	return num;
+};
+
 export const BattleProcess = async ({
 	baseEnemyStats,
 	basePlayerStats,
@@ -153,6 +162,9 @@ export const BattleProcess = async ({
 		baseEnemyStats.totalStats
 	);
 
+	playerStats.totalStats.dpr = capDPRBuff(playerStats.totalStats.dpr);
+	opponentStats.totalStats.dpr = capDPRBuff(opponentStats.totalStats.dpr);
+
 	// Reset rapid fire bonus damage percent
 	// if player is unable to attack
 	const unableToAttack = processUnableToAttack(playerStats, opponentStats);
@@ -169,6 +181,10 @@ export const BattleProcess = async ({
 				}
 			};
 		}
+	}
+	if (opponentStats.totalStats.isEvadeHit) {
+		// To keep it fair gain +.05 dpr on evade
+		opponentStats.totalStats.dpr = opponentStats.totalStats.dpr + DPR_GAIN_ON_EVADE;
 	}
 	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
@@ -193,6 +209,26 @@ export const BattleProcess = async ({
 
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - damageDealt;
+
+		// After damage is dealt, reduce the DPR of allies and 
+		// increase the DPR of enemies
+		// DPR - damage per round (or) energy
+		playerStats.totalStats.dpr = playerStats.totalStats.dpr - DEFAULT_DPR_LOSS;
+		opponentStats.totalStats.dpr = opponentStats.totalStats.dpr + DEFAULT_DPR_GAIN;
+		if (playerStats.totalStats.dpr < 0) playerStats.totalStats.dpr = 0;
+		const playerEnergy = processEnergyBar({
+			dpr: playerStats.totalStats.dpr,
+			energy: playerStats.totalStats.energy 
+		});
+		const opponentEnergy = processEnergyBar({
+			dpr: opponentStats.totalStats.dpr,
+			energy: opponentStats.totalStats.energy 
+		});
+		playerStats.totalStats.dpr = playerEnergy.dpr;
+		opponentStats.totalStats.dpr = opponentEnergy.dpr;
+		playerStats.totalStats.energy = playerEnergy.energy;
+		opponentStats.totalStats.energy = opponentEnergy.energy;
+
 		if (
 			!opponentStats.totalStats.originalHp ||
       isNaN(opponentStats.totalStats.originalHp)

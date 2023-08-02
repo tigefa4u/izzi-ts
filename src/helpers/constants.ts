@@ -554,3 +554,9 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 "\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
 "\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone.**" +
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
+
+export const DEFAULT_DPR = 0.1;
+export const DPR_MAX_BUFF = .5;
+export const DEFAULT_DPR_GAIN = 0.06;
+export const DEFAULT_DPR_LOSS = 0.035;
+export const DPR_GAIN_ON_EVADE = 0.03;
