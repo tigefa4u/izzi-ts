@@ -282,6 +282,7 @@ export const help = async ({
           "• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
           "• Cross trading of any form.\n" +
           "• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
+		  "• Exchanging Izzi Points for gold or real life money.\n" +
           "• Malicious/Suspicious activity.\n" +
           "• Supporting someone who is doing these.\n" +
           "**Note: Exchanging izzi assets for any other assets, real money or server roles " +
