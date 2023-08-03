@@ -157,15 +157,17 @@ async function verifyAndProcessEvolution(
 		params.channel?.sendMessage(embed);
 
 		if (OWNER_DISCORDID) {
-			await startTransaction((trx) => {
-				trx("users").where({ user_tag: OWNER_DISCORDID })
-					.update({ gold: trx.raw(`gold + ${cost}`) });
-			});
-			DMUser(
-				params.client,
-				`Gold added to treasury from EVO - cost: ${numericWithComma(cost)} ${emoji.gold}`,
-				OWNER_DISCORDID
-			);
+			await Promise.all([
+				startTransaction((trx) => {
+					trx("users").where({ user_tag: OWNER_DISCORDID })
+						.update({ gold: trx.raw(`gold + ${cost}`) });
+				}),
+				DMUser(
+					params.client,
+					`Gold added to treasury from EVO - cost: ${numericWithComma(cost)} ${emoji.gold}`,
+					OWNER_DISCORDID
+				)
+			]);
 		}
 		return;
 	}

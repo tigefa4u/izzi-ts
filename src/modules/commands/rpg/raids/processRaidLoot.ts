@@ -179,16 +179,18 @@ export const processRaidLoot = async ({
 
 		// Collect gold from treasury - hoax acc
 		if (OWNER_DISCORDID && raid.loot.extraGold) {
-			await startTransaction((trx) => {
-				trx("users")
-					.where({ user_tag: OWNER_DISCORDID })
-					.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
-			});
-			DMUser(
-				client,
-				`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
-				OWNER_DISCORDID
-			);
+			await Promise.all([
+				startTransaction((trx) => {
+					trx("users")
+						.where({ user_tag: OWNER_DISCORDID })
+						.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
+				}),
+				DMUser(
+					client,
+					`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
+					OWNER_DISCORDID
+				)
+			]);
 		}
 
 		return;
