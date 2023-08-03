@@ -21,6 +21,8 @@ export type MarketLogProps = {
   character_id: number;
   rank_id: number;
   sold_at_cost: number;
+  tax_paid: number;
+  user_tag: string; // Seller user_tag
   metadata?: Record<string, unknown>;
 };
 

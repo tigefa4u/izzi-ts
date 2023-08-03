@@ -11,15 +11,19 @@ import {
 	getPowerLevelByRankId,
 } from "api/controllers/PowerLevelController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { startTransaction } from "api/models/Users";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { OWNER_DISCORDID } from "environment";
+import { numericWithComma } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_R_EXP 
 } from "helpers/constants";
+import { DMUser } from "helpers/directMessages";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -113,7 +117,7 @@ async function verifyAndProcessEvolution(
 		user.gold = user.gold - cost;
 		cardToEvolve.souls = cardToEvolve.souls - reqSouls;
 		loggers.info("Evolving card: after data update -> ", cardToEvolve);
-		await Promise.all([
+		const promises = [
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			updateCollection(
 				{ id: cardToEvolve.id },
@@ -126,7 +130,9 @@ async function verifyAndProcessEvolution(
 					r_exp: STARTER_CARD_R_EXP
 				}
 			),
-		]);
+		];
+
+		await Promise.all(promises);
 		const canvas = await createSingleCanvas(cardCanvas, false);
 		if (!canvas) {
 			params.channel?.sendMessage(
@@ -149,6 +155,18 @@ async function verifyAndProcessEvolution(
 			.setThumbnail("attachment://card.jpg");
 
 		params.channel?.sendMessage(embed);
+
+		if (OWNER_DISCORDID) {
+			await startTransaction((trx) => {
+				trx("users").where({ user_tag: OWNER_DISCORDID })
+					.update({ gold: trx.raw(`gold + ${cost}`) });
+			});
+			DMUser(
+				params.client,
+				`Gold added to treasury from EVO - cost: ${numericWithComma(cost)} ${emoji.gold}`,
+				OWNER_DISCORDID
+			);
+		}
 		return;
 	}
 	return {

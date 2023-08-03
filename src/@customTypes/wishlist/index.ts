@@ -9,6 +9,9 @@ export type WishlistProps = {
     };
     name?: string;
     skin_id?: number;
+    is_random: boolean;
+    is_referral_card: boolean;
+    is_xenex_card: boolean;
 };
 
 export type WishlistCreateProps = Omit<WishlistProps, "id"> | Omit<WishlistProps, "id">[];

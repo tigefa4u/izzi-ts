@@ -40,6 +40,9 @@ export type UserProps = {
 	souls: number;
 	metadata: {
 		status?: string;
+		// This allows the user to spawn a raid from their wishlist
+		// based on the tax they have paid.
+		raidPityCount?: number;
 	};
 	is_mini_premium?: boolean;
 	mini_premium_days_left?: number;

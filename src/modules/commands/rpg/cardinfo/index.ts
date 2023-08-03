@@ -116,10 +116,6 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const abandonCardIndex = charaInfo.findIndex((c) => c.name === "luna");
-		if (abandonCardIndex >= 0) {
-			charaInfo.splice(abandonCardIndex, 1);
-		}
 		if (charaInfo.length === 1) {
 			await showCharacterDetails(
 				options.author,

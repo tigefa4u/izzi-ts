@@ -4,4 +4,7 @@ export const subcommands = [ {
 }, {
 	name: "remove",
 	alias: []
+}, {
+	name: "add",
+	alias: []
 } ];

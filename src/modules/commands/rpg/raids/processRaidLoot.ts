@@ -10,10 +10,12 @@ import { UserProps } from "@customTypes/users";
 import { createCollection } from "api/controllers/CollectionsController";
 import { deleteRaid, getRaid } from "api/controllers/RaidsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { startTransaction } from "api/models/Users";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
+import { OWNER_DISCORDID } from "environment";
 import { probability, randomElementFromArray } from "helpers";
 import {
 	QUEST_TYPES,
@@ -149,27 +151,46 @@ export const processRaidLoot = async ({
 				channel: {} as ChannelProp,
 				client,
 				extras: {
-					characterId: randomElementFromArray(raid.raid_boss.map((b) => b.character_id)),
+					characterId: randomElementFromArray(
+						raid.raid_boss.map((b) => b.character_id)
+					),
 					raidRank: raid.stats.rawDifficulty.toLowerCase(),
 					raidId: raid.id,
-					lobby: raid.lobby
-				}
+					lobby: raid.lobby,
+				},
 			};
-			await Promise.all([
+
+			const promises = [
 				validateAndCompleteQuest({
 					user_tag: author.id,
 					type: QUEST_TYPES.RAID_CHALLENGE,
 					level: 0,
-					options
+					options,
 				}),
 				validateAndCompleteQuest({
 					type: QUEST_TYPES.RAID_CARRY,
 					user_tag: author.id,
 					level: 0,
-					options
-				})
-			]);
+					options,
+				}),
+			];
+			await Promise.all(promises);
 		}
+
+		// Collect gold from treasury - hoax acc
+		if (OWNER_DISCORDID && raid.loot.extraGold) {
+			await startTransaction((trx) => {
+				trx("users")
+					.where({ user_tag: OWNER_DISCORDID })
+					.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
+			});
+			DMUser(
+				client,
+				`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
+				OWNER_DISCORDID
+			);
+		}
+
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.processRaidLoot: ERROR", err);
@@ -205,7 +226,9 @@ function prepareRewardEmbed({
 	}**\n__${reward.gold}__ Gold ${emoji.gold}${
 		reward.orbs ? `\n__${reward.orbs}__ ${emoji.blueorb}` : ""
 	}${reward.shards ? `\n__${reward.shards}__ ${emoji.shard}` : ""}${
-		raid.loot.gamePoints && raid.loot.gamePoints > 0 ? `\n__${raid.loot.gamePoints}__ Game Point(s)` : ""
+		raid.loot.gamePoints && raid.loot.gamePoints > 0
+			? `\n__${raid.loot.gamePoints}__ Game Point(s)`
+			: ""
 	}${prepareDropDesc(reward)}`;
 
 	embed.setDescription(desc);

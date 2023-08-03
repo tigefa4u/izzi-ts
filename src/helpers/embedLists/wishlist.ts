@@ -13,7 +13,11 @@ export const createWishlistEmbedList = (
 			name: `\`\`#${i + 1 + (currentPage - 1) * perPage}\`\` ${titleCase(
 				item.name || ""
 			)} | ID: ${item.id}`,
-			value: item.is_skin ? `${titleCase(item.metadata.name || "")}` : "",
+			value: item.is_skin
+				? `${titleCase(item.metadata.name || "")} (Cannot spawn in Raid Pity)`
+				: item.is_random
+					? "Can spawn in Raid Pity"
+					: "Cannot spawn in Raid Pity",
 		});
 	});
 

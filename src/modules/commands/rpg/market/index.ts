@@ -17,6 +17,7 @@ import { fetchParamsFromArgs } from "utility/forParams";
 import { purchaseCard } from "./shop/buy";
 import { removeCardFromMarket } from "./shop/remove";
 import { sellCard } from "./shop/sell";
+import { showTaxInfo } from "./shop/tax";
 import { subcommands } from "./subcommands";
 
 export const market = async ({ context, client, options, args }: BaseProps) => {
@@ -41,6 +42,9 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 		} else if (subcommand === "remove") {
 			args.shift();
 			removeCardFromMarket(subCommandParams);
+			return;
+		} else if (subcommand === "tax") {
+			showTaxInfo(subCommandParams);
 			return;
 		}
 		const params = fetchParamsFromArgs<FilterProps>(args);

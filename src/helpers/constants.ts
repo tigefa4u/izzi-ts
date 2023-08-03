@@ -159,12 +159,20 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 };
 
 export const ORB_INTEREST_RATE = 0.7;
-export const MARKET_COMMISSION = 0.04;
+
+// Market commission is used to allow the user to spawn
+// a raid boss of his choice when they reach 1m in tax.
+// This gold is also given back to the community in the form of
+// raid bonus gold.
+export const MARKET_COMMISSION = 0.06;
+export const RAID_TREASURY_PERCENT = 0.02;
+export const TAXPAYER_RETURN_PERCENT = 0.04;
 export const BASE_ORBS_COUNT = 20;
 export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
 export const GUILD_CREATION_COST = 200000;
 export const MARKET_PRICE_CAP = 100000000;
+export const TAX_PAYER_RAID_PITY_THRESHOLD = 1000000; // Tax amount
 // export const GUILD_BASE_STATS = {
 // vitality: 0.25,
 // defense: 0.31,

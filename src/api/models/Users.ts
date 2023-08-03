@@ -116,7 +116,7 @@ export const getIsPremium = (params: UserParams): Promise<boolean> => {
 export const create: (data: UserCreateProps) => Promise<UserProps> = async (
 	data
 ) => {
-	return await connection(tableName)
+	return connection(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);
 };
@@ -152,7 +152,7 @@ export const getPlayerCount = async (
 	return query;
 };
 
-export const startTransaction = async (cb: (trx: Knex.Transaction) => void) => {
+export const startTransaction = async (cb: (trx: Knex.Transaction) => void): Promise<any> => {
 	const db = connection;
 	return db
 		.transaction((trx) => {
