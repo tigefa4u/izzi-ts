@@ -235,7 +235,7 @@ const checkRaidPity = async (user: UserProps) => {
 
 		let taxReturns =
       commission -
-      (user.metadata.raidPityCount || 0) * TAX_PAYER_RAID_PITY_THRESHOLD;
+      (user.metadata?.raidPityCount || 0) * TAX_PAYER_RAID_PITY_THRESHOLD;
 		if (taxReturns < 0) taxReturns = 0;
 
 		loggers.info("Total Tax Returns: ", taxReturns);

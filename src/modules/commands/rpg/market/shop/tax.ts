@@ -9,7 +9,7 @@ import {
 	TAXPAYER_RETURN_PERCENT,
 	TAX_PAYER_RAID_PITY_THRESHOLD,
 } from "helpers/constants";
-import logger from "loggers/winston";
+import loggers from "loggers";
 
 export const showTaxInfo = async ({
 	context,
@@ -30,7 +30,7 @@ export const showTaxInfo = async ({
 
 		let taxReturns =
       commission -
-      (user.metadata.raidPityCount || 0) * TAX_PAYER_RAID_PITY_THRESHOLD;
+      (user.metadata?.raidPityCount || 0) * TAX_PAYER_RAID_PITY_THRESHOLD;
 		if (taxReturns < 0) taxReturns = 0;
 		embed.setDescription(
 			`**Total Cards Sold:** ${numericWithComma(
@@ -47,7 +47,8 @@ export const showTaxInfo = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		logger.error("market.shop.tax.showTaxInfo: ERROR", err);
+		console.log(err);
+		loggers.error("market.shop.tax.showTaxInfo: ERROR", err);
 		return;
 	}
 };
