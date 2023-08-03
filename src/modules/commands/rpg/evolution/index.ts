@@ -4,7 +4,10 @@ import {
 } from "@customTypes";
 import { CharacterCanvasProps } from "@customTypes/canvas";
 import { BaseProps } from "@customTypes/command";
-import { getCardInfoByRowNumber, getCollectionById } from "api/controllers/CollectionInfoController";
+import {
+	getCardInfoByRowNumber,
+	getCollectionById,
+} from "api/controllers/CollectionInfoController";
 import { updateCollection } from "api/controllers/CollectionsController";
 import {
 	getPowerLevelByRank,
@@ -21,7 +24,11 @@ import { numericWithComma } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
-	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_R_EXP 
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	ranksMeta,
+	STARTER_CARD_EXP,
+	STARTER_CARD_R_EXP,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { getReqSouls } from "helpers/evolution";
@@ -32,7 +39,10 @@ import { confirmationInteraction } from "utility/ButtonInteractions";
 import { getSortCache } from "../sorting/sortCache";
 
 async function verifyAndProcessEvolution(
-	params: ConfirmationInteractionParams<{ id: number; isFromButtonSource: boolean; }>,
+	params: ConfirmationInteractionParams<{
+    id: number;
+    isFromButtonSource: boolean;
+  }>,
 	options?: ConfirmationInteractionOptions
 ) {
 	const id = params.extras?.id;
@@ -44,14 +54,17 @@ async function verifyAndProcessEvolution(
 	if (params.extras?.isFromButtonSource) {
 		collection = await getCollectionById({
 			id: id,
-			user_id: user.id
+			user_id: user.id,
 		});
 	} else {
-		collection = await getCardInfoByRowNumber({
-			row_number: id,
-			user_id: user.id,
-			user_tag: params.author.id
-		}, sort);
+		collection = await getCardInfoByRowNumber(
+			{
+				row_number: id,
+				user_id: user.id,
+				user_tag: params.author.id,
+			},
+			sort
+		);
 	}
 	const embed = createEmbed(params.author, params.client).setTitle(
 		DEFAULT_ERROR_TITLE
@@ -109,7 +122,7 @@ async function verifyAndProcessEvolution(
 		loggers.info("Evolving card:", {
 			cardToEvolve,
 			toRank: newRankPL.rank,
-			rankId: newRankPL.rank_id
+			rankId: newRankPL.rank_id,
 		});
 		cardToEvolve.rank_id = cardToEvolve.rank_id + 1;
 		const prevRank = cardToEvolve.rank;
@@ -127,7 +140,7 @@ async function verifyAndProcessEvolution(
 					souls: cardToEvolve.souls,
 					character_level: 1,
 					exp: STARTER_CARD_EXP,
-					r_exp: STARTER_CARD_R_EXP
+					r_exp: STARTER_CARD_R_EXP,
 				}
 			),
 		];
@@ -158,15 +171,24 @@ async function verifyAndProcessEvolution(
 
 		if (OWNER_DISCORDID) {
 			await Promise.all([
-				startTransaction((trx) => {
-					trx("users").where({ user_tag: OWNER_DISCORDID })
-						.update({ gold: trx.raw(`gold + ${cost}`) });
+				startTransaction(async (trx) => {
+					try {
+						await trx("users")
+							.where({ user_tag: OWNER_DISCORDID })
+							.update({ gold: trx.raw(`gold + ${cost}`) });
+						return;
+					} catch (err) {
+						loggers.error("evolution.treasury: transaction failed", err);
+						return;
+					}
 				}),
 				DMUser(
 					params.client,
-					`Gold added to treasury from EVO - cost: ${numericWithComma(cost)} ${emoji.gold}`,
+					`Gold added to treasury from EVO - cost: ${numericWithComma(cost)} ${
+						emoji.gold
+					}`,
 					OWNER_DISCORDID
-				)
+				),
 			]);
 		}
 		return;
@@ -191,7 +213,9 @@ export const evolveCard = async ({
 		const cooldownCommand = "evolve-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
 		if (_inProgress) {
-			context.channel?.sendMessage("You can use this command again after a minute.");
+			context.channel?.sendMessage(
+				"You can use this command again after a minute."
+			);
 			return;
 		}
 		const id = Number(args.shift());
@@ -202,7 +226,7 @@ export const evolveCard = async ({
 			channel: context.channel,
 			extras: {
 				id,
-				isFromButtonSource 
+				isFromButtonSource,
 			},
 		};
 		let embed = createEmbed(author);

@@ -180,16 +180,25 @@ export const processRaidLoot = async ({
 		// Collect gold from treasury - hoax acc
 		if (OWNER_DISCORDID && raid.loot.extraGold) {
 			await Promise.all([
-				startTransaction((trx) => {
-					trx("users")
-						.where({ user_tag: OWNER_DISCORDID })
-						.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
+				startTransaction(async (trx) => {
+					try {
+						await trx("users")
+							.where({ user_tag: OWNER_DISCORDID })
+							.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
+						return;
+					} catch (err) {
+						loggers.error(
+							"processRaidLoot.goldTreasury: Transaction Failed",
+							err
+						);
+						return;
+					}
 				}),
 				DMUser(
 					client,
 					`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
 					OWNER_DISCORDID
-				)
+				),
 			]);
 		}
 
