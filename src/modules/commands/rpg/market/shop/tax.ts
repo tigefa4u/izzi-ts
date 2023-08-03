@@ -41,8 +41,8 @@ export const showTaxInfo = async ({
 				taxReturns
 			)} / ${numericWithComma(TAX_PAYER_RAID_PITY_THRESHOLD)} ${
 				emoji.gold
-			}\n\n**Note: You can sell Xenex series, Referral Cards or Event cards on the " +
-            "Global Market to increase the Tax Meter. But those cards will not be spawned from Wishlist.**`
+			}\n\n**Note: You can sell Xenex series, Referral Cards or Event cards on the ` +
+            "Global Market to increase the Tax Meter. But those cards will not be spawned from Wishlist.**"
 		);
 		context.channel?.sendMessage(embed);
 		return;
