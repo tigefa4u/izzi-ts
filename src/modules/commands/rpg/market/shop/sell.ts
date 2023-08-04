@@ -68,14 +68,19 @@ const sendMessageInOs = async ({
 			// To send embeds in broadcastEval it must be
 			// in json format, need to serialize to send embeds accross shards.
 			.toJSON();
-		await client.shard?.broadcastEval(async (cl, { embed_1 }: any) => {
-			const channel = await cl.channels.fetch(OS_GLOBAL_MARKET_CHANNEL);
+		await client.shard?.broadcastEval(async (cl, { embed_1, id }: any) => {
+			const channel = await cl.channels.fetch(id);
 			if (!channel || channel.type !== "GUILD_TEXT") {
 				return;
 			}
 
 			channel.send({ embeds: [ embed_1 ] });
-		}, { context: { embed_1: embed } });
+		}, {
+			context: {
+				embed_1: embed,
+				id: OS_GLOBAL_MARKET_CHANNEL 
+			} 
+		});
 	} catch (err) {
 		loggers.error("market.shop.sell.sendMessageInOs: ERROR", err);
 	}
