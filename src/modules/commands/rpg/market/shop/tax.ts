@@ -6,6 +6,8 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import {
+	MARKET_COMMISSION,
+	RAID_TREASURY_PERCENT,
 	TAXPAYER_RETURN_PERCENT,
 	TAX_PAYER_RAID_PITY_THRESHOLD,
 } from "helpers/constants";
@@ -37,12 +39,16 @@ export const showTaxInfo = async ({
 				result?.count || 0
 			)}\n**Total Tax Paid:** ${numericWithComma(total)} ${
 				emoji.gold
-			}\n**Raid Pity (Spawn a card from wishlist):** ${numericWithComma(
+			}\n**Tax Rate:** ${MARKET_COMMISSION * 100}%\n**Raid Pity Rate:** ${
+				TAXPAYER_RETURN_PERCENT * 100
+			} of Total Tax Paid (${
+				RAID_TREASURY_PERCENT * 100
+			}% goes to Izzi Treasury)\n**Raid Pity (Spawn a card from wishlist):** ${numericWithComma(
 				taxReturns
 			)} / ${numericWithComma(TAX_PAYER_RAID_PITY_THRESHOLD)} ${
 				emoji.gold
 			}\n\n**Note: You can sell Xenex series, Referral Cards or Event cards on the ` +
-            "Global Market to increase the Tax Meter. But those cards will not be spawned from Wishlist.**"
+        "Global Market to increase the Tax Meter. But those cards will not be spawned from Wishlist.**"
 		);
 		context.channel?.sendMessage(embed);
 		return;
