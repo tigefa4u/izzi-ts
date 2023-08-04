@@ -165,8 +165,8 @@ export const ORB_INTEREST_RATE = 0.7;
 // This gold is also given back to the community in the form of
 // raid bonus gold.
 export const MARKET_COMMISSION = 0.06;
-export const RAID_TREASURY_PERCENT = 0.02;
-export const TAXPAYER_RETURN_PERCENT = 0.04;
+export const RAID_TREASURY_PERCENT = 0.3;
+export const TAXPAYER_RETURN_PERCENT = 0.7;
 export const BASE_ORBS_COUNT = 20;
 export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
