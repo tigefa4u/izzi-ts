@@ -151,7 +151,8 @@ async function validateAndSellCard(
             characterInfo.filepath
 				)
 				.setTitle(DEFAULT_SUCCESS_TITLE)
-				.setDescription(desc);
+				.setDescription(desc)
+				.setHideConsoleButtons(true);
 			params.channel?.sendMessage(embed);
 
 			characterInfo.character_level = cardToBeSold.character_level;
