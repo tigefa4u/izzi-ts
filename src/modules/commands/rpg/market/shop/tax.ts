@@ -41,7 +41,7 @@ export const showTaxInfo = async ({
 				emoji.gold
 			}\n**Tax Rate:** ${MARKET_COMMISSION * 100}%\n**Raid Pity Rate:** ${
 				TAXPAYER_RETURN_PERCENT * 100
-			} of Total Tax Paid (${
+			}% of Total Tax Paid (${
 				RAID_TREASURY_PERCENT * 100
 			}% goes to Izzi Treasury)\n**Raid Pity (Spawn a card from wishlist):** ${numericWithComma(
 				taxReturns
