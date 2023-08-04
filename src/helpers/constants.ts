@@ -172,6 +172,7 @@ export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
 export const GUILD_CREATION_COST = 200000;
 export const MARKET_PRICE_CAP = 100000000;
+export const MIN_MARKET_PRICE = 10000;
 export const TAX_PAYER_RAID_PITY_THRESHOLD = 1000000; // Tax amount
 // export const GUILD_BASE_STATS = {
 // vitality: 0.25,

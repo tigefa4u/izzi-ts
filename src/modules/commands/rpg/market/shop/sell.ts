@@ -23,6 +23,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
 	MARKET_PRICE_CAP,
+	MIN_MARKET_PRICE,
 	OS_GLOBAL_MARKET_CHANNEL,
 	ranksMeta,
 } from "helpers/constants";
@@ -218,6 +219,10 @@ export const sellCard = async ({
 				"Please provide a valid selling price not more than " +
           `__${numericWithComma(MARKET_PRICE_CAP)}__ gold ${emoji.gold}`
 			);
+			return;
+		} else if (sellingPrice < MIN_MARKET_PRICE) {
+			context.channel?.sendMessage("Please provide a valid selling price, minimum " +
+			`__${numericWithComma(MIN_MARKET_PRICE)}__ gold ${emoji.gold}`);
 			return;
 		}
 		const params = {
