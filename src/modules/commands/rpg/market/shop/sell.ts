@@ -61,7 +61,8 @@ const sendMessageInOs = async ({
 			.setFooter({
 				text: `To buy this card. Use \`\`iz mk buy ${cardId}\`\``,
 				iconURL: author.displayAvatarURL(),
-			});
+			})
+			.setHideConsoleButtons(true);
 	
 		const channel = await client.channels.fetch(OS_GLOBAL_MARKET_CHANNEL);
 		if (!channel || channel.type !== "GUILD_TEXT") {
