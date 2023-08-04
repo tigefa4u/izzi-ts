@@ -11,8 +11,8 @@ export const XP_GAIN_EXPONENT = 1.5;
 export const DOT = "•";
 export const STAR = "★";
 export const BASE_RANK = "silver";
-export const STARTER_CARD_RANK = "diamond";
-export const STARTER_CARD_RANK_ID = 4;
+export const STARTER_CARD_RANK = "legend";
+export const STARTER_CARD_RANK_ID = 5;
 export const STARTER_CARD_LEVEL = 20;
 export const STARTER_CARD_EXP = 1;
 export const STARTER_CARD_R_EXP = Math.floor(
@@ -562,3 +562,5 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 "\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
 "\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone.**" +
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
+
+export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";

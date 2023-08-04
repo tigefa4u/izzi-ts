@@ -19,7 +19,7 @@ import {
 } from "@customTypes/selectMenu";
 import loggers from "loggers";
 import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS, STARTER_CARD_RANK } from "helpers/constants";
 import { PageProps } from "@customTypes/pagination";
 import { findAndSwap } from "helpers";
 import { clientSidePagination } from "helpers/pagination";
@@ -52,7 +52,7 @@ function prepareHelpDesc() {
     " " +
     "Please start your journey using ``iz start`` command to do so." +
     " " +
-    "When your character is created, you will receive a random starter __Diamond__ card." +
+    `When your character is created, you will receive a random starter __${titleCase(STARTER_CARD_RANK)}__ card.` +
     "\n" +
     `For more information / tutorials you can check out ${IZZI_WEBSITE}\n${freeCardTxt}` +
     "\n" +
