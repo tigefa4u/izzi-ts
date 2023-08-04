@@ -48,7 +48,7 @@ const sendMessageInOs = async ({
 }: P) => {
 	try {
 		const embed = createEmbed(author, client)
-			.setTitle(`${price} Gold ${emoji.gold}`)
+			.setTitle(`${numericWithComma(price)} Gold ${emoji.gold}`)
 			.setThumbnail(
 				characterInfo.metadata?.assets?.small.filepath || characterInfo.filepath
 			)
@@ -154,6 +154,7 @@ async function validateAndSellCard(
 				.setDescription(desc);
 			params.channel?.sendMessage(embed);
 
+			characterInfo.character_level = cardToBeSold.character_level;
 			await sendMessageInOs({
 				client: params.client,
 				characterInfo,
