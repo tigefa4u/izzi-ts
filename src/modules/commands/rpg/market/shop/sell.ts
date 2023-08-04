@@ -63,15 +63,19 @@ const sendMessageInOs = async ({
 				text: `To buy this card. Use \`\`iz mk buy ${cardId}\`\``,
 				iconURL: author.displayAvatarURL(),
 			})
-			.setHideConsoleButtons(true);
-	
-		const channel = await client.channels.fetch(OS_GLOBAL_MARKET_CHANNEL);
-		if (!channel || channel.type !== "GUILD_TEXT") {
-			loggers.info(`market.shop.sell.sendMessageInOs: ERROR ${OS_GLOBAL_MARKET_CHANNEL} ` +
-			"Channel not found in Izzi OS");
-			return;
-		}
-		channel.sendMessage(embed);
+			.setHideConsoleButtons(true)
+
+			// To send embeds in broadcastEval it must be
+			// in json format, need to serialize to send embeds accross shards.
+			.toJSON();
+		await client.shard?.broadcastEval(async (cl, { embed_1 }: any) => {
+			const channel = await cl.channels.fetch(OS_GLOBAL_MARKET_CHANNEL);
+			if (!channel || channel.type !== "GUILD_TEXT") {
+				return;
+			}
+
+			channel.send({ embeds: [ embed_1 ] });
+		}, { context: { embed_1: embed } });
 	} catch (err) {
 		loggers.error("market.shop.sell.sendMessageInOs: ERROR", err);
 	}
