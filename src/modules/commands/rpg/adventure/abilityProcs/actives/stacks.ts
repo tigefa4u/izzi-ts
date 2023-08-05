@@ -185,7 +185,8 @@ export const timeBomb = ({
 		const explodeRate = [ 50, 50 ];
 		if (exploded[probability(explodeRate)]) {
 			opponentStats.totalStats.isStackTB = false;
-			const percent = calcPercentRatio(20, card.rank);
+			const percentScaling = 20 * (playerStats.totalStats.stack || 1);
+			const percent = calcPercentRatio(percentScaling, card.rank);
 			abilityDamage = getRelationalDiff(
 				opponentStats.totalStats.previousDamage,
 				percent
@@ -203,6 +204,9 @@ export const timeBomb = ({
 			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 			opponentStats.totalStats.health = processedHpBar.health;
 			opponentStats.totalStats.strength = processedHpBar.strength;
+
+			// Reset stack to 1 when bomb explodes
+			playerStats.totalStats.stack = 1;
 
 			const desc =
         `Time bomb ${emoji.timebomb} has **Exploded** ${emoji.explode}, ` +
@@ -223,6 +227,11 @@ export const timeBomb = ({
 				baseEnemyStats,
 				basePlayerStats
 			});
+		} else {
+			playerStats.totalStats.stack = (playerStats.totalStats.stack || 0) + 1;
+			if (playerStats.totalStats.stack > 3) {
+				playerStats.totalStats.stack = 3;
+			}
 		}
 	}
 	return {

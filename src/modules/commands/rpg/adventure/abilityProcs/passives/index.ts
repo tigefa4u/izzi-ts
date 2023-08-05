@@ -147,7 +147,7 @@ export const fightingSpirit = ({
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(25, card.rank);
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
 			percent
