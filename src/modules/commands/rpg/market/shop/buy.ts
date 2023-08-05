@@ -29,6 +29,7 @@ import {
 	MARKET_LOG_MIN_COLLECTION_ID_DIGITS,
 	MARKET_PURCHASE_LIMIT,
 	QUEST_TYPES,
+	RAID_TREASURY_PERCENT,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
@@ -52,8 +53,20 @@ async function processPurchase(
 	id: number
 ) {
 	// commission
+
+	// player return commission is 4%
+	// raid treasury is 2%
+	// both are taken out of total market tax - 6%
+
 	const commission = Math.floor(total * MARKET_COMMISSION);
-	dealer.gold = dealer.gold + commission;
+
+	/**
+	 * Dealer takes 2% as raid treasury
+	 * Hoax acc
+	 */
+	const dealerCommission = Math.floor(commission * RAID_TREASURY_PERCENT);
+	dealer.gold = dealer.gold + dealerCommission;
+
 	const cost = total - commission;
 
 	buyer.gold = buyer.gold - total;
@@ -74,7 +87,13 @@ async function processPurchase(
 	];
 
 	await Promise.all(promises);
-	return cost;
+	return {
+		totalCost: cost,
+		// Player commission is given back to players
+		// allowing them to fill a guage to spawn any raid
+		// from their wishlist
+		commission 
+	};
 }
 
 async function notifySeller(
@@ -84,7 +103,7 @@ async function notifySeller(
 	marketCard: IMarketProps,
 	client: Client
 ) {
-	const [ totalCost ] = await Promise.all([
+	const [ { totalCost, commission } ] = await Promise.all([
 		processPurchase(
 			buyer,
 			dealer,
@@ -108,23 +127,24 @@ async function notifySeller(
 			type: QUEST_TYPES.MARKET
 		})
 	]);
-	if (marketCard.collection_id.toString().length >= MARKET_LOG_MIN_COLLECTION_ID_DIGITS) {
-		await createMarketLog({
-			character_id: marketCard.character_id,
-			rank_id: marketCard.rank_id,
-			sold_at_cost: totalCost,
-			metadata: {
-				soldBy: {
-					userTag: seller.user_tag,
-					username: seller.username
-				},
-				boughtBy: {
-					userTag: buyer.user_tag,
-					username: buyer.username
-				}
+
+	await createMarketLog({
+		character_id: marketCard.character_id,
+		rank_id: marketCard.rank_id,
+		sold_at_cost: totalCost,
+		tax_paid: commission,
+		user_tag: seller.user_tag,
+		metadata: {
+			soldBy: {
+				userTag: seller.user_tag,
+				username: seller.username
+			},
+			boughtBy: {
+				userTag: buyer.user_tag,
+				username: buyer.username
 			}
-		});
-	}
+		}
+	});
 	GA4.customEvent("market_purchase", {
 		category: "market",
 		label: buyer.user_tag,

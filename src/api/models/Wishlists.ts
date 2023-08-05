@@ -3,6 +3,7 @@ import {
 	WishlistCreateProps, WishlistParamProps, WishlistProps, WishlistUpdateParamProps, WishlistUpdateProps 
 } from "@customTypes/wishlist";
 import connection from "db";
+import loggers from "loggers";
 
 const tableName = "wishlists";
 const characters = "characters";
@@ -47,4 +48,13 @@ export const del = async (params: WishlistUpdateParamProps) => {
 
 export const get = async (params: any) => {
 	return connection(tableName).where(params);
+};
+
+export const getRandom = async (params: any) => {
+	loggers.info("Models.Wishlist.getRandom: fetching with params", { params });
+	return connection(tableName).where({
+		...params,
+		is_random: true,
+		is_skin: false
+	}).orderByRaw("random()").limit(1);
 };

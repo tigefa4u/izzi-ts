@@ -8,9 +8,12 @@ import {
 	RaidLootProps,
 	RaidStatsProps,
 } from "@customTypes/raids";
+import { UserProps } from "@customTypes/users";
 import { getRandomCard } from "api/controllers/CardsController";
+import { getYearlyTaxPaid } from "api/controllers/MarketLogsController";
 import { createRaid, getUserRaidLobby } from "api/controllers/RaidsController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import { getRandomCardFromWlist } from "api/controllers/WishlistsContorller";
 import Cache from "cache";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
@@ -25,6 +28,8 @@ import {
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
+	TAXPAYER_RETURN_PERCENT,
+	TAX_PAYER_RAID_PITY_THRESHOLD,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
@@ -49,6 +54,7 @@ type C = {
   isEvent: boolean;
   isPrivate: boolean;
   lobby: RaidLobbyProps;
+  character_id?: number[];
 };
 
 const raidDivisions = {
@@ -145,8 +151,8 @@ export const createRaidBoss = async ({
 	isEvent,
 	lobby,
 	isPrivate,
+	character_id
 }: C) => {
-	// character_id: i === 0 ? 611 : i === 1 ? 1044 : 1004
 
 	const raidBosses = (await Promise.all(
 		Array(computedBoss.bosses)
@@ -162,7 +168,6 @@ export const createRaidBoss = async ({
 					rank,
 					is_event: isEvent,
 					is_random: true,
-					// character_id: i === 0 ? 1158 : i === 1 ? 532 : 686
 				};
 				if (isEvent) {
 					if (i === 0) {
@@ -170,6 +175,11 @@ export const createRaidBoss = async ({
 					} else if (i === 1) {
 						params.group_with = computedBoss.group_id;
 					}
+				}
+
+				// Raid Pity system - spawn a raid from wishlist
+				if (character_id && character_id.length > 0 && character_id[i]) {
+					params.character_id = character_id[i];
 				}
 				const card = await getRandomCard(params, 1);
 				if (!card || card.length <= 0) {
@@ -215,6 +225,45 @@ export const createRaidBoss = async ({
 		raid,
 		raidBosses,
 	};
+};
+
+const checkRaidPity = async (user: UserProps) => {
+	try {
+		const result = await getYearlyTaxPaid({ user_tag: user.user_tag });
+		const total = Number(result?.sum || 0);
+		const commission = Math.floor(total * TAXPAYER_RETURN_PERCENT);
+
+		let taxReturns =
+      commission -
+      (user.metadata?.raidPityCount || 0) * TAX_PAYER_RAID_PITY_THRESHOLD;
+		if (taxReturns < 0) taxReturns = 0;
+
+		loggers.info("Total Tax Returns: ", taxReturns);
+		// spawn a card from wishlist
+		if (taxReturns >= TAX_PAYER_RAID_PITY_THRESHOLD) {
+			// spawn a card from wishlist and update user
+			const wlist = await getRandomCardFromWlist({
+				user_tag: user.user_tag,
+				is_referral_card: false,
+				is_xenex_card: false
+			});
+			if (wlist && wlist.length > 0 && wlist[0].is_random) {
+				loggers.info("Spawning card from wishlist: ", wlist);
+				await updateRPGUser({ user_tag: user.user_tag }, {
+					metadata: {
+						...(user.metadata || {}),
+						raidPityCount: (user.metadata?.raidPityCount || 0) + 1
+					}
+				});
+				return [ wlist[0].character_id ];
+			}
+		}
+
+		return [];
+	} catch (err) {
+		loggers.error("raid.spawn.checkRaidPity: ERROR", err);
+		return;
+	}
 };
 
 export const spawnRaid = async ({
@@ -310,11 +359,22 @@ export const spawnRaid = async ({
 				true
 			);
 		}
+
+		/**
+		 * Raid Pity - spawn a chara from wishlist
+		 * This is related to market tax. Check `tax.ts`
+		 * for more info.
+		 * 
+		 * Allow only 1 character to be spawned.
+		 */
+		const raidPityCids = await checkRaidPity(user);
+
 		const { raid, raidBosses } = await createRaidBoss({
 			lobby,
 			computedBoss,
 			isEvent,
 			isPrivate,
+			character_id: raidPityCids
 		});
 		if (!raid) return;
 

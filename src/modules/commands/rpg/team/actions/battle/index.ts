@@ -134,7 +134,9 @@ async function confirmAndBattle(
 			isVictory: battleStatus?.isVictory || false,
 			opponentTeamName: opponentStats.name,
 			playerTeamName: playerStats.name,
-			authorId: params.author.id
+			authorId: params.author.id,
+			attachments: battleStatus.attachments,
+			simulation: battleStatus.simulation
 		});
 		return;
 	}

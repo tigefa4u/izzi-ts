@@ -175,10 +175,13 @@ const handleAddToWishlist = async ({
 				filepath: skinDetails.metadata.assets?.silver.small.filepath,
 				name: skinDetails.name
 			},
-			skin_id: skinDetails.id
+			skin_id: skinDetails.id,
+			is_random: false,
+			is_referral_card: false,
+			is_xenex_card: false
 		});
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Successfully added **${titleCase(skinDetails.name)}** to your Wishlist. ` +
+			.setDescription(`Successfully added **__${titleCase(skinDetails.name)}__** to your Wishlist. ` +
 		"Use ``iz wishlist`` to view all the items in your wishlist.");
 		channel?.sendMessage(embed);
 	} catch (err) {

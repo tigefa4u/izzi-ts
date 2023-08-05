@@ -31,11 +31,10 @@ export const getAll: () => Promise<CommandProps[]> = async function () {
 export const findOne: (key: string) => Promise<CommandProps> = async function (
 	key
 ) {
-	const result = await connection
-		.raw(
-			`select * from ${tableName} where alias::jsonb @> '"${key}"' and is_deleted = false`
-		)
-		.then((res) => res.rows);
+	const result = await connection.select("id", "name", "usage", "alias", "type", "description")
+		.from(tableName)
+		.whereRaw("alias::jsonb @> '\"?\"'", [ key ])
+		.where({ is_deleted: false });
 
 	return result[0];
 };

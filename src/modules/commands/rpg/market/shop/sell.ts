@@ -3,6 +3,7 @@ import {
 	ConfirmationInteractionOptions,
 	ConfirmationInteractionParams,
 } from "@customTypes";
+import { CharacterCardProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
 import { getCharacterInfo } from "api/controllers/CharactersController";
 import {
@@ -22,6 +23,8 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
 	MARKET_PRICE_CAP,
+	MIN_MARKET_PRICE,
+	OS_GLOBAL_MARKET_CHANNEL,
 	ranksMeta,
 } from "helpers/constants";
 import loggers from "loggers";
@@ -29,6 +32,60 @@ import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
+
+type P = {
+  client: BaseProps["client"];
+  characterInfo: CharacterCardProps;
+  price: number;
+  author: BaseProps["options"]["author"];
+  cardId: number;
+};
+const sendMessageInOs = async ({
+	client,
+	characterInfo,
+	price,
+	author,
+	cardId,
+}: P) => {
+	try {
+		const embed = createEmbed(author, client)
+			.setTitle(`${numericWithComma(price)} Gold ${emoji.gold}`)
+			.setThumbnail(
+				characterInfo.metadata?.assets?.small.filepath || characterInfo.filepath
+			)
+			.addField(
+				`${titleCase(characterInfo.name)} | Level ${
+					characterInfo.character_level
+				}`,
+				`${titleCase(characterInfo.rank)} | ID: ${cardId}`
+			)
+			.setFooter({
+				text: `To buy this card. Use \`\`iz mk buy ${cardId}\`\``,
+				iconURL: author.displayAvatarURL(),
+			})
+			.setHideConsoleButtons(true)
+
+			// To send embeds in broadcastEval it must be
+			// in json format, need to serialize to send embeds accross shards.
+			.toJSON();
+		await client.shard?.broadcastEval(async (cl, { embed_1, id }: any) => {
+			const channel = await cl.channels.fetch(id);
+			if (!channel || channel.type !== "GUILD_TEXT") {
+				return;
+			}
+
+			channel.send({ embeds: [ embed_1 ] });
+		}, {
+			context: {
+				embed_1: embed,
+				id: OS_GLOBAL_MARKET_CHANNEL 
+			} 
+		});
+	} catch (err) {
+		loggers.error("market.shop.sell.sendMessageInOs: ERROR", err);
+	}
+	return;
+};
 
 async function validateAndSellCard(
 	params: ConfirmationInteractionParams<{ id: number; price: number }>,
@@ -65,7 +122,7 @@ async function validateAndSellCard(
 		if (cardToBeSold.rank_id <= ranksMeta["platinum"].rank_id) {
 			params.channel?.sendMessage(
 				`Summoner **${params.author.username}**, You cannot sell **Fodders** on the Global Market. ` +
-				"Cards that are of rank **Silver, Gold, Platinum** are considered as Fodders."
+          "Cards that are of rank **Silver, Gold, Platinum** are considered as Fodders."
 			);
 			return;
 		}
@@ -92,7 +149,7 @@ async function validateAndSellCard(
 					user_id: cardToBeSold.user_id,
 					collection_id: cardToBeSold.id,
 					price: params.extras?.price || 1000,
-				})
+				}),
 			]);
 			const desc = `You have successfully posted your __${titleCase(
 				cardToBeSold.rank
@@ -105,8 +162,18 @@ async function validateAndSellCard(
             characterInfo.filepath
 				)
 				.setTitle(DEFAULT_SUCCESS_TITLE)
-				.setDescription(desc);
+				.setDescription(desc)
+				.setHideConsoleButtons(true);
 			params.channel?.sendMessage(embed);
+
+			characterInfo.character_level = cardToBeSold.character_level;
+			await sendMessageInOs({
+				client: params.client,
+				characterInfo,
+				price: params.extras.price || 1000,
+				author: params.author,
+				cardId: cardToBeSold.id
+			});
 			return;
 		}
 		return Object.assign(
@@ -142,9 +209,12 @@ export const sellCard = async ({
 		}
 		const userBlacklisted = await getUserBlacklist({ user_tag: author.id });
 		if (userBlacklisted && userBlacklisted.length > 0) {
-			const blackListEmbed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE)
-				.setDescription(`Summoner **${author.username}**, You have been ` +
-				"blacklisted and cannot use the Global Market. Please contact support to appeal.");
+			const blackListEmbed = createEmbed(author, client)
+				.setTitle(DEFAULT_ERROR_TITLE)
+				.setDescription(
+					`Summoner **${author.username}**, You have been ` +
+            "blacklisted and cannot use the Global Market. Please contact support to appeal."
+				);
 
 			context.channel?.sendMessage(blackListEmbed);
 			return;
@@ -154,8 +224,14 @@ export const sellCard = async ({
 		const sellingPrice = Number(args.shift());
 		if (!sellingPrice || isNaN(sellingPrice)) return;
 		if (sellingPrice > MARKET_PRICE_CAP) {
-			context.channel?.sendMessage("Please provide a valid selling price not more than " +
-			`__${numericWithComma(MARKET_PRICE_CAP)}__ gold ${emoji.gold}`);
+			context.channel?.sendMessage(
+				"Please provide a valid selling price not more than " +
+          `__${numericWithComma(MARKET_PRICE_CAP)}__ gold ${emoji.gold}`
+			);
+			return;
+		} else if (sellingPrice < MIN_MARKET_PRICE) {
+			context.channel?.sendMessage("Please provide a valid selling price, minimum " +
+			`__${numericWithComma(MIN_MARKET_PRICE)}__ gold ${emoji.gold}`);
 			return;
 		}
 		const params = {

@@ -12,13 +12,16 @@ export const createMarketLog = async (data: MarketLogCreateProps) => {
 	}
 };
 
-type P = { characterId: number; rankId: number; }
+type P = { characterId: number; rankId: number };
 export const getMarketLogList = async (params: P) => {
 	try {
 		loggers.info("Fetching market log list for params ", { params });
 		return Model.getByCharacterAndRankId(params);
 	} catch (err) {
-		loggers.error("api.controller.MarketLogsController.getMarketLogList: ERROR", err);
+		loggers.error(
+			"api.controller.MarketLogsController.getMarketLogList: ERROR",
+			err
+		);
 		return;
 	}
 };
@@ -28,7 +31,24 @@ export const getAvgMarketPrice = async (params: P) => {
 		loggers.info("Fetching market average price for params ", { params });
 		return Model.getAveragePriceOfCharacterAndRankId(params);
 	} catch (err) {
-		loggers.error("api.controller.MarketLogsController.getAvgMarketPrice: ERROR", err);
+		loggers.error(
+			"api.controller.MarketLogsController.getAvgMarketPrice: ERROR",
+			err
+		);
+		return;
+	}
+};
+
+export const getYearlyTaxPaid = async (params: {
+  user_tag: string;
+}): Promise<{ sum: number; count: number } | undefined> => {
+	try {
+		return Model.getYearlyTotalTaxPaid(params);
+	} catch (err) {
+		loggers.error(
+			"api.controller.MarketLogsController.getYearlyTaxPaid: ERROR",
+			err
+		);
 		return;
 	}
 };

@@ -109,6 +109,9 @@ export type AbilityStackProps = StatStateProps &
     isLeer?: boolean;
     isParanoid?: boolean;
     isLightningShield?: boolean;
+    // Ex: stack increases every time TB is placed but no explode
+    // it represents 1x, 2x, 3x damage dealt by ability
+    stack?: number;
     abilityToResist?: {
       [name in keyof Partial<AbilityProcMapProps>]: {
         percent: number;

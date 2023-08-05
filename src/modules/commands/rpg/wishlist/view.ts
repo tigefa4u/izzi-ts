@@ -39,7 +39,7 @@ export const viewWishlist = async ({ context, client, args, options }: BaseProps
 			{
 				user_tag: mentionId,
 				name: params.name,
-				is_skin: true
+				// is_skin: true
 			},
 			filter,
 			getWishlist,

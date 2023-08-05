@@ -1,6 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
+import { addToWishlist } from "./add";
 import { removeWishlist } from "./remove";
 import { subcommands } from "./subcommands";
 import { viewWishlist } from "./view";
@@ -13,6 +14,8 @@ export const wishlist = (params: BaseProps) => {
 			viewWishlist(params);
 		} else if (subcommand === "remove") {
 			removeWishlist(params);
+		} else if (subcommand === "add") {
+			addToWishlist(params);
 		}
 		return;
 	} catch (err) {

@@ -11,8 +11,8 @@ export const XP_GAIN_EXPONENT = 1.5;
 export const DOT = "•";
 export const STAR = "★";
 export const BASE_RANK = "silver";
-export const STARTER_CARD_RANK = "diamond";
-export const STARTER_CARD_RANK_ID = 4;
+export const STARTER_CARD_RANK = "legend";
+export const STARTER_CARD_RANK_ID = 5;
 export const STARTER_CARD_LEVEL = 20;
 export const STARTER_CARD_EXP = 1;
 export const STARTER_CARD_R_EXP = Math.floor(
@@ -159,12 +159,21 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 };
 
 export const ORB_INTEREST_RATE = 0.7;
-export const MARKET_COMMISSION = 0.04;
+
+// Market commission is used to allow the user to spawn
+// a raid boss of his choice when they reach 1m in tax.
+// This gold is also given back to the community in the form of
+// raid bonus gold.
+export const MARKET_COMMISSION = 0.06;
+export const RAID_TREASURY_PERCENT = 0.3;
+export const TAXPAYER_RETURN_PERCENT = 0.7;
 export const BASE_ORBS_COUNT = 20;
 export const MARRIAGE_BONUS = 2000;
 export const INPUT_CHARACTERS_MAX_COUNT = 20;
 export const GUILD_CREATION_COST = 200000;
 export const MARKET_PRICE_CAP = 100000000;
+export const MIN_MARKET_PRICE = 2000;
+export const TAX_PAYER_RAID_PITY_THRESHOLD = 1000000; // Tax amount
 // export const GUILD_BASE_STATS = {
 // vitality: 0.25,
 // defense: 0.31,
@@ -467,16 +476,16 @@ export const CONSOLE_BUTTONS = {
 
 export const ELEMENTAL_ADVANTAGES = {
 	DEFAULT: {
-		p1: 1.4,
-		p2: 0.8
+		p1: 1.1,
+		p2: 0.9
 	},
 	EFFECTIVE: {
-		p1: 1.6,
-		p2: 0.6
+		p1: 1.2,
+		p2: 0.8
 	},
 	SUPER_EFFECTIVE: {
-		p1: 1.8,
-		p2: 0.4
+		p1: 1.3,
+		p2: 0.7
 	},
 	NEUTRAL: {
 		p1: 1,
@@ -555,8 +564,10 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 "\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone.**" +
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
 
+export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
+
 export const DEFAULT_DPR = 0.1;
 export const DPR_MAX_BUFF = .5;
-export const DEFAULT_DPR_GAIN = 0.06;
-export const DEFAULT_DPR_LOSS = 0.035;
-export const DPR_GAIN_ON_EVADE = 0.03;
+export const DEFAULT_DPR_GAIN = 0.04;
+export const DEFAULT_DPR_LOSS = 0.03;
+export const DPR_GAIN_ON_EVADE = 0.02;
