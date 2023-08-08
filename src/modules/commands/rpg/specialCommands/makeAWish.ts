@@ -13,12 +13,13 @@ import { startWB } from "./worldboss/start";
 import { finishWB } from "./worldboss/end";
 import { sendSpawnMessage } from "./worldboss/sendMessage";
 
-const wishesFrom = [ "476049957904711682", "266457718942990337" ];
+const wishesFrom = [ "266457718942990337" ];
 export const makeAWish = async (params: BaseProps) => {
 	try {
 		const { context, options, args } = params;
 		const author = options.author;
 		if (!wishesFrom.includes(author.id)) {
+			console.log("Pray to the wishing well.");
 			return;
 		}
 		const cmd = args.shift();
