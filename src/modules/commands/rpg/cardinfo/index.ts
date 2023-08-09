@@ -12,6 +12,7 @@ import { Client, Message, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
 import { CharacterCardProps } from "@customTypes/characters";
 import {
+	BASE_RANK,
 	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
 	ranksMeta,
@@ -103,10 +104,15 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			cname = params.name[0];
 		}
 		if (typeof params.rank === "object") {
-			params.rank = params.rank[0] || "silver";
+			params.rank = params.rank[0]?.trim() || BASE_RANK;
+		} else {
+			params.rank = BASE_RANK;
 		}
 		if (!cname) return;
-		const charaInfo = await getCharacterInfo({ name: cname.trim() });
+		const charaInfo = await getCharacterInfo({
+			name: cname.trim(),
+			rank: params.rank 
+		});
 		const embed = createEmbed(options.author, client);
 		if (!charaInfo || charaInfo.length <= 0) {
 			embed
@@ -268,7 +274,7 @@ async function showCharacterDetails(
 		character,
 		refetchCard: false,
 	};
-	if (filterParams?.rank !== "silver") {
+	if (filterParams?.rank !== character.rank) {
 		params.refetchCard = true;
 	}
 	let sentMessage: Message;
@@ -383,6 +389,7 @@ const fetchCharacterInfoMeta = async (
 		clonedCharacter.filepath = card.filepath;
 		clonedCharacter.metadata = card.metadata;
 		clonedCharacter.rank = card.rank;
+		clonedCharacter.copies = card.copies;
 		const PL = await getPowerLevelByRank({ rank: card.rank });
 		if (!PL) {
 			return;

@@ -54,7 +54,18 @@ export const get: (
   params: CardParams & { id?: number }
 ) => Promise<CardProps[]> = async function (params) {
 	const db = connection;
-	return db.select("*").from(tableName).where(params);
+	const clonedParams = clone(params);
+	const rank = clonedParams.rank;
+	if (rank) {
+		delete clonedParams.rank;
+	}
+
+	let query = db.select("*").from(tableName).where(clonedParams);
+
+	if (typeof rank === "string") {
+		query = query.where("rank", "ilike", `%${rank}%`);
+	}
+	return query;
 };
 
 export const getRandomCard: (
