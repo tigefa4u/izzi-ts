@@ -102,7 +102,7 @@ export const getRandomCard: (
 		query = query.where(`${tableName}.is_referral_card`, false);
 	}
 	if (!queryParams.series) {
-		query = query.whereNot(`${tableName}.series`, "=", "%xenex%");
+		query = query.whereNot(`${tableName}.series`, "=", "xenex");
 	}
 	if (group_id) {
 		query = query.where(`${tableName}.group_id`, group_id);
