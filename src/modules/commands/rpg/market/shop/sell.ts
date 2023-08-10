@@ -54,7 +54,11 @@ const broadcastMarketLog = async (embed: any, client: BaseProps["client"]) => {
 			key: "izzi os",
 			value: OS_GLOBAL_MARKET_CHANNEL
 		});
-		await Promise.all(result.map(async ({ key, value }) => {
+
+		// This caused discord api rate limit while sending logs to
+		// many servers, handle this in a queue with a delay.
+		// But make sure to instantly send data in OS channel
+		await Promise.all([ result[0] ].map(async ({ key, value }) => {
 			try {
 				await client.shard?.broadcastEval(
 					async (cl, { embed_1, id }: any) => {
