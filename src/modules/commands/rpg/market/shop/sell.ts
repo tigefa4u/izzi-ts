@@ -125,7 +125,7 @@ const sendMessageInOs = async ({
 		await client.shard?.broadcastEval(
 			async (cl, { embed_1, id }: any) => {
 				const channel = await cl.channels.fetch(id);
-				if (!channel || channel.type !== "GUILD_TEXT") {
+				if (!channel || channel.type !== "GUILD_NEWS") {
 					return;
 				}
 	

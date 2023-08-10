@@ -49,7 +49,9 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 			return;
 		} else if (subcommand === "redirect") {
 			args.shift();
-			globalMarketRedirect(subCommandParams);
+
+			// Disabled - use crosspost
+			// globalMarketRedirect(subCommandParams);
 			return;
 		}
 		const params = fetchParamsFromArgs<FilterProps>(args);
