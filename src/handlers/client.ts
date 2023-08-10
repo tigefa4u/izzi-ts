@@ -40,14 +40,15 @@ export const handleClientEvents = (client: Client) => {
 	client.on("messageCreate", (context: Message) => {
 
 		// Corsspost market logs to other servers.
-		if (
-			context.channel.id === OS_GLOBAL_MARKET_CHANNEL &&
-      context.channel.type === "GUILD_NEWS" &&
-      context.crosspostable
-		) {
-			context.crosspost();
-			return;
-		}
+		// crosspoting was not possible - hit rait limit, can only crosspost 10 per 1 hour.
+		// 	if (
+		// 		context.channel.id === OS_GLOBAL_MARKET_CHANNEL &&
+		//   context.channel.type === "GUILD_NEWS" &&
+		//   context.crosspostable
+		// 	) {
+		// 		context.crosspost();
+		// 		return;
+		// 	}
 		const hasPermissions = validateChannelPermissions(context);
 		const hasReadPerms = checkReadMessagePerms(context);
 
