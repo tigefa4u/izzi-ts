@@ -58,7 +58,7 @@ const broadcastMarketLog = async (embed: any, client: BaseProps["client"]) => {
 		// This caused discord api rate limit while sending logs to
 		// many servers, handle this in a queue with a delay.
 		// But make sure to instantly send data in OS channel
-		await Promise.all([ result[0] ].map(async ({ key, value }) => {
+		await Promise.all(result.map(async ({ key, value }) => {
 			try {
 				await client.shard?.broadcastEval(
 					async (cl, { embed_1, id }: any) => {
@@ -122,7 +122,28 @@ const sendMessageInOs = async ({
 		// in json format, need to serialize to send embeds accross shards.
 			.toJSON();
 
-		broadcastMarketLog(embed, client);
+		await client.shard?.broadcastEval(
+			async (cl, { embed_1, id }: any) => {
+				const channel = await cl.channels.fetch(id);
+				if (!channel || channel.type !== "GUILD_TEXT") {
+					return;
+				}
+	
+				channel.send({ embeds: [ embed_1 ] });
+			},
+			{
+				context: {
+					embed_1: embed,
+					id: OS_GLOBAL_MARKET_CHANNEL,
+				},
+			}
+		);
+
+		/**
+		 * This function is commented due to hitting rate limits
+		 * Log to OS and add the rest to queue and post them collectively
+		 */
+		// broadcastMarketLog(embed, client);
 	} catch (err) {
 		loggers.error("market.shop.sell.sendMessageInOs: ERROR", err);
 	}
