@@ -1,9 +1,11 @@
+import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
+import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { numericWithComma } from "helpers";
+import { getIdFromMentionedString, numericWithComma } from "helpers";
 import { DUNGEON_MAX_MANA } from "helpers/constants";
 import loggers from "loggers";
 
@@ -87,15 +89,29 @@ export const exp = async function ({
 	}
 };
 
+const getSelectedUser = async (author: AuthorProps, args: string[], client: Client) => {
+	const mentionId = getIdFromMentionedString(args.shift() || "");
+	let member = author;
+	if (mentionId && mentionId !== "") {
+		const mentionedUser = await client.users.fetch(mentionId);
+		if (mentionedUser) {
+			member = mentionedUser;
+		}
+	}
+	return member;
+};
+
 export const level = async function ({
 	context,
 	options,
-}: Pick<BaseProps, "context" | "options">) {
+	args,
+	client
+}: Pick<BaseProps, "context" | "options" | "args" | "client">) {
 	try {
-		const author = options.author;
-		const result = await getProfileInfo("level", author.id);
+		const member = await getSelectedUser(options.author, args, client);
+		const result = await getProfileInfo("level", member.id);
 		context.channel?.sendMessage(
-			`**${author.username}** is currently level __${result.data}__`
+			`**${member.username}** is currently level __${result.data}__`
 		);
 		return;
 	} catch (err) {
@@ -221,9 +237,11 @@ export const points = async function ({
 export const gold = async function ({
 	context,
 	options,
-}: Pick<BaseProps, "context" | "options">) {
+	client,
+	args
+}: Pick<BaseProps, "context" | "options" | "args" | "client">) {
 	try {
-		const author = options.author;
+		const author = await getSelectedUser(options.author, args, client);
 		const result = await getProfileInfo("gold", author.id);
 		context.channel?.sendMessage(
 			`**${author.username}** currently has __${numericWithComma(

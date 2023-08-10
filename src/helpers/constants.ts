@@ -561,7 +561,7 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 "\n$500+ - **Exclusive Role**" +
 "\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
 "\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
-"\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone.**" +
+"\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone upto 3 cards.**" +
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
 
 export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";

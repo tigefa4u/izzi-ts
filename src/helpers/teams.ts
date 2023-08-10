@@ -363,7 +363,7 @@ export const validateAndPrepareTeam = async (
 	});
 	if (!team) {
 		channel?.sendMessage(
-			"We were unable to find your Team, please reset your teams!"
+			"We were unable to find your Team, please reset your team using ``iz tm reset``!"
 		);
 		return;
 	}
@@ -376,7 +376,7 @@ export const validateAndPrepareTeam = async (
 	});
 	if (!playerTeamStats) {
 		channel?.sendMessage(
-			`We are unable to prepare __Team ${team.name}__. Please reset your team`
+			`We are unable to prepare __Team ${team.name}__. Please reset your team using \`\`iz tm reset\`\`.`
 		);
 		return;
 	}

@@ -46,7 +46,7 @@ export const viewDGTeam = async ({ context, options, client }: BaseProps) => {
 			if (!collections) {
 				context.channel?.sendMessage(
 					`Could not view DG Team **__${dgTeam.team.name}__**, ` +
-            "please reset your team"
+            "please reset your team using ``iz tm reset``."
 				);
 				return;
 			}

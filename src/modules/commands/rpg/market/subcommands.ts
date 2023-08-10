@@ -10,4 +10,7 @@ export const subcommands = [ {
 }, {
 	name: "tax",
 	alias: []
+}, {
+	name: "redirect",
+	alias: [ "rdt" ]
 } ];

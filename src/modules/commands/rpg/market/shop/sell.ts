@@ -13,6 +13,7 @@ import {
 import { createMarketCard } from "api/controllers/MarketsController";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
@@ -32,6 +33,54 @@ import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
+
+// Broadcast to all servers
+const broadcastMarketLog = async (embed: any, client: BaseProps["client"]) => {
+	try {
+		if (typeof Cache.keys !== "function") return;
+		const cachedMarketLogGuilds = await Cache.keys("market-rdt::*");
+		const cachedMarketLogChannelIds = await Promise.all(
+			(cachedMarketLogGuilds || []).map(async (key) => {
+				return {
+					key,
+					value: await Cache.get(key)
+				};
+			})
+		);
+		const result = cachedMarketLogChannelIds.filter(
+			(id) => id !== null && id !== undefined
+		) as { key: string; value: string; }[] || [];
+		result.splice(0, 0, {
+			key: "izzi os",
+			value: OS_GLOBAL_MARKET_CHANNEL
+		});
+		await Promise.all(result.map(async ({ key, value }) => {
+			try {
+				await client.shard?.broadcastEval(
+					async (cl, { embed_1, id }: any) => {
+						const channel = await cl.channels.fetch(id);
+						if (!channel || channel.type !== "GUILD_TEXT") {
+							return;
+						}
+		
+						channel.send({ embeds: [ embed_1 ] });
+					},
+					{
+						context: {
+							embed_1: embed,
+							id: value,
+						},
+					}
+				);
+			} catch (err) {
+				loggers.error(`Global Market Log broadcast failed for key: ${key}`, err);
+			}
+		}));
+	} catch (err) {
+		loggers.error("market.sell.broadcastMarketLog: ERROR", err);
+		return;
+	}
+};
 
 type P = {
   client: BaseProps["client"];
@@ -65,22 +114,11 @@ const sendMessageInOs = async ({
 			})
 			.setHideConsoleButtons(true)
 
-			// To send embeds in broadcastEval it must be
-			// in json format, need to serialize to send embeds accross shards.
+		// To send embeds in broadcastEval it must be
+		// in json format, need to serialize to send embeds accross shards.
 			.toJSON();
-		await client.shard?.broadcastEval(async (cl, { embed_1, id }: any) => {
-			const channel = await cl.channels.fetch(id);
-			if (!channel || channel.type !== "GUILD_TEXT") {
-				return;
-			}
 
-			channel.send({ embeds: [ embed_1 ] });
-		}, {
-			context: {
-				embed_1: embed,
-				id: OS_GLOBAL_MARKET_CHANNEL 
-			} 
-		});
+		broadcastMarketLog(embed, client);
 	} catch (err) {
 		loggers.error("market.shop.sell.sendMessageInOs: ERROR", err);
 	}
@@ -172,7 +210,7 @@ async function validateAndSellCard(
 				characterInfo,
 				price: params.extras.price || 1000,
 				author: params.author,
-				cardId: cardToBeSold.id
+				cardId: cardToBeSold.id,
 			});
 			return;
 		}
@@ -230,8 +268,10 @@ export const sellCard = async ({
 			);
 			return;
 		} else if (sellingPrice < MIN_MARKET_PRICE) {
-			context.channel?.sendMessage("Please provide a valid selling price, minimum " +
-			`__${numericWithComma(MIN_MARKET_PRICE)}__ gold ${emoji.gold}`);
+			context.channel?.sendMessage(
+				"Please provide a valid selling price, minimum " +
+          `__${numericWithComma(MIN_MARKET_PRICE)}__ gold ${emoji.gold}`
+			);
 			return;
 		}
 		const params = {
