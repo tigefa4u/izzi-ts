@@ -3,19 +3,19 @@ import "winston-daily-rotate-file";
 import { LoggingWinston } from "@google-cloud/logging-winston";
 import { GCP_PROJECT_ID, GCP_RESOURCE_PREFIX } from "environment";
 
-// const cloudLogger = new LoggingWinston({
-// 	projectId: GCP_PROJECT_ID,
-// 	keyFilename: "izzi-cloud-logging.json",
-// 	prefix: GCP_RESOURCE_PREFIX,
-// 	defaultCallback: (err, resp) => {
-// 		console.log({
-// 			err,
-// 			resp 
-// 		});
-// 	},
-// 	resource: { type: "service_account" },
-// 	// labels: { pid: process.pid.toString() }
-// });
+const cloudLogger = new LoggingWinston({
+	projectId: GCP_PROJECT_ID,
+	keyFilename: "izzi-cloud-logging.json",
+	prefix: GCP_RESOURCE_PREFIX,
+	defaultCallback: (err, resp) => {
+		console.log({
+			err,
+			resp 
+		});
+	},
+	resource: { type: "service_account" },
+	// labels: { pid: process.pid.toString() }
+});
 const infoTransporter = new transports.DailyRotateFile({
 	filename: "logs/info-%DATE%.log",
 	datePattern: "YYYY-MM-DD-HH",
@@ -110,8 +110,8 @@ const winstonAPILogger = createLogger({
 const logger = createLogger({
 	format: format.combine(format.timestamp(), format.json()),
 	transports: [
-		new transports.Console(),
-		// cloudLogger
+		// new transports.Console(),
+		cloudLogger
 		// infoTransporter,
 		// new transports.File({
 		// 	filename: "logs/info.log",
