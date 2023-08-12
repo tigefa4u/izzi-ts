@@ -128,9 +128,11 @@ const prepareConsoleDescription = async (
     		: `Vote in ${remainingVotingHours} hours ${remainingVotingMinutes} minutes`
     }\n**:droplet: Mana:** ${user.mana} / ${user.max_mana}\n**${
     	emoji.crossedswords
-    } DG Mana:** ${
-    	user.dungeon_mana
-    } / ${DUNGEON_MAX_MANA}\n**:game_die: Game Points:** ${user.game_points}${
+    } DG Mana:** ${user.dungeon_mana} / ${DUNGEON_MAX_MANA}\n**${
+    	emoji.crossedswords
+    } Max Floor:** ${user.max_ruin_floor}\n**:map: Max Zone:** ${
+    	user.max_ruin
+    }${
     	tagTeamPlayer
     		? `\n**:raised_hands: Teammate | Points:** <@${
     			tagTeamPlayer.teammate

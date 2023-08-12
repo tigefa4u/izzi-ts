@@ -84,13 +84,15 @@ async function confirmAndBattle(
 		]);
 		if (!playerStats) {
 			params.channel?.sendMessage(
-				`Summoner **${params.author.username}** is unable to prepare for battle. Please reset your team`
+				`Summoner **${params.author.username}** is unable to prepare for battle. Please reset your team ` +
+				"using ``iz tm reset``."
 			);
 			return;
 		}
 		if (!opponentStats) {
 			params.channel?.sendMessage(
-				`Summoner **${mentionedUser.username}** is unable to prepare for battle. Please reset your team`
+				`Summoner **${mentionedUser.username}** is unable to prepare for battle. Please reset your team ` +
+				"using ``iz tm reset``."
 			);
 			return;
 		}

@@ -31,7 +31,7 @@ async function handleTeamSet(
 	const position = +value;
 	if (position > 3 || position < 1) {
 		params.channel?.sendMessage(
-			"Unable to assign to this position. Please reset your team"
+			"Unable to assign to this position. Please reset your team using ``iz tm reset``."
 		);
 		return;
 	}
@@ -102,7 +102,7 @@ async function handleTeamView(
 	});
 	if (!teamDetails) {
 		params.channel?.sendMessage(
-			`Unable to view __Team ${selected.name}__. Please reset your team.`
+			`Unable to view __Team ${selected.name}__. Please reset your team using \`\`iz tm reset\`\`.`
 		);
 		return;
 	}

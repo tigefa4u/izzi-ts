@@ -54,7 +54,18 @@ export const get: (
   params: CardParams & { id?: number }
 ) => Promise<CardProps[]> = async function (params) {
 	const db = connection;
-	return db.select("*").from(tableName).where(params);
+	const clonedParams = clone(params);
+	const rank = clonedParams.rank;
+	if (rank) {
+		delete clonedParams.rank;
+	}
+
+	let query = db.select("*").from(tableName).where(clonedParams);
+
+	if (typeof rank === "string") {
+		query = query.where("rank", "ilike", `%${rank}%`);
+	}
+	return query;
 };
 
 export const getRandomCard: (
@@ -91,7 +102,7 @@ export const getRandomCard: (
 		query = query.where(`${tableName}.is_referral_card`, false);
 	}
 	if (!queryParams.series) {
-		query = query.whereNot(`${tableName}.series`, "=", "%xenex%");
+		query = query.whereNot(`${tableName}.series`, "=", "xenex");
 	}
 	if (group_id) {
 		query = query.where(`${tableName}.group_id`, group_id);

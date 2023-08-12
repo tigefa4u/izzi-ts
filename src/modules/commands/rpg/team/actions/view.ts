@@ -28,7 +28,7 @@ async function handleTeamView(
 	});
 	if (!teamDetails) {
 		params.channel?.sendMessage(
-			`Unable to view __Team ${selected.name}__. Please reset your team.`
+			`Unable to view __Team ${selected.name}__. Please reset your team using \`\`iz tm reset\`\`.`
 		);
 		return;
 	}

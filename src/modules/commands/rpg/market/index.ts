@@ -15,6 +15,7 @@ import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { purchaseCard } from "./shop/buy";
+import { globalMarketRedirect } from "./shop/redirect";
 import { removeCardFromMarket } from "./shop/remove";
 import { sellCard } from "./shop/sell";
 import { showTaxInfo } from "./shop/tax";
@@ -45,6 +46,12 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 			return;
 		} else if (subcommand === "tax") {
 			showTaxInfo(subCommandParams);
+			return;
+		} else if (subcommand === "redirect") {
+			args.shift();
+
+			// Disabled - use crosspost
+			// globalMarketRedirect(subCommandParams);
 			return;
 		}
 		const params = fetchParamsFromArgs<FilterProps>(args);

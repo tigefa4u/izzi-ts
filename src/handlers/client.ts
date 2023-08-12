@@ -1,6 +1,11 @@
 import { registerSlashCommands } from "commands/slashCommands";
 import { Client, Message } from "discord.js";
-import { checkReadMessagePerms, generateUUID, validateChannelPermissions } from "helpers";
+import {
+	checkReadMessagePerms,
+	generateUUID,
+	validateChannelPermissions,
+} from "helpers";
+import { OS_GLOBAL_MARKET_CHANNEL } from "helpers/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 import {
@@ -33,13 +38,25 @@ export const handleClientEvents = (client: Client) => {
 	});
 
 	client.on("messageCreate", (context: Message) => {
+
+		// Corsspost market logs to other servers.
+		// crosspoting was not possible - hit rait limit, can only crosspost 10 per 1 hour.
+		// 	if (
+		// 		context.channel.id === OS_GLOBAL_MARKET_CHANNEL &&
+		//   context.channel.type === "GUILD_NEWS" &&
+		//   context.crosspostable
+		// 	) {
+		// 		context.crosspost();
+		// 		return;
+		// 	}
 		const hasPermissions = validateChannelPermissions(context);
 		const hasReadPerms = checkReadMessagePerms(context);
 
 		const cannotProcessContext =
       context.author.bot ||
       context.channel.type === "DM" ||
-      !context.guild || !hasReadPerms;
+      !context.guild ||
+      !hasReadPerms;
 
 		if (cannotProcessContext) return;
 		initLoggerContext(() => {
@@ -47,7 +64,7 @@ export const handleClientEvents = (client: Client) => {
 				requestId: generateUUID(10),
 				userTag: context.author.id,
 				serverId: context.guild?.id,
-				channelId: context.channel.id
+				channelId: context.channel.id,
 			});
 			handleMessage(client, context, { hasPermissions });
 		});
