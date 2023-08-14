@@ -568,6 +568,6 @@ export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
 
 export const DEFAULT_DPR = 0.1;
 export const DPR_MAX_BUFF = .5;
-export const DEFAULT_DPR_GAIN = 0.04;
+export const DEFAULT_DPR_GAIN = 0.1;
 export const DEFAULT_DPR_LOSS = 0.03;
 export const DPR_GAIN_ON_EVADE = 0.02;
