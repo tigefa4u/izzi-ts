@@ -14,10 +14,17 @@ import { delay } from "helpers";
 import { prepareBattleDesc } from "helpers/adventure";
 import {
 	compare,
+	getPercentOfTwoNumbers,
+	processEnergyBar,
 	recreateBattleEmbed,
 	simulateBattleDescription,
 } from "helpers/battle";
-import { BATTLE_FORFEIT_RETRIES, BATTLE_ROUNDS_COUNT, CONSOLE_BUTTONS, ELEMENTAL_ADVANTAGES } from "helpers/constants";
+import {
+	BATTLE_FORFEIT_RETRIES,
+	BATTLE_ROUNDS_COUNT,
+	CONSOLE_BUTTONS,
+	ELEMENTAL_ADVANTAGES,
+} from "helpers/constants";
 import loggers from "loggers";
 import { clone } from "utility";
 import { BattleProcess } from "./battleProcess";
@@ -35,7 +42,7 @@ export const simulateBattle = async ({
 	title = "__TEAM BATTLE__",
 	isRaid,
 	options,
-	multiplier
+	multiplier,
 }: SimulateBattleProps & { isRaid?: boolean }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
@@ -75,6 +82,40 @@ export const simulateBattle = async ({
 		let totalDamage = 0;
 		let roundStats: BattleStats | undefined;
 		for (let round = 1; round <= BATTLE_ROUNDS_COUNT; round++) {
+			/**
+       * GAIN SOME INT EVERY 5th ROUND TO BALANCE COMPS WITH NO INT BUFFS
+       * TO GIVE A FAIR CHANCE
+       */
+			// 	if (round % 5 === 0) {
+			// 		const playerIntBuff = basePlayerStats.totalStats.intelligence * 0.3;
+			// 		const enemyIntBuff = baseEnemyStats.totalStats.intelligence * 0.3;
+			// 		playerStats.totalStats.intelligence =
+			//   playerStats.totalStats.intelligence + playerIntBuff;
+			// 		enemyStats.totalStats.intelligence =
+			//   enemyStats.totalStats.intelligence + enemyIntBuff;
+
+			// 		const diff = getPercentOfTwoNumbers(
+			// 			playerStats.totalStats.intelligence,
+			// 			basePlayerStats.totalStats.intelligence
+			// 		);
+			// 		const oppDiff = getPercentOfTwoNumbers(
+			// 			enemyStats.totalStats.intelligence,
+			// 			baseEnemyStats.totalStats.intelligence
+			// 		);
+			// 		const playerEnergy = processEnergyBar({
+			// 			dpr: diff,
+			// 			energy: playerStats.totalStats.energy,
+			// 		});
+			// 		const oppEnergy = processEnergyBar({
+			// 			dpr: oppDiff,
+			// 			energy: playerStats.totalStats.energy,
+			// 		});
+			// 		playerStats.totalStats.dpr = playerEnergy.dpr;
+			// 		playerStats.totalStats.energy = playerEnergy.energy;
+			// 		enemyStats.totalStats.dpr = oppEnergy.dpr;
+			// 		enemyStats.totalStats.energy = oppEnergy.energy;
+			// 	}
+
 			const isPlayerFirst = compare(
 				playerStats.totalStats.dexterity,
 				enemyStats.totalStats.dexterity
@@ -113,7 +154,7 @@ export const simulateBattle = async ({
 				totalDamage,
 				isRaid,
 				simulation,
-				multiplier
+				multiplier,
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -133,7 +174,7 @@ export const simulateBattle = async ({
 				roundStats: clone(roundStats),
 				retries: 0,
 				authorId: playerStats.id,
-				isRaid
+				isRaid,
 			});
 		}
 		battlesInChannel = battlesPerChannel.get(context.channel.id);
@@ -152,7 +193,8 @@ export const simulateBattle = async ({
 			return roundStats;
 		}
 		if (roundStats) {
-			roundStats.soulGainText = playerStats.soulGainText || enemyStats.soulGainText;
+			roundStats.soulGainText =
+        playerStats.soulGainText || enemyStats.soulGainText;
 			roundStats.simulation = simulation;
 			roundStats.attachments = attachmentCards;
 		}
@@ -288,11 +330,11 @@ async function visualizeSimulation({
 	roundStats,
 	retries,
 	authorId,
-	isRaid
+	isRaid,
 }: V): Promise<BattleStats | undefined> {
 	const canvas = await createBattleCanvas(attachments, {
 		isRaid,
-		isSingleRow: false 
+		isSingleRow: false,
 	});
 	if (!canvas) {
 		throw new Error("Failed to create battle canvas");
@@ -330,9 +372,9 @@ async function visualizeSimulation({
 				label: CONSOLE_BUTTONS.FORFEIT.label,
 				params: {
 					isForfeit: true,
-					id: CONSOLE_BUTTONS.FORFEIT.id 
+					id: CONSOLE_BUTTONS.FORFEIT.id,
 				},
-			}
+			},
 		],
 		authorId,
 		({ isForfeit, id }) => {
@@ -347,8 +389,7 @@ async function visualizeSimulation({
 	);
 
 	if (!buttons) return;
-	embed.setButtons(buttons)
-		.setHideConsoleButtons(true);
+	embed.setButtons(buttons).setHideConsoleButtons(true);
 
 	const message = await context.channel?.sendMessage(embed);
 	if (!message) {
@@ -362,9 +403,8 @@ async function visualizeSimulation({
 			await delay(1200);
 			const lastKey = roundKeys[roundKeys.length - 1];
 			const lastDesc =
-        rounds[lastKey].descriptions[
-        	rounds[lastKey].descriptions.length - 1
-        ].description;
+        rounds[lastKey].descriptions[rounds[lastKey].descriptions.length - 1]
+        	.description;
 			const newEmbed = recreateBattleEmbed(embed.title || "", lastDesc);
 			await message.editMessage(newEmbed, { reattachOnEdit: true });
 		}
@@ -432,17 +472,38 @@ async function visualizeSimulation({
 function boostRaidBoss({
 	enemyStats,
 	round,
-}: Pick<PrepareBattleDescriptionProps, "enemyStats"> & { round: number }) {
+	baseEnemyStats,
+}: Pick<PrepareBattleDescriptionProps, "enemyStats" | "baseEnemyStats"> & {
+  round: number;
+}) {
 	if (!enemyStats.totalStats.critical) enemyStats.totalStats.critical = 1;
-	enemyStats.totalStats.critical = enemyStats.totalStats.critical + .25;
-	if (!enemyStats.totalStats.criticalDamage) enemyStats.totalStats.criticalDamage = 1;
+	enemyStats.totalStats.critical = enemyStats.totalStats.critical + 0.5;
+	if (!enemyStats.totalStats.criticalDamage)
+		enemyStats.totalStats.criticalDamage = 1;
 	enemyStats.totalStats.criticalDamage =
-    enemyStats.totalStats.criticalDamage + .25;
+    enemyStats.totalStats.criticalDamage + 0.25;
+
+	// boost raid boss ATK by 15%
+	if (baseEnemyStats) {
+		enemyStats.totalStats.vitality = enemyStats.totalStats.vitality + (baseEnemyStats.totalStats.vitality * .10);
+	}
+
+	if (baseEnemyStats && round === 10) {
+		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+		const diff = getPercentOfTwoNumbers(enemyStats.totalStats.intelligence, baseEnemyStats.totalStats.intelligence);
+		const energy = processEnergyBar({
+			dpr: diff,
+			energy: enemyStats.totalStats.energy
+		});
+		enemyStats.totalStats.energy = energy.energy;
+		enemyStats.totalStats.dpr = energy.dpr;
+	}
 	return {
 		enemyStats,
 		desc:
-      `**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
-      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__25%__**!",
+      `**[ROUND ${round}]**\n**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
+      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__25%__**. " +
+	  `Its **ATK** also increases over time by __10%__ and has regenerated its **INT**! ${emoji.criticalDamage}`,
 	};
 }
 
@@ -457,11 +518,11 @@ async function simulatePlayerTurns({
 	totalDamage,
 	isRaid,
 	simulation,
-	multiplier
+	multiplier,
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     isRaid?: boolean;
-	multiplier?: number;
+    multiplier?: number;
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
@@ -469,6 +530,7 @@ async function simulatePlayerTurns({
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
+				baseEnemyStats
 			});
 			enemyStats = boost.enemyStats;
 			if (round === 10 && i === 1) {
@@ -514,7 +576,7 @@ async function simulatePlayerTurns({
 			round,
 			simulation,
 			isRaid,
-			multiplier
+			multiplier,
 		});
 		// if (updatedStats.forfeit) {
 		// 	// Should never execute
@@ -561,7 +623,7 @@ async function simulatePlayerTurns({
 			isStunned: updatedStats.isPlayerStunned,
 			isAsleep: updatedStats.isPlayerAsleep,
 			isEvadeHit: updatedStats.isOpponentEvadeHit,
-			isParanoid: updatedStats.isPlayerParanoid
+			isParanoid: updatedStats.isPlayerParanoid,
 		});
 		const desc = await simulateBattleDescription({
 			playerStats,
@@ -636,7 +698,7 @@ function updateBattleDesc({
 	isStunned,
 	isAsleep,
 	isEvadeHit,
-	isParanoid
+	isParanoid,
 }: {
   turn: number;
   isPlayerFirst: boolean;
@@ -677,7 +739,8 @@ function updateBattleDesc({
 			isCriticalHit
 				? "**CRITICAL HIT**"
 				: opponentStats.totalStats.effective < 1
-					? "it was " + getElementalEffectiveStatus(opponentStats.totalStats.effective)
+					? "it was " +
+          getElementalEffectiveStatus(opponentStats.totalStats.effective)
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
 						: ""

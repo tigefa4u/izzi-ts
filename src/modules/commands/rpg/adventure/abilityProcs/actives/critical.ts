@@ -172,15 +172,15 @@ export const presenceOfMind = ({
 		const dex = opponentStats.totalStats.dexterity * (dexPercent / 100);
 		opponentStats.totalStats.dexterity = Math.floor(opponentStats.totalStats.dexterity - dex);
 
-		const dprPercent = calcPercentRatio(8, card.rank);
-		playerStats.totalStats.dpr = playerStats.totalStats.dpr + (dprPercent / 100);
-		const playerEnergy = processEnergyBar({
-			dpr: playerStats.totalStats.dpr,
-			energy: playerStats.totalStats.energy
-		});
+		// const dprPercent = calcPercentRatio(8, card.rank);
+		// playerStats.totalStats.dpr = playerStats.totalStats.dpr + (dprPercent / 100);
+		// const playerEnergy = processEnergyBar({
+		// 	dpr: playerStats.totalStats.dpr,
+		// 	energy: playerStats.totalStats.energy
+		// });
 
-		playerStats.totalStats.energy = playerEnergy.energy;
-		playerStats.totalStats.dpr = playerEnergy.dpr;
+		// playerStats.totalStats.energy = playerEnergy.energy;
+		// playerStats.totalStats.dpr = playerEnergy.dpr;
 
 		const critPercent = calcPercentRatio(20, card.rank);
 		const crit = basePlayerStats.totalStats.critical * (critPercent / 100);

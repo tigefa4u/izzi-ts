@@ -42,10 +42,10 @@ type B = BattleStats["totalStats"];
 export function processStatBuffCap(stats: B, baseStats: B) {
 	stats.vitality = capStatBuff(stats.vitality, baseStats.vitality);
 	stats.defense = capStatBuff(stats.defense, baseStats.defense);
-	stats.intelligence = capStatBuff(
-		stats.intelligence,
-		baseStats.intelligence
-	);
+	// stats.intelligence = capStatBuff(
+	// 	stats.intelligence,
+	// 	baseStats.intelligence
+	// );
 	stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
 	return stats;
 }
@@ -53,10 +53,10 @@ export function processStatBuffCap(stats: B, baseStats: B) {
 export function processStatDeBuffCap(stats: B, baseStats: B) {
 	stats.vitality = capStatDeBuff(stats.vitality, baseStats.vitality);
 	stats.defense = capStatDeBuff(stats.defense, baseStats.defense);
-	stats.intelligence = capStatDeBuff(
-		stats.intelligence,
-		baseStats.intelligence
-	);
+	// stats.intelligence = capStatDeBuff(
+	// 	stats.intelligence,
+	// 	baseStats.intelligence
+	// );
 	stats.dexterity = capStatDeBuff(stats.dexterity, baseStats.dexterity);
 	if (stats.effective <= 0) stats.effective = 1;
 	if (stats.accuracy <= 0) stats.accuracy = 1;
@@ -120,26 +120,26 @@ export const getPlayerDamageDealt = (
     // accuracy *
     (effective ? effective : 1) *
     randomNumber(0.87, 1, true); // This was 0.85 before
-	let atk = clone(Math.floor(vitality));
-	let def = clone(Math.floor(defense));
+	const atk = clone(Math.floor(vitality));
+	const def = clone(Math.floor(defense));
 
 
 	/**
 	 * Rework: INT based damage buff
 	 * Use DPR (damage per round) to deal additional damage
 	 * based on INT. DPR is already in %
-	 */
-	if (playerTotalStats.dpr <= 0) playerTotalStats.dpr = 0;
-	if (enemyTotalStats.dpr <= 0) enemyTotalStats.dpr = 0;
-	atk = atk + Math.floor(playerTotalStats.intelligence * Number(playerTotalStats.dpr.toFixed(2))); // prev - 6 (35)
-	def = def + Math.floor(enemyTotalStats.intelligence * Number(enemyTotalStats.dpr.toFixed(2))); // prev - 10 (40)
+	//  */
+	// if (playerTotalStats.dpr <= 0) playerTotalStats.dpr = 0;
+	// if (enemyTotalStats.dpr <= 0) enemyTotalStats.dpr = 0;
+	// atk = atk + Math.floor(playerTotalStats.intelligence * Number(playerTotalStats.dpr.toFixed(2))); // prev - 6 (35)
+	// def = def + Math.floor(enemyTotalStats.intelligence * Number(enemyTotalStats.dpr.toFixed(2))); // prev - 10 (40)
 	// let damage = Math.round(
 	//   0.5 * vitality * (vitality / defense) * modifiers + 1
 	// );
 	// testing
 	// let damage = Math.floor((1 + (vitality * 0.01)) * (vitality/Math.max(1, defense)) * modifiers * 100);
 	let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers);
-	// if (damage <= 0) damage = randomNumber(300, 500);
+	if (damage <= 0) damage = randomNumber(100, 400);
 
 	// True damage reduction
 	// for Bone Plating
@@ -149,8 +149,16 @@ export const getPlayerDamageDealt = (
 			damage = damage - reldiff;
 		}
 	}
-	return damage;
+	return Math.ceil(damage);
 };
+
+/**
+ * Multiple the result by 100 to get actual %
+ * @param x1 number
+ * @param x2 number
+ * @returns float (decimal form percent)
+ */
+export const getPercentOfTwoNumbers = (x1: number, x2:  number) => x1 / x2;
 
 export const relativeDiff = (
 	updatedHp: number,

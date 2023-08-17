@@ -18,7 +18,7 @@ export const lastStand = ({
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	// if your HP is below 25% deal 15% Damage based on your DEF, if below 50% gain 20% DEF
-	// if your int is more gain 22% def
+	// if enemy def is more gain 22% def
 	const fiftyPercentHp = Math.floor(
 		playerStats.totalStats.originalHp * (50 / 100)
 	);
@@ -31,8 +31,8 @@ export const lastStand = ({
 	const strength = playerStats.totalStats.strength;
 	if (strength <= fiftyPercentHp && !playerStats.totalStats.isLastStand) {
 		let num = 20;
-		const hasMoreInt = compare(playerStats.totalStats.intelligence, opponentStats.totalStats.intelligence);
-		if (hasMoreInt) {
+		const hasMoreDef = compare(opponentStats.totalStats.defense, playerStats.totalStats.defense);
+		if (hasMoreDef) {
 			num = 22;
 		}
 		const percent = calcPercentRatio(num, card.rank);

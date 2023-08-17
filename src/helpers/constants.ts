@@ -477,15 +477,15 @@ export const CONSOLE_BUTTONS = {
 export const ELEMENTAL_ADVANTAGES = {
 	DEFAULT: {
 		p1: 1.1,
-		p2: 0.9
+		p2: 0.98
 	},
 	EFFECTIVE: {
 		p1: 1.2,
-		p2: 0.8
+		p2: 0.94
 	},
 	SUPER_EFFECTIVE: {
 		p1: 1.3,
-		p2: 0.7
+		p2: 0.9
 	},
 	NEUTRAL: {
 		p1: 1,
@@ -566,8 +566,12 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 
 export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
 
-export const DEFAULT_DPR = 0.1;
-export const DPR_MAX_BUFF = .5;
+/**
+ * DPR - visual representation of INT
+ * energy bar
+ */
+export const DEFAULT_DPR = 1;
+export const DPR_MAX_BUFF = 1;
 export const DEFAULT_DPR_GAIN = 0.1;
 export const DEFAULT_DPR_LOSS = 0.03;
 export const DPR_GAIN_ON_EVADE = 0.02;

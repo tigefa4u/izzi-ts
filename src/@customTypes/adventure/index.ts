@@ -172,6 +172,7 @@ export type PrepareBattleDescriptionProps = {
   enemyStats: SimulateBattleProps["enemyStats"];
   totalDamage: number;
   description?: string;
+  baseEnemyStats? :SimulateBattleProps["enemyStats"];
 };
 
 export type BattleProcessProps = {

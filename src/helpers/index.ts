@@ -310,17 +310,18 @@ export const overallStats = (params: {
 	const totalStats = {} as OverallStatsProps;
 	const baseStats = {} as OverallStatsProps;
 	keys.forEach((stat) => {
+		const key = stat as keyof CharacterStatProps;
 		if (
 			[ "critical", "accuracy", "evasion", "effective", "precision" ].includes(
 				stat
 			)
 		) {
-			Object.assign(totalStats, { [stat]: stats[stat as keyof CharacterStatProps], });
-			Object.assign(baseStats, { [stat]: stats[stat as keyof CharacterStatProps], });
+			Object.assign(totalStats, { [stat]: stats[key], });
+			Object.assign(baseStats, { [stat]: stats[key], });
 		} else {
 			Object.assign(totalStats, {
 				[stat]: calcStat(
-					stats[stat as keyof CharacterStatProps],
+					stats[key],
 					character_level,
 					powerLevel
 				),
@@ -328,36 +329,35 @@ export const overallStats = (params: {
 			if (guildStats) {
 				Object.assign(totalStats, {
 					[stat]: Math.ceil(
-						totalStats[stat as keyof CharacterStatProps] +
-              totalStats[stat as keyof CharacterStatProps] *
+						totalStats[key] +
+              totalStats[key] *
                 (guildStats[stat as keyof GuildStatProps] / 100)
 					),
 				});
 				Object.assign(totalStats, {
 					[`${stat}Bonus`]: Math.ceil(
-						totalStats[stat as keyof CharacterStatProps] *
+						totalStats[key] *
               (guildStats[stat as keyof GuildStatProps] / 100)
 					),
 				});
 			}
 
-			Object.assign(baseStats, { [stat]: totalStats[stat as keyof CharacterStatProps], });
+			Object.assign(baseStats, { [stat]: totalStats[key], });
 
 			if (isForBattle === true) {
 				if (stat === "strength") {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 10
+							totalStats[key] * 10
 						),
 						originalHp: Math.round(
-							totalStats[stat as keyof CharacterStatProps] * 10
+							totalStats[key] * 10
 						),
 					});
 				} else {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[stat as keyof CharacterStatProps]
-							// totalStats[stat as keyof CharacterStatProps] * 3
+							totalStats[key] * 1.25
 						),
 					});
 				}

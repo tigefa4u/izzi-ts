@@ -6,16 +6,18 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { addTeamEffectiveness } from "helpers/adventure";
-import { HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
+import { CONSOLE_BUTTONS, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
 import {
 	prepareSkewedCollectionsForBattle,
 	validateAndPrepareTeam,
 } from "helpers/teams";
 import loggers from "loggers";
 import { simulateBattle } from "modules/commands/rpg/adventure/battle/battle";
+import { viewBattleLogs } from "modules/commands/rpg/adventure/battle/viewBattleLogs";
 import { prepareDungeonBoss } from "modules/commands/rpg/dungeon";
 import { reducedComputedLevels } from "modules/commands/rpg/dungeon/computeLevel";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
+import { customButtonInteraction } from "utility/ButtonInteractions";
 import * as battlePerChannel from "../../../adventure/battle/battlesPerChannelState";
 
 const spawnDGBoss = async (level: number, id: string) => {
@@ -125,13 +127,13 @@ export const teamDGBattle = async ({
 			isRaid: false,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 		});
+		clearCooldown(author.id, cmd);
 		if (!result) {
 			context.channel?.sendMessage(
 				"Unable to process battle, please try again later"
 			);
 			return;
 		}
-		clearCooldown(author.id, cmd);
 		if (result?.isForfeit) {
 			result.isVictory = false;
 		}
@@ -149,7 +151,35 @@ export const teamDGBattle = async ({
 					numericWithComma(result.totalDamage || 0)
 				}__** Damage to ${enemyStats.name}`
 			);
-
+		if (result.simulation && result.attachments) {
+			const button = customButtonInteraction(
+				context.channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+						params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id, }
+					}
+				],
+				author.id,
+				() => {
+					viewBattleLogs({
+						simulation: result.simulation as any,
+						attachments: result.attachments as any,
+						authorId: author.id,
+						channel: context.channel
+					});
+					return;
+				},
+				() => {
+					return;
+				},
+				false,
+				5
+			);
+			if (button) {
+				embed.setButtons(button);
+			}
+		}
 		context.channel.sendMessage(embed);
 		return;
 	} catch (err) {

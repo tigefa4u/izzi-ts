@@ -5,8 +5,10 @@ import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	compare,
+	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
 	getRelationalDiff,
+	processEnergyBar,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
@@ -22,7 +24,7 @@ export const exhaust = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.exhNum) {
@@ -51,7 +53,7 @@ export const exhaust = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
@@ -69,19 +71,40 @@ export const exhaust = ({
 		playerStats.totalStats.exhNum = playerStats.totalStats.exhNum + num;
 		const temp = randomElementFromArray([ "dexterity", "intelligence" ]);
 		const percent = calcPercentRatio(25, card.rank);
-		const relDiff = getRelationalDiff(
-			baseEnemyStats.totalStats[temp as keyof CharacterStatProps],
-			percent
-		);
+		const key = temp as keyof CharacterStatProps;
+		const relDiff = getRelationalDiff(baseEnemyStats.totalStats[key], percent);
 		const buffDiff = getRelationalDiff(
-			basePlayerStats.totalStats[temp as keyof CharacterStatProps],
+			basePlayerStats.totalStats[key],
 			percent
 		);
-		playerStats.totalStats[temp as keyof CharacterStatProps] =
-		playerStats.totalStats[temp as keyof CharacterStatProps] + buffDiff;
+		playerStats.totalStats[key] = playerStats.totalStats[key] + buffDiff;
 
-		opponentStats.totalStats[temp as keyof CharacterStatProps] =
-      opponentStats.totalStats[temp as keyof CharacterStatProps] - relDiff;
+		opponentStats.totalStats[key] = opponentStats.totalStats[key] - relDiff;
+
+		if (opponentStats.totalStats[key] < 0) {
+			opponentStats.totalStats[key] = 0;
+		}
+		const diff = getPercentOfTwoNumbers(
+			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence
+		);
+		const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy,
+		});
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
+
+		const opDiff = getPercentOfTwoNumbers(
+			opponentStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence
+		);
+		const opponentEnergy = processEnergyBar({
+			dpr: opDiff,
+			energy: opponentStats.totalStats.energy,
+		});
+		opponentStats.totalStats.energy = opponentEnergy.energy;
+		opponentStats.totalStats.dpr = opponentEnergy.dpr;
 
 		const statDesc = temp === "dexterity" ? "SPD" : "INT";
 
@@ -103,7 +126,7 @@ export const exhaust = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isExhaust)
@@ -124,7 +147,7 @@ export const rapidFire = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// decrease the enemies defense by __10%__.
@@ -183,17 +206,20 @@ export const rapidFire = ({
 		}
 		if (round % 3 === 0) {
 			const percent = calcPercentRatio(10, card.rank);
-			const defPer = getRelationalDiff(baseEnemyStats.totalStats.defense, percent);
+			const defPer = getRelationalDiff(
+				baseEnemyStats.totalStats.defense,
+				percent
+			);
 			opponentStats.totalStats.defense =
-		  opponentStats.totalStats.defense - defPer;
-		  if (canDealDamage) {
+        opponentStats.totalStats.defense - defPer;
+			if (canDealDamage) {
 				desc = desc + " Decreasing";
-		  } else {
+			} else {
 				desc = desc + " as well as decreasing";
-		  }
-		  desc = desc + ` the **DEF** of all enemies by __${percent}%__`;
+			}
+			desc = desc + ` the **DEF** of all enemies by __${percent}%__`;
 		}
-	  prepSendAbilityOrItemProcDescription({
+		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
 			card,
@@ -207,7 +233,7 @@ export const rapidFire = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -228,24 +254,21 @@ export const dominator = ({
 	baseEnemyStats,
 	card,
 	simulation,
-	basePlayerStats
+	basePlayerStats,
 }: BattleProcessProps) => {
 	if (!card) return;
 	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 2;
 	// Parmanently decrease the **AFK** of all enemies by __14%__ as well as decreasing their **INT** by __3%__
 	if (
-		round % playerStats.totalStats.domNum === 0 &&
+		round % 3 === 0 &&
     !playerStats.totalStats.isDominator
 	) {
 		playerStats.totalStats.isDominator = true;
-		const hasMoreInt = compare(
-			playerStats.totalStats.intelligence,
-			opponentStats.totalStats.intelligence
-		);
-		const num = hasMoreInt ? 2 : 3;
-		playerStats.totalStats.domNum = playerStats.totalStats.domNum + num;
 		const percent = calcPercentRatio(14, card.rank);
-		const ratio = getRelationalDiff(baseEnemyStats.totalStats.vitality, percent);
+		const ratio = getRelationalDiff(
+			baseEnemyStats.totalStats.vitality,
+			percent
+		);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
 		const decPercent = calcPercentRatio(3, card.rank);
@@ -255,11 +278,20 @@ export const dominator = ({
 		);
 		opponentStats.totalStats.intelligence =
       opponentStats.totalStats.intelligence - decRatio;
-
-		if (opponentStats.totalStats.intelligence < 0) {
-			opponentStats.totalStats.intelligence =
-        baseEnemyStats.totalStats.intelligence;
+	  if (opponentStats.totalStats.intelligence < 0) {
+			opponentStats.totalStats.intelligence = 0;
 		}
+
+		const diff = getPercentOfTwoNumbers(
+			opponentStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence
+		);
+		const opponentEnergy = processEnergyBar({
+			dpr: diff,
+			energy: opponentStats.totalStats.energy,
+		});
+		opponentStats.totalStats.energy = opponentEnergy.energy;
+		opponentStats.totalStats.dpr = opponentEnergy.dpr;
 
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
@@ -278,7 +310,7 @@ export const dominator = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	if (round % 3 === 2 && playerStats.totalStats.isDominator) {
@@ -300,7 +332,7 @@ export const crusher = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
@@ -308,7 +340,10 @@ export const crusher = ({
 		playerStats.totalStats.isUseCrusher = true;
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(25, card.rank);
-		const ratio = getRelationalDiff(baseEnemyStats.totalStats.vitality, percent);
+		const ratio = getRelationalDiff(
+			baseEnemyStats.totalStats.vitality,
+			percent
+		);
 		const defDecratio = getRelationalDiff(
 			baseEnemyStats.totalStats.defense,
 			percent
@@ -343,7 +378,7 @@ export const crusher = ({
 			isItem: false,
 			simulation,
 			basePlayerStats,
-			baseEnemyStats
+			baseEnemyStats,
 		});
 	}
 	if (round % 4 === 0 && playerStats.totalStats.isUseCrusher)

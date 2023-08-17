@@ -3,7 +3,9 @@ import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import {
+	getPercentOfTwoNumbers, getRelationalDiff, processEnergyBar, processHpBar, relativeDiff 
+} from "helpers/battle";
 import { titleCase } from "title-case";
 
 export const electrocute = ({
@@ -67,7 +69,7 @@ export const electrocute = ({
 		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = procStun[probability([ 55, 45 ])];
 		const percent = calcPercentRatio(20, card.rank);
-		perDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
+		perDamage = getRelationalDiff(playerStats.totalStats.vitality, percent);
 		if (isNaN(perDamage)) perDamage = 0;
 		// reduce damage by 50%
 		if (opponentStats.totalStats.damageReductionPercent?.electrocute) {
@@ -260,6 +262,14 @@ export const misdirection = ({
 		);
 		playerStats.totalStats.intelligence =
       playerStats.totalStats.intelligence + ratio;
+
+	  const diff = getPercentOfTwoNumbers(playerStats.totalStats.intelligence, basePlayerStats.totalStats.intelligence);
+	  const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy
+	  });
+	  playerStats.totalStats.energy = playerEnergy.energy;
+	  playerStats.totalStats.dpr = playerEnergy.dpr;
 		if (isConfused[probability([ 60, 40 ])]) {
 			const percent = calcPercentRatio(25, card.rank);
 			abilityDamage = getRelationalDiff(

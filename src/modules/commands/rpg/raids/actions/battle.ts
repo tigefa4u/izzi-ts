@@ -126,8 +126,8 @@ export const battleBoss = async ({
 		if (!playerStats) return;
 
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
-		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
-		enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
+		// enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
+		// enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
 		const {
 			playerStats: effectiveStats,
 			opponentStats: opponentEffectiveStats,

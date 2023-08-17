@@ -3,7 +3,13 @@ import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
 import { calcPercentRatio, statRelationMap } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import {
+	getPercentOfTwoNumbers,
+	getRelationalDiff,
+	processEnergyBar,
+	processHpBar,
+	relativeDiff,
+} from "helpers/battle";
 
 export const surge = ({
 	playerStats,
@@ -66,7 +72,7 @@ export const surge = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	} else if (
 		playerStats.totalStats.strength > perStr &&
@@ -128,7 +134,7 @@ export const surge = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	if (
@@ -151,7 +157,7 @@ export const surge = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 
@@ -173,7 +179,7 @@ export const chronobreak = ({
 	card,
 	simulation,
 	basePlayerStats,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	// tempora rewind restoring hp and enemy is caught in time dialation taking 20% damage
 	// if the stat is lower than basestat, reset it to base stat
@@ -230,6 +236,16 @@ export const chronobreak = ({
 				resetStat += `${statRelationMap[key]}${i !== 3 ? ", " : ""}`;
 			}
 		});
+		const diff = getPercentOfTwoNumbers(
+			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence
+		);
+		const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy,
+		});
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
 		const desc =
       `causing a temporal rewind restoring __${restoredHp}__ **HP**${
       	resetStat ? ` as well as restoring **${resetStat}** stats` : ""
@@ -249,7 +265,7 @@ export const chronobreak = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	if (round % 2 === 0) {

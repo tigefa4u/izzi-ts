@@ -34,8 +34,8 @@ export const prepareEnergyBar = (num = 12) => {
 	const energy = [];
 	for (let i = 0; i < num; i++) {
 		if (i === 0) energy.push(emoji.dpr1);
-		if (i === num - 1) energy.push(emoji.dprrunner3);
-		else energy.push(emoji.dprrunner2);
+		if (i === num - 1) energy.push(emoji.dpr3);
+		else energy.push(emoji.dpr2);
 	}
 	return energy;
 };

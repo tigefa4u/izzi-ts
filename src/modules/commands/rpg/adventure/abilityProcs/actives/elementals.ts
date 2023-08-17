@@ -7,8 +7,10 @@ import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { addTeamEffectiveness, effectiveness } from "helpers/adventure";
 import {
+	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
 	getRelationalDiff,
+	processEnergyBar,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
@@ -25,16 +27,16 @@ export const elementalStrike = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
-}: any) => {
-	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Deal __45%__ magic damage based on your **INT** as well as buffing your **INT** by __25%__
+	baseEnemyStats,
+}: BattleProcessProps) => {
+	if (!card || !opponentStats.totalStats.originalHp || !playerStats.totalStats.originalHp) return;
+	// Deal __100%__ magic damage based on your **INT** as well as buffing your **INT** by __25%__
 	let damageDiff;
 	let damageDealt;
-	if (opponentStats.totalStats.abilityToResist?.elementalStrike) {
+	if (opponentStats.totalStats.abilityToResist?.["elemental strike"]) {
 		const canResist = [ true, false ][
 			probability([
-				opponentStats.totalStats.abilityToResist.elementalStrike.percent,
+				opponentStats.totalStats.abilityToResist["elemental strike"].percent,
 				100,
 			])
 		];
@@ -55,7 +57,7 @@ export const elementalStrike = ({
 				isItem: false,
 				simulation,
 				baseEnemyStats,
-				basePlayerStats
+				basePlayerStats,
 			});
 			return {
 				playerStats,
@@ -63,8 +65,15 @@ export const elementalStrike = ({
 			};
 		}
 	}
-	if (round % 2 === 0) {
-		const percent = calcPercentRatio(45, card.rank);
+	if (round % 3 === 0) {
+		const percent = calcPercentRatio(100, card.rank);
+
+		const incPercent = calcPercentRatio(25, card.rank);
+
+		const intRelDiff = getRelationalDiff(basePlayerStats.totalStats.intelligence, incPercent);
+		playerStats.totalStats.intelligence =
+      playerStats.totalStats.intelligence + intRelDiff;
+
 		damageDealt = getRelationalDiff(
 			playerStats.totalStats.intelligence,
 			percent
@@ -102,13 +111,13 @@ export const elementalStrike = ({
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
 		);
-		const incPercent = calcPercentRatio(25, card.rank);
-
-		const intRelDiff = getRelationalDiff(
-			card.stats.intelligence,
-			incPercent
-		);
-		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + intRelDiff;
+	  const diff = getPercentOfTwoNumbers(playerStats.totalStats.intelligence, basePlayerStats.totalStats.intelligence);
+	  const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy
+	  });
+	  playerStats.totalStats.energy = playerEnergy.energy;
+	  playerStats.totalStats.dpr = playerEnergy.dpr;
 
 		if (damageDiff < 0) damageDiff = 0;
 
@@ -141,7 +150,7 @@ export const elementalStrike = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -162,7 +171,7 @@ export const spellBook = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -176,12 +185,20 @@ export const spellBook = ({
 		playerDamageDiff;
 	if (round >= 3 && round % 1 === 0 && !playerStats.totalStats.isSB) {
 		playerStats.totalStats.isSB = true;
-		const temp = randomElementFromArray([ "vitality", "dexterity", "strength", "nothing" ]);
+		const temp = randomElementFromArray([
+			"vitality",
+			"dexterity",
+			"strength",
+			"nothing",
+		]);
 		// calculate % based on rank
 		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
 		// proc every round [PSV]
 		const percent = calcPercentRatio(8, card.rank);
-		let ratio = getRelationalDiff(basePlayerStats.totalStats.dexterity, percent);
+		let ratio = getRelationalDiff(
+			basePlayerStats.totalStats.dexterity,
+			percent
+		);
 		if (temp === "strength") {
 			const hpDiff =
         playerStats.totalStats.originalHp - playerStats.totalStats.strength;
@@ -197,7 +214,7 @@ export const spellBook = ({
 			playerStats.totalStats.dexterity =
         playerStats.totalStats.dexterity + ratio;
 			desc = `increasing its **SPD** by __${percent}%__`;
-		} else if (temp === "nothing")  {
+		} else if (temp === "nothing") {
 			desc = "**but nothing happened.**";
 		} else if (temp === "vitality") {
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
@@ -287,7 +304,7 @@ export const spellBook = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -309,7 +326,7 @@ export const tornado = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -362,7 +379,7 @@ export const tornado = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -383,7 +400,7 @@ export const eclipse = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: any) => {
 	if (!card) return;
 	playerStats.totalStats.previousRound
@@ -406,7 +423,18 @@ export const eclipse = ({
 			percent
 		);
 
-		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + relDiff;
+		playerStats.totalStats.intelligence =
+      playerStats.totalStats.intelligence + relDiff;
+		const diff = getPercentOfTwoNumbers(
+			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence
+		);
+		const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy,
+		});
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
 		const ddPercent = calcPercentRatio(20, card.rank);
 		const defDiff = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
@@ -445,7 +473,7 @@ export const eclipse = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {

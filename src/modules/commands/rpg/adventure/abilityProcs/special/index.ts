@@ -4,7 +4,11 @@ import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff } from "helpers/battle";
+import {
+	getPercentOfTwoNumbers,
+	getRelationalDiff,
+	processEnergyBar,
+} from "helpers/battle";
 import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
 
 export const harbingerOfDeath = ({
@@ -17,7 +21,7 @@ export const harbingerOfDeath = ({
 	card,
 	simulation,
 	basePlayerStats,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	// Nullify all effects resetting critical, elemental advantage
 	// and critical damage
@@ -26,11 +30,18 @@ export const harbingerOfDeath = ({
 	if (!card) return;
 	let proc = true;
 	if (opponentStats.totalStats.resistingHarbingerOfDeathPercent) {
-		const chances = [ opponentStats.totalStats.resistingHarbingerOfDeathPercent, 100 ];
+		const chances = [
+			opponentStats.totalStats.resistingHarbingerOfDeathPercent,
+			100,
+		];
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
-	if (round % HARBINGER_OF_DEATH_PROC_ROUND === 0 && !playerStats.totalStats.isHarbingerOfDeath && proc) {
+	if (
+		round % HARBINGER_OF_DEATH_PROC_ROUND === 0 &&
+    !playerStats.totalStats.isHarbingerOfDeath &&
+    proc
+	) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
 		const percent = calcPercentRatio(14, card.rank);
 		// const percentLoss = calcPercentRatio(10, card.rank);
@@ -42,7 +53,7 @@ export const harbingerOfDeath = ({
 		// opponentStats.totalStats.criticalDamage = 1;
 		// opponentStats.totalStats.criticalInc = 1;
 		// opponentStats.totalStats.criticalTemp = 1;
-		
+
 		// Bone plating is no longer stack
 		// opponentStats.totalStats.isPlatting = false;
 		// opponentStats.totalStats.isEndure = false;
@@ -80,12 +91,26 @@ export const harbingerOfDeath = ({
 			// );
 			// opponentStats.totalStats[key] = opponentStats.totalStats[key] - statLoss;
 
-			const statGain = getRelationalDiff(basePlayerStats.totalStats[key], percent);
+			const statGain = getRelationalDiff(
+				basePlayerStats.totalStats[key],
+				percent
+			);
 			playerStats.totalStats[key] = playerStats.totalStats[key] + statGain;
 		});
-		const desc = "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
-	    `${emoji.harbingerofdeath} as well as ` +
-	    `buffing all **Ally Ability Stats** by __${percent}%__`;
+		const diff = getPercentOfTwoNumbers(
+			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence
+		);
+		const playerEnergy = processEnergyBar({
+			dpr: diff,
+			energy: playerStats.totalStats.energy,
+		});
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
+		const desc =
+      "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
+      `${emoji.harbingerofdeath} as well as ` +
+      `buffing all **Ally Ability Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -100,14 +125,18 @@ export const harbingerOfDeath = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
-	if (playerStats.totalStats.isHarbingerOfDeath && opponentStats.totalStats.canEvadeHarbingerOfDeath) {
+	if (
+		playerStats.totalStats.isHarbingerOfDeath &&
+    opponentStats.totalStats.canEvadeHarbingerOfDeath
+	) {
 		opponentStats.totalStats.evasion = 1.32;
-		const desc = `${playerStats.name}'s **${card.name}** is affected by ${emoji.seekersarmguard} ` +
-		"**Seekers Armguard** increasing " +
-		`**EVASION** chances of ${opponentStats.name} by __32%__`;
+		const desc =
+      `${playerStats.name}'s **${card.name}** is affected by ${emoji.seekersarmguard} ` +
+      "**Seekers Armguard** increasing " +
+      `**EVASION** chances of ${opponentStats.name} by __32%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -122,7 +151,7 @@ export const harbingerOfDeath = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {

@@ -6,6 +6,7 @@ import {
 } from "@customTypes/battle";
 import { calcPercentRatio } from "helpers/ability";
 import {
+	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
 	processEnergyBar,
 	processHpBar,
@@ -13,7 +14,11 @@ import {
 	relativeDiff,
 } from "helpers/battle";
 import {
-	DEFAULT_DPR_GAIN, DEFAULT_DPR_LOSS, DPR_GAIN_ON_EVADE, DPR_MAX_BUFF, HARBINGER_OF_DEATH_PROC_ROUND, 
+	DEFAULT_DPR_GAIN,
+	DEFAULT_DPR_LOSS,
+	DPR_GAIN_ON_EVADE,
+	DPR_MAX_BUFF,
+	HARBINGER_OF_DEATH_PROC_ROUND,
 } from "helpers/constants";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
@@ -60,7 +65,7 @@ function processStack(stats: Stack) {
 		"isRapid",
 		"isLastStand",
 		"isLeer",
-		"isLightningShield"
+		"isLightningShield",
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -93,7 +98,7 @@ function processUnableToAttack<T extends BattleStats>(
 	return (
 		playerStats.totalStats.isAsleep ||
     playerStats.totalStats.isStunned ||
-	playerStats.totalStats.isParanoid ||
+    playerStats.totalStats.isParanoid ||
     (allowProcOnEvadeHit === true &&
     opponentStats.totalStats.isEvadeHit === true
     	? false
@@ -108,8 +113,8 @@ const capDPRBuff = (num: number) => {
 };
 
 export const BattleProcess = async ({
-	baseEnemyStats,
-	basePlayerStats,
+	baseEnemyStats: baseEnemy,
+	basePlayerStats: basePlayer,
 	isPlayerFirst,
 	playerStats,
 	opponentStats,
@@ -118,6 +123,9 @@ export const BattleProcess = async ({
 	isRaid,
 	multiplier,
 }: BattleProcessProps) => {
+	// Need to clone base stats as its been overridden
+	const baseEnemyStats = clone(baseEnemy);
+	const basePlayerStats = clone(basePlayer);
 	if (!opponentStats) {
 		throw new Error("Unable to process opponent");
 	}
@@ -169,7 +177,9 @@ export const BattleProcess = async ({
 	// if player is unable to attack
 	const unableToAttack = processUnableToAttack(playerStats, opponentStats);
 	if (unableToAttack && !opponentStats.totalStats.isEvadeHit) {
-		const cardHasRapidFire = playerStats.cards.find((c) => c?.abilityname === "rapid fire");
+		const cardHasRapidFire = playerStats.cards.find(
+			(c) => c?.abilityname === "rapid fire"
+		);
 		if (cardHasRapidFire) {
 			// rapid fire is 35%
 			const percent = calcPercentRatio(35, cardHasRapidFire.rank);
@@ -177,14 +187,32 @@ export const BattleProcess = async ({
 				...playerStats.totalStats.damageBuildUpPercent,
 				"rapid fire": {
 					percent: percent,
-					basePercent: percent
-				}
+					basePercent: percent,
+				},
 			};
 		}
 	}
+	/**
+	 * If player evades consume some % INT
+	 */
 	if (opponentStats.totalStats.isEvadeHit) {
-		// To keep it fair gain +.05 dpr on evade
-		opponentStats.totalStats.dpr = opponentStats.totalStats.dpr + DPR_GAIN_ON_EVADE;
+		const intToReduce = baseEnemyStats.totalStats.intelligence * .15;
+		opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - intToReduce;
+		if (opponentStats.totalStats.intelligence < 0) {
+			opponentStats.totalStats.intelligence = 0;
+		}
+
+		let diff = getPercentOfTwoNumbers(
+			opponentStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence
+		);
+		if (diff < 0 || isNaN(diff)) diff = 0;
+		const opponentEnergy = processEnergyBar({
+			dpr: diff,
+			energy: opponentStats.totalStats.energy,
+		});
+		opponentStats.totalStats.dpr = opponentEnergy.dpr;
+		opponentStats.totalStats.energy = opponentEnergy.energy;	
 	}
 	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
@@ -207,26 +235,41 @@ export const BattleProcess = async ({
 			);
 		}
 
-		opponentStats.totalStats.strength =
-      opponentStats.totalStats.strength - damageDealt;
+		/**
+     * INT acts as a shield which absorbs damage
+     * if INT is 0 only then hp starts to reduce.
+     */
 
-		// After damage is dealt, reduce the DPR of allies and 
-		// increase the DPR of enemies
-		// DPR - damage per round (or) energy
-		playerStats.totalStats.dpr = playerStats.totalStats.dpr - DEFAULT_DPR_LOSS;
-		opponentStats.totalStats.dpr = opponentStats.totalStats.dpr + DEFAULT_DPR_GAIN;
-		if (playerStats.totalStats.dpr < 0) playerStats.totalStats.dpr = 0;
-		const playerEnergy = processEnergyBar({
-			dpr: playerStats.totalStats.dpr,
-			energy: playerStats.totalStats.energy 
-		});
+		if (damageDealt > opponentStats.totalStats.intelligence) {
+			if (opponentStats.totalStats.intelligence < 0)
+				opponentStats.totalStats.intelligence = 0;
+			const damageToDeal = damageDealt - opponentStats.totalStats.intelligence;
+			opponentStats.totalStats.intelligence = 0;
+
+			opponentStats.totalStats.strength = Math.floor(opponentStats.totalStats.strength - damageToDeal);
+		} else if (damageDealt <= opponentStats.totalStats.intelligence) {
+			opponentStats.totalStats.intelligence =
+        opponentStats.totalStats.intelligence - damageDealt;
+			if (opponentStats.totalStats.intelligence < 0)
+				opponentStats.totalStats.intelligence = 0;
+		}
+
+		// 	opponentStats.totalStats.strength =
+		//   opponentStats.totalStats.strength - damageDealt;
+
+		/**
+     * DPR just visual rep of INT %
+     */
+		let diff = getPercentOfTwoNumbers(
+			opponentStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence
+		);
+		if (diff < 0 || isNaN(diff)) diff = 0;
 		const opponentEnergy = processEnergyBar({
-			dpr: opponentStats.totalStats.dpr,
-			energy: opponentStats.totalStats.energy 
+			dpr: diff,
+			energy: opponentStats.totalStats.energy,
 		});
-		playerStats.totalStats.dpr = playerEnergy.dpr;
 		opponentStats.totalStats.dpr = opponentEnergy.dpr;
-		playerStats.totalStats.energy = playerEnergy.energy;
 		opponentStats.totalStats.energy = opponentEnergy.energy;
 
 		if (
@@ -273,7 +316,7 @@ export const BattleProcess = async ({
 		isAbilityDefeat,
 		isAbilitySelfDefeat,
 		abilityDamage,
-		isPlayerParanoid
+		isPlayerParanoid,
 	};
 };
 
