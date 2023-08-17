@@ -86,3 +86,10 @@ FROM pg_stat_user_tables;
 
 # Migrations
 - knex `createTableIfNotExist` is deprecated
+
+# Forever logs
+Forever creates logs that can increase disk size upto more than 21GB
+`du -cha --max-depth=1 / | grep -E "M|G"`
+Use the above command to find file size of all dir
+
+- Optimize DB to remove millions of rows and update a count for fodders
