@@ -230,7 +230,7 @@ export async function prepareRankAndFetchCards({
 	}
 }
 
-async function fetchRequiredCards({
+export async function fetchRequiredCards({
 	rank = "silver",
 	user_id,
 	limit,
@@ -259,6 +259,7 @@ async function fetchRequiredCards({
 		id: c.id,
 		rank: c.rank,
 		character_id: c.character_id,
+		card_count: c.card_count || 1
 	}));
 }
 
@@ -361,7 +362,7 @@ function prepareEOI({
 	};
 }
 
-function preparePayload(
+export function preparePayload(
 	rank: keyof XPGainPerRankProps,
 	condition: boolean,
 	bucket: XPGainPerRankProps,

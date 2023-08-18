@@ -15,6 +15,7 @@ import { createSingleCanvas } from "helpers/canvas";
 import {
 	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
 	CONSOLE_BUTTONS,
+	FODDER_RANKS,
 	ranksMeta,
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
@@ -25,6 +26,13 @@ import { evolveCard } from "../evolution";
 import { upgradeCard } from "../evolution/upgradeCard";
 import { getSortCache } from "../sorting/sortCache";
 import { selectCard } from "./select";
+
+const prepareFodderDesc = (infoData: CollectionCardInfoProps) => {
+	if (FODDER_RANKS.includes(infoData.rank)) {
+		return `\n**FODDERS:** ${infoData.card_count || 1}`;
+	}
+	return "";
+};
 
 function prepareInfoDescription(
 	infoData: CollectionCardInfoProps,
@@ -49,11 +57,11 @@ function prepareInfoDescription(
 		abilitydescription: infoData.abilitydescription,
 		is_passive: infoData.is_passive,
 	};
-	const desc = `**LEVEL ${infoData.character_level}**\n**EXP [${
+	const desc = `**Level ${infoData.character_level}**\n**Exp [${
 		infoData.exp
-	} / ${infoData.r_exp}]**\n**Element Type:** ${infoData.type} ${emojiMap(
+	} / ${infoData.r_exp}]**${prepareFodderDesc(infoData)}\n**Element:** ${infoData.type} ${emojiMap(
 		infoData.type
-	)}\n**RANK:** ${titleCase(infoData.rank)}\n**SOULS:** ${infoData.souls}${
+	)}\n**Rank:** ${titleCase(infoData.rank)}\n**Souls:** ${infoData.souls}${
 		reqSouls > 0
 			? ` / ${reqSouls} ${infoData.souls >= reqSouls ? "(Upgradable)" : ""}`
 			: ""
@@ -158,45 +166,47 @@ export const getCardInfo = async ({
 				iconURL: author.displayAvatarURL()
 			});
 
-		const buttons = customButtonInteraction(
-			context.channel,
-			[
-				{
-					label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
-					params: {
-						id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
-						author,
-						cardId: infoData.id,
+		if (!FODDER_RANKS.includes(infoData.rank)) {
+			const buttons = customButtonInteraction(
+				context.channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
+						params: {
+							id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
+							author,
+							cardId: infoData.id,
+						},
 					},
-				},
-				{
-					label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
-					params: {
-						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
-						author,
-						cardId: infoData.id,
+					{
+						label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
+						params: {
+							id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
+							author,
+							cardId: infoData.id,
+						},
 					},
-				},
-				{
-					label: CONSOLE_BUTTONS.SELECT_CARD.label,
-					params: {
-						id: CONSOLE_BUTTONS.SELECT_CARD.id,
-						author,
-						cardId: infoData.id,
+					{
+						label: CONSOLE_BUTTONS.SELECT_CARD.label,
+						params: {
+							id: CONSOLE_BUTTONS.SELECT_CARD.id,
+							author,
+							cardId: infoData.id,
+						},
 					},
+				],
+				author.id,
+				handleCardUpgrade,
+				() => {
+					return;
 				},
-			],
-			author.id,
-			handleCardUpgrade,
-			() => {
-				return;
-			},
-			false,
-			2
-		);
-
-		if (buttons) {
-			embed.setButtons(buttons);
+				false,
+				2
+			);
+	
+			if (buttons) {
+				embed.setButtons(buttons);
+			}
 		}
 		context.channel?.sendMessage(embed);
 		return;

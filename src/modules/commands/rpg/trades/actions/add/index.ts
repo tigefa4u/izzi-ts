@@ -3,6 +3,7 @@ import loggers from "loggers";
 import { addGoldToTrade } from "./gold";
 import { addMultipleCards } from "./multipleCards";
 import { addCardByIds } from "./cardByIds";
+import { addFoddersToTrade } from "./addFodders";
 
 export const addToTrade = async (params: TradeActionProps) => {
 	try {
@@ -14,6 +15,8 @@ export const addToTrade = async (params: TradeActionProps) => {
 			addMultipleCards(params);
 		} else if (cta === "card") {
 			addCardByIds(params);
+		} else if (cta === "fodds" || cta === "fodders" || cta === "fodder" || cta === "fodd") {
+			addFoddersToTrade(params);
 		}
 	} catch (err) {
 		loggers.error(

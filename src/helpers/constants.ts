@@ -134,7 +134,7 @@ export const GOLD_LIMIT = 100000000;
 export const BET_LIMIT = 500000;
 export const DEFAULT_PACK = {
 	num: 50,
-	cost: 1350,
+	cost: 1100, 
 	cardPerPage: 10,
 	rank: "platinum",
 	rank_id: 3,
@@ -146,9 +146,14 @@ export const PAGE_FILTER = {
 };
 
 export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
-	silver: 100,
+	/**
+	 * These changes are related to condensed fodders.
+	 * Since there will only be platinum fodders the xp gain
+	 * is the average of silver (100) + gold (150) + plat (200)
+	 */
+	silver: 150, // 100
 	gold: 150,
-	platinum: 200,
+	platinum: 150, // 200
 	diamond: 250,
 	legend: 300,
 	divine: 450,
@@ -565,3 +570,5 @@ export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donato
 "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
 
 export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
+
+export const FODDER_RANKS = [ "silver", "gold", "platinum" ];

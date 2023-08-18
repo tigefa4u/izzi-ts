@@ -1,18 +1,23 @@
 import { FilterProps, ResponseWithPagination } from "@customTypes";
 import { CharactersReturnType } from "@customTypes/characters";
 import {
+	CollectionCreateProps,
 	CollectionParams,
 	CollectionProps,
 	CollectionReturnType,
 	CollectionUpdateProps,
 	CT,
+	DirectUpdateCreateFodderProps,
 	ICollectionCreateProps,
+	ICollectionItemCreateProps,
 } from "@customTypes/collections";
 import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
 import Cache from "cache";
-import { CHARACTER_LEVEL_EXTENDABLE_LIMIT, ranksMeta } from "helpers/constants";
+import {
+	CHARACTER_LEVEL_EXTENDABLE_LIMIT, FODDER_RANKS, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
+} from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
@@ -30,6 +35,123 @@ type C = {
   type: string;
 };
 
+export const consumeFodders = async (data: DirectUpdateCreateFodderProps) => {
+	try {
+		const conn = Collections.dbConnection;
+		return Promise.all(data.map(async (d) => {
+			const res = await conn(Collections.tableName).where({
+				rank: "platinum",
+				rank_id: ranksMeta.platinum.rank_id,
+				user_id: d.user_id,
+				character_id: d.character_id
+			}).where("card_count", ">=", d.count)
+				.update({ card_count: conn.raw(`card_count - ${d.count}`) })
+				.returning("*")
+				.then((resp) => resp[0]);
+			
+			if (!res) {
+				throw new Error("consumeFodder Update failed: Insufficient cards");
+			}
+			if (res.card_count <= 0) {
+				loggers.info("CollectionControllers.consumeFodders: deleting fodder: ", res, d);
+				await conn(Collections.tableName).where({
+					id: res.id,
+					rank: "platinum",
+					rank_id: ranksMeta.platinum.rank_id,
+					user_id: d.user_id,
+					character_id: d.character_id
+				}).del();
+			}
+			return res;
+		}));
+	} catch (err) {
+		loggers.error("CollectionsController.consumeFodder: ERROR", err);
+		return;
+	}
+};
+
+export const directUpdateCreateFodder = async (data: DirectUpdateCreateFodderProps) => {
+	try {
+		const dataToInsert: CollectionCreateProps[] = [];
+		const conn = Collections.dbConnection;
+		return Promise.all(data.map(async (d) => {
+			try {
+				const res = await conn(Collections.tableName).where({
+					rank: "platinum",
+					rank_id: ranksMeta.platinum.rank_id,
+					user_id: d.user_id,
+					character_id: d.character_id
+				}).update({ card_count: conn.raw(`card_count + ${d.count || 1}`) })
+					.returning("*");
+				
+				loggers.info("directupdateCreateFodder: fodder updated", res);
+				if (!res || res.length <= 0) {
+					throw `Fodder not found ${d.character_id}, trying to create new fodder row`;
+				}
+				return res;
+			} catch (err) {
+				loggers.error("directUpdateCreateFodder: update failed, creating new cards", err);
+				dataToInsert.push({
+					user_id: d.user_id,
+					character_id: d.character_id,
+					rank: "platinum",
+					rank_id: ranksMeta.platinum.rank_id,
+					character_level: STARTER_CARD_LEVEL,
+					exp: STARTER_CARD_EXP,
+					r_exp: STARTER_CARD_R_EXP,
+					card_count: d.count || 1,
+					is_tradable: true,
+					is_item: false,
+					is_favorite: false,
+					is_on_cooldown: false	
+				});
+			}
+		})).then(async (res) => {
+			const resp = res.flat().filter(x => x !== undefined);
+			if (dataToInsert.length > 0) {
+				const resultInserted = await Collections.create(dataToInsert);
+				console.log({ resultInserted });
+				resp.push(resultInserted);
+				return resp;
+			}
+		});
+	} catch (err) {
+		loggers.error("CollectionsController.directUpdateOrCreateFodder: ERROR", err);
+		return;
+	}
+};
+
+/**
+ * This function is used to normalize fodder ranks
+ * with backward compatibility
+ * @param fodders
+ * @returns 
+ */
+export const updateOrCreateFodder = async (fodders: CollectionCreateProps[]) => {
+	try {
+		// normalize fooders to platinum rank
+		const result = fodders.reduce((acc, r) => {
+			acc[`${r.user_id}_${r.character_id}`] = (acc[`${r.user_id}_${r.character_id}`] || 0) + 1;
+			return acc;
+		}, {} as { [key: string]: number; });
+		const preparedData = Object.keys(result).map((key) => {
+			const ids = key.split("_");
+			const user_id = +ids[0];
+			const character_id = +ids[1];
+
+			return {
+				user_id,
+				character_id,
+				count: result[key]
+			};
+		});
+		return directUpdateCreateFodder(preparedData);
+	} catch (err) {
+		loggers.error("CollectionsController.updateOrCreateFodder: ERROR", err);
+		return;
+	}
+};
+
 export const createCollection: (
   data: ICollectionCreateProps
 ) => Promise<CollectionProps[] | CollectionProps | undefined> = async function (
@@ -38,12 +160,43 @@ export const createCollection: (
 	try {
 		if (!data) return;
 		loggers.info("creating collection with data: ", data);
-		return Collections.create(data);
+		/**
+		 * IMPORTANT INFO
+		 * - To reduce the data row size fodders are condensed into single rank
+		 * while updating its count.
+		 */
+		let dataToInsert: CollectionCreateProps[] = [];
+		let fodders: CollectionCreateProps[] = [];
+		if (Array.isArray(data)) {
+			dataToInsert = data.filter((x) => !FODDER_RANKS.includes(x.rank));
+			fodders = data.filter((x) => FODDER_RANKS.includes(x.rank));
+		} else if (!FODDER_RANKS.includes(data.rank)) {
+			dataToInsert = [ data ];
+		} else {
+			fodders = [ data ];
+		}
+		if (fodders.length > 0) {
+			return updateOrCreateFodder(fodders);
+		}
+		if (dataToInsert.length > 0) {
+			return Collections.create(dataToInsert);
+		}
+		return;
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.createCollection: ERROR",
 			err
 		);
+		return;
+	}
+};
+
+export const createItem = async (data: ICollectionItemCreateProps) => {
+	try {
+		loggers.info("creating items with data: ", data);
+		return Collections.create(data);
+	} catch (err) {
+		loggers.error("CollectionsController.createItem: ERROR", err);
 		return;
 	}
 };
@@ -191,32 +344,6 @@ export const getAllCollections = async (
 					}
 				}
 				c.reqSouls = reqSouls;
-				// 	let remainingHours = 0,
-				// 		remainingMinutes = 0;
-				// 	if (c.is_on_cooldown) {
-				// 		const key = "card-cd::" + c.id;
-				// 		try {
-				// 			let cd = (await Cache.get(key)) as any;
-				// 			if (cd) {
-				// 				cd = JSON.parse(cd) as any;
-				// 				const { cooldownEndsAt } = cd;
-				// 				const remainingTime =
-				// (cooldownEndsAt - new Date().getTime()) / 1000 / 60;
-				// 				remainingHours = Math.floor(remainingTime / 60);
-				// 				remainingMinutes = Math.floor(remainingTime % 60);
-				// 				if (remainingHours < 0) {
-				// 					remainingHours = 0;
-				// 				}
-				// 				if (remainingMinutes < 0) {
-				// 					remainingMinutes = 0;
-				// 				}
-				// 			}
-				// 		} catch (err) {
-				// 			// pass
-				// 		}
-				// 		c.remainingHours = remainingHours;
-				// 		c.remainingMinutes = remainingMinutes;
-				// 	}
 
 			})
 		]);
@@ -303,4 +430,17 @@ export const resetAllNicknames = async (user_id: number) => {
 		);
 		return;
 	}	
+};
+
+export const getFoddersV2 = async (params: CollectionParams, filter: {
+	limit: number;
+	cond?: "gte" | "lte",
+}) => {
+	try {
+		loggers.info("Fetching fodders v2 with:", params, filter);
+		return Collections.getFoddersForEnchantmentV2(params, filter);
+	} catch (err) {
+		loggers.error("CollectionsController.getFoddersV2: ERROR", err);
+		return;
+	}
 };

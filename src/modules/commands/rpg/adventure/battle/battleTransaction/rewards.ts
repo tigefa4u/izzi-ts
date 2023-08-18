@@ -4,7 +4,7 @@ import { UserProps, UserUpdateProps } from "@customTypes/users";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import {
-	CONSOLE_BUTTONS, MAX_MANA_GAIN, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
+	CONSOLE_BUTTONS, MAX_MANA_GAIN, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
 } from "helpers/constants";
 import loggers from "loggers";
 
@@ -111,21 +111,21 @@ export const calculateUserProgress = (user: UserProps, card: C, author: A, { xpG
 
 export const calculateUserRewards = (user: UserProps, multiple = 1) => {
 	try {
-		let rankReward = "silver";
-		let rankId = 1;
+		const rankReward = "platinum";
+		const rankId = ranksMeta.platinum.rank_id;
 		let goldReward = randomNumber(80, 109);
 		if (user.max_ruin >= 20 && user.max_ruin < 40) {
 			goldReward = randomNumber(110, 150);
-			rankReward = "gold";
-			rankId = 2;
+			// rankReward = "gold";
+			// rankId = 2;
 		} else if (user.max_ruin >= 40 && user.max_ruin < 100) {
 			goldReward = randomNumber(160, 200);
-			rankReward = "platinum";
-			rankId = 3;
+			// rankReward = "platinum";
+			// rankId = 3;
 		} else if (user.max_ruin >= 100) {
 			goldReward = randomNumber(210, 500);
-			rankReward = "platinum";
-			rankId = 3;
+			// rankReward = "platinum";
+			// rankId = 3;
 		}
 		return {
 			rankReward,
