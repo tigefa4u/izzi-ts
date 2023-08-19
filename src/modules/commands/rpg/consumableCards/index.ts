@@ -51,7 +51,7 @@ export const cards = ({
 			)
 			.setFooter({ text: "Total EXP Gained and Total Cost depends on the cards you consume", });
 		embed.addField(
-			`Platinum (${3 * XP_GAIN_PER_RANK.platinum} xp)`,
+			`Platinum (${3 * XP_GAIN_PER_RANK.platinum} xp per card)`,
 			`${withSameName.platinum} Cards`,
 			true
 		);
@@ -60,7 +60,7 @@ export const cards = ({
 			`Between Level ${baseLevel} to ${maxLevel}`
 		);
 		embed.addField(
-			`Platinum (${XP_GAIN_PER_RANK.platinum} xp)`,
+			`Platinum (${XP_GAIN_PER_RANK.platinum} xp per card)`,
 			`${withDifferentName.platinum} Cards`,
 			true
 		);
