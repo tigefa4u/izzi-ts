@@ -107,10 +107,10 @@ export const addFoddersToTrade = async ({
 			params.limit = MAX_CARDS_IN_TRADE;
 		}
 		const trader = tradeQueue[author.id];
-		const fodders = trader.queue.filter((q) => q.is_fodder);
+		const fodderCount = trader.queue.filter((q) => q.is_fodder).reduce((acc, r) => acc + r.count, 0);
 
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
-		if ((fodders.length + params.limit) > MAX_CARDS_IN_TRADE) {
+		if ((fodderCount + params.limit) > MAX_CARDS_IN_TRADE) {
 			embed.setDescription(
 				`You cannot trade more than __${MAX_CARDS_IN_TRADE}__ cards at once`
 			);
