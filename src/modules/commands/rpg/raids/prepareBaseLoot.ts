@@ -12,20 +12,20 @@ const baseLoot = (): any => ({
 				extraGold: randomNumber(16000, 18000),
 				gamePoints: 1,
 				drop: [
-					{
-						rank: "silver",
-						rank_id: 1,
-						number: 3,
-					},
-					{
-						rank: "gold",
-						rank_id: 2,
-						number: 3,
-					},
+					// {
+					// 	rank: "silver",
+					// 	rank_id: 1,
+					// 	number: 3,
+					// },
+					// {
+					// 	rank: "gold",
+					// 	rank_id: 2,
+					// 	number: 3,
+					// },
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 3,
+						number: 62,
 					},
 				],
 				rare: [
@@ -71,20 +71,20 @@ const baseLoot = (): any => ({
 				extraGold: randomNumber(22000, 25000),
 				gamePoints: 2,
 				drop: [
-					{
-						rank: "silver",
-						rank_id: 1,
-						number: 5,
-					},
-					{
-						rank: "gold",
-						rank_id: 2,
-						number: 5,
-					},
+					// {
+					// 	rank: "silver",
+					// 	rank_id: 1,
+					// 	number: 5,
+					// },
+					// {
+					// 	rank: "gold",
+					// 	rank_id: 2,
+					// 	number: 5,
+					// },
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 5,
+						number: 70,
 					},
 				],
 				rare: [
@@ -132,20 +132,20 @@ const baseLoot = (): any => ({
 				extraGold: randomNumber(25000, 32000),
 				gamePoints: 3,
 				drop: [
-					{
-						rank: "silver",
-						rank_id: 1,
-						number: 6
-					},
-					{
-						rank: "gold",
-						rank_id: 2,
-						number: 6
-					},
+					// {
+					// 	rank: "silver",
+					// 	rank_id: 1,
+					// 	number: 6
+					// },
+					// {
+					// 	rank: "gold",
+					// 	rank_id: 2,
+					// 	number: 6
+					// },
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 6
+						number: 26
 					},
 				],
 				rare: [
@@ -230,18 +230,18 @@ const baseLoot = (): any => ({
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 9
+						number: 30
 					},
-					{
-						rank: "gold",
-						rank_id: 2,
-						number: 9
-					},
-					{
-						rank: "silver",
-						rank_id: 1,
-						number: 9
-					},
+					// {
+					// 	rank: "gold",
+					// 	rank_id: 2,
+					// 	number: 9
+					// },
+					// {
+					// 	rank: "silver",
+					// 	rank_id: 1,
+					// 	number: 9
+					// },
 				],
 				rare: [
 					{
