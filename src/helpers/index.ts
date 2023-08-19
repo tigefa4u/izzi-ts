@@ -357,7 +357,7 @@ export const overallStats = (params: {
 				} else {
 					Object.assign(totalStats, {
 						[stat]: Math.round(
-							totalStats[key] * 1.25
+							totalStats[key]
 						),
 					});
 				}

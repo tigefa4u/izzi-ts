@@ -220,7 +220,8 @@ export const spellBook = ({
 			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 			const tempDamage = getPlayerDamageDealt(
 				playerStats.totalStats,
-				opponentStats.totalStats
+				opponentStats.totalStats,
+				round
 			);
 			abilityDamage = Math.floor(
 				Math.abs(tempDamage - playerStats.totalStats.vitality)
@@ -341,7 +342,8 @@ export const tornado = ({
 		const percent = calcPercentRatio(20, card.rank);
 		const playerDamage = getPlayerDamageDealt(
 			playerStats.totalStats,
-			opponentStats.totalStats
+			opponentStats.totalStats,
+			round
 		);
 		const ratio = getRelationalDiff(playerDamage, percent);
 		abilityDamage = ratio * 3;

@@ -178,7 +178,8 @@ export const rapidFire = ({
 		if (canDealDamage) {
 			damageDealt = getPlayerDamageDealt(
 				playerStats.totalStats,
-				opponentStats.totalStats
+				opponentStats.totalStats,
+				round
 			);
 
 			const buildUpPercent =

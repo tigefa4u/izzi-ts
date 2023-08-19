@@ -9,11 +9,11 @@ import { CacheProps } from "./cacheTypes";
 // };
 
 // const client = new redisClient({ password: REDIS_PASSWORD });
-// const client = new redisClient({});
-const client = new redisClient({ password: REDIS_PASSWORD }, {
-	port: REDIS_PORT,
-	host: REDIS_HOST
-});
+const client = new redisClient({});
+// const client = new redisClient({ password: REDIS_PASSWORD }, {
+// 	port: REDIS_PORT,
+// 	host: REDIS_HOST
+// });
 
 const Cache: CacheProps & {
 	expireEod: (key: string) => Promise<boolean> | undefined;

@@ -473,22 +473,24 @@ function boostRaidBoss({
 	enemyStats,
 	round,
 	baseEnemyStats,
+	turn
 }: Pick<PrepareBattleDescriptionProps, "enemyStats" | "baseEnemyStats"> & {
   round: number;
+  turn: number;
 }) {
 	if (!enemyStats.totalStats.critical) enemyStats.totalStats.critical = 1;
 	enemyStats.totalStats.critical = enemyStats.totalStats.critical + 0.5;
 	if (!enemyStats.totalStats.criticalDamage)
 		enemyStats.totalStats.criticalDamage = 1;
 	enemyStats.totalStats.criticalDamage =
-    enemyStats.totalStats.criticalDamage + 0.25;
+    enemyStats.totalStats.criticalDamage + 0.20;
 
 	// boost raid boss ATK by 15%
 	if (baseEnemyStats) {
 		enemyStats.totalStats.vitality = enemyStats.totalStats.vitality + (baseEnemyStats.totalStats.vitality * .10);
 	}
 
-	if (baseEnemyStats && round === 10) {
+	if (baseEnemyStats && round === 10 && turn === 1) {
 		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
 		const diff = getPercentOfTwoNumbers(enemyStats.totalStats.intelligence, baseEnemyStats.totalStats.intelligence);
 		const energy = processEnergyBar({
@@ -502,7 +504,7 @@ function boostRaidBoss({
 		enemyStats,
 		desc:
       `**[ROUND ${round}]**\n**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
-      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__25%__**. " +
+      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__20%__**. " +
 	  `Its **ATK** also increases over time by __10%__ and has regenerated its **INT**! ${emoji.criticalDamage}`,
 	};
 }
@@ -530,7 +532,8 @@ async function simulatePlayerTurns({
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
-				baseEnemyStats
+				baseEnemyStats,
+				turn: i
 			});
 			enemyStats = boost.enemyStats;
 			if (round === 10 && i === 1) {

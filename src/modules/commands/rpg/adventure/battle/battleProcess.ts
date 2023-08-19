@@ -217,7 +217,8 @@ export const BattleProcess = async ({
 	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,
-			opponentStats.totalStats
+			opponentStats.totalStats,
+			round
 		);
 		playerStats.totalStats.previousDamage = damageDealt;
 		if (playerStats.totalStats.isSurge) {

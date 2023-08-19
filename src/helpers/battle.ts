@@ -102,7 +102,8 @@ export function recreateBattleEmbed(title: string, description: string) {
 
 export const getPlayerDamageDealt = (
 	playerTotalStats: BattleStats["totalStats"],
-	enemyTotalStats: BattleStats["totalStats"]
+	enemyTotalStats: BattleStats["totalStats"],
+	round = 1
 ) => {
 	// let modifiers = playercrit * playeraccuracy * effectiveness * random(0.85, 1);
 	// (((((2*2)/5) + 2) * vitality * (vitality/enemyDefense))/50 + 2) * modifiers; // wont work damage too low
@@ -140,6 +141,22 @@ export const getPlayerDamageDealt = (
 	// let damage = Math.floor((1 + (vitality * 0.01)) * (vitality/Math.max(1, defense)) * modifiers * 100);
 	let damage = Math.floor((atk ** 2 / (atk + def)) * modifiers);
 	if (damage <= 0) damage = randomNumber(100, 400);
+
+	/**
+	 * This logic is added to make sure
+	 * the DOT is smaller after r10
+	 */
+	let roundCount = round;
+	if (roundCount > 10) {
+		const diff = round - 10;
+		roundCount = 10 + (diff / 2);
+	}
+	// linear damage over time
+	const linearDOT = Math.floor(atk * .03 * roundCount * (effective < 1 ? effective : 1));
+	damage = damage + linearDOT;
+	/**
+	 * Consider a damage over time linear increase based on atk & round
+	 */
 
 	// True damage reduction
 	// for Bone Plating
@@ -184,7 +201,7 @@ export const processEnergyBar = (playerTotalStats: Pick<BattleStats["totalStats"
 		if (emptyEnergyDiff <= 0) {
 			res[res.length - 1] = emoji.dpr3;
 		} else if (emptyEnergyDiff === 1) {
-			res.push(emoji.e3);
+			res.push(emoji.dprrunner3);
 		} else if (emptyEnergyDiff > 1) {
 			const result = Array(emptyEnergyDiff).fill(emoji.dprrunner2);
 			result[result.length - 1] = emoji.dprrunner3;
