@@ -254,12 +254,6 @@ export const help = async ({
 					url: GUIDE_DOCS,
 				},
 				{
-					label: CONSOLE_BUTTONS.CHANGE_LOGS.label,
-					params: { id: CONSOLE_BUTTONS.CHANGE_LOGS.id },
-					style: "LINK",
-					url: `${GUIDE_DOCS}/change-logs`,
-				},
-				{
 					label: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.label,
 					params: { id: CONSOLE_BUTTONS.JOIN_SUPPORT_SERVER.id },
 					style: "LINK",

@@ -3,7 +3,8 @@ import { createGuild, disbandAndBackupGuild, getGuild } from "api/controllers/Gu
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
-import { IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
+import { GUIDE_DOCS, IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
+import { CONSOLE_BUTTONS } from "helpers/constants";
 import loggers from "loggers";
 import { getWebsiteUrls } from "modules/commands/basic";
 import { starterGuide } from "modules/commands/rpg/profile/guide";
@@ -74,14 +75,15 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 				"**(Ping the bot to start using commands)**. " +
 				"Use ``iz help or @izzi help or /iz help`` to get all available commands." +
                 `\nFor more assistance join our support server ${OFFICIAL_SERVER_LINK}. ` +
-                `You can also find more information/command tutorials on ${IZZI_WEBSITE}. `
+                `You can also find more information/command tutorials on ${IZZI_WEBSITE}. ` +
+				"View our beginner guide to understand the basics."
 			)
 			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")
 			.attachFiles([ attachment ])
 			.setFooter({ text: "If the button doesnt work use ``iz start`` to start your journey in the Xenverse" });
 
-		const buttons = await customButtonInteraction(
+		const buttons = customButtonInteraction(
 			defaultChannel,
 			[
 				{
@@ -90,6 +92,12 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 						client,
 						id: "start_journey" 
 					}
+				},
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					style: "LINK",
+					url: GUIDE_DOCS
 				},
 				{
 					label: "Start Guide",

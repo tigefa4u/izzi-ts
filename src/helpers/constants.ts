@@ -435,7 +435,7 @@ export const CONSOLE_BUTTONS = {
 	},
 	GUIDE: {
 		id: "guide",
-		label: "Guide"
+		label: "Beginner Guide"
 	},
 	CHANGE_LOGS: {
 		id: "change_log",
