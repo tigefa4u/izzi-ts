@@ -56,11 +56,12 @@ const confirmAndEnchantCard = async (
 			user_id: user.id,
 			ids: [ ...new Set([ ...ids, cardToEnchant.id ]) ],
 		});
-		// We have to do +1 because we are also verifying the cardToEnchant
-		const totalCount = computed.accumulator.reduce((acc, r) => acc + r.count, 0) + 1;
-		const verifyCount = collections?.reduce((acc, r) => acc + r.card_count, 0);
+		const verificationFailed = computed.accumulator.filter((a) => {
+			const chara = collections?.find((c) => c.id === a.id);
+			return !chara || chara.card_count < a.count;
+		});
 		loggers.endTimer(verificationTimer);
-		if (!collections || collections.length <= 0 || totalCount !== verifyCount) {
+		if (!collections || collections.length <= 0 || verificationFailed.length > 0) {
 			embed.setDescription(
 				"Enchantment has been cancelled due to missing cards"
 			);
