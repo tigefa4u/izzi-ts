@@ -1,6 +1,6 @@
 import { FilterProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { getAllCollections } from "api/controllers/CollectionsController";
+import { getAllCollections, getTotalFodders } from "api/controllers/CollectionsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
@@ -72,6 +72,13 @@ export const cardCollection = async ({
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+		const showFodderCount = [ "fodders", "fodd", "fodder", "fodds", "fc" ].includes((args[0] || "").toLowerCase());
+		if (showFodderCount) {
+			const fodderCount = await getTotalFodders(user.id);
+			context.channel?.sendMessage(`Summoner **${author.username}**, you currently have ` +
+			`__${((fodderCount || [])[0] || {}).sum || 0}x__ Platinum Fodders in Total.`);
+			return;
+		}
 		let params = <FilterProps & { user_id: number; }>fetchParamsFromArgs(args);
 		params = safeParseParams(params);
 		Object.assign(params, {

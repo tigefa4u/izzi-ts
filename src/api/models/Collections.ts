@@ -446,4 +446,11 @@ export const resetAllNicknames = (user_id: number) => {
 	return query;
 };
 
+export const getFodderCount = async (user_id: number): Promise<{ sum: number; }[]> => {
+	return connection(tableName).where({
+		user_id,
+		rank: "platinum" 
+	}).sum("card_count");
+};
+
 export const dbConnection = connection;

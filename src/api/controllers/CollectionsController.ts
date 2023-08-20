@@ -167,6 +167,7 @@ export const createCollection: (
 		 */
 		let dataToInsert: CollectionCreateProps[] = [];
 		let fodders: CollectionCreateProps[] = [];
+		let result: any[] = [];
 		if (Array.isArray(data)) {
 			dataToInsert = data.filter((x) => !FODDER_RANKS.includes(x.rank));
 			fodders = data.filter((x) => FODDER_RANKS.includes(x.rank));
@@ -176,12 +177,18 @@ export const createCollection: (
 			fodders = [ data ];
 		}
 		if (fodders.length > 0) {
-			return updateOrCreateFodder(fodders);
+			const fodderRes = await updateOrCreateFodder(fodders);
+			if (fodderRes) {
+				result = result.concat(fodderRes);
+			}
 		}
 		if (dataToInsert.length > 0) {
-			return Collections.create(dataToInsert);
+			const cardRes = await Collections.create(dataToInsert);
+			if (cardRes) {
+				result = result.concat(cardRes);
+			}
 		}
-		return;
+		return result;
 	} catch (err) {
 		loggers.error(
 			"api.controllers.CollectionsController.createCollection: ERROR",
@@ -441,6 +448,15 @@ export const getFoddersV2 = async (params: CollectionParams, filter: {
 		return Collections.getFoddersForEnchantmentV2(params, filter);
 	} catch (err) {
 		loggers.error("CollectionsController.getFoddersV2: ERROR", err);
+		return;
+	}
+};
+
+export const getTotalFodders = async (user_id: number) => {
+	try {
+		return Collections.getFodderCount(user_id);
+	} catch (err) {
+		loggers.error("Controllers.getTotalFodders: ERROR", err);
 		return;
 	}
 };
