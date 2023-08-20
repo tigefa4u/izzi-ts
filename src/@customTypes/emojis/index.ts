@@ -168,4 +168,5 @@ export type EmojiProps = {
 	goldstar: "<:goldstar:1135091594140332123>",
 	silverstar: "<:silverstar:1135091583096737812>",
 	bronzestar: "<:bronzestar:1135091588519968818>",
+	hertakurukuru: "<a:kurukuru:1137431791544840212>",
 }
