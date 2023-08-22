@@ -208,6 +208,7 @@ export const battleBoss = async ({
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
+			result.totalDamage = 0;
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
 				context.channel?.sendMessage("Unable to calculate total damage");
