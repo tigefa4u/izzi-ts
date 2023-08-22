@@ -503,14 +503,13 @@ export const cleanse = ({
 	if (round % 3 === 0 && playerStats.totalStats.isCleanse) {
 		playerStats.totalStats.isCleanse = true;
 		// Nullify all effects
-		playerStats.totalStats.isPoisoned = false;
-		playerStats.totalStats.isAsleep = false;
 		playerStats.totalStats.isStackTB = false;
-		playerStats.totalStats.isRestrictResisted = false;
 		playerStats.totalStats.isBleeding = false;
-		playerStats.totalStats.isToxic = false;
+		playerStats.totalStats.isPoisoned = false;
+		playerStats.totalStats.isRestrictResisted = false;
+		playerStats.totalStats.isAsleep = false;
 
-		const desc = `Nullifying all **Stack Effects** ${emoji.cleanseffect}.`;
+		const desc = `Nullifying **Status Effects** ${emoji.cleanseffect}.`;
 	  prepSendAbilityOrItemProcDescription({
 		  playerStats,
 		  enemyStats: opponentStats,

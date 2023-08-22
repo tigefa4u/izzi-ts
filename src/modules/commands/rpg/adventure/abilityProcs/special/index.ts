@@ -75,13 +75,21 @@ export const harbingerOfDeath = ({
 		// playerStats.totalStats.evasionInc = 1;
 		// playerStats.totalStats.evasionTemp = 1;
 
-		// Nullify all effects
-		playerStats.totalStats.isStunned = false;
-		playerStats.totalStats.isPoisoned = false;
-		playerStats.totalStats.isAsleep = false;
+		// Nullify all effects that apply a stack
+		// playerStats.totalStats.isStunned = false;
+		// playerStats.totalStats.isAsleep = false;
+
+		// playerStats.totalStats.isStackTB = false;
+
 		playerStats.totalStats.isStackTB = false;
-		playerStats.totalStats.isRestrictResisted = false;
 		playerStats.totalStats.isBleeding = false;
+		playerStats.totalStats.isPoisoned = false;
+		playerStats.totalStats.isRestrictResisted = false;
+		playerStats.totalStats.isParanoid = false;
+
+		// playerStats.totalStats.isUseFrostPassive = false;
+		// playerStats.totalStats.isRestrictResisted = false;
+
 
 		[ "vitality", "defense", "dexterity", "intelligence" ].map((stat) => {
 			const key = stat as keyof CharacterStatProps;
@@ -108,7 +116,7 @@ export const harbingerOfDeath = ({
 		playerStats.totalStats.energy = playerEnergy.energy;
 		playerStats.totalStats.dpr = playerEnergy.dpr;
 		const desc =
-      "Nullifying all **Stack Effects**, resetting **Evasion Chance**, " +
+      "Nullifying **Status Effects**, resetting **Evasion Chance**, " +
       `${emoji.harbingerofdeath} as well as ` +
       `buffing all **Ally Ability Stats** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
