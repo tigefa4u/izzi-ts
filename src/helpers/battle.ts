@@ -152,7 +152,7 @@ export const getPlayerDamageDealt = (
 		roundCount = 10 + (diff / 2);
 	}
 	// linear damage over time
-	const linearDOT = Math.floor(atk * .03 * roundCount * (effective < 1 ? effective : 1));
+	const linearDOT = Math.floor(atk * .0375 * roundCount * (effective < 1 ? effective : 1));
 	damage = damage + linearDOT;
 	/**
 	 * Consider a damage over time linear increase based on atk & round

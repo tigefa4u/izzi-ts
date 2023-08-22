@@ -134,7 +134,7 @@ export const GOLD_LIMIT = 100000000;
 export const BET_LIMIT = 500000;
 export const DEFAULT_PACK = {
 	num: 50,
-	cost: 1350,
+	cost: 1100, 
 	cardPerPage: 10,
 	rank: "platinum",
 	rank_id: 3,
@@ -146,9 +146,14 @@ export const PAGE_FILTER = {
 };
 
 export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
-	silver: 100,
+	/**
+	 * These changes are related to condensed fodders.
+	 * Since there will only be platinum fodders the xp gain
+	 * is the average of silver (100) + gold (150) + plat (200)
+	 */
+	silver: 150, // 100
 	gold: 150,
-	platinum: 200,
+	platinum: 150, // 200
 	diamond: 250,
 	legend: 300,
 	divine: 450,
@@ -229,7 +234,8 @@ export const CANVAS_DEFAULTS = {
 
 export const EMBED_DEFAULT_COLOR = 13148872;
 
-export const BATTLE_ROUNDS_COUNT = 15;
+export const BATTLE_ROUNDS_COUNT = 16;
+export const RAGE_MODE_ROUND = 11;
 
 export const REQUIRED_TRADE_LEVEL = 8;
 
@@ -430,7 +436,7 @@ export const CONSOLE_BUTTONS = {
 	},
 	GUIDE: {
 		id: "guide",
-		label: "Guide"
+		label: "Beginner Guide"
 	},
 	CHANGE_LOGS: {
 		id: "change_log",
@@ -575,3 +581,7 @@ export const DPR_MAX_BUFF = 1;
 export const DEFAULT_DPR_GAIN = 0.1;
 export const DEFAULT_DPR_LOSS = 0.03;
 export const DPR_GAIN_ON_EVADE = 0.02;
+
+export const FODDER_RANKS = [ "silver", "gold", "platinum" ]; // D3 ranks
+export const D2_RANKS = [ "diamond", "legend", "divine" ];
+export const D1_RANKS = [ "immortal", "exclusive", "ultimate" ];

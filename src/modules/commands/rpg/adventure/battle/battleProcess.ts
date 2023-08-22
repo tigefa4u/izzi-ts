@@ -14,9 +14,6 @@ import {
 	relativeDiff,
 } from "helpers/battle";
 import {
-	DEFAULT_DPR_GAIN,
-	DEFAULT_DPR_LOSS,
-	DPR_GAIN_ON_EVADE,
 	DPR_MAX_BUFF,
 	HARBINGER_OF_DEATH_PROC_ROUND,
 } from "helpers/constants";
@@ -45,6 +42,7 @@ type Stack = Pick<
   | "isLastStand"
   | "isLeer"
   | "isLightningShield"
+  | "isCleanse"
 >;
 function processStack(stats: Stack) {
 	[
@@ -66,6 +64,7 @@ function processStack(stats: Stack) {
 		"isLastStand",
 		"isLeer",
 		"isLightningShield",
+		"isCleanse"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -385,7 +384,7 @@ async function processAbililtyOrItemProc({
         playerStats.totalStats.isRestrictResisted) &&
       !(
       	playerStats.cards.find(
-      		(c) => c?.abilityname === "harbinger of death"
+      		(c) => (c?.abilityname === "harbinger of death" || c?.abilityname === "cleanse")
       	) && round % HARBINGER_OF_DEATH_PROC_ROUND === 0
       )
 		)

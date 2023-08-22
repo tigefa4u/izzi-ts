@@ -4,7 +4,6 @@ import {
 	PrepareLootProps,
 	RaidActionProps,
 	RaidLobbyProps,
-	RaidLootDropProps,
 	RaidLootProps,
 	RaidStatsProps,
 } from "@customTypes/raids";
@@ -22,7 +21,10 @@ import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import {
+	D1_RANKS,
+	D2_RANKS,
 	DEFAULT_ERROR_TITLE,
+	FODDER_RANKS,
 	HIGH_LEVEL_RAIDS,
 	IMMORTAL_RAIDS,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
@@ -34,11 +36,7 @@ import {
 import { DMUser } from "helpers/directMessages";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
-import {
-	getCooldown,
-	sendCommandCDResponse,
-	setCooldown,
-} from "modules/cooldowns";
+import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { clone } from "utility";
 import {
@@ -47,6 +45,12 @@ import {
 	prepareRaidTimer,
 } from "..";
 import { computeRank } from "../computeBoss";
+import {
+	computedCategoryData,
+	ComputedCategoryProps,
+	levelBonusDropRate,
+	LevelBonusDropRateProps,
+} from "../prepareBaseLoot";
 
 const spawnImmunity = [ "266457718942990337", "476049957904711682" ];
 type C = {
@@ -72,22 +76,36 @@ const raidDivisions = {
 	},
 };
 
-const calculateDropRateByPL = (pl: number, loot: RaidLootProps) => {
-	if (pl >= raidDivisions.d1.min && pl < raidDivisions.d1.max) {
-		loot.division = raidDivisions.d1.name;
+const calculateDropRateByBossLevel = (
+	level: number,
+	loot: RaidLootProps,
+	rank: string
+) => {
+	let category = "d3" as keyof ComputedCategoryProps;
+	if (D2_RANKS.includes(rank)) {
+		category = "d2";
+	} else if (D1_RANKS.includes(rank)) {
+		category = "d1";
+	}
+	let rate = 0;
+	const levelPercent = (level / computedCategoryData[category].maxlevel) * 100;
+	const percentToLoop = Object.keys(levelBonusDropRate);
+	for (const percent of percentToLoop) {
+		if (levelPercent <= +percent) {
+			rate = levelBonusDropRate[percent as keyof LevelBonusDropRateProps];
+			break;
+		}
+	}
+	loggers.info("spawn.calculateDropRateByBossLevel: bonus drop rate", rate);
+	if (rate > 0) {
 		loot.rare?.map((drop) => {
 			if (!drop.isStaticDropRate) {
-				drop.rate = (drop.rate || 1) + raidDivisions.d1.rate;
-			}
-		});
-	} else if (pl >= raidDivisions.d2.min && pl < raidDivisions.d2.max) {
-		loot.division = raidDivisions.d2.name;
-		loot.rare?.map((drop) => {
-			if (!drop.isStaticDropRate) {
-				drop.rate = (drop.rate || 1) + raidDivisions.d2.rate;
+				drop.rate = (drop.rate || 1) + rate;
 			}
 		});
 	}
+
+	loot.division = category;
 	return loot;
 };
 
@@ -117,11 +135,13 @@ export const computeRaidBossStats = async ({
 		},
     { character_level: 0 } as { character_level: number }
 	);
+	
 
 	const totalBossLevel: number = reducedLevel.character_level;
-	const computedLoot = calculateDropRateByPL(
-		stats.totalPowerLevel,
-		computedBoss.loot
+	const computedLoot = calculateDropRateByBossLevel(
+		totalBossLevel,
+		computedBoss.loot,
+		raidBosses[0].rank
 	);
 
 	const raidStats = {
@@ -131,8 +151,8 @@ export const computeRaidBossStats = async ({
 			power_level: stats.totalPowerLevel,
 			stats: stats.totalOverallStats,
 		},
-		remaining_strength: stats.totalOverallStats.strength * (totalBossLevel),
-		original_strength: stats.totalOverallStats.strength * (totalBossLevel),
+		remaining_strength: stats.totalOverallStats.strength * totalBossLevel,
+		original_strength: stats.totalOverallStats.strength * totalBossLevel,
 		difficulty: `${computedBoss.difficulty}${
 			computedLoot.division ? ` ${computedLoot.division}` : ""
 		}`,
@@ -151,18 +171,17 @@ export const createRaidBoss = async ({
 	isEvent,
 	lobby,
 	isPrivate,
-	character_id
+	character_id,
 }: C) => {
-
+	const computedLevel = randomNumber(
+		computedBoss.level[0],
+		computedBoss.level[1]
+	);
 	const raidBosses = (await Promise.all(
 		Array(computedBoss.bosses)
 			.fill(0)
 			.map(async (_, i) => {
 				const rank = randomElementFromArray(computedBoss.rank);
-				const level = randomNumber(
-					computedBoss.level[0],
-					computedBoss.level[1]
-				);
 				const params: any = {
 					is_logo: false,
 					rank,
@@ -186,7 +205,7 @@ export const createRaidBoss = async ({
 					return;
 				}
 				const raidBoss = card[0];
-				raidBoss.character_level = level;
+				raidBoss.character_level = Math.floor(computedLevel / computedBoss.bosses);
 				return {
 					...raidBoss,
 					copies: 1,
@@ -245,16 +264,19 @@ const checkRaidPity = async (user: UserProps) => {
 			const wlist = await getRandomCardFromWlist({
 				user_tag: user.user_tag,
 				is_referral_card: false,
-				is_xenex_card: false
+				is_xenex_card: false,
 			});
 			if (wlist && wlist.length > 0 && wlist[0].is_random) {
 				loggers.info("Spawning card from wishlist: ", wlist);
-				await updateRPGUser({ user_tag: user.user_tag }, {
-					metadata: {
-						...(user.metadata || {}),
-						raidPityCount: (user.metadata?.raidPityCount || 0) + 1
+				await updateRPGUser(
+					{ user_tag: user.user_tag },
+					{
+						metadata: {
+							...(user.metadata || {}),
+							raidPityCount: (user.metadata?.raidPityCount || 0) + 1,
+						},
 					}
-				});
+				);
 				return [ wlist[0].character_id ];
 			}
 		}
@@ -338,7 +360,7 @@ export const spawnRaid = async ({
 			);
 			return;
 		}
-		const computedBoss = computeRank(difficulty, isEvent);
+		const computedBoss = computeRank(difficulty, isEvent, false, user.level);
 		if (!computedBoss) {
 			context.channel?.sendMessage("Unable to spawn boss. Please try again");
 			return;
@@ -361,12 +383,12 @@ export const spawnRaid = async ({
 		}
 
 		/**
-		 * Raid Pity - spawn a chara from wishlist
-		 * This is related to market tax. Check `tax.ts`
-		 * for more info.
-		 * 
-		 * Allow only 1 character to be spawned.
-		 */
+     * Raid Pity - spawn a chara from wishlist
+     * This is related to market tax. Check `tax.ts`
+     * for more info.
+     *
+     * Allow only 1 character to be spawned.
+     */
 		const raidPityCids = await checkRaidPity(user);
 
 		const { raid, raidBosses } = await createRaidBoss({
@@ -374,17 +396,16 @@ export const spawnRaid = async ({
 			computedBoss,
 			isEvent,
 			isPrivate,
-			character_id: raidPityCids
+			character_id: raidPityCids,
 		});
 		if (!raid) return;
 
-		// TESTING
-		// if (!spawnImmunity.includes(author.id))
-		// 	setCooldown(
-		// 		author.id,
-		// 		CDKey,
-		// 		user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
-		// 	);
+		if (!spawnImmunity.includes(author.id))
+			setCooldown(
+				author.id,
+				CDKey,
+				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
+			);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (raidBosses.length === 1) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);

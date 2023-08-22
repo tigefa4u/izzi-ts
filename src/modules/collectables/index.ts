@@ -85,7 +85,7 @@ export const dropCollectables = async ({
 				channel 
 			});
 			if (!dropChannel) return;
-			const cardTypes = [ "silver", "gold", "platinum", "diamond", "immortal" ];
+			const cardTypes = [ "platinum", "platinum", "platinum", "diamond", "immortal" ];
 			const probablilities = [ 20, 15, 10, 0.5, 0.1 ];
 			const rank = cardTypes[probability(probablilities)];
 			const card = await getRandomCard(

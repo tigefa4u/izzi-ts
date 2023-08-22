@@ -135,6 +135,7 @@ async function validateAndConfirmTrade(
           "Use `` tr confirm/cancel`` to confirm/cancel your trade. " +
           "Use ``iz trade view`` to view the trade. " +
           "You can use ``tr add cards -l <num>`` to specify the number of cards you want to add." +
+		  "\nUse ``tr add fodds -n <name> -l <limit>`` to add Fodders to trade." +
 		  "\n**__NOTE:__ Your selected card(s) for floor battles will not be traded. If you're not " +
 		  "in the Official Server, please make sure that this bot has a checkmark next to its name, with the name " +
 		  "izzi#9752**"

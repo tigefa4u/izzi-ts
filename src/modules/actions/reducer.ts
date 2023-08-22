@@ -22,7 +22,6 @@ import { compareCards } from "modules/commands/rpg/compare";
 import { cards } from "modules/commands/rpg/consumableCards";
 import { consume } from "modules/commands/rpg/consumeOrbsToShards";
 import { crate } from "modules/commands/rpg/crates";
-import { enchantCard } from "modules/commands/rpg/enchantment";
 import { evolveCard } from "modules/commands/rpg/evolution";
 import { upgradeCard } from "modules/commands/rpg/evolution/upgradeCard";
 import { guild } from "modules/commands/rpg/guild";
@@ -63,6 +62,7 @@ import { dungeonFunc } from "modules/commands/rpg/dungeon/v2";
 import { quests } from "modules/commands/rpg/quests";
 import { worldBossCommands } from "modules/commands/rpg/worldBoss";
 import { tourneyCommands } from "modules/commands/rpg/tournament";
+import { enchantCardV2 } from "modules/commands/rpg/enchantment/v2";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -122,7 +122,7 @@ const commandMap: CommandMapProps = {
 	raid: raidActions,
 	event: eventActions,
 	dungeon: dungeonFunc,
-	enchantment: enchantCard,
+	enchantment: enchantCardV2,
 	bonk: bonk,
 	cry: cry,
 	poke: poke,

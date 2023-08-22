@@ -3,6 +3,7 @@ import {
 	CollectionProps,
 	CollectionUpdateProps,
 	ICollectionCreateProps,
+	ICollectionItemCreateProps,
 } from "@customTypes/collections";
 import { PaginationProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
@@ -10,7 +11,7 @@ import connection from "db";
 import { safeParseQueryParams } from "helpers/transformation";
 import { clone } from "utility";
 
-const tableName = "collections";
+export const tableName = "collections";
 export const transformation = {
 	id: {
 		type: "number",
@@ -132,7 +133,8 @@ export const get = async (
 			"is_on_cooldown",
 			"character_level",
 			"is_tradable",
-			"metadata"
+			"metadata",
+			"card_count"
 		)
 		.from(tableName)
 		.where(queryParams);
@@ -266,6 +268,7 @@ export const getAll = async function (
 				${tableName}.is_tradable,
 				${tableName}.character_level,
 				${tableName}.metadata,
+				${tableName}.card_count,
 				row_number() over(order by rank_id desc, id 
 					asc)`
 				// ${sort ? sort.sortOrder : "desc"}
@@ -304,12 +307,50 @@ export const getAll = async function (
 	return query;
 };
 
+export const getFoddersForEnchantmentV2 = async (params: CollectionParams, filter: {
+	cond?: "gte" | "lte";
+	limit: number;
+}): Promise<{
+	id: number;
+	character_id: number;
+	user_id: number;
+	card_count: number;
+}[]> => {
+	const ids = params.ids;
+	const character_ids = params.character_ids;
+	const exclude_ids = params.exclude_ids;
+	const exclude_character_ids = params.exclude_character_ids;
+	const db = connection;
+	let query = db.select("id", "character_id", "user_id", "card_count")
+		.from(tableName)
+		.where("rank", "platinum")
+		.where("user_id", params.user_id)
+		.orderBy("card_count", "desc");
+
+	if (ids && ids.length > 0) {
+		query = query.whereIn("id", ids);
+	}
+	if (character_ids && character_ids.length > 0) {
+		query = query.whereIn("character_id", character_ids);
+	}
+	if (exclude_ids && exclude_ids.length > 0) {
+		query = query.whereNotIn("id", exclude_ids);
+	}
+	if (exclude_character_ids && exclude_character_ids.length > 0) {
+		query = query.whereNotIn("character_id", exclude_character_ids);
+	}
+	
+	query = query.limit(filter.limit || 1);
+
+	return query;
+};
+
 export const create: (
-  data: ICollectionCreateProps
+  data: ICollectionCreateProps | ICollectionItemCreateProps
 ) => Promise<CollectionProps> = async (data) => {
 	const db = connection;
 	if (!data || (Array.isArray(data) && data.length <= 0)) return;
-	return await db(tableName)
+	return db(tableName)
 		.insert(data, "*")
 		.then((res) => res[0]);
 };
@@ -382,14 +423,16 @@ export const destroy = async (params: Pick<CollectionParams, "id" | "ids">) => {
 		query = query.whereIn(`${tableName}.id`, params.ids);
 	}
 
-	return await query.del();
+	return query.del();
 };
 
-export const verifyIds = async (params: { user_id: number; ids: number[] }) => {
-	if (!params.user_id) return;
+export const verifyIds = async (params: { user_id: number; ids: number[] }): Promise<{
+	id: number;
+	card_count: number;
+}[]> => {
 	const db = connection;
 	const query = db
-		.select("id")
+		.select("id", "card_count")
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
 		.whereIn(`${tableName}.id`, params.ids);
@@ -402,3 +445,12 @@ export const resetAllNicknames = (user_id: number) => {
 	const query = db(tableName).where({ user_id }).update({ metadata: {} });
 	return query;
 };
+
+export const getFodderCount = async (user_id: number): Promise<{ sum: number; }[]> => {
+	return connection(tableName).where({
+		user_id,
+		rank: "platinum" 
+	}).sum("card_count");
+};
+
+export const dbConnection = connection;

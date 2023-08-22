@@ -1,12 +1,16 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { TradeActionProps, TradeQueueProps } from "@customTypes/trade";
 import {
+	consumeFodders,
+	directUpdateCreateFodder,
 	getCollection,
 	updateCollection,
 } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MIN_TRADE_CARDS_FOR_QUEST, QUEST_TYPES } from "helpers/constants";
+import {
+	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, MIN_TRADE_CARDS_FOR_QUEST, QUEST_TYPES 
+} from "helpers/constants";
 import loggers from "loggers";
 import { validateAndCompleteQuest } from "modules/commands/rpg/quests";
 import { titleCase } from "title-case";
@@ -24,6 +28,15 @@ async function validateTraderQueue(
 		throw new Error("User not found during Trade: " + trader.user_tag);
 	}
 	if (trader.queue.length > 0) {
+		const hasNoCharacterId = trader.queue.find((q) => !q.character_id);
+		if (hasNoCharacterId) {
+			embed.setDescription(
+				"Trade has been cancelled due to corrupted data. " +
+				"Please restart the trade using ``iz tr <@user>``."
+			).setHideConsoleButtons(true);
+			channel?.sendMessage(embed);
+			return;
+		}
 		const params = {
 			user_id: user.id,
 			ids: trader.queue.map((q) => q.id),
@@ -39,6 +52,30 @@ async function validateTraderQueue(
 			channel?.sendMessage(embed);
 			return;
 		}
+		const fodders = trader.queue.filter((q) => q.is_fodder);
+		const fodderCollections = collections.filter((c) => FODDER_RANKS.includes(c.rank));
+
+		const fodderMeta = fodders.reduce((acc, r) => {
+			acc[r.character_id] = r.count;
+			return acc;
+		}, {} as { [key: string]: number; });
+		const fodderCollectionMeta = fodderCollections.reduce((acc, r) => {
+			acc[r.character_id] = r.card_count || 1;
+			return acc;
+		}, {} as { [key: string]: number; });
+
+		const invalidFodders = Object.keys(fodderMeta).find((cid) => {
+			return (fodderCollectionMeta[cid] < fodderMeta[cid] || !fodderCollectionMeta[cid]);
+		});
+		if (invalidFodders) {
+			embed.setDescription(
+				"Trade has been cancelled due to insufficient cards. " +
+	  "(Hint: Make sure you have the right amount of fodders you are trying to trade)"
+			).setHideConsoleButtons(true);
+			channel?.sendMessage(embed);
+			return;
+		}
+
 		if (user.selected_card_id) {
 			const hasSelectedCard = trader.queue
 				.find((q) => {
@@ -65,6 +102,25 @@ async function validateTraderQueue(
 	return user;
 }
 
+const invokeTradeFodders = async (fodder: TradeQueueProps[0]["queue"], receiver_uid: number) => {
+	const cards = fodder.map((f) => ({
+		character_id: f.character_id,
+		user_id: receiver_uid,
+		count: f.count
+	}));
+	
+	const consumeable = fodder.map((f) => ({
+		character_id: f.character_id,
+		user_id: f.user_id,
+		count: f.count
+	}));
+	loggers.info("Invoking fodder trade: ", consumeable, cards);
+	return Promise.all([
+		consumeFodders(consumeable),
+		directUpdateCreateFodder(cards)
+	]);
+};
+
 export const confirmTrade = async ({
 	tradeQueue,
 	tradeId,
@@ -78,10 +134,13 @@ export const confirmTrade = async ({
 
 		const embed = createEmbed(author, client).setTitle(DEFAULT_SUCCESS_TITLE);
 
+		const cardCount = trader.queue.reduce((acc, r) => acc = (acc || 0) + r.count, 0);
+
 		if (trader.hasConfirmed === true) {
 			embed.setDescription(
 				`Summoner **${author.username}**, you have already confirmed this Trade, ` +
-          "please wait for the other participant to confirm"
+          "please wait for the other participant to confirm." +
+		  `\n\n**You are trading __${cardCount}__ card(s) in total.**`
 			).setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
@@ -100,7 +159,9 @@ export const confirmTrade = async ({
 			}
 			refetchQueue[trader.user_tag] = trader;
 			queue.setTradeQueue(tradeId, refetchQueue);
-			embed.setDescription("Trade Confirmed").setHideConsoleButtons(true);
+			embed.setDescription("Trade Confirmed" +
+			`\n\n**You are trading __${cardCount}x__ card(s) in total!**`)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			viewTrade({
 				tradeQueue,
@@ -154,6 +215,8 @@ export const confirmTrade = async ({
 			);
 		}
 		if (trader_1.queue.length > 0) {
+			const trader_1_fodders = trader_1.queue.filter((q) => q.is_fodder);
+			const trader_1_cards = trader_1.queue.filter((q) => !q.is_fodder);
 			if (participantOne.selected_card_id) {
 				const index = trader_1.queue.findIndex(
 					(q) => q.id === participantOne.selected_card_id
@@ -162,7 +225,7 @@ export const confirmTrade = async ({
 					trader_1.queue.splice(index, 1);
 				}
 			}
-			if (trader_1.queue.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+			if (trader_1_cards.length >= MIN_TRADE_CARDS_FOR_QUEST) {
 				promises.push(validateAndCompleteQuest({
 					user_tag: trader_1.user_tag,
 					type: QUEST_TYPES.TRADING,
@@ -177,7 +240,7 @@ export const confirmTrade = async ({
 			}
 			promises.push(
 				updateCollection(
-					{ ids: trader_1.queue.map((q) => q.id) },
+					{ ids: trader_1_cards.map((q) => q.id) },
 					{
 						user_id: trader_2.user_id,
 						item_id: null,
@@ -187,8 +250,13 @@ export const confirmTrade = async ({
 					}
 				)
 			);
+			if (trader_1_fodders.length > 0) {
+				promises.push(invokeTradeFodders(trader_1_fodders, trader_2.user_id));
+			}
 		}
 		if (trader_2.queue.length > 0) {
+			const trader_2_fodders = trader_2.queue.filter((q) => q.is_fodder);
+			const trader_2_cards = trader_2.queue.filter((q) => !q.is_fodder);
 			if (participantTow.selected_card_id) {
 				const index = trader_2.queue.findIndex(
 					(q) => q.id === participantTow.selected_card_id
@@ -197,7 +265,7 @@ export const confirmTrade = async ({
 					trader_2.queue.splice(index, 1);
 				}
 			}
-			if (trader_2.queue.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+			if (trader_2_cards.length >= MIN_TRADE_CARDS_FOR_QUEST) {
 				promises.push(validateAndCompleteQuest({
 					user_tag: trader_2.user_tag,
 					type: QUEST_TYPES.TRADING,
@@ -212,7 +280,7 @@ export const confirmTrade = async ({
 			}
 			promises.push(
 				updateCollection(
-					{ ids: trader_2.queue.map((q) => q.id) },
+					{ ids: trader_2_cards.map((q) => q.id) },
 					{
 						user_id: trader_1.user_id,
 						item_id: null,
@@ -222,6 +290,9 @@ export const confirmTrade = async ({
 					}
 				)
 			);
+			if (trader_2_fodders.length > 0) {
+				promises.push(invokeTradeFodders(trader_2_fodders, trader_1.user_id));
+			}
 		}
 		await Promise.all(promises);
 		// await Promise.all([ ...trader_1.queue, ...trader_2.queue ].map(async (q) => {

@@ -108,6 +108,7 @@ const emojis: MapProps = {
 	bronzestar: emoji.bronzestar,
 	skull2: emoji.skull2,
 	criticalDamage: emoji.criticalDamage,
+	cleanse: emoji.cleanse
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

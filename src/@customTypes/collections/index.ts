@@ -23,6 +23,7 @@ export type CollectionProps = {
   total_count?: number;
   is_on_cooldown: boolean;
   is_tradable: boolean;
+  card_count?: number;
   name?: string;
   metadata?: {
     nickname?: string;
@@ -75,7 +76,9 @@ export type CollectionCreateProps = Omit<
 
 export type ICollectionCreateProps =
   | CollectionCreateProps
-  | CollectionCreateProps[]
+  | CollectionCreateProps[];
+
+export type ICollectionItemCreateProps = 
   | ItemCollectionCreateProps
   | ItemCollectionCreateProps[];
 
@@ -109,3 +112,15 @@ export type CollectionCardInfoByRowNumberParams = {
 };
 
 export type CT = { name?: string | string[]; type?: string | string[]; isExactMatch?: boolean; }
+
+export type UpdateCreateFodderProps = {
+  count: number;
+  user_id: number;
+}
+
+type FodderProps = {
+	count: number;
+	user_id: number;
+	character_id: number;
+};
+export type DirectUpdateCreateFodderProps = FodderProps[];

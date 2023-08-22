@@ -67,7 +67,7 @@ async function prepareCinfoDetails(
 				characterInfo.series.trim()
 			)}\n**Card Copies:** ${
 				characterInfo.copies
-			}\n**Element Type:** ${titleCase(characterInfo.type)} ${
+			}\n**Element:** ${titleCase(characterInfo.type)} ${
 				elementTypeEmoji ? elementTypeEmoji : ""
 			}\n**Zone:** ${
 				location?.zone
@@ -81,7 +81,7 @@ async function prepareCinfoDetails(
 					: characterInfo.series.includes("event")
 						? "Event"
 						: "None"
-			}\n**RANK:** ${titleCase(characterInfo.rank)}\n${prepareStatsDesc(
+			}\n**Rank:** ${titleCase(characterInfo.rank)}\n${prepareStatsDesc(
 				statsPrep,
 				characterInfo.rank
 			)}\n\n**Global Market Price ${emoji.shoppingcart}**\n${

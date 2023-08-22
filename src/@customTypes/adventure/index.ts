@@ -109,6 +109,7 @@ export type AbilityStackProps = StatStateProps &
     isLeer?: boolean;
     isParanoid?: boolean;
     isLightningShield?: boolean;
+    isCleanse?: boolean;
     // Ex: stack increases every time TB is placed but no explode
     // it represents 1x, 2x, 3x damage dealt by ability
     stack?: number;
@@ -165,6 +166,7 @@ export type BattleStats = {
   attachments?: (CollectionCardInfoProps | undefined)[];
   isBot?: boolean;
   username?: string;
+  enemyStats?: BattleStats;
 };
 
 export type PrepareBattleDescriptionProps = {

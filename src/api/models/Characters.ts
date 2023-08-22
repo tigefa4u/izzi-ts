@@ -5,6 +5,7 @@ import {
 } from "@customTypes/characters";
 import { PaginationProps } from "@customTypes/pagination";
 import connection from "db";
+import emoji from "emojis/emoji";
 
 const tableName = "characters";
 const abilities = "passives";
@@ -82,6 +83,9 @@ export const get: (
 		}
 	} else if (typeof params.name === "object") {
 		if (params.isExactMatch) {
+			if (params.name.includes("herta kuru kuru")) {
+				params.name = [ `herta kuru kuru ${emoji.hertakurukuru}` ];
+			}
 			query = query.whereIn(`${tableName}.name`, params.name);
 		} else {
 			query = query.where(`${tableName}.name`, "~*", `(${params.name.join("|")}).*`);

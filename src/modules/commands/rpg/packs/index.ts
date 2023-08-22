@@ -1,7 +1,7 @@
 import { CollectionCreateProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { getRandomCard } from "api/controllers/CardsController";
-import { createCollection } from "api/controllers/CollectionsController";
+import { createCollection, directUpdateCreateFodder } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
@@ -39,27 +39,14 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		const card = await getRandomCard({ rank: DEFAULT_PACK.rank }, 1);
 		if (!card) return;
 		const cardDetails = card[0];
-		const collections = [] as CollectionCreateProps[];
-		Array(DEFAULT_PACK.cardPerPage * num)
-			.fill(0)
-			.map(() => {
-				collections.push({
-					rank: DEFAULT_PACK.rank,
-					rank_id: DEFAULT_PACK.rank_id,
-					user_id: user.id,
-					character_id: cardDetails.character_id,
-					character_level: 1,
-					exp: 0,
-					r_exp: BASE_XP + 5,
-					is_item: false,
-					is_on_cooldown: false,
-					is_tradable: true
-				});
-			});
 
 		await Promise.all([
 			updateRPGUser({ user_tag: author.id }, { gold: user.gold }),
-			createCollection(collections),
+			directUpdateCreateFodder([ {
+				user_id: user.id,
+				character_id: cardDetails.character_id,
+				count: DEFAULT_PACK.cardPerPage * num
+			} ]),
 		]);
 		const canvas = await createSingleCanvas(cardDetails, false);
 		const attachment = createAttachment(

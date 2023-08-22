@@ -34,10 +34,7 @@ import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { numericWithComma } from "helpers";
-import {
-	battleConfirmationInteraction,
-	customButtonInteraction,
-} from "utility/ButtonInteractions";
+import { customButtonInteraction, } from "utility/ButtonInteractions";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import Cache from "cache";
 import { eventActions } from "../events";
@@ -45,11 +42,12 @@ import { raidActions } from "..";
 import { BaseProps } from "@customTypes/command";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
-import { HIGH_LVL_RAIDS_SINGLE_BT_CAP, LOW_LVL_RAIDS, LOW_LVL_RAIDS_SINGLE_BT_CAP } from "helpers/raidConstants";
 
-export const battleRaidBoss = async (params: BaseProps & {
-	callback?: (raidId: number) => void;
-}) => {
+export const battleRaidBoss = async (
+	params: BaseProps & {
+    callback?: (raidId: number) => void;
+  }
+) => {
 	return battleBoss(params);
 	// return battleConfirmationInteraction({
 	// 	...params,
@@ -63,7 +61,7 @@ export const battleBoss = async ({
 	client,
 	isEvent,
 	args,
-	callback
+	callback,
 }: any) => {
 	// has to be type RaidActionProps
 	try {
@@ -108,14 +106,13 @@ export const battleBoss = async ({
 			context.channel?.sendMessage("Unable to attack, please report");
 			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
 		}
-		// TESTING
-		// if (attacker.energy < ENERGY_PER_ATTACK) {
-		// 	context.channel?.sendMessage(
-		// 		`Summoner **${attacker.username}**, ` +
-		//   `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
-		// 	);
-		// 	return;
-		// }
+		if (attacker.energy < ENERGY_PER_ATTACK) {
+			context.channel?.sendMessage(
+				`Summoner **${attacker.username}**, ` +
+		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+			);
+			return;
+		}
 
 		const playerStats = await validateAndPrepareTeam(
 			user.id,
@@ -153,10 +150,7 @@ export const battleBoss = async ({
 		const paramArgs = (args[0] || "").toLowerCase();
 		if (paramArgs === "all") {
 			args.shift();
-			// multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
-
-			// TESTING
-			multiplier = 2;
+			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
 		}
 
 		// wasn't viable - players dont want to spend 30mins - 1 hour raiding
@@ -170,7 +164,8 @@ export const battleBoss = async ({
 		const damageCapPercent = lobbySize === 1 ? 10 : 8.5;
 		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
-			currentRaid.stats.original_strength * ((multiplier * damageCapPercent) / 100)
+			currentRaid.stats.original_strength *
+        ((multiplier * damageCapPercent) / 100)
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
@@ -203,13 +198,12 @@ export const battleBoss = async ({
 			);
 			return;
 		}
-		// TESTING
-		// if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
-		// 	context.channel?.sendMessage(
-		// 		`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
-		// 	);
-		// 	return;
-		// }
+		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
+			);
+			return;
+		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
@@ -218,10 +212,20 @@ export const battleBoss = async ({
 				context.channel?.sendMessage("Unable to calculate total damage");
 				return;
 			}
-			result.totalDamage = Math.floor(
-				Math.ceil(result.totalDamage * 1.35) * multiplier
-			);
-			if (result.totalDamage > damageCap) result.totalDamage = damageCap;
+			if (result.isVictory) {
+				result.totalDamage = damageCap;
+			} else {
+				let percentDamageDealt =
+          (result.totalDamage || 0) /
+          (result.totalStats.originalHp || result.totalStats.strength);
+
+				loggers.info(
+					"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
+					percentDamageDealt
+				);
+				if (percentDamageDealt > 1) percentDamageDealt = 1;
+				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+			}
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;
 			const updatedLobby = await consumeEnergy(
@@ -356,7 +360,11 @@ async function processRaidResult({
 		"boss.jpg"
 	);
 	const embed = createEmbed(author)
-		.setTitle(`${emoji.welldone} Total Damage Dealt`)
+		.setTitle(
+			`${
+				result.isVictory ? `${emoji.welldone} Victory` : `${emoji.cry} Defeated`
+			}, Total Damage Dealt`
+		)
 		.setDescription(
 			`**Summoner ${
 				author.username

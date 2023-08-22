@@ -111,7 +111,9 @@ export const viewTrade = async ({
 				)
 					.map((id) => {
 						const trader = tradeQueue[id];
-						const rankGroup = groupByKey(trader.queue, "rank");
+						const nonFodderCards = trader.queue.filter((q) => !q.is_fodder);
+						const fodders = trader.queue.filter((q) => q.is_fodder);
+						const rankGroup = groupByKey(nonFodderCards, "rank");
 						const keys = Object.keys(rankGroup);
 						return `**${trader.username}'s Queue**${
 							keys.length > 0
@@ -122,7 +124,10 @@ export const viewTrade = async ({
 												k
 											)} ${rankGroup[k]
 												.slice(0, 10)
-												.map((r) => `**${titleCase(r.name || "No Name")} (${r.id})**`)
+												.map(
+													(r) =>
+														`**${titleCase(r.name || "No Name")} (${r.id})**`
+												)
 												.join(", ")}${
 												rankGroup[k].length > 10
 													? ` (__${rankGroup[k].length - 10}__ more)`
@@ -130,6 +135,20 @@ export const viewTrade = async ({
 											} card(s)`
 									)
 									.join("\n")}`
+								: ""
+						}${
+							fodders.length > 0
+								? `\n${fodders
+									.slice(0, 5)
+									.map(
+										(f) =>
+											`__${f.count}x__ Platinum ${titleCase(
+												f.name || "No Name"
+											)}`
+									)
+									.join(", ")}${
+									fodders.length > 5 ? `(__${fodders.length - 5}__ more)` : ""
+								} **(Fodders)**`
 								: ""
 						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 					})

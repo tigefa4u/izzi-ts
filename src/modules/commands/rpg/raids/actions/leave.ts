@@ -36,9 +36,6 @@ const processRaidLeave = async (currentRaid: RaidProps, user_id: number) => {
 	if (Object.keys(lobby).length <= 0 && currentRaid.is_start === false) {
 		currentRaid.is_private = false;
 		Object.assign(body, { is_private: currentRaid.is_private });
-
-		// TESTING
-		await deleteRaid({ id: currentRaid.id });
 	}
 	await updateRaid({ id: currentRaid.id }, body);
 };

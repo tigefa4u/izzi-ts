@@ -24,6 +24,7 @@ import {
 	BATTLE_ROUNDS_COUNT,
 	CONSOLE_BUTTONS,
 	ELEMENTAL_ADVANTAGES,
+	RAGE_MODE_ROUND,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clone } from "utility";
@@ -182,8 +183,10 @@ export const simulateBattle = async ({
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
 				roundStats.isVictory = false;
+				roundStats.enemyStats = enemyStats;
 			} else {
 				roundStats.isVictory = true;
+				roundStats.enemyStats = playerStats;
 			}
 			roundStats.totalDamage = totalDamage;
 		}
@@ -490,7 +493,7 @@ function boostRaidBoss({
 		enemyStats.totalStats.vitality = enemyStats.totalStats.vitality + (baseEnemyStats.totalStats.vitality * .10);
 	}
 
-	if (baseEnemyStats && round === 10 && turn === 1) {
+	if (baseEnemyStats && round === RAGE_MODE_ROUND && turn === 1) {
 		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
 		const diff = getPercentOfTwoNumbers(enemyStats.totalStats.intelligence, baseEnemyStats.totalStats.intelligence);
 		const energy = processEnergyBar({
@@ -528,7 +531,7 @@ async function simulatePlayerTurns({
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
-		if (isRaid && round >= 10) {
+		if (isRaid && round >= RAGE_MODE_ROUND) {
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
@@ -536,7 +539,7 @@ async function simulatePlayerTurns({
 				turn: i
 			});
 			enemyStats = boost.enemyStats;
-			if (round === 10 && i === 1) {
+			if (round === RAGE_MODE_ROUND && i === 1) {
 				const desc = await simulateBattleDescription({
 					playerStats,
 					enemyStats,

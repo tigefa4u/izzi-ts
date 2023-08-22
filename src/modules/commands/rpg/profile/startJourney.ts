@@ -26,6 +26,7 @@ import { starterGuide } from "./guide";
 import { help } from "modules/commands/basic";
 import GA4 from "loggers/googleAnalytics";
 import { DMUser } from "helpers/directMessages";
+import { GUIDE_DOCS } from "environment";
 
 async function startUserJourney(author: AuthorProps) {
 	const newUser = await createUser({
@@ -130,6 +131,7 @@ export const start: (params: BaseProps & { extras?: { bypass: boolean; dmUser: b
           `__${titleCase(cardDetails.rank)}__ copy of` +
           " " +
           `**${titleCase(cardDetails.name)}** Use \`\`@izzi select 1\`\` to select the card.` +
+		  `\nHere's a complete informative guide on basics of izzi: ${GUIDE_DOCS}` +
           "\nGood Luck, Happy Collecting!"
 			);
 
@@ -149,6 +151,12 @@ export const start: (params: BaseProps & { extras?: { bypass: boolean; dmUser: b
 				{
 					label: CONSOLE_BUTTONS.REFERRAL.label,
 					params: { id: CONSOLE_BUTTONS.REFERRAL.id }
+				},
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					url: GUIDE_DOCS,
+					style: "LINK"
 				}
 			],
 			author.id,

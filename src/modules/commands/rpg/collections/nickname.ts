@@ -41,6 +41,15 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 				context.channel?.sendMessage(embed);
 				return;
 			}
+			/**
+			 * Do not allow nicknames to be pingable roles
+			 */
+			if (nickname.toLowerCase().includes("<@&")) {
+				embed.setDescription(`Summoner **${author.username}**, ` +
+				"You cannot use a role in card nicknames.");
+				context.channel?.sendMessage(embed);
+				return;
+			}
 			if (BANNED_TERMS.includes(nickname.toLowerCase())) {
 				context.channel?.sendMessage(`Summoner **${author.username}**, You have been blacklisted for ` +
 				"using a banned term.");

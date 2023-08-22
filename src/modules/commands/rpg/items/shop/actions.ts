@@ -7,6 +7,7 @@ import {
 import { BaseProps } from "@customTypes/command";
 import {
 	createCollection,
+	createItem,
 	getCollection,
 } from "api/controllers/CollectionsController";
 import { getItemById } from "api/controllers/ItemsController";
@@ -91,7 +92,7 @@ async function validateAndPurchaseItem(
 		user.gold = user.gold - item.price;
 		await Promise.all([
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
-			createCollection({
+			createItem({
 				user_id: user.id,
 				is_item: true,
 				item_id: item.id,

@@ -1,6 +1,7 @@
 import { XPGainPerRankProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { createEmbed } from "commons/embeds";
+import { XP_GAIN_PER_RANK } from "helpers/constants";
 import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 import { getReqExpBetweenLevels } from "../enchantment/compute";
@@ -49,24 +50,20 @@ export const cards = ({
 				`Between Level ${baseLevel} to ${maxLevel}`
 			)
 			.setFooter({ text: "Total EXP Gained and Total Cost depends on the cards you consume", });
-		Object.keys(withSameName).map((key) => {
-			embed.addField(
-				key.toUpperCase(),
-				`${withSameName[key as keyof XPGainPerRankProps]} Cards`,
-				true
-			);
-		});
+		embed.addField(
+			`Platinum (${3 * XP_GAIN_PER_RANK.platinum} xp per card)`,
+			`${withSameName.platinum} Cards`,
+			true
+		);
 		embed.addField(
 			"CARDS REQUIRED WITH DIFFERENT NAMES, NO MULTIPLIER",
 			`Between Level ${baseLevel} to ${maxLevel}`
 		);
-		Object.keys(withDifferentName).map((key) => {
-			embed.addField(
-				key.toUpperCase(),
-				`${withDifferentName[key as keyof XPGainPerRankProps]} Cards`,
-				true
-			);
-		});
+		embed.addField(
+			`Platinum (${XP_GAIN_PER_RANK.platinum} xp per card)`,
+			`${withDifferentName.platinum} Cards`,
+			true
+		);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

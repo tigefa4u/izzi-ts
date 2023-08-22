@@ -17,7 +17,7 @@ import { prepareXpGainObject } from "helpers/enchantment";
 import loggers from "loggers";
 import { prepareRankAndFetchCards } from "./process";
 
-async function calcLevelGain({
+export async function calcLevelGain({
 	totalXpGain,
 	card,
 }: {

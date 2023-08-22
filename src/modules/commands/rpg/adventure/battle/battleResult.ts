@@ -29,6 +29,7 @@ import {
 	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
 	MAX_MANA_GAIN,
+	ranksMeta,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
@@ -217,21 +218,21 @@ async function processFloorWin({
 		channel?.sendMessage("This card does not belong to you");
 		return;
 	}
-	let rankReward = "silver";
-	let rankId = 1;
+	const rankReward = "platinum";
+	const rankId = ranksMeta.platinum.rank_id;
 	let goldReward = randomNumber(80, 109);
 	if (user.max_ruin >= 20 && user.max_ruin < 40) {
 		goldReward = randomNumber(110, 150);
-		rankReward = "gold";
-		rankId = 2;
+		// rankReward = "gold";
+		// rankId = 2;
 	} else if (user.max_ruin >= 40 && user.max_ruin < 100) {
 		goldReward = randomNumber(160, 200);
-		rankReward = "platinum";
-		rankId = 3;
+		// rankReward = "platinum";
+		// rankId = 3;
 	} else if (user.max_ruin >= 100) {
 		goldReward = randomNumber(210, 300);
-		rankReward = "platinum";
-		rankId = 3;
+		// rankReward = "platinum";
+		// rankId = 3;
 	}
 	const options = {
 		character_id: enemyCard.character_id,

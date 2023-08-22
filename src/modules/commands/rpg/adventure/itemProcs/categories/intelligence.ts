@@ -26,7 +26,7 @@ export const sapphiresStaff = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "**Ability:** Grants additional (+60) **INT** points " +
+		const desc = "**Ability:** Grants additional (+90) **INT** points " +
 		"as well as __25%__ chance to put the enemy to **SLEEP**";
 
 		prepSendAbilityOrItemProcDescription({
@@ -46,54 +46,56 @@ export const sapphiresStaff = ({
 			basePlayerStats
 		});
 
-	} else {
-		if (opponentStats.totalStats.isAsleep) {
-			const temp = [ true, false ];
-			const wakeupProb = [ 55, 45 ];
-			if (temp[probability(wakeupProb)]) {
-				opponentStats.totalStats.isAsleep = false;
-				const desc = `**__${opponentStats.name}__** has snapped out of ${emoji.sleep} **Sleep!**`;
-				prepSendAbilityOrItemProcDescription({
-					playerStats,
-					enemyStats: opponentStats,
-					card,
-					message,
-					embed,
-					round,
-					isDescriptionOnly: true,
-					description: desc,
-					totalDamage: 0,
-					isPlayerFirst,
-					isItem: false,
-					simulation,
-					baseEnemyStats,
-					basePlayerStats
-				});
-			}
-		}
-		const sleepChance = [ 25, 100 ];
-		const sleeps = [ true, false ];
-		if (sleeps[probability(sleepChance)] && !opponentStats.totalStats.isAsleep && round % 3 === 0) {
-			playerStats.totalStats.previousRound = round;
-			opponentStats.totalStats.isAsleep = true;
-			prepSendAbilityOrItemProcDescription({
-				playerStats,
-				enemyStats: opponentStats,
-				card,
-				message,
-				embed,
-				round,
-				isDescriptionOnly: false,
-				description: `**${opponentStats.name}** is __Asleep__, affected by **Sapphire's Staff**`,
-				totalDamage: 0,
-				isPlayerFirst,
-				isItem: true,
-				simulation,
-				baseEnemyStats,
-				basePlayerStats
-			}); 
-		}
 	}
+	// SLEEP CHANCES HAS BEEN REMOVED
+	// else {
+	// 	if (opponentStats.totalStats.isAsleep) {
+	// 		const temp = [ true, false ];
+	// 		const wakeupProb = [ 55, 45 ];
+	// 		if (temp[probability(wakeupProb)]) {
+	// 			opponentStats.totalStats.isAsleep = false;
+	// 			const desc = `**__${opponentStats.name}__** has snapped out of ${emoji.sleep} **Sleep!**`;
+	// 			prepSendAbilityOrItemProcDescription({
+	// 				playerStats,
+	// 				enemyStats: opponentStats,
+	// 				card,
+	// 				message,
+	// 				embed,
+	// 				round,
+	// 				isDescriptionOnly: true,
+	// 				description: desc,
+	// 				totalDamage: 0,
+	// 				isPlayerFirst,
+	// 				isItem: false,
+	// 				simulation,
+	// 				baseEnemyStats,
+	// 				basePlayerStats
+	// 			});
+	// 		}
+	// 	}
+	// 	const sleepChance = [ 25, 100 ];
+	// 	const sleeps = [ true, false ];
+	// 	if (sleeps[probability(sleepChance)] && !opponentStats.totalStats.isAsleep && round % 3 === 0) {
+	// 		playerStats.totalStats.previousRound = round;
+	// 		opponentStats.totalStats.isAsleep = true;
+	// 		prepSendAbilityOrItemProcDescription({
+	// 			playerStats,
+	// 			enemyStats: opponentStats,
+	// 			card,
+	// 			message,
+	// 			embed,
+	// 			round,
+	// 			isDescriptionOnly: false,
+	// 			description: `**${opponentStats.name}** is __Asleep__, affected by **Sapphire's Staff**`,
+	// 			totalDamage: 0,
+	// 			isPlayerFirst,
+	// 			isItem: true,
+	// 			simulation,
+	// 			baseEnemyStats,
+	// 			basePlayerStats
+	// 		}); 
+	// 	}
+	// }
 	return {
 		playerStats,
 		opponentStats,

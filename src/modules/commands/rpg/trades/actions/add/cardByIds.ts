@@ -4,6 +4,7 @@ import { createEmbed } from "commons/embeds";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
+	FODDER_RANKS,
 	MAX_CARDS_IN_TRADE,
 } from "helpers/constants";
 import loggers from "loggers";
@@ -66,13 +67,14 @@ export const addCardByIds = async ({
 		}
 		embed.setTitle(DEFAULT_ERROR_TITLE);
 		collections = collections?.filter(
-			(c) => !c.is_on_cooldown && c.is_tradable && !c.is_on_market
+			(c) => !c.is_on_cooldown && c.is_tradable && !c.is_on_market && !FODDER_RANKS.includes(c.rank)
 		);
 		if (!collections || collections.length <= 0) {
 			embed
 				.setDescription(
 					"The card(s) you are looking for is either not available or on cooldown " +
-            "or is on sale on the Global Market."
+            "or is on sale on the Global Market." +
+			"\n\n**Note: To trade Fodders use ``iz tr add fodds -n <name> -l <limit>`` command.**"
 				)
 				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
@@ -85,6 +87,8 @@ export const addCardByIds = async ({
 				user_id: coll.user_id,
 				rank: coll.rank,
 				name: coll.name,
+				count: 1,
+				character_id: coll.character_id
 			}));
 		if (arr.length > 0) {
 			loggers.info("adding cards to trade: ", arr);

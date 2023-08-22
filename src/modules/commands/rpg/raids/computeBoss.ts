@@ -1,7 +1,8 @@
 import { MapProps } from "@customTypes";
 import { PrepareLootProps } from "@customTypes/raids";
-import { randomElementFromArray } from "helpers";
-import prepareBaseLoot from "./prepareBaseLoot";
+import { probability, randomElementFromArray } from "helpers";
+import loggers from "loggers";
+import prepareBaseLoot, { computedCategoryData, ComputedCategoryProps } from "./prepareBaseLoot";
 
 const difficultyObj: MapProps = {
 	e: "easy",
@@ -11,7 +12,7 @@ const difficultyObj: MapProps = {
 	easy: "easy",
 	hard: "hard",
 	medium: "medium",
-	immortal: "immortal"
+	immortal: "immortal",
 };
 
 const reverseMap: MapProps = {
@@ -22,32 +23,131 @@ const reverseMap: MapProps = {
 	e: "e",
 	m: "m",
 	h: "h",
-	i: "i"
+	i: "i",
 };
 
 const coupleEventLevels: any = {
 	e: [ 100, 200 ],
 	m: [ 250, 350 ],
 	h: [ 400, 500 ],
-	i: [ 550, 650 ]
+	i: [ 550, 650 ],
 };
 
-export const computeRank = (difficulty = "e", isEvent = false, isWorldBoss = false) => {
-	return prepareLoot(difficulty, isEvent, isWorldBoss);
+export const computeRank = (
+	difficulty = "e",
+	isEvent = false,
+	isWorldBoss = false,
+	level = 25
+) => {
+	return prepareLoot(difficulty, isEvent, isWorldBoss, level);
+};
+
+type C = {
+    d3: number;
+    d2?: number;
+    d1?: number;
+  }
+const computeBossByPlayerLevel = (
+	level: number,
+	raidBossCategories: ("d3" | "d2" | "d1")[]
+) => {
+	let categoryAndlevelPercent: C = { d3: 50 };
+	let chances = [ 100 ];
+	let bosses = 1;
+	if (level >= 70) {
+		bosses = 3;
+	}
+	if (level <= 20) {
+		categoryAndlevelPercent = { d3: 75 };
+	} else if (level <= 25) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 25,
+		};
+		chances = [ 100, 25 ];
+	} else if (level <= 30) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 50,
+		};
+		chances = [ 100, 50 ];
+	} else if (level <= 50) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 75,
+		};
+		chances = [ 100, 60 ];
+	} else if (level <= 75) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 25,
+		};
+		chances = [ 100, 100, 25 ];
+	} else if (level <= 180) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 50,
+		};
+		chances = [ 100, 100, 50 ];
+	} else if (level <= 250) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 75,
+		};
+		chances = [ 100, 100, 75 ];
+	} else if (level <= 320) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 100,
+		};
+		chances = [ 100, 100, 100 ];
+	}
+	let spawnCategory = Object.keys(categoryAndlevelPercent)[
+		probability(chances)
+	] as keyof ComputedCategoryProps;
+	if (raidBossCategories.length <= 0) {
+		spawnCategory = "d3";
+	} else {
+		const found = raidBossCategories.find((c) => c === spawnCategory);
+		if (!found) {
+			spawnCategory = raidBossCategories[raidBossCategories.length - 1];
+		}
+	}
+	const lowerLevel = Math.ceil(computedCategoryData[spawnCategory].maxlevel * 0.25);
+	const higherLevel = Math.ceil(
+		(computedCategoryData[spawnCategory].maxlevel *
+      (categoryAndlevelPercent[spawnCategory as keyof C] || 25) / 100)
+	);
+	const bonusDropRate = computedCategoryData[spawnCategory].rate;
+	const ranks = computedCategoryData[spawnCategory].ranks;
+	return {
+		lowerLevel,
+		higherLevel,
+		bonusDropRate,
+		ranks,
+		numberOfCards: computedCategoryData[spawnCategory].numberOfCards,
+		spawnCategory,
+		bosses
+	};
 };
 
 function prepareLoot(
 	difficulty = "e",
 	isEvent = false,
-	isWorldBoss = false
+	isWorldBoss = false,
+	level = 25
 ): PrepareLootProps | undefined {
 	const result = {
 		loot: {
 			drop: {
 				default: {},
-				event: {}
-			}
-		}
+				event: {},
+			},
+		},
 	} as PrepareLootProps;
 	difficulty = reverseMap[difficulty];
 	if (!difficulty) {
@@ -72,11 +172,26 @@ function prepareLoot(
 		result.rank = baseLoot[difficulty].default.rank;
 		result.level = baseLoot[difficulty].default.level;
 	} else {
-		result.bosses = baseLoot[difficulty].default.bosses || 3;
+		const resp = computeBossByPlayerLevel(
+			level,
+			baseLoot[difficulty].default.categories,
+		);
+		result.bosses = resp.bosses || 1;
 		result.loot.drop.default = baseLoot[difficulty].default.loot.drop;
 		result.loot.rare = baseLoot[difficulty].default.loot.rare;
-		result.level = baseLoot[difficulty].default.level;
-		result.rank = baseLoot[difficulty].default.rank;
+
+		loggers.info("Computed boss by player level:", resp);
+
+		result.loot.rare?.map((r) => {
+			r.rate = (r.rate || 0) + resp.bonusDropRate;
+
+			// Make this change if you decide to add more ranks
+			if (r.rank === "immortal") {
+				r.number = Math.floor(resp.numberOfCards.immortal / result.bosses);
+			}
+		});
+		result.level = [ resp.lowerLevel, resp.higherLevel ];
+		result.rank = resp.ranks;
 		result.loot.gold = baseLoot[difficulty].default.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].default.loot.extraGold;
 		// result.loot.gamePoints = 0;

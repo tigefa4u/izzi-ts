@@ -174,4 +174,7 @@ export type EmojiProps = {
 	dprrunner1: "<:dprrunner1:1135614270269301009>",
 	dprrunner2: "<:dprrunner2:1135614266683179029>",
 	dprrunner3: "<:dprrunner3:1135614262048456825>",
+	hertakurukuru: "<a:kurukuru:1137431791544840212>",
+	cleanse: "<:cleanse:1143386074048102420>",
+	cleanseffect: "<:cleanseffect:1143386071774810192>",
 }

@@ -5,7 +5,7 @@ import { emojiMap } from "emojis";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
-import { ranksMeta } from "helpers/constants";
+import { FODDER_RANKS, ranksMeta } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { processItemStats } from "..";
@@ -178,7 +178,7 @@ export const desolator = ({
 		if (isRaid && card.rank_id === ranksMeta.ultimate.rank_id) {
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];
-			if (canStealSouls) {
+			if (canStealSouls && !FODDER_RANKS.includes(card.rank)) {
 				const soulsToSeal = (opponentStats.cards.length || 0) * (multiplier || 1);
 				desc =
           desc +

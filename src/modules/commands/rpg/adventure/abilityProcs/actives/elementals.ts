@@ -87,7 +87,7 @@ export const elementalStrike = ({
 		const effective = elementalEffectiveness.playerStats.effective;
 		damageDealt = Math.floor(damageDealt * effective);
 		const abilityDamageCap = Math.floor(
-			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
+			playerStats.totalStats.originalHp * ((50) / 100)
 		);
 		if (damageDealt > abilityDamageCap) {
 			damageDealt = abilityDamageCap;
@@ -241,7 +241,7 @@ export const spellBook = ({
 			const effective = elementalEffectiveness.playerStats.effective;
 			abilityDamage = Math.floor(abilityDamage * effective);
 			const abilityDamageCap = Math.floor(
-				playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
+				playerStats.totalStats.originalHp * ((50) / 100)
 			);
 			if (abilityDamage > abilityDamageCap) {
 				abilityDamage = abilityDamageCap;
@@ -349,7 +349,7 @@ export const tornado = ({
 		abilityDamage = ratio * 3;
 
 		const abilityDamageCap = Math.floor(
-			playerStats.totalStats.originalHp * ((playerStats.isBot ? 1 : 50) / 100)
+			playerStats.totalStats.originalHp * (50 / 100)
 		);
 		if (abilityDamage > abilityDamageCap) {
 			abilityDamage = abilityDamageCap;

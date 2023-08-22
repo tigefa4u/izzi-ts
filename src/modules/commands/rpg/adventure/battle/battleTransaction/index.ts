@@ -13,6 +13,7 @@ import {
 	DUNGEON_MIN_LEVEL,
 	MANA_PER_BATTLE,
 	MAX_GOLD_THRESHOLD,
+	ranksMeta,
 	USER_XP_GAIN_PER_BATTLE,
 } from "helpers/constants";
 import loggers from "loggers";
@@ -176,8 +177,8 @@ export const processBattleTransaction = async ({
 				const fodders = prepareFloorFodder({
 					character_id: enemyCard.character_id,
 					user_id: user.id,
-					rankReward: userRewards?.rankReward || "silver",
-					rankId: userRewards?.rankId || 1,
+					rankReward: userRewards?.rankReward || "platinum",
+					rankId: userRewards?.rankId || ranksMeta.platinum.rank_id,
 					multiplier
 				});
 				if (!fodders) {
