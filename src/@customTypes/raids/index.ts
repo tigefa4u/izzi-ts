@@ -35,6 +35,7 @@ export type RaidLootDropProps = {
     number: number;
     rate?: number;
     isStaticDropRate?: boolean;
+    isStaticDrop?: boolean;
 }
 export type RaidLootProps = {
     gold: number;

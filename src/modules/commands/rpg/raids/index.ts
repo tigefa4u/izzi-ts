@@ -137,13 +137,13 @@ export function prepareRaidBossEmbedDesc(
 		isWorldBoss
 			? `\n**Boss Energy (Lives):** ${raid.stats.battle_stats.energy || 1} ${emoji.hp}`
 			: ""
-	}\n**Total HP:** ${stats.battle_stats.stats.strength}\n**Total ATK:** ${
-		stats.battle_stats.stats.vitality
-	}\n**Total DEF:** ${stats.battle_stats.stats.defense}\n**Total SPD:** ${
-		stats.battle_stats.stats.dexterity
+	}\n**Total HP:** ${numericWithComma(stats.battle_stats.stats.strength)}\n**Total ATK:** ${
+		numericWithComma(stats.battle_stats.stats.vitality)
+	}\n**Total DEF:** ${numericWithComma(stats.battle_stats.stats.defense)}\n**Total SPD:** ${
+		numericWithComma(stats.battle_stats.stats.dexterity)
 	}\n**Total INT:** ${
-		stats.battle_stats.stats.intelligence
-	}\n\n**Power Level:** ${stats.battle_stats.power_level}\n\n${
+		numericWithComma(stats.battle_stats.stats.intelligence)
+	}\n\n**Power Level:** ${numericWithComma(stats.battle_stats.power_level)}\n\n${
 		prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)
 	}`;
 

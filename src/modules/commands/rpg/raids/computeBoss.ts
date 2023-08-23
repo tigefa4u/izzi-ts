@@ -117,17 +117,15 @@ const computeBossByPlayerLevel = (
 			spawnCategory = raidBossCategories[raidBossCategories.length - 1];
 		}
 	}
-	const lowerLevel = Math.ceil(computedCategoryData[spawnCategory].maxlevel * 0.25);
+	const lowerLevel = Math.ceil(computedCategoryData[spawnCategory].maxlevel * .25);
 	const higherLevel = Math.ceil(
 		(computedCategoryData[spawnCategory].maxlevel *
       (categoryAndlevelPercent[spawnCategory as keyof C] || 25) / 100)
 	);
-	const bonusDropRate = computedCategoryData[spawnCategory].rate;
 	const ranks = computedCategoryData[spawnCategory].ranks;
 	return {
 		lowerLevel,
 		higherLevel,
-		bonusDropRate,
 		ranks,
 		numberOfCards: computedCategoryData[spawnCategory].numberOfCards,
 		spawnCategory,
@@ -183,11 +181,13 @@ function prepareLoot(
 		loggers.info("Computed boss by player level:", resp);
 
 		result.loot.rare?.map((r) => {
-			r.rate = (r.rate || 0) + resp.bonusDropRate;
-
+			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
 			// Make this change if you decide to add more ranks
-			if (r.rank === "immortal") {
-				r.number = Math.floor(resp.numberOfCards.immortal / result.bosses);
+			if (resp.numberOfCards[rank]) {
+				r.rate = (r.rate || 0) + resp.numberOfCards[rank].rate;
+				if (!r.isStaticDrop) {
+					r.number = Math.floor(resp.numberOfCards[rank].cards / result.bosses);
+				}
 			}
 		});
 		result.level = [ resp.lowerLevel, resp.higherLevel ];

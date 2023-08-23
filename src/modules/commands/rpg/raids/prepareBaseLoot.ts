@@ -30,32 +30,58 @@ export const levelBonusDropRate: LevelBonusDropRateProps = {
 
 export type ComputedCategoryProps = {
 	[key in "d3" | "d2" | "d1"]: {
-		rate: number;
 		maxlevel: number;
 		ranks: string[];
 		numberOfCards: {
-			immortal: number;
+			[key: string]: {
+				cards: number;
+				rate: number;
+			};
 		}
 	}
 }
 export const computedCategoryData : ComputedCategoryProps = {
 	d3: {
-		rate: 3,
 		maxlevel: 1500,
 		ranks: [ "silver", "gold", "platinum" ],
-		numberOfCards: { immortal: 3 }
+		numberOfCards: {
+			legend: {
+				cards: 3,
+				rate: 4
+			},
+			immortal: {
+				cards: 1,
+				rate: 2
+			}
+		}
 	},
 	d2: {
-		rate: 6,
 		maxlevel: 1850,
 		ranks: [ "diamond", "divine", "legend" ],
-		numberOfCards: { immortal: 6 }
+		numberOfCards: {
+			legend: {
+				cards: 6,
+				rate: 7.35
+			},
+			immortal: {
+				cards: 1,
+				rate: 4
+			} 
+		}
 	},
 	d1: {
-		rate: 9,
 		maxlevel: 2500,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
-		numberOfCards: { immortal: 9 }
+		numberOfCards: {
+			legend: {
+				cards: 9,
+				rate: 12
+			},
+			immortal: {
+				cards: 1,
+				rate: 6
+			} 
+		}
 	}
 };
 
@@ -80,11 +106,23 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "immortal",
-						rank_id: 7,
-						rate: .5,
+						rank: "legend",
+						rank_id: 5,
+						rate: 1.2,
 						number: 3,
 					},
+					{
+						rank: "immortal",
+						rank_id: 7,
+						/**
+						 * Negative rate is used here as base rate
+						 * since the rate will gradually increase
+						 * when you add category and level rate
+						 */
+						rate: -5.25,
+						number: 1,
+						isStaticDrop: true
+					}
 				],
 			}
 		},
@@ -116,11 +154,18 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "immortal",
-						rank_id: 7,
-						rate: 1.75,
+						rank: "legend",
+						rank_id: 5,
+						rate: 2,
 						number: 1,
 					},
+					{
+						rank: "immortal",
+						rank_id: 7,
+						rate: -4.5,
+						number: 1,
+						isStaticDrop: true
+					}
 				],
 			}
 		},
@@ -165,10 +210,17 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
+						rank: "legend",
+						rank_id: 5,
+						rate: 3,
+						number: 1 // depends on d3, d2, d1
+					},
+					{
 						rank: "immortal",
 						rank_id: 7,
-						rate: 2.25,
-						number: 1 // depends on d3, d2, d1
+						rate: -3.75,
+						number: 1,
+						isStaticDrop: true
 					}
 				],
 				worldBoss: {
@@ -240,11 +292,18 @@ const baseLoot = (): any => ({
 				// number of cards depend on category
 				rare: [
 					{
-						rank: "immortal",
-						rank_id: 7,
-						rate: 4.65,
+						rank: "legend",
+						rank_id: 5,
+						rate: 4.5,
 						number: 8,
 					},
+					{
+						rank: "immortal",
+						rank_id: 7,
+						rate: -3.15,
+						number: 1,
+						isStaticDrop: true
+					}
 				],
 			}
 		},

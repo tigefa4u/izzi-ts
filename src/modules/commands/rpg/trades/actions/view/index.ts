@@ -148,7 +148,7 @@ export const viewTrade = async ({
 									)
 									.join(", ")}${
 									fodders.length > 5 ? `(__${fodders.length - 5}__ more)` : ""
-								} **(Fodders)**`
+								} card(s) **(Fodders)**`
 								: ""
 						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 					})
