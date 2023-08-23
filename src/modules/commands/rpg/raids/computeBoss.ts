@@ -54,7 +54,7 @@ const computeBossByPlayerLevel = (
 	let categoryAndlevelPercent: C = { d3: 50 };
 	let chances = [ 100 ];
 	let bosses = 1;
-	if (level >= 70) {
+	if (level >= 55) {
 		bosses = 3;
 	}
 	if (level <= 20) {
