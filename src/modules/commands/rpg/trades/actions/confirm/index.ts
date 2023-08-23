@@ -225,7 +225,8 @@ export const confirmTrade = async ({
 					trader_1.queue.splice(index, 1);
 				}
 			}
-			if (trader_1_cards.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+			const trader1totalCardsTraded = trader_1.queue.reduce((acc, r) => acc + r.count, 0);
+			if (trader1totalCardsTraded >= MIN_TRADE_CARDS_FOR_QUEST) {
 				promises.push(validateAndCompleteQuest({
 					user_tag: trader_1.user_tag,
 					type: QUEST_TYPES.TRADING,
@@ -233,7 +234,7 @@ export const confirmTrade = async ({
 						channel,
 						client,
 						author: {} as AuthorProps,
-						extras: { tradeQueueLen: trader_1.queue.length },
+						extras: { tradeQueueLen: trader1totalCardsTraded },
 					},
 					level: 0
 				}));
@@ -265,7 +266,8 @@ export const confirmTrade = async ({
 					trader_2.queue.splice(index, 1);
 				}
 			}
-			if (trader_2_cards.length >= MIN_TRADE_CARDS_FOR_QUEST) {
+			const trader2totalCardsTraded = trader_2.queue.reduce((acc, r) => acc + r.count, 0);
+			if (trader2totalCardsTraded >= MIN_TRADE_CARDS_FOR_QUEST) {
 				promises.push(validateAndCompleteQuest({
 					user_tag: trader_2.user_tag,
 					type: QUEST_TYPES.TRADING,
@@ -273,7 +275,7 @@ export const confirmTrade = async ({
 						channel,
 						client,
 						author: {} as AuthorProps,
-						extras: { tradeQueueLen: trader_2.queue.length },
+						extras: { tradeQueueLen: trader2totalCardsTraded },
 					},
 					level: 0
 				}));
