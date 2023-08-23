@@ -151,9 +151,9 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 	 * Since there will only be platinum fodders the xp gain
 	 * is the average of silver (100) + gold (150) + plat (200)
 	 */
-	silver: 150, // 100
-	gold: 150,
-	platinum: 150, // 200
+	silver: 170, // 100
+	gold: 170,
+	platinum: 170, // 200
 	diamond: 250,
 	legend: 300,
 	divine: 450,

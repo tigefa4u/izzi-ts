@@ -50,7 +50,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 				rate: 4
 			},
 			immortal: {
-				cards: 1,
+				cards: 3,
 				rate: 2
 			}
 		}
@@ -64,7 +64,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 				rate: 7.35
 			},
 			immortal: {
-				cards: 1,
+				cards: 3,
 				rate: 4
 			} 
 		}
@@ -78,7 +78,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 				rate: 12
 			},
 			immortal: {
-				cards: 1,
+				cards: 3,
 				rate: 6
 			} 
 		}
