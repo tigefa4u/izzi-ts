@@ -305,7 +305,7 @@ async function processAbililtyOrItemProc({
         playerStats.totalStats.isRestrictResisted) &&
       !(
       	playerStats.cards.find(
-      		(c) => c?.abilityname === "harbinger of death"
+      		(c) => (c?.abilityname === "harbinger of death" || c?.abilityname === "cleanse")
       	) && round % HARBINGER_OF_DEATH_PROC_ROUND === 0
       )
 		)

@@ -481,3 +481,49 @@ export const frost = ({
 		abilityDamage,
 	};
 };
+
+export const cleanse = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	baseEnemyStats,
+	simulation,
+	basePlayerStats,
+}: BattleProcessProps) => {
+	if (round % 3 === 0 && playerStats.totalStats.isCleanse) {
+		playerStats.totalStats.isCleanse = true;
+		// Nullify all effects
+		playerStats.totalStats.isStackTB = false;
+		playerStats.totalStats.isBleeding = false;
+		playerStats.totalStats.isPoisoned = false;
+		playerStats.totalStats.isRestrictResisted = false;
+		playerStats.totalStats.isAsleep = false;
+
+		const desc = `Nullifying **Status Effects** ${emoji.cleanseffect}.`;
+	  prepSendAbilityOrItemProcDescription({
+		  playerStats,
+		  enemyStats: opponentStats,
+		  card,
+		  message,
+		  embed,
+		  round,
+		  isDescriptionOnly: false,
+		  description: desc,
+		  totalDamage: 0,
+		  isPlayerFirst,
+		  isItem: false,
+		  simulation,
+		  baseEnemyStats,
+		  basePlayerStats,
+	  });
+	}
+
+	return {
+		playerStats,
+		opponentStats
+	};
+};

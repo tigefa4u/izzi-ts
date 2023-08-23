@@ -13,6 +13,12 @@ const emoji: EmojiProps = {
 	e1: "<:e1:779550704523935755>",
 	e2: "<:e2:779550704464560158>",
 	e3: "<:e3:779550704032284723>",
+	dpr1: "<:dpr1:1135574490068303902>",
+	dpr2: "<:dpr2:1135574488038264972>",
+	dpr3: "<:dpr3:1135574484250808381>",
+	dprrunner1: "<:dprrunner1:1135614270269301009>",
+	dprrunner2: "<:dprrunner2:1135614266683179029>",
+	dprrunner3: "<:dprrunner3:1135614262048456825>",
 	lowhealth: "<:lowhealth:774254493985669150>",
 	fullhealth: "<:fullhealth:774254493570695198>",
 	emptyhealth: "<:emptyhealth:774254493474357248>",
@@ -171,6 +177,8 @@ const emoji: EmojiProps = {
 	silverstar: "<:silverstar:1135091583096737812>",
 	bronzestar: "<:bronzestar:1135091588519968818>",
 	hertakurukuru: "<a:kurukuru:1137431791544840212>",
+	cleanse: "<:cleanse:1143386074048102420>",
+	cleanseffect: "<:cleanseffect:1143386071774810192>",
 };
 
 export default emoji;
