@@ -90,6 +90,7 @@ export type AbilityProcMapProps = {
     "defensive strike": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     "lightning shield": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     leer: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    cleanse: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 
 export type ItemProcMapProps = {
