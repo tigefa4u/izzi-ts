@@ -41,7 +41,7 @@ const spawnRaids = async () => {
 		// if (raids && raids.length > 40) return;
 		return Promise.all(Array(5).fill([ "e", "m", "h", "i" ]).flat().map(async (difficulty) => {
 			// spawning boss based on user level
-			const computedBoss = computeRank(difficulty, isEvent, false, randomNumber(30, 170));
+			const computedBoss = computeRank(difficulty, isEvent, false, randomNumber(30, 200));
 			if (!computedBoss) return;
 			loggers.info("cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " + difficulty);
 			await createRaidBoss({

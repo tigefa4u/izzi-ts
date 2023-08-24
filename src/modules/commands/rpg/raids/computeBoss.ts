@@ -43,7 +43,7 @@ export const computeRank = (
 };
 
 type C = {
-    d3: number;
+    d3?: number;
     d2?: number;
     d1?: number;
   }
@@ -85,32 +85,29 @@ const computeBossByPlayerLevel = (
 		chances = [ 100, 100, 50 ];
 	} else  if (level <= 100) {
 		categoryAndlevelPercent = {
-			d3: 100,
+			// d3: 100,
 			d2: 100,
 			d1: 75,
 		};
 		chances = [ 100, 100, 75 ];
 	} else if (level <= 125) {
 		categoryAndlevelPercent = {
-			d3: 100,
 			d2: 100,
 			d1: 100,
 		};
-		chances = [ 100, 100, 100 ];	
+		chances = [ 100, 500 ];	
 	} else if (level <= 160) {
 		categoryAndlevelPercent = {
-			d3: 100,
-			d2: 100,
+			// d2: 100,
 			d1: 125,
 		};
-		chances = [ 100, 100, 100 ];		
+		chances = [ 500 ];		
 	} else {
 		categoryAndlevelPercent = {
-			d3: 100,
-			d2: 100,
+			// d2: 100,
 			d1: 150,
 		};
-		chances = [ 100, 100, 100 ];	
+		chances = [ 500 ];	
 	}
 	let spawnCategory = Object.keys(categoryAndlevelPercent)[
 		probability(chances)

@@ -20,12 +20,12 @@ export type LevelBonusDropRateProps = {
 	[key: string]: number;
 }
 export const levelBonusDropRate: LevelBonusDropRateProps = {
-	25: 3,
-	50: 6,
-	75: 9,
-	100: 12,
-	125: 15,
-	150: 20,
+	25: 5,
+	50: 8,
+	75: 12,
+	100: 15,
+	125: 35,
+	150: 50,
 };
 
 export type ComputedCategoryProps = {
