@@ -205,7 +205,7 @@ const baseLoot = (): any => ({
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 26
+						number: 78
 					},
 				],
 				rare: [
@@ -286,7 +286,7 @@ const baseLoot = (): any => ({
 					{
 						rank: "platinum",
 						rank_id: 3,
-						number: 30
+						number: 90
 					}
 				],
 				// number of cards depend on category
