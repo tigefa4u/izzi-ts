@@ -115,7 +115,7 @@ export const joinRaid = async ({
 		]);
 		if (!viewEmbed) return;
 
-		viewEmbed.setTitle(`${isEvent ? "Event" : "Raid"} View`);
+		// viewEmbed.setTitle(`${isEvent ? "Event" : "Raid"} View`);
 		context.channel?.sendMessage(viewEmbed);
 
 		const followUpEmbed = createEmbed(author, client)
