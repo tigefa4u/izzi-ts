@@ -90,11 +90,25 @@ const computeBossByPlayerLevel = (
 			d1: 75,
 		};
 		chances = [ 100, 100, 75 ];
-	} else {
+	} else if (level <= 125) {
 		categoryAndlevelPercent = {
 			d3: 100,
 			d2: 100,
 			d1: 100,
+		};
+		chances = [ 100, 100, 100 ];	
+	} else if (level <= 160) {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 125,
+		};
+		chances = [ 100, 100, 100 ];		
+	} else {
+		categoryAndlevelPercent = {
+			d3: 100,
+			d2: 100,
+			d1: 150,
 		};
 		chances = [ 100, 100, 100 ];	
 	}
