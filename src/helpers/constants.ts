@@ -28,54 +28,54 @@ export const ranksMeta: RanksMetaProps = {
 		size: 1,
 		rank_id: 1,
 		color: "#b6c7be",
-		emoji: "bronzestar"
+		emoji: "bronzestar",
 	},
 	gold: {
 		size: 2,
 		rank_id: 2,
 		color: "#c89e50",
-		emoji: "bronzestar"
+		emoji: "bronzestar",
 	},
 	platinum: {
 		size: 3,
 		rank_id: 3,
 		color: "#298077",
-		emoji: "bronzestar"
+		emoji: "bronzestar",
 	},
 	diamond: {
 		size: 1,
 		rank_id: 4,
 		color: "#73c0d3",
-		emoji: "silverstar"
+		emoji: "silverstar",
 	},
 	legend: {
 		size: 2,
 		rank_id: 5,
 		color: "#c11b17",
-		emoji: "silverstar"
+		emoji: "silverstar",
 	},
 	divine: {
 		size: 3,
 		rank_id: 6,
 		color: "#c35817",
-		emoji: "silverstar"
+		emoji: "silverstar",
 	},
 	immortal: {
 		size: 1,
 		rank_id: 7,
 		color: "#b641c4",
-		emoji: "goldstar"
+		emoji: "goldstar",
 	},
 	exclusive: {
 		size: 2,
 		rank_id: 8,
-		emoji: "goldstar"
+		emoji: "goldstar",
 	},
 	ultimate: {
 		size: 3,
 		rank_id: 9,
 		max_level: 70,
-		emoji: "goldstar"
+		emoji: "goldstar",
 	},
 };
 
@@ -134,7 +134,7 @@ export const GOLD_LIMIT = 100000000;
 export const BET_LIMIT = 500000;
 export const DEFAULT_PACK = {
 	num: 1000,
-	cost: 1350, 
+	cost: 1350,
 	cardPerPage: 10,
 	rank: "platinum",
 	rank_id: 3,
@@ -147,10 +147,10 @@ export const PAGE_FILTER = {
 
 export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 	/**
-	 * These changes are related to condensed fodders.
-	 * Since there will only be platinum fodders the xp gain
-	 * is the average of silver (100) + gold (150) + plat (200)
-	 */
+   * These changes are related to condensed fodders.
+   * Since there will only be platinum fodders the xp gain
+   * is the average of silver (100) + gold (150) + plat (200)
+   */
 	silver: 170, // 100
 	gold: 170,
 	platinum: 170, // 200
@@ -160,7 +160,7 @@ export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
 	immortal: 500,
 	exclusive: 800,
 	ultimate: 800,
-	prestige: 1000
+	prestige: 1000,
 };
 
 export const ORB_INTEREST_RATE = 0.7;
@@ -209,7 +209,7 @@ export const IMMORTAL_SHIELDBOW_ID = 3;
 export const GUILD_ITEM_PROPERTIES = {
 	SOUL_ID: "souls",
 	SEAL_ID: "seals",
-	IMMORTAL_SHIELD_BOW_ID: "immortalshieldbow"
+	IMMORTAL_SHIELD_BOW_ID: "immortalshieldbow",
 };
 
 export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -291,9 +291,7 @@ export const BOT_GLOBAL_PERMISSIONS: PermissionString[] = [
 	"USE_APPLICATION_COMMANDS",
 ];
 
-export const THREAD_CHANNEL_PERMISSIONS = [
-	"SEND_MESSAGES_IN_THREADS"
-];
+export const THREAD_CHANNEL_PERMISSIONS = [ "SEND_MESSAGES_IN_THREADS" ];
 
 export const MAX_REQUESTS_PER_CHANNEL = 6;
 
@@ -307,7 +305,7 @@ export const DUNGEON_MIN_LEVEL = 10;
 
 export const BATTLE_TYPES = {
 	DUNGEON: "DUNGEON",
-	FLOOR: "FLOOR"
+	FLOOR: "FLOOR",
 };
 
 export const HARBINGER_OF_DEATH_PROC_ROUND = 3;
@@ -340,170 +338,173 @@ export const CONSOLE_BUTTONS = {
 	},
 	FLOOR_BT: {
 		id: "floor_bt",
-		label: "Fl Bt"
+		label: "Fl Bt",
 	},
 	FLOOR_BT_ALL: {
 		id: "floor_bt_all",
-		label: "Bt all"
+		label: "Bt all",
 	},
 	NEXT_FLOOR: {
 		id: "next_floor",
-		label: "Fl n"
+		label: "Fl n",
 	},
 	NEXT_ZONE: {
 		id: "next_zone",
-		label: "Zn n"
+		label: "Zn n",
 	},
 	RAID_BATTLE: {
 		id: "raid_bt",
-		label: "Rd bt"
+		label: "Rd bt",
 	},
 	RAID_SPAWN: {
 		id: "raid_spawn",
-		label: "Raid spawn"
+		label: "Raid spawn",
 	},
 	CONSOLE: {
 		id: "console",
-		label: "Console"
+		label: "Console",
 	},
 	RAID_COMMANDS: {
 		id: "raid_commands",
-		label: "Rd Commands"
+		label: "Rd Commands",
 	},
 	RAID_MAKE_PRIVATE: {
 		id: "raid_make_private",
-		label: "Rd Private"
+		label: "Rd Private",
 	},
 	RAID_MAKE_PUBLIC: {
 		id: "raid_make_public",
-		label: "Rd Public"
+		label: "Rd Public",
 	},
 	RAID_VIEW: {
 		id: "raid_view",
-		label: "Rd View"
+		label: "Rd View",
 	},
 	RAID_START: {
 		id: "raid_start",
-		label: "Rd Start"
+		label: "Rd Start",
 	},
 	RAID_JOIN: {
 		id: "raid_join",
-		label: "Rd Join"
+		label: "Rd Join",
 	},
 	HOURLY: {
 		id: "hourly",
-		label: "Hourly"
+		label: "Hourly",
 	},
 	LOTTERY: {
 		id: "lotto",
-		label: "Lottery"
+		label: "Lottery",
 	},
 	RAID_LEAVE: {
 		id: "raid_leave",
-		label: "Rd Leave"
+		label: "Rd Leave",
 	},
 	RAID_RECRUIT: {
 		id: "raid_recruit",
-		label: "Rd Recruit"
+		label: "Rd Recruit",
 	},
 	HELP: {
 		id: "help",
-		label: "Help"
+		label: "Help",
 	},
 	BACK: {
 		id: "back",
-		label: "Back"
+		label: "Back",
 	},
 	JUMP_TO_FLOOR: {
 		id: "jump_to_floor",
-		label: "Jump to Floor"
+		label: "Jump to Floor",
 	},
 	UPGRADE_CARD_LEVEL: {
 		id: "upgrade_card_level",
-		label: "Upgrade Level"
+		label: "Upgrade Level",
 	},
 	EVOLVE_CARD: {
 		id: "evolve_card",
-		label: "Evolve Card"
+		label: "Evolve Card",
 	},
 	RAID_PARTY: {
 		id: "raid_party",
-		label: "Rd Party"
+		label: "Rd Party",
 	},
 	SELECT_CARD: {
 		id: "select_card",
-		label: "Select Card"
+		label: "Select Card",
 	},
 	GUIDE: {
 		id: "guide",
-		label: "Beginner Guide"
+		label: "Beginner Guide",
 	},
 	CHANGE_LOGS: {
 		id: "change_log",
-		label: "Change Logs"
+		label: "Change Logs",
 	},
 	FORFEIT: {
 		id: "forfeit",
-		label: "Forfeit"
+		label: "Forfeit",
 	},
 	FINISH_BATTLE: {
 		id: "finish_battle",
-		label: "Finish Battle"
+		label: "Finish Battle",
 	},
 	VIEW_BATTLE_LOGS: {
 		id: "view_battle_logs",
-		label: "View Battle Logs"
+		label: "View Battle Logs",
 	},
 	JOIN_SUPPORT_SERVER: {
 		id: "join_support_server",
-		label: "Join Support Server"
+		label: "Join Support Server",
 	},
 	START_JOURNEY: {
 		id: "start_journey",
-		label: "Start Journey"
+		label: "Start Journey",
 	},
 	REFERRAL: {
 		id: "referral",
-		label: "Refer your friends and get a free card!"
+		label: "Refer your friends and get a free card!",
 	},
 	UPGRADE_GUILD: {
 		id: "upgrade_guild",
-		label: "Upgrade Guild"
+		label: "Upgrade Guild",
 	},
 	ATTACK_WORLDBOSS: {
 		id: "attack_worldboss",
-		label: "Battle World Boss"
+		label: "Battle World Boss",
 	},
 	DISCLAIMER: {
 		id: "disclaimer",
-		label: "Show Disclaimer"
-	}
+		label: "Show Disclaimer",
+	},
 };
 
 export const ELEMENTAL_ADVANTAGES = {
 	DEFAULT: {
 		p1: 1.1,
-		p2: 0.98
+		p2: 0.98,
 	},
 	EFFECTIVE: {
 		p1: 1.2,
-		p2: 0.94
+		p2: 0.94,
 	},
 	SUPER_EFFECTIVE: {
 		p1: 1.3,
-		p2: 0.9
+		p2: 0.9,
 	},
 	NEUTRAL: {
 		p1: 1,
-		p2: 1
-	}
+		p2: 1,
+	},
 };
 
-export const ALLOWED_CONSUME_CARDS_TO_SHARDS = [ ranksMeta["legend"].rank_id, ranksMeta["divine"].rank_id ];
+export const ALLOWED_CONSUME_CARDS_TO_SHARDS = [
+	ranksMeta["legend"].rank_id,
+	ranksMeta["divine"].rank_id,
+];
 
-export const SHARDS_PER_CARD: { [key: string]: number; } = {
+export const SHARDS_PER_CARD: { [key: string]: number } = {
 	legend: 1,
-	divine: 2
+	divine: 2,
 };
 
 export const MAX_REFERRAL_REWARD_POINTS = 20;
@@ -511,7 +512,8 @@ export const MAX_REFERRAL_REWARD_POINTS = 20;
 export const MAX_MANA_GAIN = 420;
 // max level for this mana is 187
 
-export const REFERRAL_BG_IMG_URL = "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpeg";
+export const REFERRAL_BG_IMG_URL =
+  "https://assets.izzi-xenex.xyz/assets/v3/izzi-referral.jpeg";
 export const MIN_LEVEL_FOR_REFERRAL = 6;
 
 // Ability cap in %
@@ -529,7 +531,7 @@ export const COMMANDS_WITH_RAW_ARGS = [ "guild", "team", "dungeon" ];
 export const BANNED_TERMS = [ "kkk", "ngga", "nigger", "nbba", "pussy", "porn" ];
 
 export const QUEST_TYPES: {
-	[key in QuestTypes]: QuestTypes
+  [key in QuestTypes]: QuestTypes;
 } = {
 	RAID_CHALLENGE: "RAID_CHALLENGE",
 	RAID_CARRY: "RAID_CARRY",
@@ -539,7 +541,7 @@ export const QUEST_TYPES: {
 	MARKET: "MARKET",
 	DUNGEON: "DUNGEON",
 	PVP: "PVP",
-	WORLD_BOSS: "WORLD_BOSS"
+	WORLD_BOSS: "WORLD_BOSS",
 };
 
 export const MIN_TRADE_CARDS_FOR_QUEST = 1000;
@@ -563,12 +565,13 @@ export const MARKET_LOG_MIN_COLLECTION_ID_DIGITS = 7;
 
 export const TEAM_POINTS_PER_TASK = 1;
 
-export const DONATOR_PERKS_MESSAGE = "\n\n**__Donator Perks__**\n$15+ - **Donator Role**\n$100+ - **Ascended Role**" +
-"\n$500+ - **Exclusive Role**" +
-"\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
-"\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
-"\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone upto 3 cards.**" +
-"\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
+export const DONATOR_PERKS_MESSAGE =
+  "\n\n**__Donator Perks__**\n$15+ - **Donator Role**\n$100+ - **Ascended Role**" +
+  "\n$500+ - **Exclusive Role**" +
+  "\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+  "\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+  "\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone upto 3 cards.**" +
+  "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
 
 export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
 
@@ -585,3 +588,11 @@ export const DPR_GAIN_ON_EVADE = 0.02;
 export const FODDER_RANKS = [ "silver", "gold", "platinum" ]; // D3 ranks
 export const D2_RANKS = [ "diamond", "legend", "divine" ];
 export const D1_RANKS = [ "immortal", "exclusive", "ultimate" ];
+
+export const tutorialLinks = [
+	"https://izzi-xenex.xyz/blogs/raids-beginner-guide",
+	"https://izzi-xenex.xyz/blogs/beginner-battle-and-leveling-guide",
+	"https://izzi-xenex.xyz/blogs/card-trading-guide",
+	"https://izzi-xenex.xyz/blogs/teams-and-abilities-beginner-guide",
+	"https://izzi-xenex.xyz/blogs/command-filter-library",
+];

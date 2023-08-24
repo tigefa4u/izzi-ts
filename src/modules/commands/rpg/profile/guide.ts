@@ -3,7 +3,7 @@ import { getRPGUser, updateUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { GUIDE_DOCS, IZZI_WEBSITE } from "environment";
-import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE, tutorialLinks } from "helpers/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 
@@ -38,7 +38,8 @@ export const starterGuide = async ({
 			}
 			embed.setTitle(DEFAULT_STARTER_GUIDE_TITLE + " Completed")
 				.setDescription("You have successfully completed the starter guide! " +
-            "Use ``@izzi help`` for more info. We wish you the best of luck in your journey, GLHF!");
+            "Use ``@izzi help`` for more info. We wish you the best of luck in your journey, GLHF!" +
+			`\n\nMore useful guides:\n${GUIDE_DOCS}\n${tutorialLinks.join("\n")}`);
 			context.channel?.sendMessage(embed);
 			return;
 		}
