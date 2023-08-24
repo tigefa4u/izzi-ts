@@ -78,7 +78,8 @@ export const starterGuide = async ({
             "(We will move you back to your original location if you were on a " +
             "different location on completion of the guide)\n" +
             "To begin, select a " +
-            "card to fight alongside you using ``@izzi select 1``");
+            "card to fight alongside you using ``@izzi select 1``" +
+			`\n\nTo read more about basics of izzi checkout ${GUIDE_DOCS}`);
         
 		const cacheParams = {
 			moveToOrigin: false,
