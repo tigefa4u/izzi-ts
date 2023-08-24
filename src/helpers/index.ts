@@ -125,15 +125,15 @@ type T = {
   [key: string]: number;
 };
 const baseStatsRatioPercent: T = {
-	silver: 10,
-	gold: 20,
-	platinum: 30,
-	diamond: 40,
-	legend: 50,
+	silver: 0,
+	gold: 0,
+	platinum: 0,
+	diamond: 20,
+	legend: 40,
 	divine: 60,
-	immortal: 70,
-	exclusive: 80,
-	ultimate: 90,
+	immortal: 80,
+	exclusive: 100,
+	ultimate: 120,
 };
 
 export const baseStatRatio = (stat: number, rank: string) =>

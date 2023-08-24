@@ -218,7 +218,7 @@ export const battleBoss = async ({
 			} else {
 				let percentDamageDealt =
           (result.totalDamage || 0) /
-          (result.totalStats.originalHp || result.totalStats.strength);
+          (result.enemyStats?.totalStats.originalHp || result.enemyStats?.totalStats.strength || 1);
 
 				loggers.info(
 					"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +

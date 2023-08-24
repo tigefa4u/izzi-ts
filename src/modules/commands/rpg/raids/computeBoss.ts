@@ -57,9 +57,7 @@ const computeBossByPlayerLevel = (
 	if (level >= 55) {
 		bosses = 3;
 	}
-	if (level <= 20) {
-		categoryAndlevelPercent = { d3: 75 };
-	} else if (level <= 25) {
+	if (level <= 25) {
 		categoryAndlevelPercent = {
 			d3: 100,
 			d2: 25,
@@ -68,43 +66,37 @@ const computeBossByPlayerLevel = (
 	} else if (level <= 30) {
 		categoryAndlevelPercent = {
 			d3: 100,
-			d2: 50,
+			d2: 75,
 		};
 		chances = [ 100, 50 ];
 	} else if (level <= 50) {
 		categoryAndlevelPercent = {
 			d3: 100,
-			d2: 75,
-		};
-		chances = [ 100, 60 ];
-	} else if (level <= 75) {
-		categoryAndlevelPercent = {
-			d3: 100,
 			d2: 100,
 			d1: 25,
 		};
-		chances = [ 100, 100, 25 ];
-	} else if (level <= 180) {
+		chances = [ 100, 60, 25 ];
+	} else if (level <= 75) {
 		categoryAndlevelPercent = {
 			d3: 100,
 			d2: 100,
 			d1: 50,
 		};
 		chances = [ 100, 100, 50 ];
-	} else if (level <= 250) {
+	} else  if (level <= 100) {
 		categoryAndlevelPercent = {
 			d3: 100,
 			d2: 100,
 			d1: 75,
 		};
 		chances = [ 100, 100, 75 ];
-	} else if (level <= 320) {
+	} else {
 		categoryAndlevelPercent = {
 			d3: 100,
 			d2: 100,
 			d1: 100,
 		};
-		chances = [ 100, 100, 100 ];
+		chances = [ 100, 100, 100 ];	
 	}
 	let spawnCategory = Object.keys(categoryAndlevelPercent)[
 		probability(chances)

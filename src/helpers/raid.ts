@@ -15,13 +15,13 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 		if (![ "critical", "accuracy", "precision", "evasion", "strength", "originalHp" ].includes(stat)) {
 			Object.assign(totalStats, {
 				[stat]: Math.round(
-					stats[key] * 2.5
+					stats[key] * 1.75
 				),
 			});
 		} else if ([ "strength", "originalHp" ].includes(stat)) {
 			Object.assign(totalStats, {
 				[stat]: Math.round(
-					stats[key] * 30
+					stats[key] * 15
 				)
 			});
 		}
