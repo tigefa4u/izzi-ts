@@ -157,6 +157,7 @@ export const guardianAngel = ({
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
+		playerStats.totalStats.isGuardianAngel = true;
 		playerStats.totalStats = processItemStats(
 			playerStats.totalStats,
 			card.itemStats

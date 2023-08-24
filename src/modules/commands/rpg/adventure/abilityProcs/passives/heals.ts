@@ -42,6 +42,9 @@ export const surge = ({
     !playerStats.totalStats.isSurge
 	) {
 		playerStats.totalStats.isSurge = true;
+		if (!opponentStats.totalStats.isGuardianAngel) {
+			opponentStats.totalStats.isBleeding = true;
+		}
 		playerStats.totalStats.bleedResetOnRound = round + 2;
 		const percent = calcPercentRatio(65, card.rank);
 		playerStats.totalStats.surgePercent = percent;
@@ -55,7 +58,13 @@ export const surge = ({
       playerStats.totalStats.defense + defIncreaseRatio;
 		desc =
       `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__ as well as ` +
-      `buffing its **DEF** by __${defBuffPercent}%__ applying a **Stack** of **BLEED** ${emoji.bleed}`;
+      `buffing its **DEF** by __${defBuffPercent}%__ applying a **Stack** of **BLEED** ${
+      	emoji.bleed
+      }${
+      	opponentStats.totalStats.isGuardianAngel
+      		? ` But bleed was resisted by Guardian Angel ${emoji.guardianangel}`
+      		: ""
+      }`;
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -88,8 +97,11 @@ export const surge = ({
 	// 	playerStats.totalStats.bleedResetOnRound = round + 2;
 	// 	opponentStats.totalStats.isBleeding = true;
 	// }
-	if (playerStats.totalStats.isSurge && !opponentStats.totalStats.isBleeding) {
-		opponentStats.totalStats.isBleeding = true;
+	if (
+		opponentStats.totalStats.isBleeding &&
+    !playerStats.totalStats.isUseBleed
+	) {
+		playerStats.totalStats.isUseBleed = true;
 		let defenseDiff =
       baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
 		if (defenseDiff < 0) defenseDiff = 0;
@@ -100,7 +112,7 @@ export const surge = ({
 		);
 		abilityDamage = bleedDamage + defenseDiff;
 		const abilityDamageCap = Math.floor(
-			playerStats.totalStats.originalHp * ((50) / 100)
+			playerStats.totalStats.originalHp * (50 / 100)
 		);
 		if (abilityDamage > abilityDamageCap) abilityDamage = abilityDamageCap;
 		opponentStats.totalStats.strength =
