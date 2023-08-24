@@ -42,7 +42,7 @@ export type ComputedCategoryProps = {
 }
 export const computedCategoryData : ComputedCategoryProps = {
 	d3: {
-		maxlevel: 1500,
+		maxlevel: 2000,
 		ranks: [ "silver", "gold", "platinum" ],
 		numberOfCards: {
 			legend: {
@@ -56,7 +56,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d2: {
-		maxlevel: 1850,
+		maxlevel: 3500,
 		ranks: [ "diamond", "divine", "legend" ],
 		numberOfCards: {
 			legend: {
@@ -70,7 +70,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 2500,
+		maxlevel: 5000,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
 		numberOfCards: {
 			legend: {
