@@ -121,7 +121,6 @@ const baseLoot = (): any => ({
 						 */
 						rate: -5.25,
 						number: 1,
-						isStaticDrop: true
 					}
 				],
 			}
@@ -164,7 +163,6 @@ const baseLoot = (): any => ({
 						rank_id: 7,
 						rate: -4.5,
 						number: 1,
-						isStaticDrop: true
 					}
 				],
 			}
@@ -220,7 +218,6 @@ const baseLoot = (): any => ({
 						rank_id: 7,
 						rate: -3.75,
 						number: 1,
-						isStaticDrop: true
 					}
 				],
 				worldBoss: {
@@ -302,7 +299,6 @@ const baseLoot = (): any => ({
 						rank_id: 7,
 						rate: -3.15,
 						number: 1,
-						isStaticDrop: true
 					}
 				],
 			}

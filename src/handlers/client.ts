@@ -93,7 +93,8 @@ export const handleClient = (client: Client) => {
 		client?.user?.setPresence({
 			activities: [
 				{
-					name: `iz help, ${IZZI_WEBSITE}`,
+					name: "NEW GAME MODE!! NEW BATTLE MECHANICS!! NEW RAID MODE!",
+					// name: `iz help, ${IZZI_WEBSITE}`,
 					type: 3,
 				},
 			],
