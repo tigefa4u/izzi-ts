@@ -24,8 +24,8 @@ export const levelBonusDropRate: LevelBonusDropRateProps = {
 	50: 8,
 	75: 12,
 	100: 15,
-	125: 35,
-	150: 50,
+	125: 20,
+	150: 25,
 };
 
 export type ComputedCategoryProps = {
