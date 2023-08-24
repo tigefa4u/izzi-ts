@@ -180,6 +180,9 @@ function prepareLoot(
 
 		loggers.info("Computed boss by player level:", resp);
 
+		result.loot.drop.default?.map((d) => {
+			d.number = Math.floor(d.number / result.bosses);
+		});
 		result.loot.rare?.map((r) => {
 			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
 			// Make this change if you decide to add more ranks
