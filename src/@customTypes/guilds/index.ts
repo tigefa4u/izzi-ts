@@ -25,6 +25,7 @@ export type GuildProps = {
   metadata?: string; // guild previous stats (on delete)
   banner?: string;
   max_admin_slots: number;
+  match_making_rate: number;
 };
 
 export type GuildCreateProps = Omit<GuildProps, "id">;

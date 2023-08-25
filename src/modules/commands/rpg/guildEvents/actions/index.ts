@@ -73,6 +73,7 @@ export const setPrefix = async ({
 				is_deleted: false,
 				points: 0,
 				max_admin_slots: 1,
+				match_making_rate: 0
 			});
 		} else {
 			updateGuild({ guild_id: guild.guild_id }, { prefix });

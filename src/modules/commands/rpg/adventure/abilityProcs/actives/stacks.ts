@@ -11,6 +11,7 @@ import {
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
+import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
 
 export const toxicScreen = ({
 	playerStats,
@@ -391,9 +392,9 @@ export const frost = ({
 		opponentStats.totalStats.intelligence =
       opponentStats.totalStats.intelligence - relDiff;
 
-	  if (opponentStats.totalStats.intelligence < 0) {
+		if (opponentStats.totalStats.intelligence < 0) {
 			opponentStats.totalStats.intelligence = 0;
-	  }
+		}
 		const diff = getPercentOfTwoNumbers(
 			opponentStats.totalStats.intelligence,
 			baseEnemyStats.totalStats.intelligence
@@ -500,7 +501,12 @@ export const cleanse = ({
 	simulation,
 	basePlayerStats,
 }: BattleProcessProps) => {
-	if (round % 3 === 0 && playerStats.totalStats.isCleanse) {
+	if (
+		round % HARBINGER_OF_DEATH_PROC_ROUND === 0 &&
+    !playerStats.totalStats.isCleanse &&
+    !playerStats.totalStats.isStunned &&
+    !playerStats.totalStats.isParanoid
+	) {
 		playerStats.totalStats.isCleanse = true;
 		// Nullify all effects
 		playerStats.totalStats.isStackTB = false;
@@ -510,26 +516,26 @@ export const cleanse = ({
 		playerStats.totalStats.isAsleep = false;
 
 		const desc = `Nullifying **Status Effects** ${emoji.cleanseffect}.`;
-	  prepSendAbilityOrItemProcDescription({
-		  playerStats,
-		  enemyStats: opponentStats,
-		  card,
-		  message,
-		  embed,
-		  round,
-		  isDescriptionOnly: false,
-		  description: desc,
-		  totalDamage: 0,
-		  isPlayerFirst,
-		  isItem: false,
-		  simulation,
-		  baseEnemyStats,
-		  basePlayerStats,
-	  });
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+			baseEnemyStats,
+			basePlayerStats,
+		});
 	}
 
 	return {
 		playerStats,
-		opponentStats
+		opponentStats,
 	};
 };

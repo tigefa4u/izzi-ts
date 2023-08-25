@@ -13,10 +13,7 @@ import {
 	processStatDeBuffCap,
 	relativeDiff,
 } from "helpers/battle";
-import {
-	DPR_MAX_BUFF,
-	HARBINGER_OF_DEATH_PROC_ROUND,
-} from "helpers/constants";
+import { DPR_MAX_BUFF, HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";
@@ -66,7 +63,7 @@ function processStack(stats: Stack) {
 		"isLeer",
 		"isLightningShield",
 		"isCleanse",
-		"isUseBleed"
+		"isUseBleed",
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -194,11 +191,12 @@ export const BattleProcess = async ({
 		}
 	}
 	/**
-	 * If player evades consume some % INT
-	 */
+   * If player evades consume some % INT
+   */
 	if (opponentStats.totalStats.isEvadeHit) {
-		const intToReduce = baseEnemyStats.totalStats.intelligence * .15;
-		opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - intToReduce;
+		const intToReduce = baseEnemyStats.totalStats.intelligence * 0.15;
+		opponentStats.totalStats.intelligence =
+      opponentStats.totalStats.intelligence - intToReduce;
 		if (opponentStats.totalStats.intelligence < 0) {
 			opponentStats.totalStats.intelligence = 0;
 		}
@@ -213,7 +211,7 @@ export const BattleProcess = async ({
 			energy: opponentStats.totalStats.energy,
 		});
 		opponentStats.totalStats.dpr = opponentEnergy.dpr;
-		opponentStats.totalStats.energy = opponentEnergy.energy;	
+		opponentStats.totalStats.energy = opponentEnergy.energy;
 	}
 	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
@@ -248,7 +246,9 @@ export const BattleProcess = async ({
 			const damageToDeal = damageDealt - opponentStats.totalStats.intelligence;
 			opponentStats.totalStats.intelligence = 0;
 
-			opponentStats.totalStats.strength = Math.floor(opponentStats.totalStats.strength - damageToDeal);
+			opponentStats.totalStats.strength = Math.floor(
+				opponentStats.totalStats.strength - damageToDeal
+			);
 		} else if (damageDealt <= opponentStats.totalStats.intelligence) {
 			opponentStats.totalStats.intelligence =
         opponentStats.totalStats.intelligence - damageDealt;
@@ -381,16 +381,21 @@ async function processAbililtyOrItemProc({
 				}
 			}
 		}
+		const hasHarbingerOrCleanse = card.abilityname === "harbinger of death" || card.abilityname === "cleanse";
 		if (
 			(processUnableToAttack(playerStats, opponentStats, true) ||
         playerStats.totalStats.isRestrictResisted) &&
       !(
-      	playerStats.cards.find(
-      		(c) => (c?.abilityname === "harbinger of death" || c?.abilityname === "cleanse")
-      	) && round % HARBINGER_OF_DEATH_PROC_ROUND === 0
+      	hasHarbingerOrCleanse &&
+        round % HARBINGER_OF_DEATH_PROC_ROUND === 0
       )
+      //   !(
+      //   	playerStats.cards.find(
+      //   		(c) => (c?.abilityname === "harbinger of death" || c?.abilityname === "cleanse")
+      //   	) && round % HARBINGER_OF_DEATH_PROC_ROUND === 0
+      //   )
 		)
-			break;
+			continue;
 
 		const callable =
       abilityProcMap[card.abilityname as keyof AbilityProcMapProps];

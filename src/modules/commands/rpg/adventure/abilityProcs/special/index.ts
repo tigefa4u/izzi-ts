@@ -40,7 +40,7 @@ export const harbingerOfDeath = ({
 	if (
 		round % HARBINGER_OF_DEATH_PROC_ROUND === 0 &&
     !playerStats.totalStats.isHarbingerOfDeath &&
-    proc
+    proc && !playerStats.totalStats.isStunned && !playerStats.totalStats.isAsleep
 	) {
 		playerStats.totalStats.isHarbingerOfDeath = true;
 		const percent = calcPercentRatio(14, card.rank);

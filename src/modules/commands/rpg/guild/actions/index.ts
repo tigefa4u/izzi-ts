@@ -87,7 +87,8 @@ export const addGuild = async ({
 				guild_level: 0,
 				is_banned: false,
 				is_deleted: false,
-				max_admin_slots: 1
+				max_admin_slots: 1,
+				match_making_rate: 0
 			});
 			return;
 		}

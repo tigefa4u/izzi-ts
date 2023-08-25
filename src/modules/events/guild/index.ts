@@ -47,7 +47,8 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 				is_banned: false,
 				is_deleted: false,
 				points: 0,
-				max_admin_slots: 1
+				max_admin_slots: 1,
+				match_making_rate: 0
 			});
 		}
 		const me = guild.me;

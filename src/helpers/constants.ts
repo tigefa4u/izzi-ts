@@ -596,3 +596,8 @@ export const tutorialLinks = [
 	"https://izzi-xenex.xyz/blogs/teams-and-abilities-beginner-guide",
 	"https://izzi-xenex.xyz/blogs/command-filter-library",
 ];
+
+export const PVP_XP = {
+	win: 4,
+	loss: 4
+};

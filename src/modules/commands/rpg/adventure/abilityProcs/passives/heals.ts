@@ -151,7 +151,7 @@ export const surge = ({
 	}
 	if (
 		playerStats.totalStats.bleedResetOnRound &&
-    playerStats.totalStats.bleedResetOnRound === round
+    playerStats.totalStats.bleedResetOnRound === round && opponentStats.totalStats.isBleeding
 	) {
 		opponentStats.totalStats.isBleeding = false;
 		const desc = `${opponentStats.name} has stopped **Bleeding** ${emoji.bleed}`;
