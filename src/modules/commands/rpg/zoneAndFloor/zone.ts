@@ -3,6 +3,7 @@ import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getAllZones, getMaxLocation, getZoneByLocationId } from "api/controllers/ZonesController";
+import { loadImage } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
@@ -56,11 +57,18 @@ async function handleNextZone(params: {
 		} else if (user.ruin == user.max_ruin) {
 			user.max_floor = user.max_ruin_floor;
 		}
-	    const attachment = createAttachment(zone.filepath, "zone.jpg");
-		embed.attachFiles([ attachment ])
-			.setTitle(`Successfully travelled to __${titleCase(zone.name)}__\n[Zone ${user.ruin}]`)
-			.setDescription(zone.description)
-			.setImage("attachment://zone.jpg");
+
+		embed.setTitle(`Successfully travelled to __${titleCase(zone.name)}__\n[Zone ${user.ruin}]`)
+			.setDescription(zone.description);
+
+		try {
+			await loadImage(zone.filepath);
+			const attachment = createAttachment(zone.filepath, "zone.jpg");
+			embed.attachFiles([ attachment ])
+				.setImage("attachment://zone.jpg");
+		} catch (err) {
+			// loggers.error("Failed to load image for zone: ", err);
+		}
 
 		embed = attachButtonToFloorEmbed({
 			embed,

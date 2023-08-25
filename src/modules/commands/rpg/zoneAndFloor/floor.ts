@@ -9,6 +9,7 @@ import { getStageForBattle } from "api/controllers/StagesController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
 import Cache from "cache";
+import { loadImage } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
@@ -100,7 +101,14 @@ async function handleNextFloor(params: {
 	const cardCanvas = await createSingleCanvas(stage, false);
 	if (!cardCanvas) return;
 	const attachment = createAttachment(cardCanvas.createJPEGStream(), "img.jpg");
-	const zoneAttachment = createAttachment(stage.zone_filepath, "zone.jpg");
+	const atts = [ attachment ];
+	try {
+		await loadImage(stage.zone_filepath);
+		const zoneAttachment = createAttachment(stage.zone_filepath, "zone.jpg");
+		atts.push(zoneAttachment);
+	} catch (err) {
+		// loggers.error("Unable to load floor zone image:", err);
+	}
 	embed
 		.setTitle(`Travelled to Arena [${user.ruin}-${user.floor}]`)
 		.setDescription(
@@ -123,7 +131,7 @@ async function handleNextFloor(params: {
 		)
 		.setImage("attachment://img.jpg")
 		.setThumbnail("attachment://zone.jpg")
-		.attachFiles([ attachment, zoneAttachment ]);
+		.attachFiles(atts);
 
 	embed = attachButtonToFloorEmbed({
 		embed,

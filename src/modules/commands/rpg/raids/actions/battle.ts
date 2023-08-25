@@ -213,20 +213,23 @@ export const battleBoss = async ({
 				context.channel?.sendMessage("Unable to calculate total damage");
 				return;
 			}
-			if (result.isVictory) {
+
+			// Enemy stats will always be raid boss
+			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;
 			} else {
 				let percentDamageDealt =
-          (result.totalDamage || 0) /
-          (result.enemyStats?.totalStats.originalHp || result.enemyStats?.totalStats.strength || 1);
-
-				loggers.info(
-					"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
-					percentDamageDealt
-				);
-				if (percentDamageDealt > 1) percentDamageDealt = 1;
-				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+				(result.totalDamage || 0) /
+				(result.enemyStats?.totalStats.originalHp || result.enemyStats?.totalStats.strength || 1);
+	  
+					  loggers.info(
+						  "raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
+						  percentDamageDealt
+					  );
+					  if (percentDamageDealt > 1) percentDamageDealt = 1;
+					  result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
 			}
+
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;
 			const updatedLobby = await consumeEnergy(

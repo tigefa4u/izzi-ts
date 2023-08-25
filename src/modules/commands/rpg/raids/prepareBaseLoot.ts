@@ -70,7 +70,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 1000,
+		maxlevel: 1500,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
 		numberOfCards: {
 			legend: {

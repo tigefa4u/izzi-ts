@@ -183,11 +183,10 @@ export const simulateBattle = async ({
 		if (roundStats) {
 			if (roundStats.id === playerStats.id) {
 				roundStats.isVictory = false;
-				roundStats.enemyStats = enemyStats;
 			} else {
 				roundStats.isVictory = true;
-				roundStats.enemyStats = playerStats;
 			}
+			roundStats.enemyStats = enemyStats;
 			roundStats.totalDamage = totalDamage;
 		}
 		if (roundStats?.isForfeit === true) {

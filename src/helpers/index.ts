@@ -128,12 +128,12 @@ const baseStatsRatioPercent: T = {
 	silver: 0,
 	gold: 0,
 	platinum: 0,
-	diamond: 20,
-	legend: 40,
-	divine: 60,
-	immortal: 80,
-	exclusive: 100,
-	ultimate: 120,
+	diamond: 30,
+	legend: 60,
+	divine: 90,
+	immortal: 120,
+	exclusive: 150,
+	ultimate: 180,
 };
 
 export const baseStatRatio = (stat: number, rank: string) =>
