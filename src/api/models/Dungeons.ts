@@ -50,7 +50,7 @@ export const getRandomPlayer = async (params: {
 		mmrBucket.high = 500;
 	} else {
 		mmrBucket.low = 500;
-		mmrBucket.high = 10000;
+		mmrBucket.high = 1000000;
 	}
 	const db = connection;
 	const query = db.select(db.raw(`${tableName}.*, ${userRanks}.rank_id, ${userRanks}.rank`))
