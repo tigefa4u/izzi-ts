@@ -27,12 +27,11 @@ export const getRandomPlayer = async (params: {
     exclude_guild: number;
 	mmr: number;
 }): Promise<DungeonOpponentProps[]> => {
-	const mmr = 222;
 	const mmrBucket = {
 		low: 0,
 		high: 20
 	};
-	// const mmr = params.mmr;
+	const mmr = params.mmr;
 	if (mmr <= 20) {
 		mmrBucket.low = 0;
 		mmrBucket.high = 20;
