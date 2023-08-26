@@ -109,3 +109,25 @@ export const getAllGuilds = async () => {
 		return;
 	}
 };
+
+export const increaseGuildMMR = async (params: {
+	id: number;
+	mmr: number;
+}) => {
+	try {
+		return Guilds.updateMMR(params, "inc");
+	} catch (err) {
+		loggers.error("GuildsController.increaseGuildMMR: ERROR", err);
+	}
+};
+
+export const decreaseGuildMMR = async (params: {
+	id: number;
+	mmr: number;
+}) => {
+	try {
+		return Guilds.updateMMR(params, "dec");
+	} catch (err) {
+		loggers.error("GuildsController.decreaseGuildMMR: ERROR", err);
+	}
+};

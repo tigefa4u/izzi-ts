@@ -598,6 +598,8 @@ export const tutorialLinks = [
 ];
 
 export const PVP_XP = {
-	win: 4,
-	loss: 4
+	WIN: 4,
+	LOSS: 4,
+	MMR_GAIN: 1,
+	MMR_LOSS: 1
 };

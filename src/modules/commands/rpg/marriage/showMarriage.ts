@@ -13,7 +13,11 @@ export const showMarriageProfile = async ({
 	try {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id });
-		if (!user || !user.is_married) return;
+		if (!user || !user.is_married) {
+			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
+			"you are currently not married.");
+			return;
+		}
 		const marriages = await getMarriage({ user_tag: author.id });
 		if (!marriages || !marriages.married_to_username) {
 			context.channel?.sendMessage(

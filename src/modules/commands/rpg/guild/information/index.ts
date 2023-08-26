@@ -45,21 +45,21 @@ function prepareGuildDesc(
 	vice?: P,
 	admins?: P[]
 ) {
-	const desc = `All your clan stats are shown below!\n**Clan Leader:** ${
-		leader.username
-	}${vice ? `\n**Clan Vice Leader:** ${vice.username}` : ""}${
-		(admins || []).length > 0
-			? `\n**Clan Admin(s): [${
-				admins?.length || 0
-			} / ${guild.max_admin_slots}]** ${admins
-				?.map((admin) => `${admin.username}`)
-				.join(", ")}`
-			: ""
-	}\n**Clan Name:** ${guild.name}\n**Clan Level:** ${
-		guild.guild_level
-	}\n**Clan Reputation:** ${guild.points}\n**Clan Gold:** ${numericWithComma(
+	const desc = `All your clan stats are shown below!\n**Clan Name:** ${
+		guild.name
+	}\n**Clan Level:** ${guild.guild_level}\n**Clan Gold:** ${numericWithComma(
 		guild.gold
-	)} ${emoji.gold}\n**Clan Members:** __${mc}/${
+	)} ${emoji.gold}\n**Clan Reputation:** ${guild.points}\n**Clain Points:** ${
+		guild.match_making_rate || 0
+	}\n**Clan Leader:** ${leader.username}${
+		vice ? `\n**Clan Vice Leader:** ${vice.username}` : ""
+	}${
+		(admins || []).length > 0
+			? `\n**Clan Admin(s): [${admins?.length || 0} / ${
+				guild.max_admin_slots
+			}]** ${admins?.map((admin) => `${admin.username}`).join(", ")}`
+			: ""
+	}\n**Clan Members:** __${mc}/${
 		guild.max_members
 	}__\n**Clan Items:** __${ic}__\n\n**Clan Bonus Stats** ${emoji.up}\n\n${
 		emoji.crossedswords

@@ -11,6 +11,9 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { emojiMap } from "emojis";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
+import { GuildMemberProps } from "@customTypes/guildMembers";
+import { DEFAULT_ERROR_TITLE, PVP_XP } from "helpers/constants";
 
 const fetchAndUpdateDgLog = async (
 	uid: string,
@@ -53,6 +56,9 @@ type O = {
   channel: ChannelProp;
   opponentId: string;
   opponentUsername: string;
+  guild_id: number;
+  user_id: number;
+  opponentUserId?: number;
 };
 export const processBattleOutcome = async ({
 	result,
@@ -61,12 +67,21 @@ export const processBattleOutcome = async ({
 	author,
 	channel,
 	opponentUsername,
+	guild_id,
+	user_id,
+	opponentUserId
 }: O) => {
 	try {
-		const [ userRank, blacklist ] = await Promise.all([
+		const _promises: any[] = [
 			getUserRank({ user_tag: author.id }),
-			getUserBlacklist({ user_tag: author.id })
-		]);
+			getUserBlacklist({ user_tag: author.id }),
+			getGuildMember({ user_id })
+		];
+		let opponentGuildMember: GuildMemberProps | undefined;
+		if (opponentUserId && !result.isBot) {
+			_promises.push(getGuildMember({ user_id: opponentUserId }).then((res) => opponentGuildMember = res));
+		}
+		const [ userRank, blacklist, guildMember ] = await Promise.all(_promises);
 		if (!userRank) {
 			channel?.sendMessage("Unable to process DG, please try again later");
 			return;
@@ -74,6 +89,14 @@ export const processBattleOutcome = async ({
 		if (blacklist && blacklist.length > 0) {
 			channel?.sendMessage(`Summoner **${author.username}**, you have been blacklisted, ` +
             "your DG battle will not be processed. Please contact support.");
+			return;
+		}
+
+		const errorEmbed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		if (!guildMember) {
+			errorEmbed.setDescription(`Summoner **${author.username}**, You must be in a ` +
+			"Guild to participate in Ranked PvP. Your battle will not be processed.");
+			channel?.sendMessage(errorEmbed);
 			return;
 		}
 		let resultDesc = "";
@@ -98,17 +121,15 @@ export const processBattleOutcome = async ({
 			outcomeDesc = `Congratulations summoner **${author.username}**, You ` +
             `have defeated **${opponentUsername}** in Dungeon Ranked Battle! ${emoji.celebration}`;
 			promises.push(
-				processDGWin(userRank, author.id).then((_dgWin) => {
+				processDGWin(userRank, author.id, guildMember.guild_id).then((_dgWin) => {
 					resultDesc = _dgWin.desc;
 					computedUserRank = _dgWin.userRank;
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
 				// Interchange points for season 2
-				const userWonPoints = userRank.division * 4;
-				const opponentLosePoints = opponentUserRank.division * 2;
 				promises.push(
-					processDGLose(opponentUserRank, opponentId),
+					processDGLose(opponentUserRank, opponentId, opponentGuildMember?.guild_id),
 					fetchAndUpdateDgLog(
 						author.id,
 						{
@@ -117,7 +138,7 @@ export const processBattleOutcome = async ({
 								username: opponentUsername,
 								outcome: "win",
 								rank: opponentUserRank.rank,
-								points: userWonPoints
+								points: PVP_XP.WIN
 							},
 						},
 						channel,
@@ -131,7 +152,7 @@ export const processBattleOutcome = async ({
 								username: author.username,
 								outcome: "lose",
 								rank: userRank.rank,
-								points: opponentLosePoints
+								points: PVP_XP.LOSS
 							},
 						},
 						channel,
@@ -141,18 +162,16 @@ export const processBattleOutcome = async ({
 			}
 		} else {
 			outcomeDesc = `Summoner **${author.username}**, You were defeated by ` +
-            `**${opponentUsername}** in Dungeon Ranked Battle! ${emoji.cry}`;
+            `**${opponentUsername}** in PvP Ranked Battle! ${emoji.cry}`;
 			promises.push(
-				processDGLose(userRank, author.id).then((_dgLose) => {
+				processDGLose(userRank, author.id, guildMember?.guild_id).then((_dgLose) => {
 					resultDesc = _dgLose.desc;
 					computedUserRank = _dgLose.userRank;
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
-				const userLosePoints = userRank.division * 2;
-				const opponentWonPoints = opponentUserRank.division * 4;
 				promises.push(
-					processDGWin(opponentUserRank, opponentId),
+					processDGWin(opponentUserRank, opponentId, opponentGuildMember?.guild_id),
 					fetchAndUpdateDgLog(
 						author.id,
 						{
@@ -161,7 +180,7 @@ export const processBattleOutcome = async ({
 								username: opponentUsername,
 								outcome: "lose",
 								rank: opponentUserRank.rank,
-								points: userLosePoints
+								points: PVP_XP.LOSS
 							},
 						},
 						channel,
@@ -175,7 +194,7 @@ export const processBattleOutcome = async ({
 								username: author.username,
 								outcome: "win",
 								rank: userRank.rank,
-								points: opponentWonPoints
+								points: PVP_XP.WIN
 							},
 						},
 						channel,

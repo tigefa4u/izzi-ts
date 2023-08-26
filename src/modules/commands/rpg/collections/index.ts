@@ -8,11 +8,16 @@ import { PAGE_FILTER, ranksMeta } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
 import { RanksMetaProps } from "helpers/helperTypes";
+import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { getSortCache } from "../sorting/sortCache";
+import { lockFodders } from "./actions/lock";
+import { unlockFodders } from "./actions/unlock";
+import { viewLockedFodders } from "./actions/view";
+import { subcommands } from "./subcommands";
 
 function getRankId(rank_id: string) {
 	const keys = Object.keys(ranksMeta);
@@ -72,11 +77,26 @@ export const cardCollection = async ({
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
-		const showFodderCount = [ "fodders", "fodd", "fodder", "fodds", "fc" ].includes((args[0] || "").toLowerCase());
-		if (showFodderCount) {
+		const cmd = filterSubCommands(args[0], subcommands);
+		const subcommandParams = {
+			client,
+			context,
+			args,
+			options
+		};
+		if (cmd === "fodders") {
 			const fodderCount = await getTotalFodders(user.id);
 			context.channel?.sendMessage(`Summoner **${author.username}**, you currently have ` +
 			`__${((fodderCount || [])[0] || {}).sum || 0}x__ Platinum Fodders in Total.`);
+			return;
+		} else if (cmd === "lock") {
+			lockFodders(subcommandParams);
+			return;
+		} else if (cmd === "unlock") {
+			unlockFodders(subcommandParams);
+			return;
+		} else if (cmd === "viewlock") {
+			viewLockedFodders(subcommandParams);
 			return;
 		}
 		let params = <FilterProps & { user_id: number; }>fetchParamsFromArgs(args);

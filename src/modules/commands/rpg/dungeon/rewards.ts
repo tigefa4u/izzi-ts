@@ -1,6 +1,7 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { BattleStats } from "@customTypes/adventure";
 import { UserRankProps } from "@customTypes/userRanks";
+import { decreaseGuildMMR, increaseGuildMMR } from "api/controllers/GuildsController";
 import { updateUserRank } from "api/controllers/UserRanksController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -8,7 +9,7 @@ import { Client } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
-import { CONSOLE_BUTTONS, DUNGEON_DEFAULTS } from "helpers/constants";
+import { CONSOLE_BUTTONS, DUNGEON_DEFAULTS, PVP_XP } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -115,10 +116,10 @@ export const handleDungeonBattleOutcome = async ({
 	}
 };
 
-export async function processDGWin(userRank: UserRankProps, id: string) {
+export async function processDGWin(userRank: UserRankProps, id: string, guild_id?: number) {
 	const goldReward = userRank.rank_id * randomNumber(300, 500);
 	let desc = `• You have received __${goldReward}__ gold ${emoji.gold}`;
-	const xpGain = 4 * userRank.division;
+	const xpGain = PVP_XP.WIN;
 	userRank.exp = userRank.exp + xpGain;
 	desc = desc + `\n• You have gained __${xpGain}__ xp`;
 	const user = await getRPGUser({ user_tag: id });
@@ -172,10 +173,17 @@ export async function processDGWin(userRank: UserRankProps, id: string) {
       )}** __division ${userRank.division}__`;
 	}
 	user.gold = user.gold + goldReward;
-	await Promise.all([
+	const _promises = [
 		updateRPGUser({ user_tag: id }, { gold: user.gold }),
 		updateUserRank({ user_tag: id }, bodyParams),
-	]);
+	];
+	if (guild_id) {
+		_promises.push(increaseGuildMMR({
+			id: guild_id,
+			mmr: PVP_XP.MMR_GAIN 
+		}));
+	}
+	await Promise.all(_promises);
 
 	return {
 		userRank,
@@ -183,17 +191,16 @@ export async function processDGWin(userRank: UserRankProps, id: string) {
 	};
 }
 
-export async function processDGLose(userRank: UserRankProps, id: string) {
+export async function processDGLose(userRank: UserRankProps, id: string, guild_id?: number) {
 	userRank.loss = userRank.loss + 1;
-	const xpLoss = 2 * userRank.division;
-	userRank.exp = userRank.exp - xpLoss;
+	userRank.exp = userRank.exp - PVP_XP.LOSS;
 	if (userRank.exp <= 0) userRank.exp = 0;
 
 	const bodyParams = {
 		loss: userRank.loss,
 		exp: userRank.exp,
 	};
-	let desc = `• You have lost __${xpLoss}__ xp`;
+	let desc = `• You have lost __${PVP_XP.LOSS}__ xp`;
 	if (
 		userRank.rank_id === DUNGEON_DEFAULTS.rank_id &&
     userRank.division == DUNGEON_DEFAULTS.division
@@ -201,7 +208,14 @@ export async function processDGLose(userRank: UserRankProps, id: string) {
 		loggers.info(
 			"Updating on default user rank and division, :: rank_id: 1, division: 1"
 		);
-		updateUserRank({ user_tag: id }, bodyParams);
+		const promises = [ updateUserRank({ user_tag: id }, bodyParams) ];
+		if (guild_id) {
+			promises.push(decreaseGuildMMR({
+				id: guild_id,
+				mmr: PVP_XP.MMR_LOSS
+			}));
+		}
+		await Promise.all(promises);
 		return {
 			desc,
 			userRank,
@@ -240,7 +254,15 @@ export async function processDGLose(userRank: UserRankProps, id: string) {
       )}** __division ${userRank.division}__`;
 	}
 
-	updateUserRank({ user_tag: id }, bodyParams);
+	const _promises = [ updateUserRank({ user_tag: id }, bodyParams) ];
+	if (guild_id) {
+		_promises.push(decreaseGuildMMR({
+			id: guild_id,
+			mmr: PVP_XP.MMR_LOSS 
+		}));
+	}
+
+	await Promise.all(_promises);
 	return {
 		userRank,
 		desc,

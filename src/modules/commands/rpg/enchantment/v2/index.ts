@@ -6,6 +6,7 @@ import { getCharacterInfo } from "api/controllers/CharactersController";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import { consumeFodders, updateCollection, verifyCollectionsById } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
@@ -150,10 +151,10 @@ export const enchantCardV2 = async ({
 			sort
 		);
 		loggers.endTimer(rowNumTimer);
-		let cardsToExclude;
-		if (params.exclude) {
-			cardsToExclude = await getCharacterInfo({ name: params.exclude });
-		}
+
+		// if (params.exclude) {
+		// 	cardsToExclude = await getCharacterInfo({ name: params.exclude });
+		// }
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (!card || card.length <= 0) {
 			embed.setDescription(
@@ -173,9 +174,19 @@ export const enchantCardV2 = async ({
 		}
 		const exclude = [ cardToEnchant.id ];
 		const excludeCharacters = [];
-		if (cardsToExclude && cardsToExclude.length > 0) {
-			excludeCharacters.push(...cardsToExclude.map((cc) => cc.id));
+
+		const key = "enhlock::" + author.id;
+		const result = await Cache.get(key);
+		if (result) {
+			const lockedCharacters = JSON.parse(result).lockcards;
+			if (lockedCharacters && lockedCharacters.length > 0) {
+				excludeCharacters.push(...lockedCharacters.map((l: { id: number; }) => l.id));
+			}
 		}
+
+		// if (cardsToExclude && cardsToExclude.length > 0) {
+		// 	excludeCharacters.push(...cardsToExclude.map((cc) => cc.id));
+		// }
 		const computationTimer = loggers.startTimer(
 			"computation for cid: " + cardToEnchant.id
 		);

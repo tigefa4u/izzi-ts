@@ -14,8 +14,8 @@ export const subcommands =  [ {
 	name: "rank",
 	alias: [ "ranks", "rk", "dg" ]
 }, {
-	name: "game_points",
-	alias: [ "gp" ]
+	name: "guild_level",
+	alias: [ "clevel", "glevel", "clvl" ]
 }, {
 	name: "vote_count",
 	alias: [ "vc", "streak", "vote" ]

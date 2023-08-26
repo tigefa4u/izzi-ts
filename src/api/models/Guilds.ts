@@ -8,7 +8,7 @@ import {
 } from "@customTypes/guilds";
 import connection from "db";
 
-const tableName = "guilds";
+export const tableName = "guilds";
 export const transformation = {
 	id: {
 		type: "number",
@@ -79,7 +79,9 @@ export const getDetails = async (params: {
 	return connection("guild_details").where({ guild_id: params.id });
 };
 
-export const getMemberAndItemCount = async (params: { id: number }): Promise<GuildMemberAndItemCountProps[]> => {
+export const getMemberAndItemCount = async (params: {
+  id: number;
+}): Promise<GuildMemberAndItemCountProps[]> => {
 	const db = connection;
 	return db
 		.raw(
@@ -89,3 +91,31 @@ export const getMemberAndItemCount = async (params: { id: number }): Promise<Gui
 		)
 		.then((res) => res.rows);
 };
+
+export const updateMMR = async (
+	params: {
+    id: number;
+    mmr: number;
+  },
+	operation: "inc" | "dec"
+) => {
+	const db = connection;
+	let query = db(tableName).where({ id: params.id });
+	const columnName = "match_making_rate";
+
+	if (operation === "inc") {
+		query = query.update({ [columnName]: db.raw(`${columnName} + ?`, [ params.mmr ]), });
+	} else if (operation === "dec") {
+		query = query.update({
+			[columnName]: db.raw(
+				`CASE WHEN ${columnName} - ? < 0 THEN 0 ELSE ${columnName} - ? END`,
+				[ params.mmr, params.mmr ]
+			),
+		});
+	}
+	query = query.returning([ "id", "guild_id", columnName ]);
+
+	return query;
+};
+
+export const dbConnection = connection;

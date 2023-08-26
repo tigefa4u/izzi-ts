@@ -26,12 +26,12 @@ export const console = async (params: BaseProps) => {
 		if (cmd) {
 			const subcommand = filterSubCommands(cmd, subcommands);
 			const key = "anonymous-market-purchase::" + author.id;
-			if (subcommand === "toggle") {
+			if (subcommand === "hidemk") {
 				Cache.set(key, JSON.stringify({ anonymousMarketPurchase: true }));
 				context.channel?.sendMessage(`Summoner **${author.username}**, Your username ` +
 			"will no longer be visible to the seller on the Global Market.");
 				return;
-			} else if (subcommand === "reset") {
+			} else if (subcommand === "showmk") {
 				Cache.del(key);
 				context.channel?.sendMessage(`Summoner **${author.username}**, Your username ` +
 			"will now be visible to the seller on the Global Market.");

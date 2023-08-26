@@ -44,11 +44,12 @@ export const delDGTeam = async (user_tag: string) => {
 };
 
 export const getRandomDGOpponent = async (params: {
-    exclude_tag: string;
-    rank_id: number;
+    exclude_guild: number;
+    mmr: number;
 }) => {
 	try {
-		const result = await Dungeons.getRandomPlayer(params.exclude_tag, { rank_id: params.rank_id });
+		loggers.info("DungeonsController.getRandomDGOpponent: fetch player with mmr:", params);
+		const result = await Dungeons.getRandomPlayer(params);
 		return result[0];
 	} catch (err) {
 		loggers.error("api.controllers.DungeonsController.getRandomDGOpponent: ERROR", err);

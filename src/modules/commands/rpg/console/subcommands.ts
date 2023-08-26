@@ -1,8 +1,8 @@
 export const subcommands = [ {
-	name: "toggle",
+	name: "hidemk",
 	alias: []
 }, {
-	name: "reset",
+	name: "showmk",
 	alias: []
 }, {
 	name: "tag-team",

@@ -2,6 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { DungeonBanProps } from "@customTypes/dungeon";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
@@ -17,11 +18,18 @@ export const dgTeamReady = async ({ client, context, options }: BaseProps) => {
 			getRPGUser({ user_tag: author.id }, { cached: true })
 		]);
 		if (!user) return;
+		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		const guildMember = await getGuildMember({ user_id: user.id });
+		if (!guildMember) {
+			embed.setDescription(`Summoner **${author.username}**, You must be in a Guild ` +
+			"to participate in PvP Ranked battles.");
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		let dungeonBans: DungeonBanProps = {};
 		if (bans) {
 			dungeonBans = JSON.parse(bans);
 		}
-		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (!dgTeam || !dgTeam.team) {
 			embed.setDescription(`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
             "using ``iz dg create <name>``");

@@ -5,6 +5,8 @@ import { TeamProps } from "@customTypes/teams";
 import { UserRankProps } from "@customTypes/userRanks";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { getDGTeam, getRandomDGOpponent, updateDGTeam } from "api/controllers/DungeonsController";
+import { getGuildMember } from "api/controllers/GuildMembersController";
+import { getGuild } from "api/controllers/GuildsController";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { createUserRank, getUserRank } from "api/controllers/UserRanksController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -116,11 +118,39 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const [ dgTeam, _userRank, blackList ] = await Promise.all([
-			getDGTeam(author.id),
-			getUserRank({ user_tag: author.id }),
-			getUserBlacklist({ user_tag: author.id })
+		const [ guildmember, dgTeam ] = await Promise.all([
+			getGuildMember({ user_id: user.id }),
+			getDGTeam(author.id)
 		]);
+
+		// MMR depends on guild
+		if (!guildmember) {
+			embed.setDescription(`Summoner **${author.username}**, You must ` +
+			"be in a Guild to participate in Ranked PvP.\n\nTo create your guild type `iz guild create <name>` " +
+			"or you can join a guild by getting an invite.");
+			context.channel?.sendMessage(embed);
+
+			if (dgTeam) {
+				await updateDGTeam(author.id, {
+					metadata: {
+						...dgTeam.metadata,
+						isValid: false
+					} 
+				});
+			}
+			return;
+		}
+		const [ _userRank, blackList, guild ] = await Promise.all([
+			getUserRank({ user_tag: author.id }),
+			getUserBlacklist({ user_tag: author.id }),
+			getGuild({ id: guildmember.guild_id })
+		]);
+		if (!guild) {
+			embed.setDescription(`Summoner **${author.username}**, we were not able to find your guild ` +
+			"please contact support.");
+			context.channel?.sendMessage(embed);
+			return;
+		}
 		if (dgTeam && blackList && blackList.length > 0) {
 			// dgTeam.metadata.isValid = false;
 			if (dgTeam.metadata.isValid) {
@@ -227,15 +257,18 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		playerStats = dedupItems(playerStats);
 		let opponent: BattleStats | undefined, opponentTeamName = "";
 		const randomOpponent = await getRandomDGOpponent({
-			exclude_tag: author.id,
-			rank_id: userRank?.rank_id || 1
+			exclude_guild: guildmember.guild_id,
+			mmr: guild.match_making_rate || 0
 		});
+
+		let opponentUserId: number;
 		/**
 		 * If opponent doesn't exist the bot will spawn a boss
 		 */
 		if (!randomOpponent) {
 			// spawn boss
 			opponent = await spawnDGBoss(userRank);
+			opponent.isBot = true;
 			// embed.setDescription("We could not find other players in your rank. Please try again later");
 			// context.channel?.sendMessage(embed);
 			// return;
@@ -274,6 +307,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
 				opponent.username = randomOpponent.username;
 				opponent = dedupItems(opponent);
+				opponentUserId = opponentUser.id;
 			}
 		}
 
@@ -298,7 +332,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context,
 			playerStats,
 			enemyStats: opponent,
-			title: `__Ranked Battle Challenge ${playerTeamName} vs ${opponentTeamName || opponent.name}__`,
+			title: `__PvP Ranked Battle ${playerTeamName} vs ${opponentTeamName || opponent.name}__`,
 			isRaid: false,
 			options: { hideVisualBattle: false }
 		});
@@ -340,7 +374,10 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 					client,
 					channel: context.channel,
 					opponentId: opponent?.id || "No id",
-					opponentUsername: opponent?.username || opponent?.name || "No Name"
+					opponentUsername: opponent?.username || opponent?.name || "No Name",
+					guild_id: guild.id,
+					user_id: user.id,
+					opponentUserId
 				});
 				loggers.info("battle outcome proessed for user: " + author.id);
 				return trx.commit();

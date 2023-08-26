@@ -39,9 +39,11 @@ export const createLBEmbedList = (
 						name: `#${obj.index + 1}| ${array[obj.index].name || ""} (${
 							array[obj.index].guild_id
 						}) | ${numericWithComma(array[obj.index].gold)} ${emoji.gold}`,
-						value: `Clan Level **${array[obj.index].guild_level || 0}** ${
+						value: `Clan Level **${numericWithComma(array[obj.index].guild_level || 0)}** ${
 							emoji.up
-						} | Reputation **${array[obj.index].points}**`,
+						} | Clan Points: **${
+							numericWithComma(array[obj.index].match_making_rate || 0)
+						}** | Reputation **${numericWithComma(array[obj.index].points)}**`,
 					}
 				);
 			} else if (lb === "ranks") {
@@ -91,8 +93,10 @@ export const createLBEmbedList = (
 								? ":map:"
 								: emoji.up
 					} ${
-						order === "zone" ?
-							`Reached **[${new Date(array[obj.index]["reached_max_ruin_at"]).toLocaleDateString()}]**`
+						order === "zone"
+							? `Reached **[${new Date(
+								array[obj.index]["reached_max_ruin_at"]
+							).toLocaleDateString()}]**`
 							: ""
 					}`,
 				}
