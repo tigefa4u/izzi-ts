@@ -27,11 +27,12 @@ export const getRandomPlayer = async (params: {
     exclude_guild: number;
 	mmr: number;
 }): Promise<DungeonOpponentProps[]> => {
+	const mmr = 222;
 	const mmrBucket = {
 		low: 0,
 		high: 20
 	};
-	const mmr = params.mmr;
+	// const mmr = params.mmr;
 	if (mmr <= 20) {
 		mmrBucket.low = 0;
 		mmrBucket.high = 20;
@@ -47,7 +48,7 @@ export const getRandomPlayer = async (params: {
 	} else if (mmr <= 500) {
 		mmrBucket.low = 150;
 		mmrBucket.high = 500;
-	} {
+	} else {
 		mmrBucket.low = 500;
 		mmrBucket.high = 10000;
 	}
