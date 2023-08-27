@@ -56,10 +56,10 @@ export const consumeFodders = async (data: DirectUpdateCreateFodderProps) => {
 				loggers.info("CollectionControllers.consumeFodders: deleting fodder: ", res, d);
 				await conn(Collections.tableName).where({
 					id: res.id,
-					rank: "platinum",
-					rank_id: ranksMeta.platinum.rank_id,
-					user_id: d.user_id,
-					character_id: d.character_id
+					// rank: "platinum",
+					// rank_id: ranksMeta.platinum.rank_id,
+					// user_id: d.user_id,
+					// character_id: d.character_id
 				}).del();
 			}
 			return res;
