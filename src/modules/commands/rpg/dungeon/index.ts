@@ -100,6 +100,7 @@ export const dungeon = async ({ context, client, options, args }: BaseProps) => 
 				loss: DUNGEON_DEFAULTS.loss,
 				user_tag: author.id,
 				division: DUNGEON_DEFAULTS.division,
+				match_making_rate: 0
 			});
 		}
 		const dungeonBoss = await prepareDungeonBoss(userRank);
@@ -165,8 +166,10 @@ export async function prepareDungeonBoss(userRank?: UserRankProps) {
 		});
 		itemsArray = allItems?.data || [];
 	}
+
+	// always spawn 3 bosses
 	return Promise.all(
-		Array(userRank?.division)
+		Array(3)
 			.fill("0")
 			.map(async () => {
 				const computed = computeLevel(userRank?.rank);

@@ -56,9 +56,6 @@ type O = {
   channel: ChannelProp;
   opponentId: string;
   opponentUsername: string;
-  guild_id: number;
-  user_id: number;
-  opponentUserId?: number;
 };
 export const processBattleOutcome = async ({
 	result,
@@ -67,21 +64,12 @@ export const processBattleOutcome = async ({
 	author,
 	channel,
 	opponentUsername,
-	guild_id,
-	user_id,
-	opponentUserId
 }: O) => {
 	try {
-		const _promises: any[] = [
+		const [ userRank, blacklist ] = await Promise.all([
 			getUserRank({ user_tag: author.id }),
 			getUserBlacklist({ user_tag: author.id }),
-			getGuildMember({ user_id })
-		];
-		let opponentGuildMember: GuildMemberProps | undefined;
-		if (opponentUserId && !result.isBot) {
-			_promises.push(getGuildMember({ user_id: opponentUserId }).then((res) => opponentGuildMember = res));
-		}
-		const [ userRank, blacklist, guildMember ] = await Promise.all(_promises);
+		]);
 		if (!userRank) {
 			channel?.sendMessage("Unable to process DG, please try again later");
 			return;
@@ -92,13 +80,6 @@ export const processBattleOutcome = async ({
 			return;
 		}
 
-		const errorEmbed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
-		if (!guildMember) {
-			errorEmbed.setDescription(`Summoner **${author.username}**, You must be in a ` +
-			"Guild to participate in Ranked PvP. Your battle will not be processed.");
-			channel?.sendMessage(errorEmbed);
-			return;
-		}
 		let resultDesc = "";
 		let outcomeDesc = "";
 		let opponentUserRank: UserRankProps | undefined,
@@ -121,7 +102,7 @@ export const processBattleOutcome = async ({
 			outcomeDesc = `Congratulations summoner **${author.username}**, You ` +
             `have defeated **${opponentUsername}** in Dungeon Ranked Battle! ${emoji.celebration}`;
 			promises.push(
-				processDGWin(userRank, author.id, guildMember.guild_id).then((_dgWin) => {
+				processDGWin(userRank, author.id).then((_dgWin) => {
 					resultDesc = _dgWin.desc;
 					computedUserRank = _dgWin.userRank;
 				})
@@ -129,7 +110,7 @@ export const processBattleOutcome = async ({
 			if (!result.isBot && opponentUserRank) {
 				// Interchange points for season 2
 				promises.push(
-					processDGLose(opponentUserRank, opponentId, opponentGuildMember?.guild_id),
+					processDGLose(opponentUserRank, opponentId),
 					fetchAndUpdateDgLog(
 						author.id,
 						{
@@ -164,14 +145,14 @@ export const processBattleOutcome = async ({
 			outcomeDesc = `Summoner **${author.username}**, You were defeated by ` +
             `**${opponentUsername}** in PvP Ranked Battle! ${emoji.cry}`;
 			promises.push(
-				processDGLose(userRank, author.id, guildMember?.guild_id).then((_dgLose) => {
+				processDGLose(userRank, author.id).then((_dgLose) => {
 					resultDesc = _dgLose.desc;
 					computedUserRank = _dgLose.userRank;
 				})
 			);
 			if (!result.isBot && opponentUserRank) {
 				promises.push(
-					processDGWin(opponentUserRank, opponentId, opponentGuildMember?.guild_id),
+					processDGWin(opponentUserRank, opponentId),
 					fetchAndUpdateDgLog(
 						author.id,
 						{
