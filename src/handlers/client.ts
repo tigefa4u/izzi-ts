@@ -5,7 +5,6 @@ import {
 	generateUUID,
 	validateChannelPermissions,
 } from "helpers";
-import { OS_GLOBAL_MARKET_CHANNEL } from "helpers/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 import {
@@ -21,7 +20,7 @@ export const handleClientEvents = (client: Client) => {
 		console.log({ warning });
 	});
 	client.on("debug", (debug) => {
-		loggers.debug(debug);
+		loggers.debug("debugger", debug);
 		// if (debug.toLowerCase().includes("heartbeat")) {
 		// 	console.log({ debug });
 		// }

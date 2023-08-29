@@ -82,6 +82,7 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 			.setFooter({ text: "GLHF! Happy Collecting" })
 			.setImage("attachment://Xenverse.jpg")
 			.attachFiles([ attachment ])
+			.setHideConsoleButtons(true)
 			.setFooter({ text: "If the button doesnt work use ``iz start`` to start your journey in the Xenverse" });
 
 		const buttons = customButtonInteraction(
@@ -95,17 +96,17 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 					}
 				},
 				{
-					label: CONSOLE_BUTTONS.GUIDE.label,
-					params: { id: CONSOLE_BUTTONS.GUIDE.id },
-					style: "LINK",
-					url: GUIDE_DOCS
-				},
-				{
 					label: "Start Guide",
 					params: {
 						client,
 						id: "guide" 
 					}
+				},
+				{
+					label: CONSOLE_BUTTONS.GUIDE.label,
+					params: { id: CONSOLE_BUTTONS.GUIDE.id },
+					style: "LINK",
+					url: GUIDE_DOCS
 				}
 			],
 			"",
@@ -123,7 +124,8 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 
 		const helpEmbed = createEmbed(undefined, client)
 			.setTitle("Find Useful Urls Below")
-			.setDescription(getWebsiteUrls());
+			.setDescription(getWebsiteUrls())
+			.setHideConsoleButtons(true);
 		defaultChannel.sendMessage(helpEmbed);
 		return;
 	} catch (err) {
