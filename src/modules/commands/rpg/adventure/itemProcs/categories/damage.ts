@@ -274,7 +274,7 @@ export const stormrazor = ({
 	playerStats.totalStats.previousRound
 		? playerStats.totalStats.previousRound++
 		: null;
-	if (round == playerStats.totalStats.previousRound) {
+	if (playerStats.totalStats.previousRound && round >= playerStats.totalStats.previousRound) {
 		if (opponentStats.totalStats.isStunned) {
 			opponentStats.totalStats.isStunned = false;
 		}
