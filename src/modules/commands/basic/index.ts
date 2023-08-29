@@ -18,11 +18,19 @@ import {
 	SelectMenuOptions,
 } from "@customTypes/selectMenu";
 import loggers from "loggers";
-import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
-import { CONSOLE_BUTTONS, STARTER_CARD_RANK } from "helpers/constants";
+import {
+	customButtonInteraction,
+	paginatorInteraction,
+} from "utility/ButtonInteractions";
+import {
+	CONSOLE_BUTTONS,
+	REQUIRED_TRADE_LEVEL,
+	STARTER_CARD_RANK,
+} from "helpers/constants";
 import { PageProps } from "@customTypes/pagination";
 import { findAndSwap } from "helpers";
 import { clientSidePagination } from "helpers/pagination";
+import { getRPGUser } from "api/controllers/UsersController";
 
 const freeCardTxt = `If you are below level __25__ you will receive free claimable cards. checkout ${IZZI_WEBSITE}/@me`;
 
@@ -52,7 +60,9 @@ function prepareHelpDesc() {
     " " +
     "Please start your journey using ``iz start`` command to do so." +
     " " +
-    `When your character is created, you will receive a random starter __${titleCase(STARTER_CARD_RANK)}__ card.` +
+    `When your character is created, you will receive a random starter __${titleCase(
+    	STARTER_CARD_RANK
+    )}__ card.` +
     "\n" +
     `For more information / tutorials you can check out ${IZZI_WEBSITE}\n${freeCardTxt}` +
     "\n" +
@@ -87,7 +97,10 @@ export const invite = async ({ context, client }: BaseProps) => {
 	context.channel?.sendMessage(embed);
 };
 
-const handleHelpPagination = async (params: { items: string[]; commandGroup: any; }, filter: PageProps) => {
+const handleHelpPagination = async (
+	params: { items: string[]; commandGroup: any },
+	filter: PageProps
+) => {
 	const fields: EmbedFieldData[] = [];
 	const result = clientSidePagination(
 		params.items,
@@ -113,16 +126,26 @@ const handleHelpPagination = async (params: { items: string[]; commandGroup: any
 	};
 };
 
-const prepareHelpEmbed = (author: AuthorProps, client: Client, page: {
-	current_page: number;
-	total_pages: number;
-}) => {
+const prepareHelpEmbed = (
+	author: AuthorProps,
+	client: Client,
+	page: {
+    current_page: number;
+    total_pages: number;
+    extraDesc?: string;
+  }
+) => {
 	return createEmbed(author, client)
 		.setTitle(":crossed_swords: Bot Commands :crossed_swords:")
-		.setDescription(`All Commands available on Izzi are shown below.\n${freeCardTxt}`)
+		.setDescription(
+			`All Commands available on Izzi are shown below.\n${freeCardTxt}${
+				page.extraDesc ? page.extraDesc : ""
+			}`
+		)
 		.setFooter({
-			text: "Filters include -n (name) -r (rank) -t (element type) -a (ability) | " +
-		`${page.current_page} / ${page.total_pages} Pages`, 
+			text:
+        "Filters include -n (name) -r (rank) -t (element type) -a (ability) | " +
+        `${page.current_page} / ${page.total_pages} Pages`,
 		});
 };
 
@@ -136,7 +159,23 @@ export const help = async ({
 	try {
 		const cmd = args.shift();
 		if (cmd && excludeCommands.includes(cmd)) return;
-		let allCommands = await getAllCommands();
+		const params = {} as { is_beginner: boolean };
+		const user = await getRPGUser({ user_tag: options.author.id });
+
+		const pageFilter = {
+			currentPage: 1,
+			perPage: 7,
+		};
+
+		let extraDesc = "";
+		if (user && user.level < REQUIRED_TRADE_LEVEL) {
+			params.is_beginner = true;
+			pageFilter.perPage = 10;
+			extraDesc =
+        "\n**Note: You are currently viewing Beginner Commands. " +
+        `To view all commands you must be atleast level __${REQUIRED_TRADE_LEVEL}__.**`;
+		}
+		let allCommands = await getAllCommands(params);
 		if (!allCommands) return;
 		allCommands = allCommands.filter((c) => !excludeCommands.includes(c.name));
 		if (cmd) {
@@ -144,6 +183,9 @@ export const help = async ({
 			if (index >= 0) {
 				const command = allCommands[index];
 				const newEmbed = prepareSingleCommandEmbed(client, command);
+				if (user && user.level < REQUIRED_TRADE_LEVEL) {
+					newEmbed.setHideConsoleButtons(true);
+				}
 				context.channel?.sendMessage(newEmbed);
 
 				followUp(command, context.channel, options.author, client);
@@ -169,16 +211,14 @@ export const help = async ({
 			"emotions",
 			"miscellaneous",
 		]);
-		const pageFilter = {
-			currentPage: 1,
-			perPage: 7,
-		};
 
 		let sentMessage: Message;
 
+		const totalPages = Math.ceil(rearrangedkeys.length / pageFilter.perPage);
 		let embed = prepareHelpEmbed(options.author, client, {
 			current_page: pageFilter.currentPage,
-			total_pages: Math.ceil(rearrangedkeys.length / pageFilter.perPage)
+			total_pages: totalPages,
+			extraDesc,
 		});
 
 		const paginationButtons = await paginatorInteraction(
@@ -186,7 +226,7 @@ export const help = async ({
 			options.author.id,
 			{
 				items: rearrangedkeys,
-				commandGroup
+				commandGroup,
 			},
 			pageFilter,
 			handleHelpPagination,
@@ -194,12 +234,16 @@ export const help = async ({
 				if (data) {
 					embed = prepareHelpEmbed(options.author, client, {
 						current_page: data.metadata.currentPage,
-						total_pages: data.metadata.totalPages
+						total_pages: data.metadata.totalPages,
+						extraDesc,
 					});
-					embed.addFields(data.data).addField(
-						"Usage",
-						"**```iz help {command} for more info about the command.```**"
-					).setHideConsoleButtons(true);
+					embed
+						.addFields(data.data)
+						.addField(
+							"Usage",
+							"**```iz help {command} for more info about the command.```**"
+						)
+						.setHideConsoleButtons(true);
 				}
 				if (opts?.isEdit) {
 					sentMessage.editMessage(embed);
@@ -212,19 +256,31 @@ export const help = async ({
 
 		const disclaimerButton = customButtonInteraction(
 			context.channel,
-			[ {
-				label: CONSOLE_BUTTONS.DISCLAIMER.label,
-				params: { id: CONSOLE_BUTTONS.DISCLAIMER.id },
-				style: "SECONDARY"
-			} ],
+			[
+				{
+					label: CONSOLE_BUTTONS.DISCLAIMER.label,
+					params: { id: CONSOLE_BUTTONS.DISCLAIMER.id },
+					style: "SECONDARY",
+				},
+			],
 			options.author.id,
 			({ message, user_tag, id }) => {
-				const disclaimerEmbed = createEmbed(options.author, client)
-					.setTitle(embed.title || "Bot Disclaimer")
-					.setDescription(prepareHelpDesc())
+				const rulesEmbed = createEmbed(options.author, client)
+					.setTitle("IzzI Disclaimer & Rules")
+					.setDescription(
+						prepareHelpDesc() +
+              "\n**__BOT RULES__**\n**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
+              "• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
+              "• Cross trading of any form.\n" +
+              "• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
+              "• Exchanging Izzi Points for gold or real life money.\n" +
+              "• Malicious/Suspicious activity.\n" +
+              "• Supporting someone who is doing these.\n" +
+              "**Note: Exchanging izzi assets for any other assets, real money or server roles " +
+              "is considered Cross Trading**"
+					)
 					.setHideConsoleButtons(true);
-				
-				context.channel?.sendMessage(disclaimerEmbed);
+				context.channel?.sendMessage(rulesEmbed);
 				return;
 			},
 			() => {
@@ -233,17 +289,6 @@ export const help = async ({
 			true,
 			10
 		);
-
-		if (paginationButtons) {
-			embed.setButtons(paginationButtons);
-		}
-		if (disclaimerButton && embed.buttons) {
-			embed.buttons.setComponents(
-				...embed.buttons.components,
-				...disclaimerButton.components
-			);
-		}
-		
 		const buttons = customButtonInteraction(
 			context.channel,
 			[
@@ -269,28 +314,30 @@ export const help = async ({
 			},
 			true
 		);
-		const rulesEmbed = createEmbed(options.author, client)
-			.setTitle("IzzI Rules")
-			.setDescription(
-				"**WHEN AND WHY WILL I GET PERMANENT BOT BANNED?**\n" +
-          "• Botting, Scripting, cheating to gain unfair advantage over others.\n" +
-          "• Cross trading of any form.\n" +
-          "• Using multiple accounts (alt-ing) to gain unfair advantage.\n" +
-		  "• Exchanging Izzi Points for gold or real life money.\n" +
-          "• Malicious/Suspicious activity.\n" +
-          "• Supporting someone who is doing these.\n" +
-          "**Note: Exchanging izzi assets for any other assets, real money or server roles " +
-          "is considered Cross Trading**"
-			);
-
-		if (buttons) {
-			rulesEmbed.setButtons(buttons);
+		if (paginationButtons && totalPages > 1) {
+			embed.setButtons(paginationButtons);
 		}
+		if (disclaimerButton && embed.buttons) {
+			embed.buttons.setComponents(
+				...embed.buttons.components,
+				...disclaimerButton.components
+			);
+		} else if (disclaimerButton && !embed.buttons) {
+			embed.setButtons(disclaimerButton);
+		}
+		if (buttons && embed.buttons) {
+			embed.buttons.setComponents(
+				...embed.buttons.components,
+				...buttons.components
+			);
+		} else if (buttons && !embed.buttons) {
+			embed.setButtons(buttons);
+		}
+
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;
 		}
-		context.channel?.sendMessage(rulesEmbed);
 	} catch (err) {
 		loggers.error("modules.commands.basic.help: ERROR", err);
 	}

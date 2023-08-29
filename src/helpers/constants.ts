@@ -338,7 +338,7 @@ export const CONSOLE_BUTTONS = {
 	},
 	FLOOR_BT: {
 		id: "floor_bt",
-		label: "Fl Bt",
+		label: "Floor Battle",
 	},
 	FLOOR_BT_ALL: {
 		id: "floor_bt_all",
@@ -346,11 +346,11 @@ export const CONSOLE_BUTTONS = {
 	},
 	NEXT_FLOOR: {
 		id: "next_floor",
-		label: "Fl n",
+		label: "Next Floor",
 	},
 	NEXT_ZONE: {
 		id: "next_zone",
-		label: "Zn n",
+		label: "Next Arena",
 	},
 	RAID_BATTLE: {
 		id: "raid_bt",
@@ -474,8 +474,16 @@ export const CONSOLE_BUTTONS = {
 	},
 	DISCLAIMER: {
 		id: "disclaimer",
-		label: "Show Disclaimer",
+		label: "Show Disclaimer & Rules",
 	},
+	INFO_INVENTORY_CARD: {
+		id: "info_inventory_card",
+		label: "View Info"
+	},
+	VIEW_INVENTORY: {
+		id: "view_inventory",
+		label: "View Inventory"
+	}
 };
 
 export const ELEMENTAL_ADVANTAGES = {

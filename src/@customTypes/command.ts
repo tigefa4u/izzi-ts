@@ -132,6 +132,7 @@ export type CommandProps = {
 	metadata?: {
 		image_url?: string;
 	};
+	is_beginner?: boolean;
 }
 
 export type CommandCategoryProps = {

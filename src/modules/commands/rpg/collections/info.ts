@@ -17,6 +17,7 @@ import {
 	CONSOLE_BUTTONS,
 	FODDER_RANKS,
 	ranksMeta,
+	REQUIRED_TRADE_LEVEL,
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
@@ -166,35 +167,42 @@ export const getCardInfo = async ({
 				iconURL: author.displayAvatarURL()
 			});
 
+		if (user.level < REQUIRED_TRADE_LEVEL) {
+			embed.setHideConsoleButtons(true);
+		}
+
+		const buttonLabels = [
+			{
+				label: CONSOLE_BUTTONS.SELECT_CARD.label,
+				params: {
+					id: CONSOLE_BUTTONS.SELECT_CARD.id,
+					author,
+					cardId: infoData.id,
+				},
+			},
+			{
+				label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
+				params: {
+					id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
+					author,
+					cardId: infoData.id,
+				},
+			},
+		];
+		if (user.level > REQUIRED_TRADE_LEVEL) {
+			buttonLabels.push({
+				label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
+				params: {
+					id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
+					author,
+					cardId: infoData.id,
+				},
+			});
+		}
 		if (!FODDER_RANKS.includes(infoData.rank)) {
 			const buttons = customButtonInteraction(
 				context.channel,
-				[
-					{
-						label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
-						params: {
-							id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
-							author,
-							cardId: infoData.id,
-						},
-					},
-					{
-						label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
-						params: {
-							id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
-							author,
-							cardId: infoData.id,
-						},
-					},
-					{
-						label: CONSOLE_BUTTONS.SELECT_CARD.label,
-						params: {
-							id: CONSOLE_BUTTONS.SELECT_CARD.id,
-							author,
-							cardId: infoData.id,
-						},
-					},
-				],
+				buttonLabels,
 				author.id,
 				handleCardUpgrade,
 				() => {

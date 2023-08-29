@@ -14,6 +14,7 @@ import {
 	MANA_PER_BATTLE,
 	MAX_GOLD_THRESHOLD,
 	ranksMeta,
+	REQUIRED_TRADE_LEVEL,
 	USER_XP_GAIN_PER_BATTLE,
 } from "helpers/constants";
 import loggers from "loggers";
@@ -65,6 +66,11 @@ export const processBattleTransaction = async ({
 }: BattleTransactionProps) => {
 	try {
 		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
+
+		if (user.level < REQUIRED_TRADE_LEVEL) {
+			embed.setHideConsoleButtons(true);
+		}
+
 		const isCardValid = await validateBattleCard(
 			card.selected_card_id,
 			user.id

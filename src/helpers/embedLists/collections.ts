@@ -27,7 +27,7 @@ export const createCollectionList = (array: CollectionReturnType[]) => {
 			}${c.is_on_market ? emoji.shoppingcart : ""} ${
 				c.is_on_cooldown ? `${emoji.cooldown} [${c.remainingHours} hours ${c.remainingMinutes} minutes]` : ""
 			}${c.is_tradable ? "" : " (Non Tradable/Sellable)"}`,
-			value: `${titleCase(c.rank)} | ${renderSoulsOrCardCount(c)} | ID: ${c.id}`,
+			value: `${titleCase(c.rank)} | ${renderSoulsOrCardCount(c)} | \`iz info ${c.row_number}\` | ID: ${c.id}`,
 		});
 	});
 	return fields;

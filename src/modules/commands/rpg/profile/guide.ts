@@ -2,10 +2,11 @@ import { BaseProps } from "@customTypes/command";
 import { getRPGUser, updateUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { GUIDE_DOCS, IZZI_WEBSITE } from "environment";
+import { GUIDE_DOCS } from "environment";
 import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE, tutorialLinks } from "helpers/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
+import { cardCollection } from "../collections";
 
 export const starterGuide = async ({
 	context,
@@ -20,7 +21,8 @@ export const starterGuide = async ({
 		const embed = createEmbed(author, client).setTitle(DEFAULT_STARTER_GUIDE_TITLE).setFooter({
 			iconURL: author.displayAvatarURL(),
 			text: "Guide will automatically expire 10 mins."
-		});
+		})
+			.setHideConsoleButtons(true);
 
 		const key = "guide::" + author.id;
 		const endGuide = args.shift();
@@ -38,7 +40,7 @@ export const starterGuide = async ({
 			}
 			embed.setTitle(DEFAULT_STARTER_GUIDE_TITLE + " Completed")
 				.setDescription("You have successfully completed the starter guide! " +
-            "Use ``@izzi help`` for more info. We wish you the best of luck in your journey, GLHF!" +
+            "Use ``iz help`` for more info. We wish you the best of luck in your journey, GLHF!" +
 			`\n\nMore useful guides:\n${GUIDE_DOCS}\n${tutorialLinks.join("\n")}`);
 			context.channel?.sendMessage(embed);
 			return;
@@ -53,6 +55,10 @@ export const starterGuide = async ({
 			context.channel,
 			[
 				{
+					label: CONSOLE_BUTTONS.VIEW_INVENTORY.label,
+					params: { id: CONSOLE_BUTTONS.VIEW_INVENTORY.id }
+				},
+				{
 					label: CONSOLE_BUTTONS.GUIDE.label,
 					params: { id: CONSOLE_BUTTONS.GUIDE.id },
 					url: GUIDE_DOCS,
@@ -60,7 +66,16 @@ export const starterGuide = async ({
 				}
 			],
 			author.id,
-			() => {
+			({ id }) => {
+				if (id === CONSOLE_BUTTONS.VIEW_INVENTORY.id) {
+					cardCollection({
+						client,
+						args,
+						options,
+						isGuide: true,
+						context
+					});
+				}
 				return;
 			},
 			() => {
@@ -78,8 +93,9 @@ export const starterGuide = async ({
             "floor ``Zone 1 Floor 1`` in the Xenverse " +
             "(We will move you back to your original location if you were on a " +
             "different location on completion of the guide)\n" +
-            "To begin, select a " +
-            "card to fight alongside you using ``@izzi select 1``" +
+            "To begin, lets open your inventory to see all the cards you have. " +
+            "Type ``iz inv`` " +
+			"Or **Click on the button below.**" +
 			`\n\nTo read more about basics of izzi checkout ${GUIDE_DOCS}`);
         
 		const cacheParams = {

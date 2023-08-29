@@ -16,6 +16,7 @@ import {
 	validateFiveMinuteTimer,
 } from "helpers/battle";
 import {
+	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_STARTER_GUIDE_TITLE,
 	HIDE_VISUAL_BATTLE_ARG,
@@ -24,7 +25,8 @@ import {
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { battleConfirmationInteraction } from "utility/ButtonInteractions";
+import { battleConfirmationInteraction, customButtonInteraction } from "utility/ButtonInteractions";
+import { floor } from "../zoneAndFloor/floor";
 import { simulateBattle } from "./battle/battle";
 import * as battlePerChannel from "./battle/battlesPerChannelState";
 import { processBattleTransaction } from "./battle/battleTransaction";
@@ -284,6 +286,28 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 		const key = "guide::" + author.id;
 		const starterGuide = await Cache.get(key);
 		if (starterGuide) {
+			const button = customButtonInteraction(
+				context.channel,
+				[ {
+					label: CONSOLE_BUTTONS.NEXT_FLOOR.label,
+					params: { id: CONSOLE_BUTTONS.NEXT_FLOOR.id }
+				} ],
+				author.id,
+				({ id }) => {
+					if (id === CONSOLE_BUTTONS.NEXT_FLOOR.id) {
+						floor({
+							context,
+							client,
+							args: [ "n" ],
+							options
+						});
+					}
+					return;
+				},
+				() => {
+					return;
+				}
+			);
 			const guideEmbed = createEmbed(author, client)
 				.setTitle(DEFAULT_STARTER_GUIDE_TITLE)
 				.setDescription(
@@ -291,12 +315,18 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
             "your first floor challenge. On defeating the floor boss you will receive gold and " +
             "experience to advance further and level up.\n" +
             "Your card will also receive exp to level up and become more powerful.\n\n" +
-            "You can advance to the next floor using ``@izzi fl n`` or ``@izzi fl <number>``"
+            "You can advance to the next floor using ``iz fl n`` or ``iz fl <number>``" +
+			" or by clicking on the button."
 				)
+				.setHideConsoleButtons(true)
 				.setFooter({
 					iconURL: author.displayAvatarURL(),
 					text: "Guide will automatically expire in 10 mins.",
 				});
+
+			if (button) {
+				guideEmbed.setButtons(button);
+			}
 			context.channel?.sendMessage(guideEmbed);
 		}
 		return;

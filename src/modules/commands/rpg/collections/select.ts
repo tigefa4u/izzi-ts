@@ -4,9 +4,11 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { startBattle } from "../adventure";
 import { getSortCache } from "../sorting/sortCache";
 
 export const selectCard = async ({
@@ -52,15 +54,41 @@ export const selectCard = async ({
 		);
 		
 		if (starterGuide) {
+			const button = customButtonInteraction(
+				context.channel,
+				[ {
+					label: CONSOLE_BUTTONS.FLOOR_BT.label,
+					params: { id: CONSOLE_BUTTONS.FLOOR_BT.id }
+				} ],
+				author.id,
+				({ id }) => {
+					if (id === CONSOLE_BUTTONS.FLOOR_BT.id) {
+						startBattle({
+							client,
+							context,
+							args,
+							options
+						});
+					}
+					return;
+				},
+				() => {
+					return;
+				}
+			);
 			const embed = createEmbed(author, client).setTitle(`${DEFAULT_STARTER_GUIDE_TITLE} ${emoji.welldone}`)
-				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\nYou have selected ` +
-				"your first card from your card collection.\nTo view all of your collections use ``@izzi inv``\n" +
+				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\n` +
 				"Now that you have selected your card it is now time to attack a floor boss.\n" +
-				"Use ``@izzi bt`` to initiate a floor battle.")
+				"Use ``iz bt`` to initiate a floor battle or click on the button below.")
+				.setHideConsoleButtons(true)
 				.setFooter({
 					iconURL: author.displayAvatarURL(),
 					text: "Guide will automatically expire in 10 mins."
 				});
+
+			if (button) {
+				embed.setButtons(button);
+			}
 			
 			context.channel?.sendMessage(embed);
 		}

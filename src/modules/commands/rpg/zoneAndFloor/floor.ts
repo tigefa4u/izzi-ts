@@ -17,7 +17,7 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { baseStatRatio, calcPower, parsePremiumUsername, prepareAbilityDescription } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE, REQUIRED_TRADE_LEVEL } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { attachButtonToFloorEmbed } from ".";
@@ -133,6 +133,10 @@ async function handleNextFloor(params: {
 		.setThumbnail("attachment://zone.jpg")
 		.attachFiles(atts);
 
+	if (user.level < REQUIRED_TRADE_LEVEL) {
+		embed.setHideConsoleButtons(true);
+	}
+
 	embed = attachButtonToFloorEmbed({
 		embed,
 		channel: params.channel 
@@ -213,14 +217,16 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 			const guideEmbed = createEmbed(author, client).setTitle(DEFAULT_STARTER_GUIDE_TITLE + " Completed! " + 
 			emoji.welldone)
 				.setDescription(`Yay! Well done Summoner **${author.username}**!\n\n` +
-			"Similarly, on completing a zone use ``@izzi zn n`` to move to the next zone in the Xenverse.\n\n" +
+			"Similarly, on completing a zone use ``iz zn n`` to move to the next zone in the Xenverse.\n\n" +
 			"Congratulations on completing the starter guide! You are now ready to take on the " +
-			"challenges and head on your own path.\n\nUse ``@izzi h`` for more commands" +
-			"Hope your find the journey exciting and fun.\n\nHappy Hunting, GLHF!")
+			"challenges and head on your own path.\n\nUse ``iz h`` for more commands" +
+			"Hope your find the journey exciting and fun." +
+			"\n\n**Collect atleast Legend Cards from Global Market to be able to do raids.**" +
+			"\n\nHappy Collecting, GLHF!")
 				.setFooter({
 					text: "Guide will automatically expire in 10 mins",
 					iconURL: author.displayAvatarURL() 
-				});
+				}).setHideConsoleButtons(true);
 			context.channel?.sendMessage(guideEmbed);
 		}
 		return;

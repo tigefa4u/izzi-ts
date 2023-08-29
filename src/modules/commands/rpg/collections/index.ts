@@ -4,19 +4,20 @@ import { getAllCollections, getTotalFodders } from "api/controllers/CollectionsC
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { PAGE_FILTER, ranksMeta } from "helpers/constants";
+import { CONSOLE_BUTTONS, PAGE_FILTER, ranksMeta } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
 import { RanksMetaProps } from "helpers/helperTypes";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { clone } from "utility";
-import { paginatorInteraction } from "utility/ButtonInteractions";
+import { customButtonInteraction, paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { getSortCache } from "../sorting/sortCache";
 import { lockFodders } from "./actions/lock";
 import { unlockFodders } from "./actions/unlock";
 import { viewLockedFodders } from "./actions/view";
+import { selectCard } from "./select";
 import { subcommands } from "./subcommands";
 
 function getRankId(rank_id: string) {
@@ -72,7 +73,8 @@ export const cardCollection = async ({
 	context,
 	args,
 	options,
-}: BaseProps) => {
+	isGuide
+}: BaseProps & { isGuide?: boolean; }) => {
 	try {
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
@@ -112,47 +114,108 @@ export const cardCollection = async ({
 			filter.currentPage = Number(params.page[0]);
 			delete params.page;
 		}
-		const sort = await getSortCache(author.id);
-		const buttons = await paginatorInteraction(
-			context.channel,
-			author.id,
-			params,
-			filter,
-			getAllCollections,
-			(data, options) => {
-				if (data) {
-					const list = createCollectionList(data.data);
-					embed = createEmbedList({
-						author,
-						list,
-						currentPage: data.metadata.currentPage,
-						totalPages: data.metadata.totalPages,
-						totalCount: data.metadata.totalCount,
-						client,
-						pageCount: data.data.length,
-						pageName: "Collection",
-						description:
+		if (!isGuide) {
+			const sort = await getSortCache(author.id);
+			const buttons = await paginatorInteraction(
+				context.channel,
+				author.id,
+				params,
+				filter,
+				getAllCollections,
+				(data, options) => {
+					if (data) {
+						const list = createCollectionList(data.data);
+						embed = createEmbedList({
+							author,
+							list,
+							currentPage: data.metadata.currentPage,
+							totalPages: data.metadata.totalPages,
+							totalCount: data.metadata.totalCount,
+							client,
+							pageCount: data.data.length,
+							pageName: "Inventory",
+							description:
               "All Cards in your inventory that match your " +
               "requirements are shown below.",
-						title: "Collections",
-					}).setHideConsoleButtons(true);
-				} else {
-					embed.setDescription(
-						"You currently have no collections. Start claiming cards to go on your journey in the Xenverse!"
-					);
-				}
-				if (options?.isDelete && sentMessage) {
-					sentMessage.deleteMessage();
-				}
-				if (options?.isEdit) {
-					sentMessage.editMessage(embed);
-				}
-			},
-			sort
-		);
-		if (!buttons) return;
+							title: "Inventory",
+						}).setHideConsoleButtons(true);
+					} else {
+						embed.setDescription(
+							"You currently have no collections. Start " +
+							"claiming cards to go on your journey in the Xenverse!"
+						);
+					}
+					if (options?.isDelete && sentMessage) {
+						sentMessage.deleteMessage();
+					}
+					if (options?.isEdit) {
+						sentMessage.editMessage(embed);
+					}
+				},
+				sort
+			);
+			if (!buttons) return;
 
-		embed.setButtons(buttons);
+			embed.setButtons(buttons);
+		} else {
+			const result = await getAllCollections({ user_id: user.id }, {
+				currentPage: 1,
+				perPage: 1,
+			});
+			if (!result?.data || result.data.length <= 0) {
+				embed.setDescription("You do not have any cards in your inventory. " +
+				"Claim cards to be able to use them throughout your journey.")
+					.setHideConsoleButtons(true);
+				context.channel?.sendMessage(embed);
+				return;
+			}
+			const list = createCollectionList(result.data);
+			embed = createEmbedList({
+				author,
+				list,
+				currentPage: 1,
+				totalPages: 1,
+				totalCount: 1,
+				client,
+				pageCount: 1,
+				pageName: "Inventory",
+				description:
+					"**Yay, Welldone Summoner. Now select the card below " +
+					"by typing `iz select 1` or click on the button.**",
+				title: "Inventory",
+			}).setHideConsoleButtons(true);
+
+			const buttons = customButtonInteraction(
+				context.channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.SELECT_CARD.label,
+						params: { id: CONSOLE_BUTTONS.SELECT_CARD.id }
+					},
+				],
+				author.id,
+				({ id }) => {
+					if (id === CONSOLE_BUTTONS.SELECT_CARD.id) {
+						selectCard({
+							client,
+							context,
+							args: [ "1" ],
+							options,
+						});
+					}
+					return;
+				},
+				() => {
+					return;
+				},
+				true,
+				11
+			);
+			if (!buttons) return;
+			embed.setButtons(buttons);
+			context.channel?.sendMessage(embed);
+			return;
+		}
 
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
