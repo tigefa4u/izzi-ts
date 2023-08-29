@@ -279,9 +279,10 @@ export const stormrazor = ({
 			opponentStats.totalStats.isStunned = false;
 		}
 	}
-	const stunChance = [ 5, 95 ];
+	const stunChance = [ 5, 100 ];
 	const stuns = [ true, false ];
-	if (stuns[probability(stunChance)]) {
+	const hasElectrocute = playerStats.cards.find((c) => c?.abilityname === "electrocute");
+	if (stuns[probability(stunChance)] && !hasElectrocute) {
 		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = true;
 		prepSendAbilityOrItemProcDescription({
