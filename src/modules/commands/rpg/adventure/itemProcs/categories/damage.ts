@@ -271,36 +271,40 @@ export const stormrazor = ({
 			basePlayerStats
 		});
 	}
-	playerStats.totalStats.previousRound
-		? playerStats.totalStats.previousRound++
-		: null;
-	if (playerStats.totalStats.previousRound && round >= playerStats.totalStats.previousRound) {
-		if (opponentStats.totalStats.isStunned) {
-			opponentStats.totalStats.isStunned = false;
-		}
-	}
-	const stunChance = [ 5, 100 ];
-	const stuns = [ true, false ];
 	const hasElectrocute = playerStats.cards.find((c) => c?.abilityname === "electrocute");
-	if (stuns[probability(stunChance)] && !hasElectrocute) {
-		playerStats.totalStats.previousRound = round;
-		opponentStats.totalStats.isStunned = true;
-		prepSendAbilityOrItemProcDescription({
-			playerStats,
-			enemyStats: opponentStats,
-			card,
-			message,
-			embed,
-			round,
-			isDescriptionOnly: false,
-			description: `**${opponentStats.name}** is __Stunned__, affected by **Stormrazor**`,
-			totalDamage: 0,
-			isPlayerFirst,
-			isItem: true,
-			simulation,
-			baseEnemyStats,
-			basePlayerStats
-		});
+	
+	if (!hasElectrocute) {
+		playerStats.totalStats.previousRound
+			? playerStats.totalStats.previousRound++
+			: null;
+		if (playerStats.totalStats.previousRound && round >= playerStats.totalStats.previousRound) {
+			if (opponentStats.totalStats.isStunned) {
+				opponentStats.totalStats.isStunned = false;
+			}
+		}
+
+		const stunChance = [ 5, 100 ];
+		const stuns = [ true, false ];
+		if (stuns[probability(stunChance)]) {
+			playerStats.totalStats.previousRound = round;
+			opponentStats.totalStats.isStunned = true;
+			prepSendAbilityOrItemProcDescription({
+				playerStats,
+				enemyStats: opponentStats,
+				card,
+				message,
+				embed,
+				round,
+				isDescriptionOnly: false,
+				description: `**${opponentStats.name}** is __Stunned__, affected by **Stormrazor**`,
+				totalDamage: 0,
+				isPlayerFirst,
+				isItem: true,
+				simulation,
+				baseEnemyStats,
+				basePlayerStats
+			});
+		}
 	}
 
 	return {
