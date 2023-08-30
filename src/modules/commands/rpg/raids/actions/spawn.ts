@@ -92,7 +92,7 @@ const calculateDropRateByBossLevel = (
 	const percentToLoop = Object.keys(levelBonusDropRate);
 	for (const percent of percentToLoop) {
 		if (levelPercent <= +percent) {
-			rate = levelBonusDropRate[percent as keyof LevelBonusDropRateProps];
+			rate = Number(levelBonusDropRate[percent as keyof LevelBonusDropRateProps].toFixed(2));
 			break;
 		}
 	}

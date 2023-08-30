@@ -8,7 +8,7 @@ export const prepareCriticalHitChance = ({ isPlayerFirst, playerStats, enemyStat
 		? playerStats.totalStats.critical
 		: enemyStats.totalStats.critical;
 
-	let noCriticalHitPercent = 1;
+	let noCriticalHitPercent = 2;
 	if (criticalHitPercent <= 1) {
 		criticalHitPercent = 0;
 		noCriticalHitPercent = 0;
@@ -38,7 +38,7 @@ export const prepareEvadeHitChance = ({ isPlayerFirst, playerStats, enemyStats }
 		? enemyStats.totalStats.evasion
 		: playerStats.totalStats.evasion;
 
-	let noEvadeHitPercent = 1;
+	let noEvadeHitPercent = 2;
 	if (evadeHitPercent <= 1) {
 		evadeHitPercent = 0;
 		noEvadeHitPercent = 0;
