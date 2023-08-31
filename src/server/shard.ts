@@ -43,7 +43,7 @@ manager.spawn().catch((err) => {
 });
 manager.on("shardCreate", (shard) => {
 	console.log(`Shard #${shard.id} is Online`);
-	shard.on("death", async (process) => {
+	shard.on("death", async (process: any) => {
 		await flushBattleCooldowns();
 		loggers.error(
 			"SHARD_CRASHED " +
