@@ -20,14 +20,12 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createOrUpdateZoneBackup } from "api/controllers/ZonesController";
 import { createEmbed } from "commons/embeds";
-import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import {
 	BASE_XP,
 	CONSOLE_BUTTONS,
-	DUNGEON_MIN_LEVEL,
-	MANA_PER_BATTLE,
+	LOW_LEVEL_THRESHOLD,
 	MAX_MANA_GAIN,
 	ranksMeta,
 	STARTER_CARD_EXP,
@@ -251,6 +249,9 @@ async function processFloorWin({
 		.fill(options)
 		.map((item) => item);
 
+	if (user.level <= LOW_LEVEL_THRESHOLD) {
+		goldReward = goldReward + 100;
+	}
 	goldReward = goldReward * multiplier;
 
 	const [ _coll, _user, _updatedCard ] = await Promise.all([
@@ -259,7 +260,7 @@ async function processFloorWin({
 			card,
 			user,
 			goldReward,
-			(user.level < DUNGEON_MIN_LEVEL
+			(user.level < LOW_LEVEL_THRESHOLD
 				? USER_XP_GAIN_PER_BATTLE
 				: USER_XP_GAIN_PER_BATTLE - 2) * multiplier,
 			author,

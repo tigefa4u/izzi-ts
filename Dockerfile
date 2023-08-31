@@ -1,10 +1,8 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=17.6.0
+ARG NODE_VERSION=16.6.0
 FROM node:${NODE_VERSION}-alpine as base
-
-LABEL fly_launch_runtime="Node.js"
 
 # Node.js app lives here
 WORKDIR /app
@@ -17,9 +15,7 @@ ENV NODE_ENV=production
 FROM base as build
 
 # To install node canvas
-RUN apk add --no-cache \
-        git \
-        build-base \
+RUN apk add build-base \
         g++ \
         cairo-dev \
         jpeg-dev \
@@ -30,11 +26,11 @@ RUN apk add --no-cache \
         python3
 
 # Install node modules
-COPY --link package-lock.json package.json ./
+COPY package-lock.json package.json ./
 RUN npm ci --include=dev
 
-# Copy application code
-COPY --link . .
+# # Copy application code
+COPY . .
 
 # Build application
 RUN npm run build
@@ -47,8 +43,7 @@ RUN npm prune --omit=dev
 FROM base
 
 # node canvas requires these in runtime
-RUN apk add --no-cache \
-    cairo \
+RUN apk add cairo \
     jpeg \
     pango \
     giflib

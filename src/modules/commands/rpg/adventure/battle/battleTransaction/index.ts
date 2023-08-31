@@ -10,7 +10,7 @@ import { numericWithComma } from "helpers";
 import {
 	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
-	DUNGEON_MIN_LEVEL,
+	LOW_LEVEL_THRESHOLD,
 	MANA_PER_BATTLE,
 	MAX_GOLD_THRESHOLD,
 	ranksMeta,
@@ -82,7 +82,7 @@ export const processBattleTransaction = async ({
 		}
 
 		const xpGain = 
-        (user.level < DUNGEON_MIN_LEVEL
+        (user.level <= LOW_LEVEL_THRESHOLD
         	? USER_XP_GAIN_PER_BATTLE
         	: USER_XP_GAIN_PER_BATTLE - 2) * multiplier;
 		const manaToConsume = multiplier * MANA_PER_BATTLE;
