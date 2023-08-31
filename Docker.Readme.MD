@@ -5,6 +5,13 @@
 # While build docker image
 - For docker image to run on linux use `--platform=linux/amd64` in `docker build` while building on mac
 
+# Installing docker on ubuntu
+- read https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+
+# Installing redis on ubuntu
+- Only run `sudo apt install redis-server`
+- `sudo nano /etc/redis/redis.conf` to configure password etc
+
 # To Push image to CANISTER registry
 - `docker login --username=<username> cloud.canister.io:5000`
 - `docker tag <image> cloud.canister.io:5000/<username>/<repo>:latest`
