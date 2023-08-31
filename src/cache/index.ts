@@ -8,8 +8,8 @@ import { CacheProps } from "./cacheTypes";
 // 	url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}`,
 // };
 
-// const client = new redisClient({ password: REDIS_PASSWORD });
-const client = new redisClient({}, { host: REDIS_HOST });
+const client = new redisClient({ password: REDIS_PASSWORD });
+// const client = new redisClient({}, { host: REDIS_HOST });
 // const client = new redisClient({ password: REDIS_PASSWORD }, {
 // 	port: REDIS_PORT,
 // 	host: REDIS_HOST
