@@ -25,12 +25,24 @@ export const transformation = {
 	},
 	isBeginner: {
 		type: "boolean",
-		columnName: "is_beginner"
-	}
+		columnName: "is_beginner",
+	},
 };
 
-export const getAll: (params?: { is_beginner: boolean; }) => Promise<CommandProps[]> = async function (params) {
-	let query = connection.select("id", "name", "usage", "alias", "type", "description", "is_beginner")
+export const getAll: (params?: {
+  is_beginner: boolean;
+}) => Promise<CommandProps[]> = async function (params) {
+	let query = connection
+		.select(
+			"id",
+			"name",
+			"usage",
+			"alias",
+			"type",
+			"description",
+			"is_beginner",
+			"sub_commands"
+		)
 		.from(tableName)
 		.where({ is_deleted: false });
 
@@ -39,18 +51,27 @@ export const getAll: (params?: { is_beginner: boolean; }) => Promise<CommandProp
 	}
 
 	return query;
-
 };
 export const findOne: (key: string) => Promise<CommandProps> = async function (
 	key
 ) {
 	try {
-		const result = await connection.select("id", "name", "usage", "alias", "type", "description", "is_beginner")
+		const result = await connection
+			.select(
+				"id",
+				"name",
+				"usage",
+				"alias",
+				"type",
+				"description",
+				"is_beginner",
+				"sub_commands"
+			)
 			.from(tableName)
-			/**
-			 * ?? - is used to escape the bindings correctly.
-			 * Using ? is causing a bug where knex is not able to pass the bindings
-			 */
+		/**
+       * ?? - is used to escape the bindings correctly.
+       * Using ? is causing a bug where knex is not able to pass the bindings
+       */
 			.whereRaw("alias::jsonb @> '??'", [ key ])
 			.where({ is_deleted: false });
 		return result[0];

@@ -182,10 +182,8 @@ export const help = async ({
 			const index = allCommands.findIndex((c) => c.alias.includes(cmd)) ?? -1;
 			if (index >= 0) {
 				const command = allCommands[index];
-				const newEmbed = prepareSingleCommandEmbed(client, command);
-				if (user && user.level < REQUIRED_TRADE_LEVEL) {
-					newEmbed.setHideConsoleButtons(true);
-				}
+				const newEmbed = prepareSingleCommandEmbed(client, command)
+					.setHideConsoleButtons(true);
 				context.channel?.sendMessage(newEmbed);
 
 				followUp(command, context.channel, options.author, client);
