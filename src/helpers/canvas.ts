@@ -48,7 +48,10 @@ async function _loadFromCache(path: string, extras: { prefix?: string; }): Promi
       time: number;
     }
 > {
-	const result = ImageCache.getImage(`${extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path}`);
+	const result = ImageCache.getImage(`${extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path}`) as {
+		image: Buffer;
+		time: number;
+	};
 	if (!result) {
 		return;
 	}
@@ -120,7 +123,9 @@ export const createSingleCanvas: (
 		}
 
 		return new Promise((resolve) => {
-			ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+			if (image) {
+				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+			}
 
 			if (isNotStar && claimNowImage) {
 				// to center on X axis

@@ -1,6 +1,6 @@
 import Sqlite from "better-sqlite3";
 
-export default class DiskStorage<T> {
+export default class DiskStorage<T extends {}> {
 	db;
 	tableName;
 	constructor(dbname = "cache", tableName: string) {

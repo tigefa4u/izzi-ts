@@ -5,6 +5,7 @@ import {
 	MessageActionRowComponent,
 	MessageAttachment,
 	MessageEmbed,
+	StageChannel,
 	TextChannel,
 	ThreadChannel,
 } from "discord.js";
@@ -14,7 +15,7 @@ import loggers from "loggers";
 import { delay } from "helpers";
 import { prepareConsoleButton } from "./consoleButtons";
 
-type Props = TextChannel | DMChannel | ThreadChannel;
+type Props = TextChannel | DMChannel | ThreadChannel | StageChannel;
 type ResponseObjectProps = {
   content?: string;
   embeds?: MessageEmbed[];

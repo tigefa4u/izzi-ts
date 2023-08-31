@@ -16,3 +16,6 @@
 - `docker login --username=<username> cloud.canister.io:5000`
 - `docker tag <image> cloud.canister.io:5000/<username>/<repo>:latest`
 - `docker push cloud.canister.io:5000/<username>/<repo>`
+
+# Useful tools
+- `dive` is a useful tool to check docker image size to see where the huge files are

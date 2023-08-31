@@ -104,6 +104,7 @@ export type AbilityStackProps = StatStateProps &
     canEvadeHarbingerOfDeath?: boolean;
     isBleeding?: boolean;
     bleedResetOnRound?: number;
+    restrictionResetOnRound?: number;
     isUseBleed?:boolean;
     isGuardianAngel?: boolean;
     resistByFutureSightPercent?: number;

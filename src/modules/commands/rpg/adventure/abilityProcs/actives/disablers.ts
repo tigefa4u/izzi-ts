@@ -362,6 +362,8 @@ export const restriction = ({
 				};
 			}
 		}
+		// last for 2 turns
+		playerStats.totalStats.restrictionResetOnRound = round + 2;
 
 		// restrict all enemies from using their passive for the next 2 turns.
 		opponentStats.totalStats.isRestrictResisted = !isResist;
@@ -393,7 +395,7 @@ export const restriction = ({
 			basePlayerStats
 		});
 	}
-	if (round % 4 === 0 && opponentStats.totalStats.isRestrictResisted) {
+	if (playerStats.totalStats.restrictionResetOnRound && round >= playerStats.totalStats.restrictionResetOnRound && opponentStats.totalStats.isRestrictResisted) {
 		opponentStats.totalStats.isRestrictResisted = false;
 		desc = `**__${opponentStats.name}__** has been released from ${titleCase(
 			card.name

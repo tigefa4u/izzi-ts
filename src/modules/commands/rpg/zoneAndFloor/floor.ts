@@ -123,7 +123,7 @@ async function handleNextFloor(params: {
 			}\n**DEF:** ${stats?.defense}\n**SPD:** ${
 				stats?.dexterity
 			}\n\n**Ability**\n${passiveEmoji ? passiveEmoji : ""} **${titleCase(
-				stage?.abilityname
+				stage?.abilityname || ""
 			)}** ${stage.is_passive ? "[PSV]" : ""}: ${prepareAbilityDescription(
 				stage.abilitydescription,
 				stage.rank

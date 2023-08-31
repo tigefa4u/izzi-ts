@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.6.0
+ARG NODE_VERSION=16.9.0
 FROM node:${NODE_VERSION}-alpine as base
 
 # Node.js app lives here
@@ -36,7 +36,7 @@ COPY . .
 RUN npm run build
 
 # Remove development dependencies
-RUN npm prune --omit=dev
+RUN npm prune --production
 
 
 # Final stage for app image
@@ -49,7 +49,9 @@ RUN apk add cairo \
     giflib
 
 # Copy built application
-COPY --from=build /app /app
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/lib /app/lib
+COPY --from=build /app/package.json /app/package.json
 
 # Setup sqlite3 on a separate volume
 RUN mkdir -p /data
@@ -57,6 +59,6 @@ VOLUME /data
 ENV DATABASE_URL="file:///data/sqlite.db"
 
 ENV NODE_PATH=lib/
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+
+EXPOSE 5000
 CMD [ "npm", "run", "start" ]

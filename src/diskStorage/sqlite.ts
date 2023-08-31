@@ -34,7 +34,7 @@ export const dropDbTable = (tableName: string, db = defaultDB) => {
 	return db.exec(`drop table ${tableName}`);
 };
 
-export const insertLogs = <T>(tableName: string, data: T, db = defaultDB) => {
+export const insertLogs = <T extends {}>(tableName: string, data: T, db = defaultDB) => {
 	const cols = Object.keys(data);
 	return db.prepare(`insert into ${tableName} (${cols.map((i) => i)})
         values (${cols.map((i) => `@${i}`)})`)

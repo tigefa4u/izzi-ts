@@ -10,6 +10,8 @@ import {
 	NewsChannel,
 	TextChannel,
 	ThreadChannel,
+  StageChannel,
+  VoiceChannel
 } from "discord.js";
 import implementSendMessage, {
 	editMessage as implementEditMessage,
@@ -31,6 +33,12 @@ declare module "discord.js" {
     sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface NewsChannel {
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
+  }
+  interface VoiceChannel {
+    sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
+  }
+  interface StageChannel {
     sendMessage: (content: CustomProps) => Promise<Message | undefined> | undefined;
   }
   interface MessageEmbed {
@@ -77,6 +85,12 @@ DMChannel.prototype.sendMessage = function (content: CustomProps) {
 ThreadChannel.prototype.sendMessage = function (content: CustomProps) {
 	return implementSendMessage(this, content);
 };
+StageChannel.prototype.sendMessage = function (content: CustomProps) {
+  return implementSendMessage(this, content)
+}
+VoiceChannel.prototype.sendMessage = function () {
+  throw new Error("Unimplemented");
+}
 NewsChannel.prototype.sendMessage = function () {
 	throw new Error("Unimplemented");
 };
