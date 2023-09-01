@@ -79,7 +79,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 			if (card && card.metadata?.assets?.small?.filepath) {
 				embed.setThumbnail(card.metadata.assets.small.filepath);
 
-				let imgPath = "assets/images/monthly_calender.jpg";
+				let imgPath = "assets/images/monthly_calendar.jpg";
 				if (user.is_premium) {
 					imgPath = "assets/images/premium_monthly_calender.jpg";
 				}
