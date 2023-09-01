@@ -50,9 +50,7 @@ RUN apk add cairo \
 
 # Copy built application
 COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/assets/images/xenverse.jpeg /app/assets/images/xenverse.jpeg
-COPY --from=build /app/assets/images/background.jpeg /app/assets/images/background.jpeg
-COPY --from=build /app/assets/images/claim-now-gradient.png /app/assets/images/claim-now-gradient.png
+COPY --from=build /app/assets/images /app/assets/images
 COPY --from=build /app/lib /app/lib
 COPY --from=build /app/package.json /app/package.json
 
