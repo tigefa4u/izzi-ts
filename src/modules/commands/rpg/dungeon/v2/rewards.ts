@@ -213,10 +213,10 @@ export const processBattleOutcome = async ({
 
 		const button = customButtonInteraction(
 			channel,
-			[{
+			[ {
 				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
 				params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id }
-			}],
+			} ],
 			author.id,
 			({ id }) => {
 				if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id && result.simulation && result.attachments) {
@@ -225,14 +225,14 @@ export const processBattleOutcome = async ({
 						authorId: author.id,
 						attachments: result.attachments,
 						channel
-					})
+					});
 				}
 				return;
 			},
 			() => {
 				return;
 			}
-		)
+		);
 
 		const embed = createEmbed(author, client)
 			.setTitle(
@@ -251,6 +251,10 @@ export const processBattleOutcome = async ({
           )}` +
           `\n\nYou currently have __[${computedUserRank.exp} / ${computedUserRank.r_exp}]__`
 			);
+		
+		if (button) {
+			embed.setButtons(button);
+		}
 
 		channel?.sendMessage(outcomeDesc);
 		channel?.sendMessage(embed);
