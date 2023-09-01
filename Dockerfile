@@ -50,6 +50,7 @@ RUN apk add cairo \
 
 # Copy built application
 COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/assets /app/assets
 COPY --from=build /app/lib /app/lib
 COPY --from=build /app/package.json /app/package.json
 
