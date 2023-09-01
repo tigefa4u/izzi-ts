@@ -152,6 +152,13 @@ export const updateOrCreateFodder = async (fodders: CollectionCreateProps[]) => 
 	}
 };
 
+/**
+ * Disclaimer: To directly create or update fodders if you already have count
+ * use `directUpdateCreateFodder` function. This function will manually count each card
+ * in the array so the count will be incorrect if it is not 1.
+ * @param data
+ * @returns 
+ */
 export const createCollection: (
   data: ICollectionCreateProps
 ) => Promise<CollectionProps[] | CollectionProps | undefined> = async function (

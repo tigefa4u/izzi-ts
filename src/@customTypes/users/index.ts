@@ -43,6 +43,7 @@ export type UserProps = {
 		// This allows the user to spawn a raid from their wishlist
 		// based on the tax they have paid.
 		raidPityCount?: number;
+		raidDropPity?: boolean;
 	};
 	is_mini_premium?: boolean;
 	mini_premium_days_left?: number;
@@ -50,6 +51,7 @@ export type UserProps = {
 	mini_premium_days?: number;
 	game_points: number;
 	vote_count?: number;
+	monthly_votes: number;
 }
 
 export type UserParams = {
