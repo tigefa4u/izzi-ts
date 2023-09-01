@@ -63,7 +63,7 @@ export const handleDiscordServerJoin = async (client: Client, guild: Guild) => {
 			}
 		});
 		const attachment = createAttachment(
-			"./assets/images/xenverse.png",
+			"./assets/images/xenverse.jpeg",
 			"Xenverse.jpg"
 		);
 		const embed = createEmbed(undefined, client);

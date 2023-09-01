@@ -181,20 +181,6 @@ export const createBattleCanvas = async (
 	}
 	try {
 		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
-		// const border = await loadImage("./assets/images/border.png");
-		// const borderCanvas = createCanvas(
-		// 	CANVAS_DEFAULTS.cardWidth,
-		// 	CANVAS_DEFAULTS.cardHeight
-		// );
-		// const borderCtx = borderCanvas.getContext("2d");
-		// borderCtx.drawImage(border, 0, 0, borderCanvas.width, borderCanvas.height);
-		// borderCtx.globalCompositeOperation = "source-in";
-		// const path = "./assets/images/star.png";
-		// const star = await loadImage(path);
-		// const starCanvas = createCanvas(
-		// 	CANVAS_DEFAULTS.iconWidth,
-		// 	CANVAS_DEFAULTS.iconHeight
-		// );
 		const startTimer = loggers.startTimer("Battle canvas: ");
 		const images = await Promise.all(
 			cards.map(async (card) => {
