@@ -196,8 +196,8 @@ const processMonthlyVoteReward = async (user: UserProps) => {
 	const card = (monthlyCard || [])[0];
 	if (!card)
 		return {
-			desc,
-			reward: null,
+			desc: `__6,000__ Gold ${emoji.gold}`,
+			reward: { gold: 6000 },
 		};
 	const rewardArray = prepMatrix();
 	const item = rewardArray[user.monthly_votes - 1];
