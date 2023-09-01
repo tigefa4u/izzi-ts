@@ -19,3 +19,7 @@
 
 # Useful tools
 - `dive` is a useful tool to check docker image size to see where the huge files are
+
+# Monitoring stats
+- `docker stats`
+- `docker stats <tag> --no-stream --format "{{ json . }}" | python3 -m json.tool` to check memory and usage
