@@ -79,9 +79,9 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 			if (card && card.metadata?.assets?.small?.filepath) {
 				embed.setThumbnail(card.metadata.assets.small.filepath);
 
-				let imgPath = "assets/images/monthly_calender.jpeg";
+				let imgPath = "assets/images/monthly_calender.jpg";
 				if (user.is_premium) {
-					imgPath = "assets/images/premium_monthly_calender.jpeg";
+					imgPath = "assets/images/premium_monthly_calender.jpg";
 				}
 				const dt = new Date();
 				const month = dt.toLocaleString("default", { month: "long" });
@@ -95,7 +95,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 					.setDescription(
 						embed.description +
               `\n\n**__${month} ${year}, Calender Card (Total Monthly Votes: ${user.monthly_votes})__**` +
-              `\nName: **${cardName}**\nSeries: **${titleCase(card.series)}**` +
+              `\nName: **${cardName} (Tradable)**\nSeries: **${titleCase(card.series)}**` +
               `\nTotal Collectables: **__5x__ Immortal ${cardName}, __150x__ Platinum ${cardName} Fodders.**`
 					)
 					.setFooter({

@@ -143,8 +143,8 @@ const monthlyCardMatrix = [
 	},
 	{
 		vote: 3,
-		reward: { raid_pass: 1 },
-		premiumReward: { raid_pass: 2 },
+		reward: { raid_pass: 2 },
+		premiumReward: { raid_pass: 4 },
 	},
 	{
 		vote: 4,
