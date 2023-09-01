@@ -57,11 +57,11 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           " " +
           "Use daily to gain __2,000__ and 150xStreaks (up to 30)" +
           " " +
-          `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if married)` +
+          `Gold ${emoji.gold}, 3 Shards ${emoji.shard} (6 if premium) 1 Raid Permit(s) (2 if married)` +
           " " +
           "as you vote! You get bonus __2,000__ gold if you're married!" +
           " " +
-          `You get 4IP ${emoji.izzipoints} if premium and ` +
+          `You get also 4IP ${emoji.izzipoints} if premium and ` +
           "Your mana as well as dungeon mana also gets refilled as you vote."
 
 				// removed in favor of monthly votes
@@ -99,7 +99,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
               `\nTotal Collectables: **__5x__ Immortal ${cardName}, __150x__ Platinum ${cardName} Fodders.**`
 					)
 					.setFooter({
-						text: "After 35 votes you receive 6,000 Gold per vote",
+						text: "After 40 votes you receive 6,000 Gold per vote",
 						iconURL: author.displayAvatarURL(),
 					});
 			} else {

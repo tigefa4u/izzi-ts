@@ -15,7 +15,10 @@ import { UserProps, UserUpdateProps } from "@customTypes/users";
 import { getMonthlyCard } from "api/controllers/MonthlyCardsController";
 import { numericWithComma } from "helpers";
 import { titleCase } from "title-case";
-import { createCollection, directUpdateCreateFodder } from "api/controllers/CollectionsController";
+import {
+	createCollection,
+	directUpdateCreateFodder,
+} from "api/controllers/CollectionsController";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {
@@ -50,7 +53,9 @@ export const processUpVote = async (req: Request, res: Response) => {
         "Thank you for voting! You have received " +
         `__${numericWithComma(goldReward)}__ Gold ${
         	emoji.gold
-        }, __${passReward}__ Raid Permit(s) ${emoji.permitsic}, ` +
+        }, __3x__ Shards ${emoji.shard}, __${passReward}__ Raid Permit(s) ${
+        	emoji.permitsic
+        }, ` +
         "and refilled your mana and dungeon mana for dailying.";
 			const updateObj = {
 				voted_at: summoner.voted_at,
@@ -69,8 +74,18 @@ export const processUpVote = async (req: Request, res: Response) => {
 					? summoner.izzi_points + IPreward
 					: IPreward;
 
-				Object.assign(updateObj, { izzi_points: summoner.izzi_points });
-				messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP.`;
+				const shardReward = 6;
+				summoner.shards = (summoner.shards || 0) + shardReward;
+
+				Object.assign(updateObj, {
+					izzi_points: summoner.izzi_points,
+					shards: summoner.shards,
+				});
+				messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP ` +
+				`and __${shardReward}__ Shards ${emoji.shard}.`;
+			} else {
+				summoner.shards = (summoner.shards || 0) + 3;
+				updateObj.shards = summoner.shards;
 			}
 
 			// monthly bonus rewards
@@ -81,7 +96,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 					updateObj.gold = (updateObj.gold || 0) + reward.gold;
 				}
 				if (reward.shards) {
-					updateObj.shards = summoner.shards + reward.shards;
+					updateObj.shards = (updateObj.shards || 0) + reward.shards;
 				}
 				if (reward.raid_pass) {
 					updateObj.raid_pass = reward.raid_pass + (updateObj.raid_pass || 0);
@@ -173,19 +188,24 @@ const monthlyCardMatrix = [
 			rank_id: 7,
 		},
 	},
+	{
+		vote: 8,
+		reward: { shards: 5 },
+		premiumReward: { shards: 10 }
+	}
 ];
 
 const prepMatrix = () => {
-	// total 35 votes
-	const total = 35;
+	// total 40 votes
+	const total = 40;
 	const matrix = [];
 	for (let i = 0; i < total; i++) {
-		const item = monthlyCardMatrix[i % 7];
+		const item = monthlyCardMatrix[i % 8];
 		matrix.push({
 			vote: i + 1,
 			reward: item.reward,
 			premiumReward: item.premiumReward,
-		}); // 7x5 matrix
+		}); // 8x5 matrix
 	}
 	return matrix;
 };
@@ -209,11 +229,13 @@ const processMonthlyVoteReward = async (user: UserProps) => {
 	}
 	if (item.reward.type === "immortal" || item.reward.type === "fodder") {
 		if (item.reward.type === "fodder") {
-			await directUpdateCreateFodder([ {
-				character_id: card.character_id,
-				user_id: user.id,
-				count: item.reward.number
-			} ]);
+			await directUpdateCreateFodder([
+				{
+					character_id: card.character_id,
+					user_id: user.id,
+					count: item.reward.number,
+				},
+			]);
 		}
 		if (item.reward.type === "immortal") {
 			await createCollection({
