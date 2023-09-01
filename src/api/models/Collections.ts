@@ -89,6 +89,10 @@ export const transformation = {
 		type: "boolean",
 		columnName: "is_tradable",
 	},
+	cardCount: {
+		type: "number",
+		columnName: "card_count"
+	}
 };
 
 export const get = async (
