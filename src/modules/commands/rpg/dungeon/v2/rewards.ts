@@ -13,7 +13,9 @@ import { emojiMap } from "emojis";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getGuildMember } from "api/controllers/GuildMembersController";
 import { GuildMemberProps } from "@customTypes/guildMembers";
-import { DEFAULT_ERROR_TITLE, PVP_XP } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, PVP_XP } from "helpers/constants";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 
 const fetchAndUpdateDgLog = async (
 	uid: string,
@@ -208,6 +210,29 @@ export const processBattleOutcome = async ({
 			"dungeon.v2.rewards.processBattleOutcome: loading all promises"
 		);
 		await Promise.all(promises);
+
+		const button = customButtonInteraction(
+			channel,
+			[{
+				label: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.label,
+				params: { id: CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id }
+			}],
+			author.id,
+			({ id }) => {
+				if (id === CONSOLE_BUTTONS.VIEW_BATTLE_LOGS.id && result.simulation && result.attachments) {
+					viewBattleLogs({
+						simulation: result.simulation,
+						authorId: author.id,
+						attachments: result.attachments,
+						channel
+					})
+				}
+				return;
+			},
+			() => {
+				return;
+			}
+		)
 
 		const embed = createEmbed(author, client)
 			.setTitle(
