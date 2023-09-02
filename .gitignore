@@ -6,3 +6,4 @@ logs/
 .vscode
 
 *logging.json
+*.DS_Store
