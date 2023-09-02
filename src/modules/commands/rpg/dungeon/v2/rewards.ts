@@ -145,7 +145,7 @@ export const processBattleOutcome = async ({
 			}
 		} else {
 			outcomeDesc = `Summoner **${author.username}**, You were defeated by ` +
-            `**${opponentUsername}** in PvP Ranked Battle! ${emoji.cry}`;
+            `**${opponentUsername}** in Dungeon Battle! ${emoji.cry}`;
 			promises.push(
 				processDGLose(userRank, author.id).then((_dgLose) => {
 					resultDesc = _dgLose.desc;

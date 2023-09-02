@@ -228,75 +228,84 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			return;
 		}
 		playerStats = dedupItems(playerStats);
-		let opponent: BattleStats | undefined, opponentTeamName = "";
+		// let opponent: BattleStats | undefined, opponentTeamName = "";
 
-		const excludeUsers = [ author.id ];
-		if (Cache.keys) {
-			const keys = await Cache.keys(`dg-vs::${author.id}*`);
-			if (keys && keys.length > 0) {
-				keys.forEach((k) => {
-					const oppId = k.split("-")[2];
-					if (oppId) {
-						excludeUsers.push(oppId);
-					}
-				});
-			}
-		}
+		// const excludeUsers = [ author.id ];
+		// if (Cache.keys) {
+		// 	const keys = await Cache.keys(`dg-vs::${author.id}*`);
+		// 	if (keys && keys.length > 0) {
+		// 		keys.forEach((k) => {
+		// 			const oppId = k.split("-")[2];
+		// 			if (oppId) {
+		// 				excludeUsers.push(oppId);
+		// 			}
+		// 		});
+		// 	}
+		// }
 
-		const randomOpponent = await getRandomDGOpponent({
-			exclude_tag: excludeUsers,
-			mmr: userRank?.match_making_rate || 0
-		});
+		// const randomOpponent = await getRandomDGOpponent({
+		// 	exclude_tag: excludeUsers,
+		// 	mmr: userRank?.match_making_rate || 0
+		// });
 
 		/**
 		 * If opponent doesn't exist the bot will spawn a boss
 		 */
-		if (!randomOpponent) {
-			// spawn boss
-			opponent = await spawnDGBoss(userRank);
-			opponent.isBot = true;
-			// embed.setDescription("We could not find other players in your rank. Please try again later");
-			// context.channel?.sendMessage(embed);
-			// return;
-		} else {
-			const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
-			if (!opponentUser) {
-				loggers.info("dungeon.v2.battle.dungeonBattle: opponent user not found: " + 
-                randomOpponent);
-				context.channel?.sendMessage("We could not prepare your opponent. Please contact support.");
-				return;
-			}
+		// if (!randomOpponent) {
+		// spawn boss
 
-			opponent = await prepareTeamForBattle({
-				team: randomOpponent.team as TeamProps,
-				user_id: opponentUser.id,
-				id: randomOpponent.user_tag,
-				canAddGuildStats: false,
-				isDungeon: true,
-				capCharacterMaxLevel: true
-			});
 
-			if (!opponent) {
-				loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 
-                randomOpponent);
-				await updateDGTeam(opponentUser.user_tag, {
-					team: {
-						...randomOpponent.team,
-						metadata: []
-					},
-					metadata: {
-						...randomOpponent.metadata,
-						isValid: false
-					}
-				});
-				opponent = await spawnDGBoss(userRank);
-			} else {
-				opponent.name = `Team ${randomOpponent.username}`;
-				opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
-				opponent.username = randomOpponent.username;
-				opponent = dedupItems(opponent);
-			}
-		}
+		/**
+		 * DG PvP was a failure. There are too many restrictions
+		 * to match players effectively. So stick to PvE
+		 */
+		const opponent = await spawnDGBoss(userRank);
+		opponent.isBot = true;
+
+
+
+		// embed.setDescription("We could not find other players in your rank. Please try again later");
+		// context.channel?.sendMessage(embed);
+		// return;
+		// } else {
+		// 	const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
+		// 	if (!opponentUser) {
+		// 		loggers.info("dungeon.v2.battle.dungeonBattle: opponent user not found: " + 
+		//         randomOpponent);
+		// 		context.channel?.sendMessage("We could not prepare your opponent. Please contact support.");
+		// 		return;
+		// 	}
+
+		// 	opponent = await prepareTeamForBattle({
+		// 		team: randomOpponent.team as TeamProps,
+		// 		user_id: opponentUser.id,
+		// 		id: randomOpponent.user_tag,
+		// 		canAddGuildStats: false,
+		// 		isDungeon: true,
+		// 		capCharacterMaxLevel: true
+		// 	});
+
+		// 	if (!opponent) {
+		// 		loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 
+		//         randomOpponent);
+		// 		await updateDGTeam(opponentUser.user_tag, {
+		// 			team: {
+		// 				...randomOpponent.team,
+		// 				metadata: []
+		// 			},
+		// 			metadata: {
+		// 				...randomOpponent.metadata,
+		// 				isValid: false
+		// 			}
+		// 		});
+		// 		opponent = await spawnDGBoss(userRank);
+		// 	} else {
+		// 		opponent.name = `Team ${randomOpponent.username}`;
+		// 		opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
+		// 		opponent.username = randomOpponent.username;
+		// 		opponent = dedupItems(opponent);
+		// 	}
+		// }
 
 		if (!playerStats || !opponent) {
 			context.channel?.sendMessage("We could not prepare your battle. Please contact support.");
@@ -319,20 +328,20 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context,
 			playerStats,
 			enemyStats: opponent,
-			title: `__PvP Ranked Battle ${playerTeamName} vs ${opponentTeamName || opponent.name}__`,
+			title: `__Dungeon Battle ${playerTeamName} vs ${opponent.name}__`,
 			isRaid: false,
 			options: { hideVisualBattle: false }
 		});
 		clearCooldown(author.id, cdKey);
 
-		if (!opponent.isBot) {
-			/** Set vs cache to avoid matching same players for some period. */
-			const versusKey = `dg-vs::${author.id}-${opponent.id}`;
-			await Promise.all([
-				Cache.set(versusKey, "1"),
-				(Cache.expire && Cache.expire(versusKey, 60 * 10))
-			]);
-		}
+		// if (!opponent.isBot) {
+		// 	/** Set vs cache to avoid matching same players for some period. */
+		// 	const versusKey = `dg-vs::${author.id}-${opponent.id}`;
+		// 	await Promise.all([
+		// 		Cache.set(versusKey, "1"),
+		// 		(Cache.expire && Cache.expire(versusKey, 60 * 10))
+		// 	]);
+		// }
 
 		if (!result) {
 			context.channel?.sendMessage(

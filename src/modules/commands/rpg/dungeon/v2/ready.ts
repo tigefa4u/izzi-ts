@@ -19,13 +19,6 @@ export const dgTeamReady = async ({ client, context, options }: BaseProps) => {
 		]);
 		if (!user) return;
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
-		const guildMember = await getGuildMember({ user_id: user.id });
-		if (!guildMember) {
-			embed.setDescription(`Summoner **${author.username}**, You must be in a Guild ` +
-			"to participate in PvP Ranked battles.");
-			context.channel?.sendMessage(embed);
-			return;
-		}
 		let dungeonBans: DungeonBanProps = {};
 		if (bans) {
 			dungeonBans = JSON.parse(bans);
