@@ -167,8 +167,8 @@ const monthlyCardMatrix = [
 	},
 	{
 		vote: 5,
-		reward: { shards: 30 },
-		premiumReward: { shards: 40 },
+		reward: { shards: 15 },
+		premiumReward: { shards: 25 },
 	},
 	{
 		vote: 6,
@@ -190,8 +190,8 @@ const monthlyCardMatrix = [
 	},
 	{
 		vote: 8,
-		reward: { shards: 5 },
-		premiumReward: { shards: 10 }
+		reward: { shards: 20 },
+		premiumReward: { shards: 25 }
 	}
 ];
 
