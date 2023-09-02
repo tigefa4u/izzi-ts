@@ -8,4 +8,5 @@ export type UserRankProps = {
     r_exp: number;
     rank_id: number;
     rank: string;
+    match_making_rate: number;
 }

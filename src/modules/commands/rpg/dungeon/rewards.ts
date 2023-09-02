@@ -116,7 +116,7 @@ export const handleDungeonBattleOutcome = async ({
 	}
 };
 
-export async function processDGWin(userRank: UserRankProps, id: string, guild_id?: number) {
+export async function processDGWin(userRank: UserRankProps, id: string) {
 	const goldReward = userRank.rank_id * randomNumber(300, 500);
 	let desc = `• You have received __${goldReward}__ gold ${emoji.gold}`;
 	const xpGain = PVP_XP.WIN;
@@ -127,9 +127,11 @@ export async function processDGWin(userRank: UserRankProps, id: string, guild_id
 		throw new Error("Unable to process user: User not found, processDGWin()");
 	}
 	userRank.wins = userRank.wins + 1;
+	userRank.match_making_rate = userRank.match_making_rate + PVP_XP.MMR_GAIN;
 	const bodyParams = {
 		wins: userRank.wins,
 		exp: userRank.exp,
+		match_making_rate: userRank.match_making_rate
 	};
 	const baseCondition =
     userRank.exp >= userRank.r_exp &&
@@ -177,12 +179,6 @@ export async function processDGWin(userRank: UserRankProps, id: string, guild_id
 		updateRPGUser({ user_tag: id }, { gold: user.gold }),
 		updateUserRank({ user_tag: id }, bodyParams),
 	];
-	if (guild_id) {
-		_promises.push(increaseGuildMMR({
-			id: guild_id,
-			mmr: PVP_XP.MMR_GAIN 
-		}));
-	}
 	await Promise.all(_promises);
 
 	return {
@@ -191,14 +187,17 @@ export async function processDGWin(userRank: UserRankProps, id: string, guild_id
 	};
 }
 
-export async function processDGLose(userRank: UserRankProps, id: string, guild_id?: number) {
+export async function processDGLose(userRank: UserRankProps, id: string) {
 	userRank.loss = userRank.loss + 1;
 	userRank.exp = userRank.exp - PVP_XP.LOSS;
 	if (userRank.exp <= 0) userRank.exp = 0;
 
+	userRank.match_making_rate = userRank.match_making_rate - PVP_XP.MMR_LOSS;
+	if (userRank.match_making_rate < 0) userRank.match_making_rate = 0;
 	const bodyParams = {
 		loss: userRank.loss,
 		exp: userRank.exp,
+		match_making_rate: userRank.match_making_rate
 	};
 	let desc = `• You have lost __${PVP_XP.LOSS}__ xp`;
 	if (
@@ -208,14 +207,7 @@ export async function processDGLose(userRank: UserRankProps, id: string, guild_i
 		loggers.info(
 			"Updating on default user rank and division, :: rank_id: 1, division: 1"
 		);
-		const promises = [ updateUserRank({ user_tag: id }, bodyParams) ];
-		if (guild_id) {
-			promises.push(decreaseGuildMMR({
-				id: guild_id,
-				mmr: PVP_XP.MMR_LOSS
-			}));
-		}
-		await Promise.all(promises);
+		await updateUserRank({ user_tag: id }, bodyParams);
 		return {
 			desc,
 			userRank,
@@ -254,15 +246,8 @@ export async function processDGLose(userRank: UserRankProps, id: string, guild_i
       )}** __division ${userRank.division}__`;
 	}
 
-	const _promises = [ updateUserRank({ user_tag: id }, bodyParams) ];
-	if (guild_id) {
-		_promises.push(decreaseGuildMMR({
-			id: guild_id,
-			mmr: PVP_XP.MMR_LOSS 
-		}));
-	}
+	await updateUserRank({ user_tag: id }, bodyParams);
 
-	await Promise.all(_promises);
 	return {
 		userRank,
 		desc,

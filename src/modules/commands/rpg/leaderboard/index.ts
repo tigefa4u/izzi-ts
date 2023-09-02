@@ -25,8 +25,8 @@ export const leaderboard = async ({
 		if (subcommand === "guild") {
 			Object.assign(params, {
 				lb: "guilds",
-				order: "match_making_rate",
-				orderName: "Clan Points"
+				order: "level",
+				orderName: "Clan Level"
 			});
 		} else if (subcommand === "level") {
 			Object.assign(params, {
@@ -53,11 +53,11 @@ export const leaderboard = async ({
 				order: "rank"
 			});
 		} else if (subcommand === "guild_level") {
-			Object.assign(params, {
-				lb: "guilds",
-				orderName: "Clan Level",
-				order: "level"
-			});
+			// Object.assign(params, {
+			// 	lb: "guilds",
+			// 	orderName: "Clan Level",
+			// 	order: "level"
+			// });
 		} else if (subcommand === "ultimate") {
 			Object.assign(params, {
 				lb: "ultimate",

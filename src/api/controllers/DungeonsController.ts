@@ -44,7 +44,7 @@ export const delDGTeam = async (user_tag: string) => {
 };
 
 export const getRandomDGOpponent = async (params: {
-    exclude_guild: number;
+    exclude_tag: string;
     mmr: number;
 }) => {
 	try {

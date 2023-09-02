@@ -118,39 +118,11 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const [ guildmember, dgTeam ] = await Promise.all([
-			getGuildMember({ user_id: user.id }),
-			getDGTeam(author.id)
-		]);
-
-		// MMR depends on guild
-		if (!guildmember) {
-			embed.setDescription(`Summoner **${author.username}**, You must ` +
-			"be in a Guild to participate in Ranked PvP.\n\nTo create your guild type `iz guild create <name>` " +
-			"or you can join a guild by getting an invite.");
-			context.channel?.sendMessage(embed);
-
-			if (dgTeam) {
-				await updateDGTeam(author.id, {
-					metadata: {
-						...dgTeam.metadata,
-						isValid: false
-					} 
-				});
-			}
-			return;
-		}
-		const [ _userRank, blackList, guild ] = await Promise.all([
+		const [ _userRank, blackList, dgTeam ] = await Promise.all([
 			getUserRank({ user_tag: author.id }),
 			getUserBlacklist({ user_tag: author.id }),
-			getGuild({ id: guildmember.guild_id })
+			getDGTeam(author.id)
 		]);
-		if (!guild) {
-			embed.setDescription(`Summoner **${author.username}**, we were not able to find your guild ` +
-			"please contact support.");
-			context.channel?.sendMessage(embed);
-			return;
-		}
 		if (dgTeam && blackList && blackList.length > 0) {
 			// dgTeam.metadata.isValid = false;
 			if (dgTeam.metadata.isValid) {
@@ -232,6 +204,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				loss: DUNGEON_DEFAULTS.loss,
 				user_tag: author.id,
 				division: DUNGEON_DEFAULTS.division,
+				match_making_rate: 0
 			});
 		}
 
@@ -257,11 +230,10 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		playerStats = dedupItems(playerStats);
 		let opponent: BattleStats | undefined, opponentTeamName = "";
 		const randomOpponent = await getRandomDGOpponent({
-			exclude_guild: guildmember.guild_id,
-			mmr: guild.match_making_rate || 0
+			exclude_tag: author.id,
+			mmr: userRank?.match_making_rate || 0
 		});
 
-		let opponentUserId: number;
 		/**
 		 * If opponent doesn't exist the bot will spawn a boss
 		 */
@@ -307,7 +279,6 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				opponentTeamName = `${opponent.name} ${emojiMap(randomOpponent.rank || "duke")}`;
 				opponent.username = randomOpponent.username;
 				opponent = dedupItems(opponent);
-				opponentUserId = opponentUser.id;
 			}
 		}
 
@@ -375,9 +346,6 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 					channel: context.channel,
 					opponentId: opponent?.id || "No id",
 					opponentUsername: opponent?.username || opponent?.name || "No Name",
-					guild_id: guild.id,
-					user_id: user.id,
-					opponentUserId
 				});
 				loggers.info("battle outcome proessed for user: " + author.id);
 				return trx.commit();

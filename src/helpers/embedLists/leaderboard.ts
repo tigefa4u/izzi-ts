@@ -41,9 +41,7 @@ export const createLBEmbedList = (
 						}) | ${numericWithComma(array[obj.index].gold)} ${emoji.gold}`,
 						value: `Clan Level **${numericWithComma(array[obj.index].guild_level || 0)}** ${
 							emoji.up
-						} | Clan Points: **${
-							numericWithComma(array[obj.index].match_making_rate || 0)
-						}** | Reputation **${numericWithComma(array[obj.index].points)}**`,
+						} | Reputation **${numericWithComma(array[obj.index].points)}**`,
 					}
 				);
 			} else if (lb === "ranks") {

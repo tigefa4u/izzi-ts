@@ -339,6 +339,7 @@ export const crusher = ({
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
 	if (round % 2 === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
+		playerStats.totalStats.crusherResetOnRound = round + 3;
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(25, card.rank);
 		const ratio = getRelationalDiff(
@@ -382,7 +383,8 @@ export const crusher = ({
 			baseEnemyStats,
 		});
 	}
-	if (round % 4 === 0 && playerStats.totalStats.isUseCrusher)
+	if (!playerStats.totalStats.crusherResetOnRound) playerStats.totalStats.crusherResetOnRound = round;
+	if (round >= playerStats.totalStats.crusherResetOnRound && playerStats.totalStats.isUseCrusher)
 		playerStats.totalStats.isUseCrusher = false;
 	if (playerStats.totalStats.isUseCrusher) {
 		// let inc = calcPercentRatio(6, card.rank);
