@@ -24,7 +24,7 @@ export const del = async (user_tag: string) => {
 };
 
 export const getRandomPlayer = async (params: {
-    exclude_tag: string;
+    exclude_tag: string[];
 	mmr: number;
 }): Promise<DungeonOpponentProps[]> => {
 	const mmrBucket = {
@@ -53,6 +53,7 @@ export const getRandomPlayer = async (params: {
 		.from(tableName)
 		// .innerJoin(users, `${tableName}.user_tag`, `${users}.user_tag`)
 		.innerJoin(userRanks, `${tableName}.user_tag`, `${userRanks}.user_tag`)
+		.whereNotIn(`${tableName}.user_tag`, params.exclude_tag || [])
 		.whereRaw(`cast(${tableName}.metadata->> ? as boolean) = ?`, [ "isValid", true ])
 		// .where(`${users}.is_banned`, false)
 		.whereBetween(`${userRanks}.match_making_rate`, [ mmrBucket.low, mmrBucket.high ])

@@ -42,6 +42,7 @@ const spawnDGBoss = async (level: number, id: string) => {
 		loss: 0,
 		id: 0,
 		exp: 0,
+		match_making_rate: 0
 	});
 	const enemyStats = await prepareSkewedCollectionsForBattle({
 		collections: dungeonBoss,

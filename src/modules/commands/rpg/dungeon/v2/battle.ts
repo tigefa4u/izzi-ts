@@ -229,8 +229,22 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		}
 		playerStats = dedupItems(playerStats);
 		let opponent: BattleStats | undefined, opponentTeamName = "";
+
+		const excludeUsers = [ author.id ];
+		if (Cache.keys) {
+			const keys = await Cache.keys(`dg-vs::${author.id}*`);
+			if (keys && keys.length > 0) {
+				keys.forEach((k) => {
+					const oppId = k.split("-")[2];
+					if (oppId) {
+						excludeUsers.push(oppId);
+					}
+				});
+			}
+		}
+
 		const randomOpponent = await getRandomDGOpponent({
-			exclude_tag: author.id,
+			exclude_tag: excludeUsers,
 			mmr: userRank?.match_making_rate || 0
 		});
 
@@ -252,6 +266,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				context.channel?.sendMessage("We could not prepare your opponent. Please contact support.");
 				return;
 			}
+
 			opponent = await prepareTeamForBattle({
 				team: randomOpponent.team as TeamProps,
 				user_id: opponentUser.id,
@@ -260,6 +275,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				isDungeon: true,
 				capCharacterMaxLevel: true
 			});
+
 			if (!opponent) {
 				loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 
                 randomOpponent);
@@ -308,6 +324,16 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			options: { hideVisualBattle: false }
 		});
 		clearCooldown(author.id, cdKey);
+
+		if (!opponent.isBot) {
+			/** Set vs cache to avoid matching same players for some period. */
+			const versusKey = `dg-vs::${author.id}-${opponent.id}`;
+			await Promise.all([
+				Cache.set(versusKey, "1"),
+				(Cache.expire && Cache.expire(versusKey, 60 * 10))
+			]);
+		}
+
 		if (!result) {
 			context.channel?.sendMessage(
 				"Unable to process battle, please try again later"

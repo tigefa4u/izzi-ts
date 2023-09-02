@@ -19,6 +19,7 @@ import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { getItemById } from "api/controllers/ItemsController";
 import { DEFAULT_DPR } from "./constants";
+import { GuildMemberProps } from "@customTypes/guildMembers";
 
 const prepareItemStats = ({
 	itemStats,
@@ -232,15 +233,21 @@ export const prepareTeamForBattle = async ({
 }) => {
 	const ids = team.metadata.filter(Boolean).map((m) => Number(m.collection_id));
 
-	const [ collections, guildMember ] = await Promise.all([
-		getCollectionById({
-			ids,
-			user_id,
-			user_tag: id,
-			isDungeon
-		}),
-		getGuildMember({ user_id }),
-	]);
+
+	const promises: any[] = [ getCollectionById({
+		ids,
+		user_id,
+		user_tag: id,
+		isDungeon
+	}) ];
+
+	let guildMember: any = null;
+	if (canAddGuildStats) {
+		promises.push(getGuildMember({ user_id }).then((res) => {
+			if (res) guildMember = res;
+		}));
+	}
+	const [ collections ] = await Promise.all(promises);
 	if (!collections || collections.length <= 0) return;
 
 	let guildStats = undefined as GuildStatProps;
