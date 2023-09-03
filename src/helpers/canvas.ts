@@ -12,7 +12,7 @@ const _fetchAndSaveToCache = async (
 	path: string,
 	width: number,
 	height: number,
-	extras: { prefix?: string; }
+	extras: { prefix?: string }
 ) => {
 	// load the path and draw on canvas to convert it into
 	// buffer to be stored in disk cache
@@ -32,8 +32,10 @@ const _fetchAndSaveToCache = async (
 	ctx.drawImage(data, 0, 0, width, height);
 	const blob = canvas.toBuffer("image/jpeg");
 	ImageCache.setImage(
-		`${extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path}`,
-		blob,
+		`${
+			extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path
+		}`,
+		blob
 		// { path }
 	);
 
@@ -41,28 +43,35 @@ const _fetchAndSaveToCache = async (
 	return data;
 };
 
-async function _loadFromCache(path: string, extras: { prefix?: string; }): Promise<
+async function _loadFromCache(
+	path: string,
+	extras: { prefix?: string }
+): Promise<
   | undefined
   | {
       image: Image;
       time: number;
     }
 > {
-	const result = ImageCache.getImage(`${extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path}`) as {
-		image: Buffer;
-		time: number;
-	};
+	const result = ImageCache.getImage(
+		`${
+			extras.prefix && extras.prefix !== "" ? `${extras.prefix}-${path}` : path
+		}`
+	) as {
+    image: Buffer;
+    time: number;
+  };
 	if (!result) {
 		return;
 	}
-	loggers.info("BATTLE_CANVAS_CACHE_HIT: ", path);
+	// loggers.info("BATTLE_CANVAS_CACHE_HIT: ", path);
 	const buffer = Buffer.from(result.image);
 
 	// load the buffer to be drawn on canvas
 	const img = await loadImage(buffer).catch((err) => {
 		loggers.error(
 			"canvas.createBattleCanvas._loadFromCache: ERROR Unable to load filepath -> " +
-	    path,
+        path,
 			err
 		);
 		throw err;
@@ -96,20 +105,24 @@ export const createSingleCanvas: (
 		ctx.fillStyle = "#2f3136";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image" });
+		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image", });
 		let image = cachedImage?.image;
 		if (!image) {
-			image = await _fetchAndSaveToCache(filepath, canvas.width, canvas.height, 
-				{ prefix: "single-image", });
+			image = await _fetchAndSaveToCache(
+				filepath,
+				canvas.width,
+				canvas.height,
+				{ prefix: "single-image" }
+			);
 
-			loggers.info(`[Path] loading filepath -> ${filepath}`);
+			// loggers.info(`[Path] loading filepath -> ${filepath}`);
 		}
 		// console.log("loaded", image);
 
 		/**
-		 * This will show an image `claim now` hiding the stars.
-		 * And is only used for card drops
-		 */
+     * This will show an image `claim now` hiding the stars.
+     * And is only used for card drops
+     */
 		let claimNowImage: Image | undefined = undefined;
 		const imgW = 180;
 		const imgH = 48;
@@ -118,7 +131,7 @@ export const createSingleCanvas: (
 			const claimNowText = await _loadFromCache(claimNowPath, { prefix: "" });
 			claimNowImage = claimNowText?.image;
 			if (!claimNowImage) {
-				claimNowImage = await _fetchAndSaveToCache(claimNowPath, imgW, imgH, { prefix: "" });
+				claimNowImage = await _fetchAndSaveToCache(claimNowPath, imgW, imgH, { prefix: "", });
 			}
 		}
 
@@ -129,7 +142,7 @@ export const createSingleCanvas: (
 
 			if (isNotStar && claimNowImage) {
 				// to center on X axis
-				const dx = (canvas.width / 2) - (imgW / 2);
+				const dx = canvas.width / 2 - imgW / 2;
 				const dy = canvas.height - 100;
 				ctx.drawImage(claimNowImage, dx, dy, imgW, imgH);
 			}
@@ -174,18 +187,17 @@ export const createBattleCanvas = async (
 		const cachedBg = await _loadFromCache(path, { prefix: "" });
 		let bgPath = cachedBg?.image;
 		if (!bgPath) {
-			bgPath = await _fetchAndSaveToCache(path, canvas.width, canvas.height, 
-				{ prefix: "", });
+			bgPath = await _fetchAndSaveToCache(path, canvas.width, canvas.height, { prefix: "", });
 		}
 		ctx.drawImage(bgPath, 0, 0, canvas.width, canvas.height);
 	}
 	try {
 		const dh = extras?.isSingleRow ? canvas.height : canvas.height / 2;
-		const startTimer = loggers.startTimer("Battle canvas: ");
+		// const startTimer = loggers.startTimer("Battle canvas: ");
 		const images = await Promise.all(
 			cards.map(async (card) => {
 				if (card) {
-					const startImageTimer = loggers.startTimer("[Image] Path: ");
+					// const startImageTimer = loggers.startTimer("[Image] Path: ");
 					// load precomputed images with border and stars
 					let filepath = card?.filepath;
 					const version =
@@ -193,20 +205,20 @@ export const createBattleCanvas = async (
 					if (card.metadata?.assets && card.metadata.assets[version]) {
 						filepath = card.metadata.assets[version].filepath;
 					}
-					startImageTimer.message = startImageTimer.message + " -> " + filepath;
-					const cachedImage = await _loadFromCache(filepath, 
-						{ prefix: extras?.isSingleRow ? "single-row" : "" });
+					// startImageTimer.message = startImageTimer.message + " -> " + filepath;
+					const cachedImage = await _loadFromCache(filepath,	
+						{ prefix: extras?.isSingleRow ? "single-row" : "", });
 					let image = cachedImage?.image;
 					if (!image) {
-						startImageTimer.message =
-              startImageTimer.message + " -> loading image from url";
+						// 			startImageTimer.message =
+						//   startImageTimer.message + " -> loading image from url";
 						image = await _fetchAndSaveToCache(filepath, canvas.width / 3, dh, 
 							{ prefix: extras?.isSingleRow ? "single-row" : "", });
 					} else {
-						startImageTimer.message =
-              startImageTimer.message + " -> loading from cache";
+						// 			startImageTimer.message =
+						//   startImageTimer.message + " -> loading from cache";
 					}
-					loggers.endTimer(startImageTimer);
+					// loggers.endTimer(startImageTimer);
 					return {
 						id: card.id,
 						image,
@@ -236,7 +248,7 @@ export const createBattleCanvas = async (
 				// }
 				ctx.drawImage(images[card.id].image, dx, dy, canvas.width / 3, dh);
 			}
-			loggers.endTimer(startTimer);
+			// loggers.endTimer(startTimer);
 			resolve(canvas);
 		});
 	} catch (err) {

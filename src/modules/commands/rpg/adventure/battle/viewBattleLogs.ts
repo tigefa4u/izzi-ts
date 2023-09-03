@@ -43,7 +43,7 @@ export const viewBattleLogs = async ({
 		let lastObject = {} as SimulationRound["descriptions"][0];
 		const allDescriptions = roundKeys
 			.map((key) => {
-				const descriptionsToMap = rounds[key].descriptions;
+				const descriptionsToMap = clone(rounds[key].descriptions);
 				if (!isEmptyValue(lastObject)) {
 					descriptionsToMap.unshift(lastObject);
 					lastObject = {} as SimulationRound["descriptions"][0];
@@ -81,11 +81,12 @@ export const viewBattleLogs = async ({
 
 		loggers.info(`Battle log ${battleLogId}`, {
 			battleLogId,
-			battleLog: allDescriptions
+			battleLog: allDescriptions,
+			rounds
 		});
 		const embed = createEmbed()
 			.setTitle(`__${simulation.title.replaceAll("_", "")} Battle Logs__`)
-			.setDescription(allDescriptions[0])
+			.setDescription(`${allDescriptions[0]}\n${allDescriptions[1]}`)
 			.setFooter({ text: `Battle Log ID: ${battleLogId}`, });
 
 		const canvas = await createBattleCanvas(attachments, {

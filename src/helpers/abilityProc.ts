@@ -2,6 +2,7 @@ import { Simulation } from "@customTypes/adventure";
 import { AbilityProcDescriptionProps } from "@customTypes/battle";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
+import { generateUUID } from "helpers";
 import { titleCase } from "title-case";
 import { processStatDeBuffCap, simulateBattleDescription } from "./battle";
 
@@ -50,7 +51,8 @@ export const prepSendAbilityOrItemProcDescription = async ({
 		description: desc,
 		delay: 1000,
 		rawDescription: updatedDescription,
-		showUpdatedDescription: true
+		showUpdatedDescription: true,
+		id: generateUUID(4)
 	});
 	// FIXME: Need to catch somewhere
 	// if (!hasEdited) {

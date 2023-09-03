@@ -335,12 +335,16 @@ async function initDrops(
 		});
 
 		/**
-		 * Hack - Do drop more than 2 immo
+		 * Hack - Do drop more than 1 immo and 2 divs
 		 */
 		const immortalDrops = array.filter((a) => a.rank_id === 7);
 		const rest = array.filter(a => a.rank_id !== 7);
-		if (immortalDrops.length > 2) {
-			array = [ ...rest, immortalDrops[0], immortalDrops[1] ].filter(Boolean);
+		const divineDrops = array.filter((a) => a.rank_id === 6);
+		if (immortalDrops.length > 1) {
+			array = [ ...rest, immortalDrops[0] ].filter(Boolean);
+		}
+		if (divineDrops.length > 2) {
+			array = [ ...rest, divineDrops[0] ].filter(Boolean);
 		}
 	}
 

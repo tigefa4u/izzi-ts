@@ -1,19 +1,13 @@
 import {
 	ChannelProp,
-	ConfirmationInteractionOptions,
-	ConfirmationInteractionParams,
-	MapProps,
 	ResponseWithPagination,
 } from "@customTypes";
 import { ButtonOptions } from "@customTypes/button";
 import { BaseProps } from "@customTypes/command";
 import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
-import { createEmbed } from "commons/embeds";
 import { Client, Message, MessageActionRow } from "discord.js";
-import emoji from "emojis/emoji";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
-import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import { REACTIONS } from "helpers/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
@@ -91,9 +85,9 @@ export const paginatorInteraction: <P, T, O = Record<string, never>>(
 				});
 				buttonInteraction.deferUpdate();
 				const id = buttonInteraction.customId;
-				loggers.info(
-					`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-				);
+				// loggers.info(
+				// 	`Pagination Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				// );
 				switch (id) {
 					case binLabel: {
 						if (isAsyncFunction(callback)) {
@@ -199,9 +193,9 @@ export const confirmationInteraction = async <P, T, O = Record<string, never>>(
 					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
-				loggers.info(
-					`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-				);
+				// loggers.info(
+				// 	`Confirmation Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				// );
 				switch (id) {
 					case cancelLabel: {
 						buttonInteraction.deferUpdate();
@@ -282,9 +276,9 @@ export const collectableInteraction = async <P>(
 					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
-				loggers.info(
-					`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-				);
+				// loggers.info(
+				// 	`Collectable Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				// );
 				switch (id) {
 					case label: {
 						buttonInteraction.deferUpdate();
@@ -377,9 +371,9 @@ export const customButtonInteraction = <P>(
 					channelId: buttonInteraction.channel?.id
 				});
 				const id = buttonInteraction.customId;
-				loggers.info(
-					`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
-				);
+				// loggers.info(
+				// 	`Custom Button interacted by user -> ${buttonInteraction.user.id} buttonId: ${id}`
+				// );
 				options.map((option, i) => {
 					if (id === label + "_" + i) {
 						buttonInteraction.deferUpdate();

@@ -43,7 +43,7 @@ export const selectionInteraction = async <P>(
 				});
 			});
 			await interaction.deferUpdate();
-			loggers.info(`Select Menu interacted by user -> ${interaction.user.id} value: ${interaction.values[0]}`);
+			// loggers.info(`Select Menu interacted by user -> ${interaction.user.id} value: ${interaction.values[0]}`);
 			callback(params, interaction.values[0]);
 			return;
 		});

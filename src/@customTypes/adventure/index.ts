@@ -221,6 +221,7 @@ export type SimulationRound = {
     delay: number;
     rawDescription?: string;
     showUpdatedDescription?: boolean;
+    id: string;
   }[];
   round: number;
   canSimulateRound: boolean;

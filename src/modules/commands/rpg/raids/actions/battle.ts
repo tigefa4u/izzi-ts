@@ -156,16 +156,14 @@ export const battleBoss = async ({
 
 		// wasn't viable - players dont want to spend 30mins - 1 hour raiding
 		const lobbySize = Object.keys(currentRaid.lobby).length;
+
 		// Fromula: 7.5 - size = 2.5
 		// let capPerLobbySize = HIGH_LVL_RAIDS_SINGLE_BT_CAP - (lobbySize - 1);
 		// if (LOW_LVL_RAIDS.includes(currentRaid.stats.rawDifficulty.toLowerCase())) {
 		// 	capPerLobbySize = LOW_LVL_RAIDS_SINGLE_BT_CAP;
 		// }
 
-		const damageCapPercent =
-      lobbySize === 1
-      	? 10
-      	: RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
+		const damageCapPercent = RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
 		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength *

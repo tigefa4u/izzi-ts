@@ -72,7 +72,7 @@ export const electrocute = ({
 		}
 	}
 	// Deal __20%__ electric damage based on **INT** also gain a chance of inflicting paralysis
-	if (round % 2 === 0) {
+	if (round % 3 === 0) {
 		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = procStun[probability([ 55, 45 ])];
 		const percent = calcPercentRatio(50, card.rank);

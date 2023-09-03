@@ -10,7 +10,7 @@ import {
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { delay } from "helpers";
+import { delay, generateUUID } from "helpers";
 import { prepareBattleDesc } from "helpers/adventure";
 import {
 	compare,
@@ -73,6 +73,7 @@ export const simulateBattle = async ({
 					{
 						description,
 						delay: 0,
+						id: generateUUID(4)
 					},
 				],
 				canSimulateRound: true,
@@ -138,6 +139,7 @@ export const simulateBattle = async ({
 						description: desc,
 						delay: 1000,
 						rawDescription: updatedDescription,
+						id: generateUUID(4)
 					},
 				],
 				canSimulateRound: true,
@@ -549,6 +551,7 @@ async function simulatePlayerTurns({
 					description: desc,
 					delay: 1000,
 					rawDescription: boost.desc,
+					id: generateUUID(4)
 				});
 			}
 		}
@@ -641,6 +644,7 @@ async function simulatePlayerTurns({
 			delay: 1000,
 			rawDescription: battleDescription,
 			showUpdatedDescription: true,
+			id: generateUUID(4)
 		});
 		isPlayerFirst = !isPlayerFirst;
 		if (updatedStats.damageDiff <= 0) {

@@ -190,29 +190,30 @@ export const BattleProcess = async ({
 			};
 		}
 	}
-	/**
-   * If player evades consume some % INT
-   */
-	if (opponentStats.totalStats.isEvadeHit) {
-		const intToReduce = baseEnemyStats.totalStats.intelligence * 0.15;
-		opponentStats.totalStats.intelligence =
-      opponentStats.totalStats.intelligence - intToReduce;
-		if (opponentStats.totalStats.intelligence < 0) {
-			opponentStats.totalStats.intelligence = 0;
-		}
+	// 	/**
+	//    * If player evades consume some % INT
+	//		(Not a good change)
+	//    */
+	// 	if (opponentStats.totalStats.isEvadeHit) {
+	// 		const intToReduce = baseEnemyStats.totalStats.intelligence * 0.15;
+	// 		opponentStats.totalStats.intelligence =
+	//       opponentStats.totalStats.intelligence - intToReduce;
+	// 		if (opponentStats.totalStats.intelligence < 0) {
+	// 			opponentStats.totalStats.intelligence = 0;
+	// 		}
 
-		let diff = getPercentOfTwoNumbers(
-			opponentStats.totalStats.intelligence,
-			baseEnemyStats.totalStats.intelligence
-		);
-		if (diff < 0 || isNaN(diff)) diff = 0;
-		const opponentEnergy = processEnergyBar({
-			dpr: diff,
-			energy: opponentStats.totalStats.energy,
-		});
-		opponentStats.totalStats.dpr = opponentEnergy.dpr;
-		opponentStats.totalStats.energy = opponentEnergy.energy;
-	}
+	// 		let diff = getPercentOfTwoNumbers(
+	// 			opponentStats.totalStats.intelligence,
+	// 			baseEnemyStats.totalStats.intelligence
+	// 		);
+	// 		if (diff < 0 || isNaN(diff)) diff = 0;
+	// 		const opponentEnergy = processEnergyBar({
+	// 			dpr: diff,
+	// 			energy: opponentStats.totalStats.energy,
+	// 		});
+	// 		opponentStats.totalStats.dpr = opponentEnergy.dpr;
+	// 		opponentStats.totalStats.energy = opponentEnergy.energy;
+	// 	}
 	if (!isDefeated && !unableToAttack) {
 		damageDealt = getPlayerDamageDealt(
 			playerStats.totalStats,

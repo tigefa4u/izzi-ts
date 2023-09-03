@@ -1,6 +1,7 @@
 import winstonLogger from "./winston";
 import safeStringify from "fast-safe-stringify";
 import { getLoggerContext } from "./context";
+import { clone } from "utility";
 
 type A = (string | number | Record<string, unknown> | Error)[]
 
@@ -14,7 +15,15 @@ const prepareLogObject = (array: A[]) => {
 		} else if (Array.isArray(item)) {
 			arrays.push(item);
 		} else if (typeof item === "object") {
-			Object.assign(objects, item);
+			const obj = clone(item);
+			/**
+			 * Logging discord components is causing memory leaks
+			 */
+			if (obj["embeds"]) delete obj["embeds"];
+			if (obj["files"]) delete obj["files"];
+			if (obj["components"]) delete obj["components"];
+
+			Object.assign(objects, obj);
 		}
 	});
 	const logString = array.filter((a) => typeof a === "string").join(", ");
@@ -32,17 +41,22 @@ const prepareLogObject = (array: A[]) => {
 
 const sendLog = (level: string, ...args: any[]) => {
 	const { logString, objects = {} } = prepareLogObject(args);
-	console.log(logString, objects);
-	// Object.assign(objects, { labels: getLoggerContext() });
-	// if (level === "error") {
-	// 	winstonLogger.error(logString, objects);
-	// } else if (level === "info") {
-	// 	winstonLogger.info(logString, objects);
-	// } else if (level === "debug") {
-	// 	winstonLogger.debug(logString, objects);
-	// } else if (level === "warn") {
-	// 	winstonLogger.warn(logString, objects);
-	// }
+
+	/**
+	 * For some reason if you use winston logger it breaks with
+	 * call stack exceeded error
+	 */
+	// console.log(logString, objects);
+	Object.assign(objects, { labels: getLoggerContext() });
+	if (level === "error") {
+		winstonLogger.error(logString, objects);
+	} else if (level === "info") {
+		winstonLogger.info(logString, objects);
+	} else if (level === "debug") {
+		winstonLogger.debug(logString, objects);
+	} else if (level === "warn") {
+		winstonLogger.warn(logString, objects);
+	}
 };
 
 const error = (...args: any[]) => {

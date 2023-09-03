@@ -1,4 +1,5 @@
 import { BattleProcessProps } from "@customTypes/adventure";
+import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
@@ -14,7 +15,7 @@ export const blackCleaver = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -24,9 +25,10 @@ export const blackCleaver = ({
 			itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = `and has gained additional __(+${itemStats.strength})__ **HP** and ` +
-        `__(+${itemStats.vitality})__ **ATK** **Ability:** Dealing damage to enemies will now decrease their ` +
-        "**DEF** by __4%__";
+		const desc =
+      `and has gained additional __(+${itemStats.strength})__ **HP** and ` +
+      `__(+${itemStats.vitality})__ **ATK** **Ability:** Dealing damage to enemies will now decrease their ` +
+      "**DEF** by __4%__";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -42,7 +44,7 @@ export const blackCleaver = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	const ratio = getRelationalDiff(opponentStats.totalStats.defense, 4);
@@ -65,7 +67,7 @@ export const thornmail = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -76,8 +78,9 @@ export const thornmail = ({
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
 		playerStats.totalStats.isReflectThornmailDamage = true;
-		const desc = `and has gained __${itemStats.strength}__ **HP** and __${itemStats.defense}__ **DEF** ` +
-        "**Ability:** When struck by an Attack, deal (10 + 1% bonus Defense) damage to the attacker";
+		const desc =
+      `and has gained __${itemStats.strength}__ **HP** and __${itemStats.defense}__ **DEF** ` +
+      "**Ability:** When struck by an Attack, deal (10 + 1% bonus Defense) damage to the attacker";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -93,17 +96,21 @@ export const thornmail = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	let damageDiff, itemDamage;
 	if (playerStats.totalStats.isReflectThornmailDamage && round !== 1) {
-		if (!opponentStats.totalStats.originalHp || isNaN(opponentStats.totalStats.originalHp)) {
+		if (
+			!opponentStats.totalStats.originalHp ||
+      isNaN(opponentStats.totalStats.originalHp)
+		) {
 			throw new Error("Unprocessable originalHp");
 		}
 		const randomDamage = randomNumber(300, 500);
 		itemDamage = randomDamage;
-		opponentStats.totalStats.strength = opponentStats.totalStats.strength - randomDamage;
+		opponentStats.totalStats.strength =
+      opponentStats.totalStats.strength - randomDamage;
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
@@ -115,7 +122,8 @@ export const thornmail = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const desc = `**${opponentStats.name}** is affected by **Thornmail**, taking __${randomDamage}__ upon itself!`;
+		const desc = `**${opponentStats.name}** is affected by **Thornmail** ${emoji.thornmail}, ` +
+		`taking __${randomDamage}__ damage upon itself!`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -130,7 +138,7 @@ export const thornmail = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 
@@ -139,7 +147,7 @@ export const thornmail = ({
 		opponentStats,
 		basePlayerStats,
 		damageDiff,
-		itemDamage
+		itemDamage,
 	};
 };
 
@@ -153,7 +161,7 @@ export const guardianAngel = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -163,7 +171,8 @@ export const guardianAngel = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "**Ability:** Grants additional __500__ **HP** as well as (+120) **DEF** Points.";
+		const desc =
+      "**Ability:** Grants additional __500__ **HP** as well as (+120) **DEF** Points.";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -179,7 +188,7 @@ export const guardianAngel = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	if (playerStats.totalStats.isBleeding) {
