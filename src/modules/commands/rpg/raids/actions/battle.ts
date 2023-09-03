@@ -4,6 +4,7 @@ import {
 	CONSOLE_BUTTONS,
 	ENERGY_PER_ATTACK,
 	HIDE_VISUAL_BATTLE_ARG,
+	RAID_CAP_PERCENT,
 } from "helpers/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -34,7 +35,7 @@ import { processRaidLoot } from "../processRaidLoot";
 import { prepareRaidBossBase } from "helpers/raid";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { numericWithComma } from "helpers";
-import { customButtonInteraction, } from "utility/ButtonInteractions";
+import { customButtonInteraction } from "utility/ButtonInteractions";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import Cache from "cache";
 import { eventActions } from "../events";
@@ -109,7 +110,7 @@ export const battleBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
 		}
@@ -161,7 +162,10 @@ export const battleBoss = async ({
 		// 	capPerLobbySize = LOW_LVL_RAIDS_SINGLE_BT_CAP;
 		// }
 
-		const damageCapPercent = lobbySize === 1 ? 10 : 8.5;
+		const damageCapPercent =
+      lobbySize === 1
+      	? 10
+      	: RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
 		const hideBt = (args.shift() || "").toLowerCase();
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength *
@@ -219,15 +223,17 @@ export const battleBoss = async ({
 				result.totalDamage = damageCap;
 			} else {
 				let percentDamageDealt =
-				(result.totalDamage || 0) /
-				(result.enemyStats?.totalStats.originalHp || result.enemyStats?.totalStats.strength || 1);
-	  
-					  loggers.info(
-						  "raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
-						  percentDamageDealt
-					  );
-					  if (percentDamageDealt > 1) percentDamageDealt = 1;
-					  result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+          (result.totalDamage || 0) /
+          (result.enemyStats?.totalStats.originalHp ||
+            result.enemyStats?.totalStats.strength ||
+            1);
+
+				loggers.info(
+					"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
+            percentDamageDealt
+				);
+				if (percentDamageDealt > 1) percentDamageDealt = 1;
+				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
 			}
 
 			if (result.totalDamage > updateObj.stats.remaining_strength)

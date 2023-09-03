@@ -4,7 +4,11 @@ import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
-	getPercentOfTwoNumbers, getRelationalDiff, processEnergyBar, processHpBar, relativeDiff 
+	getPercentOfTwoNumbers,
+	getRelationalDiff,
+	processEnergyBar,
+	processHpBar,
+	relativeDiff,
 } from "helpers/battle";
 import { titleCase } from "title-case";
 
@@ -18,7 +22,7 @@ export const electrocute = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.electrocute) {
@@ -45,7 +49,7 @@ export const electrocute = ({
 				isItem: false,
 				simulation,
 				baseEnemyStats,
-				basePlayerStats
+				basePlayerStats,
 			});
 			return {
 				playerStats,
@@ -59,7 +63,10 @@ export const electrocute = ({
 	playerStats.totalStats.previousRound
 		? playerStats.totalStats.previousRound++
 		: null;
-	if (playerStats.totalStats.previousRound && round >= playerStats.totalStats.previousRound) {
+	if (
+		playerStats.totalStats.previousRound &&
+    round >= playerStats.totalStats.previousRound
+	) {
 		if (opponentStats.totalStats.isStunned) {
 			opponentStats.totalStats.isStunned = false;
 		}
@@ -68,7 +75,7 @@ export const electrocute = ({
 	if (round % 2 === 0) {
 		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = procStun[probability([ 55, 45 ])];
-		const percent = calcPercentRatio(20, card.rank);
+		const percent = calcPercentRatio(50, card.rank);
 		perDamage = getRelationalDiff(playerStats.totalStats.vitality, percent);
 		if (isNaN(perDamage)) perDamage = 0;
 		// reduce damage by 50%
@@ -119,7 +126,7 @@ export const electrocute = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -140,7 +147,7 @@ export const sleep = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	let desc,
 		isResist = false;
@@ -164,7 +171,7 @@ export const sleep = ({
 				isItem: false,
 				simulation,
 				baseEnemyStats,
-				basePlayerStats
+				basePlayerStats,
 			});
 		}
 	}
@@ -195,7 +202,7 @@ export const sleep = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -214,7 +221,7 @@ export const misdirection = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	if (opponentStats.totalStats.abilityToResist?.misdirection) {
@@ -241,7 +248,7 @@ export const misdirection = ({
 				isItem: false,
 				simulation,
 				baseEnemyStats,
-				basePlayerStats
+				basePlayerStats,
 			});
 			return {
 				playerStats,
@@ -263,13 +270,16 @@ export const misdirection = ({
 		playerStats.totalStats.intelligence =
       playerStats.totalStats.intelligence + ratio;
 
-	  const diff = getPercentOfTwoNumbers(playerStats.totalStats.intelligence, basePlayerStats.totalStats.intelligence);
-	  const playerEnergy = processEnergyBar({
+		const diff = getPercentOfTwoNumbers(
+			playerStats.totalStats.intelligence,
+			basePlayerStats.totalStats.intelligence
+		);
+		const playerEnergy = processEnergyBar({
 			dpr: diff,
-			energy: playerStats.totalStats.energy
-	  });
-	  playerStats.totalStats.energy = playerEnergy.energy;
-	  playerStats.totalStats.dpr = playerEnergy.dpr;
+			energy: playerStats.totalStats.energy,
+		});
+		playerStats.totalStats.energy = playerEnergy.energy;
+		playerStats.totalStats.dpr = playerEnergy.dpr;
 		if (isConfused[probability([ 60, 40 ])]) {
 			const percent = calcPercentRatio(25, card.rank);
 			abilityDamage = getRelationalDiff(
@@ -311,7 +321,7 @@ export const misdirection = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -332,7 +342,7 @@ export const restriction = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card) return;
 	let desc,
@@ -392,10 +402,14 @@ export const restriction = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
-	if (playerStats.totalStats.restrictionResetOnRound && round >= playerStats.totalStats.restrictionResetOnRound && opponentStats.totalStats.isRestrictResisted) {
+	if (
+		playerStats.totalStats.restrictionResetOnRound &&
+    round >= playerStats.totalStats.restrictionResetOnRound &&
+    opponentStats.totalStats.isRestrictResisted
+	) {
 		opponentStats.totalStats.isRestrictResisted = false;
 		desc = `**__${opponentStats.name}__** has been released from ${titleCase(
 			card.name
@@ -414,7 +428,7 @@ export const restriction = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {

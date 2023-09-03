@@ -45,7 +45,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		maxlevel: 1500,
 		ranks: [ "silver", "gold", "platinum" ],
 		numberOfCards: {
-			legend: {
+			divine: {
 				cards: 3,
 				rate: 4
 			},
@@ -56,10 +56,10 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d2: {
-		maxlevel: 1850,
+		maxlevel: 2000,
 		ranks: [ "diamond", "divine", "legend" ],
 		numberOfCards: {
-			legend: {
+			divine: {
 				cards: 6,
 				rate: 7.35
 			},
@@ -70,10 +70,10 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 1500,
+		maxlevel: 1850,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
 		numberOfCards: {
-			legend: {
+			divine: {
 				cards: 9,
 				rate: 12
 			},
@@ -106,8 +106,8 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "legend",
-						rank_id: 5,
+						rank: "divine",
+						rank_id: 6,
 						rate: 1.2,
 						number: 3,
 					},
@@ -153,8 +153,8 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "legend",
-						rank_id: 5,
+						rank: "divine",
+						rank_id: 6,
 						rate: 2,
 						number: 1,
 					},
@@ -208,8 +208,8 @@ const baseLoot = (): any => ({
 				],
 				rare: [
 					{
-						rank: "legend",
-						rank_id: 5,
+						rank: "divine",
+						rank_id: 6,
 						rate: 3,
 						number: 1 // depends on d3, d2, d1
 					},
@@ -289,8 +289,8 @@ const baseLoot = (): any => ({
 				// number of cards depend on category
 				rare: [
 					{
-						rank: "legend",
-						rank_id: 5,
+						rank: "divine",
+						rank_id: 6,
 						rate: 4.5,
 						number: 8,
 					},

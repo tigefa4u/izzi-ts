@@ -30,7 +30,7 @@ export const elementalStrike = ({
 	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp || !playerStats.totalStats.originalHp) return;
-	// Deal __100%__ magic damage based on your **INT** as well as buffing your **INT** by __25%__
+	// Deal __100%__ magic damage based on your **ATK** as well as buffing your **INT** by __25%__
 	let damageDiff;
 	let damageDealt;
 	if (opponentStats.totalStats.abilityToResist?.["elemental strike"]) {
@@ -66,7 +66,7 @@ export const elementalStrike = ({
 		}
 	}
 	if (round % 3 === 0) {
-		const percent = calcPercentRatio(100, card.rank);
+		const percent = calcPercentRatio(30, card.rank);
 
 		const incPercent = calcPercentRatio(25, card.rank);
 
@@ -75,7 +75,7 @@ export const elementalStrike = ({
       playerStats.totalStats.intelligence + intRelDiff;
 
 		damageDealt = getRelationalDiff(
-			playerStats.totalStats.intelligence,
+			playerStats.totalStats.vitality,
 			percent
 		);
 		const elementalEffectiveness = addTeamEffectiveness({

@@ -312,7 +312,7 @@ async function initDrops(
 		.filter(
 			(x) =>
 				raid.lobby[x].total_damage <=
-        Math.floor(raid.stats.original_strength * 0.12)
+        Math.floor(raid.stats.original_strength * 0.10)
 		);
 	if (isRare) {
 		array = array.filter((item) => {
@@ -329,11 +329,21 @@ async function initDrops(
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
 				rate = rate + 10;
 			}
-			const dropChance = [ rate, 100 - rate ];
+			const dropChance = [ rate, 100 ];
 			const ratebool = [ true, false ];
 			return ratebool[probability(dropChance)];
 		});
+
+		/**
+		 * Hack - Do drop more than 2 immo
+		 */
+		const immortalDrops = array.filter((a) => a.rank_id === 7);
+		const rest = array.filter(a => a.rank_id !== 7);
+		if (immortalDrops.length > 2) {
+			array = [ ...rest, immortalDrops[0], immortalDrops[1] ].filter(Boolean);
+		}
 	}
+
 	const result = array.map((item) => {
 		return raid.raid_boss
 			.map((boss) =>
