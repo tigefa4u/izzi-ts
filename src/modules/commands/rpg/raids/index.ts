@@ -191,22 +191,22 @@ function prepareLoot(
 				)
 				.join("\n")
 			: ""
-	}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
-		loot.extraGold || 0
-	)}__ Gold ${emoji.gold}\n${
+	}${
 		loot.rare
 			? loot?.rare
 				?.map(
 					(d) =>
-						`__${d.number}x__ ${titleCase(d.rank)} of ${boss
+						`\n__${d.number}x__ ${titleCase(d.rank)} of ${boss
 							.map((b) => `**${titleCase(b.name)}**`)
 							.join(", ")} (At ${d.rate}% per card)${
 							d.isStaticDropRate ? " (Fixed %)" : ""
 						}`
 				)
-				.join("\n")
+				.join("")
 			: ""
-	}`;
+	}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
+		loot.extraGold || 0
+	)}__ Gold ${emoji.gold}`;
 
 	return desc;
 }

@@ -5,7 +5,7 @@ import { GCP_LOGGING_CLIENT_EMAIL, GCP_LOGGING_PRIVATE_KEY, GCP_PROJECT_ID, GCP_
 
 const cloudLogger = new LoggingWinston({
 	projectId: GCP_PROJECT_ID,
-	// keyFilename: "izzi-cloud-logging.json",
+	keyFilename: "izzi-cloud-logging.json",
 	prefix: GCP_RESOURCE_PREFIX,
 	defaultCallback: (err, resp) => {
 		console.log({
@@ -14,10 +14,10 @@ const cloudLogger = new LoggingWinston({
 		});
 	},
 	resource: { type: "service_account" },
-	credentials: {
-		client_email: GCP_LOGGING_CLIENT_EMAIL,
-		private_key: GCP_LOGGING_PRIVATE_KEY,
-	},
+	// credentials: {
+	// 	client_email: GCP_LOGGING_CLIENT_EMAIL,
+	// 	private_key: GCP_LOGGING_PRIVATE_KEY,
+	// },
 	// labels: { pid: process.pid.toString() }
 });
 
