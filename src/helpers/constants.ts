@@ -617,6 +617,6 @@ export const LOW_LEVEL_THRESHOLD = 25;
 export const RAID_CAP_PERCENT: {[key: string]: number;} = {
 	easy: 10,
 	medium: 8.5,
-	hard: 6,
-	immortal: 4.5
+	hard: 7,
+	immortal: 5.5
 };
