@@ -35,3 +35,5 @@ export const GCP_PROJECT_ID = "izzi-295412";
 export const GCP_RESOURCE_PREFIX = process.env.GCP_RESOURCE_PREFIX || "unknown";
 export const GA4_MEASUREMENT_ID = process.env.GA4_MEASUREMENT_ID;
 export const GA4_API_SECRET = process.env.GA4_API_SECRET;
+export const GCP_LOGGING_PRIVATE_KEY = process.env.GCP_LOGGING_PRIVATE_KEY;
+export const GCP_LOGGING_CLIENT_EMAIL = process.env.GCP_LOGGING_CLIENT_EMAIL;
