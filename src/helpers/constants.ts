@@ -618,5 +618,5 @@ export const RAID_CAP_PERCENT: {[key: string]: number;} = {
 	easy: 10,
 	medium: 7,
 	hard: 6,
-	immortal: 4
+	immortal: 5
 };
