@@ -213,8 +213,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			user_id: user.id,
 			id: author.id,
 			canAddGuildStats: false,
-			isDungeon: true,
-			capCharacterMaxLevel: true
+			isDungeon: true
 		});
 		if (!playerStats) {
 			embed.setDescription("You do not have a valid DG Team, Please reset your team using ``iz dg reset``");
