@@ -21,7 +21,7 @@ execute="echo Enter the name or ID of the Docker container to stop and remove: &
 read id && echo Stopping and Removing container \$id && \
 docker container stop \$id && docker container rm \$id"
 
-dockerrun="docker run -d --restart unless-stopped -p 6379:6379 \
+dockerrun="docker run -v ./izzi-cloud-logging.json:/app/izzi-cloud-logging.json -d --restart unless-stopped -p 6379:6379 \
 --env-file .env --network host --memory=5g izzi && docker stats"
 
 cmd="cd ../home/izzi-ts && ${gitpull} && ${pullcomplete} && ${dockerbuild} && \

@@ -22,6 +22,8 @@ const prepareLogObject = (array: A[]) => {
 			if (obj["embeds"]) delete obj["embeds"];
 			if (obj["files"]) delete obj["files"];
 			if (obj["components"]) delete obj["components"];
+			if (obj["author"]) delete obj["author"];
+			if (obj["client"]) delete obj["client"];
 
 			Object.assign(objects, obj);
 		}
