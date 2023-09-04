@@ -408,7 +408,7 @@ export const frost = ({
 
 		desc =
       `Inflicting a stack of **Frost** on **__${opponentStats.name}__** as well as decreasing ` +
-      `its **INT** by __${decPercent}%__`;
+      `its **ARMOR** by __${decPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

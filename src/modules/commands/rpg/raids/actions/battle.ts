@@ -108,14 +108,13 @@ export const battleBoss = async ({
 			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
 		}
 
-		// TESTING
-		// if (attacker.energy < ENERGY_PER_ATTACK) {
-		// 	context.channel?.sendMessage(
-		// 		`Summoner **${attacker.username}**, ` +
-		//   `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
-		// 	);
-		// 	return;
-		// }
+		if (attacker.energy < ENERGY_PER_ATTACK) {
+			context.channel?.sendMessage(
+				`Summoner **${attacker.username}**, ` +
+		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+			);
+			return;
+		}
 
 		const playerStats = await validateAndPrepareTeam(
 			user.id,
@@ -167,7 +166,6 @@ export const battleBoss = async ({
 
 		const hideBt = (args.shift() || "").toLowerCase();
 
-		// TESTING
 		const damageCapPercent = 10;
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength *
@@ -205,13 +203,12 @@ export const battleBoss = async ({
 			return;
 		}
 
-		// TESTING
-		// if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
-		// 	context.channel?.sendMessage(
-		// 		`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
-		// 	);
-		// 	return;
-		// }
+		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+			context.channel?.sendMessage(
+				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
+			);
+			return;
+		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
@@ -222,7 +219,6 @@ export const battleBoss = async ({
 				return;
 			}
 
-			// TESTING
 			// Enemy stats will always be raid boss
 			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;

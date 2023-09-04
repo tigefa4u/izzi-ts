@@ -202,7 +202,7 @@ export const prepareBattleDesc = ({
 function showStatsDesc(stats: BattleStats["totalStats"]) {
 	const desc =
     `${emoji.crossedswords} \`${Math.floor(stats.vitality)}\` ${emoji.shield2} \`${Math.floor(stats.defense)}\` ` +
-    `${emoji.radiobutton} \`${Math.floor(stats.intelligence)}\` ${emoji.dash} \`${Math.floor(stats.dexterity)}\` ` +
+    `${emoji.armor} \`${Math.floor(stats.intelligence)}\` ${emoji.dash} \`${Math.floor(stats.dexterity)}\` ` +
 	`${emoji.criticalDamage} \`${stats.criticalDamage.toFixed(2)}\``;
 	return desc;
 }

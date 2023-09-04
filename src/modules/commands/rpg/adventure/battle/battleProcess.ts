@@ -129,6 +129,7 @@ export const BattleProcess = async ({
 	}
 	let damageDiff = 1,
 		damageDealt = 0,
+		isDamageAbsorbed = false,
 		isAbilityDefeat = false,
 		isAbilitySelfDefeat = false;
 	// "duskblade of draktharr"
@@ -250,11 +251,16 @@ export const BattleProcess = async ({
 			opponentStats.totalStats.strength = Math.floor(
 				opponentStats.totalStats.strength - damageToDeal
 			);
+
+			damageDealt = damageToDeal;
+			isDamageAbsorbed = false;
 		} else if (damageDealt <= opponentStats.totalStats.intelligence) {
 			opponentStats.totalStats.intelligence =
         opponentStats.totalStats.intelligence - damageDealt;
 			if (opponentStats.totalStats.intelligence < 0)
 				opponentStats.totalStats.intelligence = 0;
+
+			isDamageAbsorbed = true;
 		}
 
 		// 	opponentStats.totalStats.strength =
@@ -320,6 +326,7 @@ export const BattleProcess = async ({
 		isAbilitySelfDefeat,
 		abilityDamage,
 		isPlayerParanoid,
+		isDamageAbsorbed
 	};
 };
 

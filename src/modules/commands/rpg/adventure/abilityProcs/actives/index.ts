@@ -47,10 +47,10 @@ export const dragonRage = ({
 		[
 			{
 				name: "vitality",
-				num: 25,
+				num: 30,
 				op: "+",
 				desc: `Increasing the **ATK** of all allies by __${calcPercentRatio(
-					25,
+					30,
 					card.rank
 				)}%__`,
 			},
@@ -281,7 +281,7 @@ export const killerInstincts = ({
 		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 
 		const desc =
-      `increasing **INT** as well as **SPD** by __${incPercent}%__, ` +
+      `increasing **ARMOR** as well as **SPD** by __${incPercent}%__, ` +
       `And has also increased its evasion chances by __${evaPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -395,7 +395,7 @@ export const futureSight = ({
 		const evaRatio = basePlayerStats.totalStats.evasion * (evaPercent / 100);
 		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
 		const desc =
-      `increasing **INT** of all allies by __${percent}%__ as well as increasing ` +
+      `increasing **ARMOR** of all allies by __${percent}%__ as well as increasing ` +
       `**Evasion Chances** by __${evaPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

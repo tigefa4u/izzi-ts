@@ -135,7 +135,7 @@ export const elementalStrike = ({
 				: effective < 1
 					? " it was not very effective..."
 					: ""
-		} as well as increasing its **INT** by __${incPercent}%__`;
+		} as well as increasing its **ARMOR** by __${incPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -459,7 +459,7 @@ export const eclipse = ({
 			};
 		}
 		const desc =
-      `harnessing its power increasing **INT** by __${percent}%__ as well as ` +
+      `harnessing its power increasing **ARMOR** by __${percent}%__ as well as ` +
       `**Buffing DEF** of allies by __${ddPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

@@ -304,7 +304,7 @@ export const misdirection = ({
         `takes __${abilityDamage}__ damage.`;
 		} else {
 			desc =
-        `Increasing **INT** of all allies by __${tempPercent}__ as well as ` +
+        `Increasing **ARMOR** of all allies by __${tempPercent}__ as well as ` +
         `inflicting a stack of **Confusion** on **__${opponentStats.name}__**, but it resisted!`;
 		}
 		prepSendAbilityOrItemProcDescription({

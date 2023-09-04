@@ -243,7 +243,7 @@ export const MAX_TEAMS_ALLOWED = 5;
 
 export const SPBT_REQUIRED_MANA = 2;
 
-export const MAX_RAID_LOBBY_MEMBERS = 6;
+export const MAX_RAID_LOBBY_MEMBERS = 5;
 export const PERMIT_PER_RAID = 2;
 export const MAX_ENERGY_PER_RAID = 25;
 export const ENERGY_PER_ATTACK = 10;
@@ -585,7 +585,8 @@ export const OS_GLOBAL_MARKET_CHANNEL = "1136920564079022090";
 
 /**
  * DPR - visual representation of INT
- * energy bar
+ * energy bar.
+ * INT is basically armor
  */
 export const DEFAULT_DPR = 1;
 export const DPR_MAX_BUFF = 1;

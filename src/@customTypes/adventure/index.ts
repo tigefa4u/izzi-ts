@@ -161,6 +161,7 @@ export type BattleStats = {
       isEvadeHit?: boolean;
       energy: string[];
       dpr: number; // in calculated percentage (0.06)
+      isDamageAbsorbed?: boolean;
     };
   totalDamage?: number;
   isVictory?: boolean;

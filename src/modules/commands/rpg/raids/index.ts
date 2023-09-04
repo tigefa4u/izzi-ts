@@ -141,7 +141,7 @@ export function prepareRaidBossEmbedDesc(
 		numericWithComma(stats.battle_stats.stats.vitality)
 	}\n**Total DEF:** ${numericWithComma(stats.battle_stats.stats.defense)}\n**Total SPD:** ${
 		numericWithComma(stats.battle_stats.stats.dexterity)
-	}\n**Total INT:** ${
+	}\n**Total ARM:** ${
 		numericWithComma(stats.battle_stats.stats.intelligence)
 	}\n\n**Power Level:** ${numericWithComma(stats.battle_stats.power_level)}\n\n${
 		prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)

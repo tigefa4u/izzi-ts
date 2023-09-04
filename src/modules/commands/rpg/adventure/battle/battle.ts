@@ -73,7 +73,7 @@ export const simulateBattle = async ({
 					{
 						description,
 						delay: 0,
-						id: generateUUID(4)
+						id: generateUUID(4),
 					},
 				],
 				canSimulateRound: true,
@@ -139,7 +139,7 @@ export const simulateBattle = async ({
 						description: desc,
 						delay: 1000,
 						rawDescription: updatedDescription,
-						id: generateUUID(4)
+						id: generateUUID(4),
 					},
 				],
 				canSimulateRound: true,
@@ -477,7 +477,7 @@ function boostRaidBoss({
 	enemyStats,
 	round,
 	baseEnemyStats,
-	turn
+	turn,
 }: Pick<PrepareBattleDescriptionProps, "enemyStats" | "baseEnemyStats"> & {
   round: number;
   turn: number;
@@ -487,19 +487,23 @@ function boostRaidBoss({
 	if (!enemyStats.totalStats.criticalDamage)
 		enemyStats.totalStats.criticalDamage = 1;
 	enemyStats.totalStats.criticalDamage =
-    enemyStats.totalStats.criticalDamage + 0.20;
+    enemyStats.totalStats.criticalDamage + 0.2;
 
 	// boost raid boss ATK by 15%
 	if (baseEnemyStats) {
-		enemyStats.totalStats.vitality = enemyStats.totalStats.vitality + (baseEnemyStats.totalStats.vitality * .10);
+		enemyStats.totalStats.vitality =
+      enemyStats.totalStats.vitality + baseEnemyStats.totalStats.vitality * 0.1;
 	}
 
 	if (baseEnemyStats && round === RAGE_MODE_ROUND && turn === 1) {
 		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
-		const diff = getPercentOfTwoNumbers(enemyStats.totalStats.intelligence, baseEnemyStats.totalStats.intelligence);
+		const diff = getPercentOfTwoNumbers(
+			enemyStats.totalStats.intelligence,
+			baseEnemyStats.totalStats.intelligence
+		);
 		const energy = processEnergyBar({
 			dpr: diff,
-			energy: enemyStats.totalStats.energy
+			energy: enemyStats.totalStats.energy,
 		});
 		enemyStats.totalStats.energy = energy.energy;
 		enemyStats.totalStats.dpr = energy.dpr;
@@ -509,7 +513,7 @@ function boostRaidBoss({
 		desc:
       `**[ROUND ${round}]**\n**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
       "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__20%__**. " +
-	  `Its **ATK** also increases over time by __10%__ and has regenerated its **INT**! ${emoji.criticalDamage}`,
+      `Its **ATK** also increases over time by __10%__ and has regenerated its **ARMOR**! ${emoji.criticalDamage}`,
 	};
 }
 
@@ -537,7 +541,7 @@ async function simulatePlayerTurns({
 				enemyStats,
 				round,
 				baseEnemyStats,
-				turn: i
+				turn: i,
 			});
 			enemyStats = boost.enemyStats;
 			if (round === RAGE_MODE_ROUND && i === 1) {
@@ -551,7 +555,7 @@ async function simulatePlayerTurns({
 					description: desc,
 					delay: 1000,
 					rawDescription: boost.desc,
-					id: generateUUID(4)
+					id: generateUUID(4),
 				});
 			}
 		}
@@ -608,6 +612,11 @@ async function simulatePlayerTurns({
 		const abilityDamage = updatedStats.abilityDamage || 0;
 		if (isPlayerFirst) {
 			totalDamage += damageDealt;
+
+			// play with this and see if its too easy to deal damage
+			// if (!updatedStats.isDamageAbsorbed) {
+			// 	totalDamage += damageDealt;
+			// }
 			totalDamage += abilityDamage;
 		}
 		if (updatedStats.isAbilityDefeat) {
@@ -632,6 +641,7 @@ async function simulatePlayerTurns({
 			isAsleep: updatedStats.isPlayerAsleep,
 			isEvadeHit: updatedStats.isOpponentEvadeHit,
 			isParanoid: updatedStats.isPlayerParanoid,
+			isDamageAbsorbed: updatedStats.isDamageAbsorbed,
 		});
 		const desc = await simulateBattleDescription({
 			playerStats,
@@ -644,7 +654,7 @@ async function simulatePlayerTurns({
 			delay: 1000,
 			rawDescription: battleDescription,
 			showUpdatedDescription: true,
-			id: generateUUID(4)
+			id: generateUUID(4),
 		});
 		isPlayerFirst = !isPlayerFirst;
 		if (updatedStats.damageDiff <= 0) {
@@ -708,6 +718,7 @@ function updateBattleDesc({
 	isAsleep,
 	isEvadeHit,
 	isParanoid,
+	isDamageAbsorbed,
 }: {
   turn: number;
   isPlayerFirst: boolean;
@@ -723,6 +734,7 @@ function updateBattleDesc({
   isStunned?: boolean;
   isAsleep?: boolean;
   isParanoid?: boolean;
+  isDamageAbsorbed?: boolean;
 }) {
 	let desc = `${
 		turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`
@@ -744,7 +756,9 @@ function updateBattleDesc({
 	} else if (isParanoid) {
 		desc = `${desc} ${playerDesc} is **Paranoid** ${emoji.paranoid}! It cannot attack!`;
 	} else {
-		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage ${
+		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage${
+			isDamageAbsorbed ? ` But it was absorbed by ${enemyDesc}'s ARMOR ${emoji.armor}` : ""
+		} ${
 			isCriticalHit
 				? "**CRITICAL HIT**"
 				: opponentStats.totalStats.effective < 1

@@ -29,7 +29,7 @@ function prepareItemBonusDesc(stats: GuildStatProps) {
     `\n${emoji.heart} **Bonus HP:** (+__${stats.strength}__)` +
     `\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)` +
     `\n${emoji.dash} **Bonus SPD:** (+__${stats.dexterity}__)` +
-    `\n${emoji.radiobutton} **Bonus INT:** (+__${stats.intelligence}__)`;
+    `\n${emoji.armor} **Bonus ARM:** (+__${stats.intelligence}__)`;
 
 	return desc;
 }
@@ -68,8 +68,8 @@ function prepareGuildDesc(
 	}__)\n${emoji.shield} **Bonus DEF:** (+__${stats.defense}__)\n${
 		emoji.dash
 	} **Bonus SPD:** (+__${stats.dexterity}__)\n${
-		emoji.radiobutton
-	} **Bonus INT:** (+__${stats.intelligence}__)${prepareItemBonusDesc(
+		emoji.armor
+	} **Bonus ARM:** (+__${stats.intelligence}__)${prepareItemBonusDesc(
 		guild.item_stats
 	)}`;
 

@@ -116,11 +116,11 @@ async function handleNextFloor(params: {
 				stage.level
 			} ${titleCase(stage.name)}**\n**Element Type:** ${
 				classEmoji ? classEmoji : ""
-			}\n**RANK:** ${titleCase(stage.rank)}\n**HP:** ${
+			}\n**RANK:** ${titleCase(stage.rank)}\n**${emoji.hp} HP:** ${
 				stats?.strength
-			}\n**ATK:** ${stats?.vitality}\n**INT:** ${
+			}\n**${emoji.crossedswords} ATK:** ${stats?.vitality}\n**${emoji.armor} ARM:** ${
 				stats?.intelligence
-			}\n**DEF:** ${stats?.defense}\n**SPD:** ${
+			}\n**${emoji.shield2} DEF:** ${stats?.defense}\n**${emoji.dash} SPD:** ${
 				stats?.dexterity
 			}\n\n**Ability**\n${passiveEmoji ? passiveEmoji : ""} **${titleCase(
 				stage?.abilityname || ""

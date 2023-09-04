@@ -179,6 +179,7 @@ const emoji: EmojiProps = {
 	hertakurukuru: "<a:kurukuru:1137431791544840212>",
 	cleanse: "<:cleanse:1143386074048102420>",
 	cleanseffect: "<:cleanseffect:1143386071774810192>",
+	armor: "<:armor:1148208016416591923>",
 };
 
 export default emoji;

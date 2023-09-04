@@ -56,7 +56,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d2: {
-		maxlevel: 2000,
+		maxlevel: 1850,
 		ranks: [ "diamond", "divine", "legend" ],
 		numberOfCards: {
 			divine: {
@@ -70,7 +70,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 1850,
+		maxlevel: 1500,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
 		numberOfCards: {
 			divine: {

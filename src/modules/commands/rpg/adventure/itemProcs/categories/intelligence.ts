@@ -26,7 +26,7 @@ export const sapphiresStaff = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "**Ability:** Grants additional (+90) **INT** points " +
+		const desc = "**Ability:** Grants additional (+90) **ARMOR** points " +
 		"as well as __25%__ chance to put the enemy to **SLEEP**";
 
 		prepSendAbilityOrItemProcDescription({
@@ -124,7 +124,8 @@ export const seekersArmguard = ({
 		playerStats.totalStats.canEvadeHarbingerOfDeath = true;
 		playerStats.totalStats.resistingHarbingerOfDeathPercent = card.itemStats.resist;
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Gaining additional (+40) **INT** points. **Ability:** Buff your allies __+35__ **DEF** points, " +
+		const desc = "Gaining additional (+40) **ARMOR** points. " +
+		"**Ability:** Buff your allies __+35__ **DEF** points, " +
 		`as well as Grants __${card.itemStats.resist}%__ resistance as well as __32%__ **EVASION** ` + 
 		"chances against **Harbinger of Death**.";
 
@@ -171,7 +172,7 @@ export const farsightOrb = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = "Its **INT** is increased by __135__ points. " +
+		const desc = "Its **ARMOR** is increased by __135__ points. " +
 		"**Ability:** Reduce enemy **Crit Chance** by __15__%.";
 
 		prepSendAbilityOrItemProcDescription({
@@ -223,7 +224,7 @@ export const lunarWand = ({
 		);
 		playerStats.totalStats.sleepResistPercent = itemStats.resist;
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = `It's **INT** is increased by __110__ points. **Ability:** Grants __${itemStats.resist}%__ ` +
+		const desc = `It's **ARMOR** is increased by __110__ points. **Ability:** Grants __${itemStats.resist}%__ ` +
         "resistance buff against **SLEEP** ability.";
         
 		prepSendAbilityOrItemProcDescription({
@@ -278,7 +279,7 @@ export const staffOfMedana = ({
 		}
 		basePlayerStats.totalStats = playerStats.totalStats;
     
-		const desc = "It's **INT** is increased by __125__ points as well as buffing its resistance against " +
+		const desc = "It's **ARMOR** is increased by __125__ points as well as buffing its resistance against " +
         `**${resistAgainst.toUpperCase()}** by __${itemStats.resist}%__`;
 
 		prepSendAbilityOrItemProcDescription({
@@ -337,7 +338,7 @@ export const agnusScepter = ({
 		if (!playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpGain;
 		opponentStats.totalStats.originalHp = opponentStats.totalStats.originalHp - hpGain;
-		const desc = `and has gained __${card.itemStats.intelligence}__ **INT** ` +
+		const desc = `and has gained __${card.itemStats.intelligence}__ **ARMOR** ` +
 		`**Ability:** Increase max **HP** of all allies by __${hpGain}__, and ` +
 		"simultaneously reduce max **HP** of the enemy by the same amount.";
 		// "**Ability:** Gain max **HP** equal to __200%__ of the difference between the enemy and ally max **HP's**" +

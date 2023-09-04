@@ -277,7 +277,7 @@ export const prepareStatsDesc = <T extends OverallStatsProps>(
 		stats.defenseBonus ? ` (+${stats.defenseBonus})` : ""
 	}\n**SPD:** ${stats.dexterity}${
 		stats.dexterityBonus ? ` (+${stats.dexterityBonus})` : ""
-	}\n**INT:** ${stats.intelligence}${
+	}\n**ARM:** ${stats.intelligence}${
 		stats.intelligenceBonus ? ` (+${stats.intelligenceBonus})` : ""
 	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
 		stats.abilityname || ""

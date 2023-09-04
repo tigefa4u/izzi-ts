@@ -10,8 +10,8 @@ import { DEFAULT_DPR } from "./constants";
 const statMultiplier: {[key: string]: number;} = {
 	easy: 1,
 	medium: 1,
-	hard: 1.5,
-	immortal: 3
+	hard: 1,
+	immortal: 1.15
 };
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 	const stats = raid.stats.battle_stats.stats;

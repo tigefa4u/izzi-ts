@@ -141,13 +141,13 @@ export const fightingSpirit = ({
 	// cap at 150%
 	// boost atk & def, more like bulkup
 	// while your hp is low increase the **ATK** and **DEF** of all allies by __20%__
-	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (30 / 100));
+	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (35 / 100));
 	if (
 		playerStats.totalStats.strength <= hpRatio &&
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(30, card.rank);
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
 			percent

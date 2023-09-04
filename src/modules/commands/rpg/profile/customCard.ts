@@ -14,23 +14,31 @@ const prepareCustomCardDetails = (selectedCard: CardProps, status: string) => {
 		selectedCard.series
 	)}\n**Card Copies:** 1\n**Element Type:** ${titleCase(
 		selectedCard.type
-	)} ${emojiMap(
-		selectedCard.type
-	)}\n**Zone:** None\n**Floors:** None\n**RANK:** Silver\n**ATK:** ${selectedCard.stats.vitality}\n**HP:** ${
-		selectedCard.stats.strength
-	}\n**DEF:** ${selectedCard.stats.defense}\n**SPD:** ${
-		selectedCard.stats.dexterity
-	}\n**INT:** ${selectedCard.stats.intelligence}\n\n**Ability**\n**${titleCase(
-		selectedCard.abilityname
-	)}:** ${selectedCard.abilitydescription}`;
+	)} ${emojiMap(selectedCard.type)}\n**${emoji.zoneic} Zone:** None
+	\n**Floors:** None\n**RANK:** Silver\n**${emoji.crossedswords} ATK:** ${
+	selectedCard.stats.vitality
+}\n**${emoji.hp} HP:** ${selectedCard.stats.strength}\n**${
+	emoji.shield2
+} DEF:** ${selectedCard.stats.defense}\n**${emoji.dash} SPD:** ${
+	selectedCard.stats.dexterity
+}\n**${emoji.armor} ARM:** ${
+	selectedCard.stats.intelligence
+}\n\n**Ability**\n**${titleCase(selectedCard.abilityname)}:** ${
+	selectedCard.abilitydescription
+}`;
 
 	return {
 		title: selectedCard.name,
-		desc 
+		desc,
 	};
 };
 
-export const customCard = async ({ context, options, args, client }: BaseProps) => {
+export const customCard = async ({
+	context,
+	options,
+	args,
+	client,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		let mentionId = getIdFromMentionedString(args.shift());
@@ -39,10 +47,12 @@ export const customCard = async ({ context, options, args, client }: BaseProps) 
 		}
 		const [ customCardDetails, mentionedUser ] = await Promise.all([
 			getCustomCards(mentionId),
-			client.users.fetch(mentionId)
+			client.users.fetch(mentionId),
 		]);
 		if (!mentionedUser) return;
-		const embed = createEmbed(mentionedUser).setTitle("Custom Card " + emoji.dagger);
+		const embed = createEmbed(mentionedUser).setTitle(
+			"Custom Card " + emoji.dagger
+		);
 		if (!customCardDetails) {
 			embed.setDescription(
 				`Summoner **${mentionedUser.username}** does not have a custom card. ` +
@@ -60,18 +70,21 @@ export const customCard = async ({ context, options, args, client }: BaseProps) 
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const selectedCard = customCards.find((c) => c.selected === true) || customCards[0];
+		const selectedCard =
+      customCards.find((c) => c.selected === true) || customCards[0];
 		const { title, desc } = prepareCustomCardDetails(
 			selectedCard,
 			customCardDetails.info?.status || "Set your quote on website"
 		);
 
 		// Only silver is available for now....
-		embed.setTitle(`${titleCase(title)} | Level 80`).setDescription(desc)
+		embed
+			.setTitle(`${titleCase(title)} | Level 80`)
+			.setDescription(desc)
 			.setImage(selectedCard.assets.silver.default.filepath)
 			.setFooter({
 				iconURL: mentionedUser.displayAvatarURL(),
-				text: `Summoner ID: ${mentionedUser.id}`
+				text: `Summoner ID: ${mentionedUser.id}`,
 			});
 		// fake profile will cause confusion
 		// const fields = prepareFakeCardDetails(fakeProfile, user.username);

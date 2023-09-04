@@ -56,7 +56,7 @@ export const leer = ({
 		const desc =
       `inflicting a stack of **Paranoia** ${emoji.paranoid} on ` +
       `**__${opponentStats.name}__**, simultaneously ` +
-      `decreasing its **DEF** and **INT** by __${percent}%__`;
+      `decreasing its **DEF** and **ARMOR** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

@@ -233,7 +233,7 @@ export const prepareTeamDescription = (
 		totalTeamStats.vitalityBonus ? ` (+${totalTeamStats.vitalityBonus})` : ""
 	}\n**${emoji.shield2} Team DEF:** ${totalTeamStats.defense}${
 		totalTeamStats.defenseBonus ? ` (+${totalTeamStats.defenseBonus})` : ""
-	}\n**${emoji.radiobutton} Team INT:** ${totalTeamStats.intelligence}${
+	}\n**${emoji.armor} Team ARM:** ${totalTeamStats.intelligence}${
 		totalTeamStats.intelligenceBonus
 			? ` (+${totalTeamStats.intelligenceBonus})`
 			: ""

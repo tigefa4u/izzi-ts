@@ -60,7 +60,7 @@ export const statRelationMap: any = {
 	vitality: "ATK",
 	defense: "DEF",
 	dexterity: "SPD",
-	intelligence: "INT",
+	intelligence: "ARM",
 	strength: "HP",
 	critical: "CRIT",
 	accuracy: "ACC",

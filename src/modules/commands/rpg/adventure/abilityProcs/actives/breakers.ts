@@ -106,7 +106,7 @@ export const exhaust = ({
 		opponentStats.totalStats.energy = opponentEnergy.energy;
 		opponentStats.totalStats.dpr = opponentEnergy.dpr;
 
-		const statDesc = temp === "dexterity" ? "SPD" : "INT";
+		const statDesc = temp === "dexterity" ? "SPD" : "ARMOR";
 
 		const desc =
       `Decreasing ${opponentStats.name}'s **${statDesc}** by __${percent}%__ ` +
@@ -296,7 +296,7 @@ export const dominator = ({
 
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
-      `it's **ATK** by __${percent}%__ as well as decreasing its **INT** by __${decPercent}%__`;
+      `it's **ATK** by __${percent}%__ as well as decreasing its **ARMOR** by __${decPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
