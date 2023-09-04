@@ -38,7 +38,8 @@ type C = {
 export const consumeFodders = async (data: DirectUpdateCreateFodderProps) => {
 	try {
 		const conn = Collections.dbConnection;
-		return Promise.all(data.map(async (d) => {
+		const idsToDelete: number[] = [];
+		await Promise.all(data.map(async (d) => {
 			const res = await conn(Collections.tableName).where({
 				rank: "platinum",
 				rank_id: ranksMeta.platinum.rank_id,
@@ -53,17 +54,23 @@ export const consumeFodders = async (data: DirectUpdateCreateFodderProps) => {
 				throw new Error("consumeFodder Update failed: Insufficient cards");
 			}
 			if (res.card_count <= 0) {
-				loggers.info("CollectionControllers.consumeFodders: deleting fodder: ", res, d);
-				await conn(Collections.tableName).where({
-					id: res.id,
-					// rank: "platinum",
-					// rank_id: ranksMeta.platinum.rank_id,
-					// user_id: d.user_id,
-					// character_id: d.character_id
-				}).del();
+				idsToDelete.push(res.id);
+				// loggers.info("CollectionControllers.consumeFodders: deleting fodder: ", res, d);
+				// await conn(Collections.tableName).where({
+				// 	id: res.id,
+				// 	// rank: "platinum",
+				// 	// rank_id: ranksMeta.platinum.rank_id,
+				// 	// user_id: d.user_id,
+				// 	// character_id: d.character_id
+				// }).del();
 			}
 			return res;
 		}));
+		if (idsToDelete.length > 0) {
+			loggers.info("CollectionsControllers.consumeFodders: deleting fodders:", idsToDelete);
+			await conn(Collections.tableName).whereIn("id", idsToDelete).del();
+		}
+		return;
 	} catch (err) {
 		loggers.error("CollectionsController.consumeFodder: ERROR", err);
 		return;
