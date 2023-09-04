@@ -126,8 +126,8 @@ export const battleBoss = async ({
 		if (!playerStats) return;
 
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
-		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
-		enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
+		// enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
+		// enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
 		const {
 			playerStats: effectiveStats,
 			opponentStats: opponentEffectiveStats,
@@ -168,11 +168,11 @@ export const battleBoss = async ({
 		const hideBt = (args.shift() || "").toLowerCase();
 
 		// TESTING
-		// const damageCapPercent = RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
-		// const damageCap = Math.floor(
-		// 	currentRaid.stats.original_strength *
-		// ((multiplier * damageCapPercent) / 100)
-		// );
+		const damageCapPercent = 10;
+		const damageCap = Math.floor(
+			currentRaid.stats.original_strength *
+		((multiplier * damageCapPercent) / 100)
+		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
 			context,
@@ -224,22 +224,18 @@ export const battleBoss = async ({
 
 			// TESTING
 			// Enemy stats will always be raid boss
-			// 	if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
-			// 		result.totalDamage = damageCap;
-			// 	} else {
-			// 		let percentDamageDealt =
-			//   (result.totalDamage || 0) /
-			//   (result.enemyStats?.totalStats.originalHp ||
-			//     result.enemyStats?.totalStats.strength ||
-			//     1);
+			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
+				result.totalDamage = damageCap;
+			} else {
+				let percentDamageDealt =
+			  (result.totalDamage || 0) /
+			  (result.enemyStats?.totalStats.originalHp ||
+			    result.enemyStats?.totalStats.strength ||
+			    1);
 
-			// 		loggers.info(
-			// 			"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
-			//     percentDamageDealt
-			// 		);
-			// 		if (percentDamageDealt > 1) percentDamageDealt = 1;
-			// 		result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
-			// 	}
+				if (percentDamageDealt > 1) percentDamageDealt = 1;
+				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+			}
 
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;

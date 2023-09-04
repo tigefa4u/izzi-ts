@@ -7,6 +7,12 @@ import { clone } from "utility";
 import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { DEFAULT_DPR } from "./constants";
 
+const statMultiplier: {[key: string]: number;} = {
+	easy: 1,
+	medium: 1,
+	hard: 1.5,
+	immortal: 3
+};
 export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 	const stats = raid.stats.battle_stats.stats;
 	const totalStats = {} as OverallStatsProps;
@@ -15,7 +21,7 @@ export const prepareRaidBossBase = (raid: RaidProps, isEvent = false) => {
 		if (![ "critical", "accuracy", "precision", "evasion", "strength", "originalHp" ].includes(stat)) {
 			Object.assign(totalStats, {
 				[stat]: Math.round(
-					stats[key]
+					stats[key] * statMultiplier[raid.stats.rawDifficulty.toLowerCase()]
 				),
 			});
 		} else if ([ "strength", "originalHp" ].includes(stat)) {
