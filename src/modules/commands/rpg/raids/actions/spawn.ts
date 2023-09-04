@@ -400,12 +400,13 @@ export const spawnRaid = async ({
 		});
 		if (!raid) return;
 
-		if (!spawnImmunity.includes(author.id))
-			setCooldown(
-				author.id,
-				CDKey,
-				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
-			);
+		// TESTING
+		// if (!spawnImmunity.includes(author.id))
+		// 	setCooldown(
+		// 		author.id,
+		// 		CDKey,
+		// 		user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
+		// 	);
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (raidBosses.length === 1) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);

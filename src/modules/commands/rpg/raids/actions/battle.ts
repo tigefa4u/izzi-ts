@@ -107,13 +107,15 @@ export const battleBoss = async ({
 			context.channel?.sendMessage("Unable to attack, please report");
 			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
 		}
-		if (attacker.energy < ENERGY_PER_ATTACK) {
-			context.channel?.sendMessage(
-				`Summoner **${attacker.username}**, ` +
-          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
-			);
-			return;
-		}
+
+		// TESTING
+		// if (attacker.energy < ENERGY_PER_ATTACK) {
+		// 	context.channel?.sendMessage(
+		// 		`Summoner **${attacker.username}**, ` +
+		//   `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+		// 	);
+		// 	return;
+		// }
 
 		const playerStats = await validateAndPrepareTeam(
 			user.id,
@@ -124,8 +126,8 @@ export const battleBoss = async ({
 		if (!playerStats) return;
 
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
-		// enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
-		// enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
+		enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
+		enemyStats.totalStats.originalHp = currentRaid.stats.remaining_strength;
 		const {
 			playerStats: effectiveStats,
 			opponentStats: opponentEffectiveStats,
@@ -163,12 +165,14 @@ export const battleBoss = async ({
 		// 	capPerLobbySize = LOW_LVL_RAIDS_SINGLE_BT_CAP;
 		// }
 
-		const damageCapPercent = RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
 		const hideBt = (args.shift() || "").toLowerCase();
-		const damageCap = Math.floor(
-			currentRaid.stats.original_strength *
-        ((multiplier * damageCapPercent) / 100)
-		);
+
+		// TESTING
+		// const damageCapPercent = RAID_CAP_PERCENT[currentRaid.stats.rawDifficulty.toLowerCase()];
+		// const damageCap = Math.floor(
+		// 	currentRaid.stats.original_strength *
+		// ((multiplier * damageCapPercent) / 100)
+		// );
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
 			context,
@@ -200,12 +204,14 @@ export const battleBoss = async ({
 			);
 			return;
 		}
-		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
-			context.channel?.sendMessage(
-				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
-			);
-			return;
-		}
+
+		// TESTING
+		// if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+		// 	context.channel?.sendMessage(
+		// 		`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
+		// 	);
+		// 	return;
+		// }
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
 			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
@@ -216,23 +222,24 @@ export const battleBoss = async ({
 				return;
 			}
 
+			// TESTING
 			// Enemy stats will always be raid boss
-			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
-				result.totalDamage = damageCap;
-			} else {
-				let percentDamageDealt =
-          (result.totalDamage || 0) /
-          (result.enemyStats?.totalStats.originalHp ||
-            result.enemyStats?.totalStats.strength ||
-            1);
+			// 	if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
+			// 		result.totalDamage = damageCap;
+			// 	} else {
+			// 		let percentDamageDealt =
+			//   (result.totalDamage || 0) /
+			//   (result.enemyStats?.totalStats.originalHp ||
+			//     result.enemyStats?.totalStats.strength ||
+			//     1);
 
-				loggers.info(
-					"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
-            percentDamageDealt
-				);
-				if (percentDamageDealt > 1) percentDamageDealt = 1;
-				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
-			}
+			// 		loggers.info(
+			// 			"raids.actions.battle.simulateBattle: 235 - damage dealt to raid boss in %: " +
+			//     percentDamageDealt
+			// 		);
+			// 		if (percentDamageDealt > 1) percentDamageDealt = 1;
+			// 		result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+			// 	}
 
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;

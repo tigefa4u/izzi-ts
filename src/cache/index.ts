@@ -33,7 +33,7 @@ const Cache: CacheProps & {
 		const data = await client.get(key);
 		if (!data) {
 			const ttl = 60 * 60;
-			loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
+			// loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
 			const resp = await cb();
 			if (resp) {
 				client.set(key, JSON.stringify(resp));
@@ -41,7 +41,7 @@ const Cache: CacheProps & {
 			}
 			return resp;
 		}
-		loggers.info("Cache hit for: " + key);
+		// loggers.info("Cache hit for: " + key);
 		return data ? JSON.parse(data) : null;
 	},
 	incr: (key) => client.incr(key),

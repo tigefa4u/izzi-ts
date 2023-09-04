@@ -51,11 +51,12 @@ export const startRaid = async ({
 		await Promise.all(
 			[ ...lobbyMembers.map(async (l) => {
 				const desc = `Summoner **${lobby[l].username}**, ${challengingDesc}`;
-				const member = await getRPGUser({ user_tag: lobby[l].user_tag });
-				if (member) {
-					member.raid_pass = member.raid_pass - PERMIT_PER_RAID;
-					await updateRPGUser({ user_tag: member.user_tag }, { raid_pass: member.raid_pass });
-				}
+				// TESTING
+				// const member = await getRPGUser({ user_tag: lobby[l].user_tag });
+				// if (member) {
+				// 	member.raid_pass = member.raid_pass - PERMIT_PER_RAID;
+				// 	await updateRPGUser({ user_tag: member.user_tag }, { raid_pass: member.raid_pass });
+				// }
 				return DMUser(client, desc, lobby[l].user_tag);
 			}), updateRaid({ id: currentRaid.id }, {
 				stats: currentRaid.stats,
