@@ -252,7 +252,7 @@ export const BattleProcess = async ({
 				opponentStats.totalStats.strength - damageToDeal
 			);
 
-			damageDealt = damageToDeal;
+			// damageDealt = damageToDeal;
 			isDamageAbsorbed = false;
 		} else if (damageDealt <= opponentStats.totalStats.intelligence) {
 			opponentStats.totalStats.intelligence =
