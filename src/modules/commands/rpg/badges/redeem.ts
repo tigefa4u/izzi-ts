@@ -45,7 +45,7 @@ export const redeemBadge = async ({
 		if (!user) return;
 		if (user.metadata?.badge?.name?.toLowerCase() === badge.name.toLowerCase()) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
-            `You have already redeem The ${badge.name} Badge.`);
+            `You have already redeem The ${badge.name} Badge ${badge.emoji}.`);
 			return;
 		}
 		if (badge.criteria.has) {
