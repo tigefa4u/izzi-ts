@@ -1,4 +1,5 @@
 import { IgnoreProps } from "@customTypes";
+import { BadgeProps } from "@customTypes/badges";
 
 export type UserProps = {
     id: number;
@@ -44,6 +45,7 @@ export type UserProps = {
 		// based on the tax they have paid.
 		raidPityCount?: number;
 		raidDropPity?: boolean;
+		badge?: Pick<BadgeProps, "name" | "emoji">;
 	};
 	is_mini_premium?: boolean;
 	mini_premium_days_left?: number;

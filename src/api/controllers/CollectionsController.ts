@@ -474,3 +474,12 @@ export const getTotalFodders = async (user_id: number) => {
 		return;
 	}
 };
+
+export const groupCollectionsByCharacterId = async (user_id: number, character_ids: number[]) => {
+	try {
+		return Collections.groupByCharacterId(user_id, character_ids);
+	} catch (err) {
+		loggers.error("CollectionsController.groupCollectionsByCharacterId: ERROR", err);
+		return;
+	}
+};

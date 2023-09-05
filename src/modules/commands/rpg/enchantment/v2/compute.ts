@@ -94,7 +94,8 @@ export const preComputeRequiredCardsV2 = async ({
 		if (!result || result.totalXpGain === 0 || result.accumulator.length <= 0) {
 			channel?.sendMessage(
 				"You do not have sufficient cards to Enchant this card. " +
-                "To get more Fodders use ``iz packs`` or join a raid."
+                "To get more Fodders use ``iz packs`` or join a raid. " +
+				"Additionally you might've also locked your fodders, type ``iz inv viewlock`` and ``iz inv unlock``"
 			);
 			return;
 		}

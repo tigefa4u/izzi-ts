@@ -183,6 +183,7 @@ export const battleWB = async ({
 			);
 			return;
 		}
+		result.totalDamage = Math.ceil((result.totalDamage || 0) * 5);
 		processWorldBossRewards({
 			raid,
 			user,
@@ -393,10 +394,7 @@ const prepareAndSendResult = async ({
         		)}** Crate`
         		: ""
         }` +
-        `\n${DOT} __6x__ Platinum of **${raid.raid_boss
-        	.map((b) => titleCase(b.name))
-        	.join(", ")}**` +
-        `\n${DOT} __6x__ Gold of **${raid.raid_boss
+        `\n${DOT} __30x__ Platinum of **${raid.raid_boss
         	.map((b) => titleCase(b.name))
         	.join(", ")}**` +
         `${Object.keys(extraCardLoot).map((key) => {

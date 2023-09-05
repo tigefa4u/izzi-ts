@@ -26,7 +26,7 @@ const _prepareLoot = (raid: RaidProps) => {
 	const bosses = raid.raid_boss.map((b) => titleCase(b.name)).join(",");
 	const desc =
     `**__Rewards per Battle [For Everyone]__**\n__${raid.loot.drop.worldBoss?.gold}__ Gold ${emoji.gold}` +
-    `\n__6x__ Platinum of **${bosses}**\n__6x__ Gold of **${bosses}**` +
+    `\n__15x__ Platinum of **${bosses}**` +
     `\n\n**__Extra Rewards per Battle [Per Threshold]__**\n${raid.loot.drop.worldBoss?.default
     	.map((item) => {
     		return (

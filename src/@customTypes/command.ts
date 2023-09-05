@@ -110,6 +110,13 @@ export type CommandMapProps = {
 	quest: (params: BaseProps) => void;
 	worldboss: (params: BaseProps) => void;
 	tournament: (params: BaseProps) => void;
+	say: (params: BaseProps) => void;
+	banner: (params: BaseProps) => void;
+	respect: (params: BaseProps) => void;
+	choose: (params: BaseProps) => void;
+	ship: (params: BaseProps) => void;
+	gifts: (params: BaseProps) => void;
+	badge: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

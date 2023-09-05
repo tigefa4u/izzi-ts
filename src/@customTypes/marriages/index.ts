@@ -4,6 +4,9 @@ export type MarriageProps = {
   married_to: string;
   married_to_username?: string;
   created_at: Date;
+  metadata?: {
+    badges?: string[];
+  }
 };
 
 export type MarriageCreateProps =

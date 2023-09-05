@@ -184,6 +184,7 @@ const baseLoot = (): any => ({
 		default: {
 			bosses: 1,
 			level: [ 200, 350 ],
+			rank: [ "platinum", "platinum" ],
 			categories: [ "d3", "d2" ],
 			loot: {
 				gold: randomNumber(26000, 30000),

@@ -218,6 +218,14 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 	];
 
+	if (user.metadata?.badge) {
+		fields.splice(1, 0, {
+			name: "Badges",
+			value: user.metadata.badge.emoji,
+			inline: false
+		});
+	}
+
 	if (user.rank) {
 		fields.push(
 			{

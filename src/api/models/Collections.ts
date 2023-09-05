@@ -458,3 +458,13 @@ export const getFodderCount = async (user_id: number): Promise<{ sum: number; }[
 };
 
 export const dbConnection = connection;
+
+export const groupByCharacterId = async (user_id: number, character_ids: number[]) => {
+	const db = connection;
+	return db.select("id", "character_id", "user_id")
+		.from(tableName)
+		.whereIn("character_id", character_ids)
+		.groupBy([ "character_id", "id" ])
+		.where({ user_id })
+		.limit(character_ids.length);
+};

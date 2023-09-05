@@ -29,6 +29,7 @@ import { setCooldown } from "modules/cooldowns";
 import { CrateProps } from "@customTypes/crates";
 import { RandomCardProps } from "@customTypes/cards";
 import { clone } from "utility";
+import { directUpdateCreateFodder } from "./CollectionsController";
 
 export const getAllWorldBossForMarket = async (
 	params = {},
@@ -238,48 +239,29 @@ export const processWorldBossRewards = async (params: {
 
 		let totalGoldLooted = loot.gold;
 		const attackerRewards = { gold: loot.gold } as Record<string, any>;
-		const collectionData = await Promise.all(
+		const collectionData: CollectionCreateProps[] = [];
+		const fodderData = await Promise.all(
 			raid.raid_boss
 				.map((boss) => {
-					attackerRewards[boss.character_id] = {
-						platinum: 6,
-						gold: 6,
-					};
-					return [
-						{
-							rank: "platinum",
-							rank_id: 3,
-						},
-						{
-							rank: "gold",
-							rank_id: 2,
-						},
-					]
-						.map(({ rank, rank_id }) => {
-							return Array(6)
-								.fill(0)
-								.map(
-									(_) =>
-										({
-											is_item: false,
-											is_on_cooldown: false,
-											is_tradable: true,
-											is_favorite: false,
-											user_id: user.id,
-											character_id: boss.character_id,
-											character_level: STARTER_CARD_LEVEL,
-											r_exp: STARTER_CARD_R_EXP,
-											exp: STARTER_CARD_EXP,
-											rank,
-											rank_id,
-										} as CollectionCreateProps)
-								);
-						})
-						.flat();
+					attackerRewards[boss.character_id] = { platinum: 30, };
+					return {
+						is_item: false,
+						is_on_cooldown: false,
+						is_tradable: true,
+						is_favorite: false,
+						user_id: user.id,
+						character_id: boss.character_id,
+						character_level: STARTER_CARD_LEVEL,
+						r_exp: STARTER_CARD_R_EXP,
+						exp: STARTER_CARD_EXP,
+						rank: "platinum",
+						rank_id: 3,
+						card_count: 30
+					} as CollectionCreateProps;
 				})
 				.flat()
 		);
-			
+
 		const clonedArr = clone(loot.default).reverse();
 		const extraLoot = clonedArr.find(
 			(item) => item.threshold <= Number(damagePercent.toFixed(2))
@@ -287,6 +269,7 @@ export const processWorldBossRewards = async (params: {
 
 		let soulsLooted = 0;
 		let crateLooted: any;
+		let collectionDataCreated: CollectionProps[] = [];
 		if (extraLoot) {
 			totalGoldLooted = totalGoldLooted + extraLoot.extraGold;
 			attackerRewards.extraGold = extraLoot.extraGold;
@@ -419,27 +402,32 @@ export const processWorldBossRewards = async (params: {
 						.where({ id: raid.id })
 						.update({ stats: updatedRaidObj.stats });
 				}
-
 				loggers.info(
 					"[transaction] WB user update successful: data - ", updatedObj
 				);
-
-				loggers.info(
-					"[transaction] WB Create Collections with data: ", collectionData
-				);
-				const collectionDataCreated = await trx("collections").insert(
-					collectionData,
-					"*"
-				);
-				if (!collectionDataCreated) {
-					channel?.sendMessage(
-						"We were not able to process your rewards, Please try again."
+				await directUpdateCreateFodder(fodderData.map((f) => ({
+					count: f.card_count || 1,
+					character_id: f.character_id,
+					user_id: f.user_id
+				})));
+				if (collectionData.length > 0) {
+					loggers.info(
+						"[transaction] WB Create Collections with data: ", collectionData
 					);
-					throw new Error("Unable to create Cards");
+					collectionDataCreated = await trx("collections").insert(
+						collectionData,
+						"*"
+					);
+					if (!collectionDataCreated) {
+						channel?.sendMessage(
+							"We were not able to process your rewards, Please try again."
+						);
+						throw new Error("Unable to create Cards");
+					}
+					loggers.info(
+						"[transaction] WB collections created with data: ", collectionDataCreated
+					);
 				}
-				loggers.info(
-					"[transaction] WB collections created with data: ", collectionDataCreated
-				);
 				const _worldBossBattleData = {
 					user_tag: user.user_tag,
 					loot: attackerRewards,

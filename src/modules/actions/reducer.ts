@@ -63,6 +63,12 @@ import { quests } from "modules/commands/rpg/quests";
 import { worldBossCommands } from "modules/commands/rpg/worldBoss";
 import { tourneyCommands } from "modules/commands/rpg/tournament";
 import { enchantCardV2 } from "modules/commands/rpg/enchantment/v2";
+import { izziSpeak } from "modules/commands/basic/funCommands/say";
+import { izziBanner } from "modules/commands/basic/funCommands/banner";
+import { izziChoose, payRespect } from "modules/commands/basic/funCommands";
+import { shipCouple } from "modules/commands/rpg/marriage/ship";
+import { giftPartner } from "modules/commands/rpg/marriage/gifts";
+import { badge } from "modules/commands/rpg/badges";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -160,8 +166,15 @@ const commandMap: CommandMapProps = {
 	customcard: customCard,
 	quest: quests,
 	worldboss: worldBossCommands,
-	tournament: tourneyCommands
-	// spbt: spbt, // temporarily removed
+	tournament: tourneyCommands,
+	say: izziSpeak,
+	banner: izziBanner,
+	respect: payRespect,
+	choose: izziChoose,
+	ship: shipCouple,
+	gifts: giftPartner,
+	badge: badge
+	// spbt: spbt, // removed
 	// sort: sort, // removed
 };
 
