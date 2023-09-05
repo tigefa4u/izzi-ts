@@ -43,7 +43,7 @@ export const redeemBadge = async ({
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
-		if (user.metadata.badge?.name?.toLowerCase() === badge.name.toLowerCase()) {
+		if (user.metadata?.badge?.name?.toLowerCase() === badge.name.toLowerCase()) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
             `You have already redeem The ${badge.name} Badge.`);
 			return;
