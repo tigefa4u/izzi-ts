@@ -215,6 +215,12 @@ const confirmAndSendGift = async (
 			updateRPGUser({ user_tag: author.id }, { gold: user.gold }),
 			DMUser(params.client, giftEmbed, marriage.married_to),
 		]);
+		const embed = createEmbed(author, params.client).setTitle(`Gift Sent ${emoji.heart}`)
+			.setDescription(`Summoner **${author.username}**, ` +
+            `You have sent **${titleCase(item.name)}** to **${marriage.married_to_username}**`)
+			.setHideConsoleButtons(true);
+
+		params.channel?.sendMessage(embed);
 		return;
 	}
 	return item;
