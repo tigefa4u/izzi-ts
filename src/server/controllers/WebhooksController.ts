@@ -31,6 +31,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 		if (summoner && !hasVoted) {
 			summoner.vote_count = (summoner.vote_count || 0) + 1;
 			summoner.monthly_votes = (summoner.monthly_votes || 0) + 1;
+			summoner.total_monthly_votes = (summoner.total_monthly_votes || 0) + 1;
 			let streak = (summoner.vote_streak || 0) + 1;
 			if (streak > 30) streak = 30;
 			let goldReward = 2000 + 150 * streak;
@@ -66,6 +67,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 				dungeon_mana: summoner.dungeon_mana,
 				vote_count: summoner.vote_count,
 				monthly_votes: summoner.monthly_votes,
+				total_monthly_votes: summoner.total_monthly_votes,
 			} as UserUpdateProps;
 
 			if (summoner.is_premium) {
@@ -81,47 +83,61 @@ export const processUpVote = async (req: Request, res: Response) => {
 					izzi_points: summoner.izzi_points,
 					shards: summoner.shards,
 				});
-				messageStr = `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP ` +
-				`and __${shardReward}__ Shards ${emoji.shard}.`;
+				messageStr =
+          `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP ` +
+          `and __${shardReward}__ Shards ${emoji.shard}.`;
 			} else {
 				summoner.shards = (summoner.shards || 0) + 3;
 				updateObj.shards = summoner.shards;
 			}
 
-			// monthly bonus rewards
-			const monthlyRewards = await processMonthlyVoteReward(summoner);
-			if (monthlyRewards.reward) {
-				const reward = monthlyRewards.reward;
-				if (reward.gold) {
-					updateObj.gold = (updateObj.gold || 0) + reward.gold;
-				}
-				if (reward.shards) {
-					updateObj.shards = (updateObj.shards || 0) + reward.shards;
-				}
-				if (reward.raid_pass) {
-					updateObj.raid_pass = reward.raid_pass + (updateObj.raid_pass || 0);
-				}
-				if (reward.exp) {
-					monthlyRewards.desc = `${monthlyRewards.desc}__${reward.exp}__ Exp`;
-					const currentExp = summoner.exp + reward.exp;
-					const requiredExp = summoner.r_exp;
-					if (currentExp >= requiredExp) {
-						summoner.level = summoner.level + 1;
-						summoner.exp = Math.abs(currentExp - requiredExp);
-						summoner.r_exp = summoner.level * 47;
-						if (summoner.max_mana < MAX_MANA_GAIN) {
-							summoner.max_mana = summoner.max_mana + 2;
-							updateObj.max_mana = summoner.max_mana;
-						}
-						summoner.mana = summoner.max_mana;
-						updateObj.mana = summoner.mana;
-						updateObj.r_exp = summoner.exp;
-						updateObj.level = summoner.level;
+			if (summoner.total_monthly_votes <= 40) {
+				// monthly bonus rewards
+				const monthlyRewards = await processMonthlyVoteReward(summoner);
+				if (monthlyRewards.reward) {
+					const reward = monthlyRewards.reward;
+					if (reward.gold) {
+						updateObj.gold = (updateObj.gold || 0) + reward.gold;
 					}
-					updateObj.exp = currentExp;
-				}
+					if (reward.shards) {
+						updateObj.shards = (updateObj.shards || 0) + reward.shards;
+					}
+					if (reward.raid_pass) {
+						updateObj.raid_pass = reward.raid_pass + (updateObj.raid_pass || 0);
+					}
+					if (reward.exp) {
+						monthlyRewards.desc = `${monthlyRewards.desc}__${reward.exp}__ Exp`;
+						const currentExp = summoner.exp + reward.exp;
+						const requiredExp = summoner.r_exp;
+						if (currentExp >= requiredExp) {
+							summoner.level = summoner.level + 1;
+							monthlyRewards.desc =
+              `${monthlyRewards.desc}. You have leveled up! You are now level __${summoner.level}__. ` +
+              `${
+              	summoner.max_mana >= MAX_MANA_GAIN
+              		? "You have already gained the maximum obtainable mana"
+              		: `We have also refilled your mana __${
+              			summoner.max_mana
+              		}__ -> __${summoner.max_mana + 2}__`
+              }`;
+							summoner.exp = Math.abs(currentExp - requiredExp);
+							summoner.r_exp = summoner.level * 47;
+							if (summoner.max_mana < MAX_MANA_GAIN) {
+								summoner.max_mana = summoner.max_mana + 2;
+								updateObj.max_mana = summoner.max_mana;
+							}
+							summoner.mana = summoner.max_mana;
+							updateObj.mana = summoner.mana;
+							updateObj.r_exp = summoner.exp;
+							updateObj.level = summoner.level;
+						}
+						updateObj.exp = currentExp;
+					}
 
-				messageStr = `${messageStr}\n\n**__Monthly Bonus Reward__**\n${monthlyRewards.desc}`;
+					messageStr = `${messageStr}\n\n**__Monthly Bonus Reward__**\n${monthlyRewards.desc}`;
+				}
+			} else {
+				messageStr = `${messageStr}. **You have already claimed all of your monthly rewards.**`;
 			}
 
 			await updateRPGUser({ user_tag }, updateObj);
@@ -191,8 +207,8 @@ const monthlyCardMatrix = [
 	{
 		vote: 8,
 		reward: { shards: 20 },
-		premiumReward: { shards: 25 }
-	}
+		premiumReward: { shards: 25 },
+	},
 ];
 
 const prepMatrix = () => {
