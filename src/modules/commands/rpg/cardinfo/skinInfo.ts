@@ -42,8 +42,9 @@ export const showCardSkins = async ({
 		const embed = createEmbed(author)
 			.setTitle(`${titleCase(character.name)} Skin Collections`);
 
-		const characterSkins = await getSkinByCharacterId({ character_id: character.id, });
+		let characterSkins = await getSkinByCharacterId({ character_id: character.id, });
 		if (!characterSkins || characterSkins.length <= 0) return;
+		characterSkins = characterSkins.filter((c) => !c.metadata?.isSpecial || c.metadata?.isSpecial != true);
 		embed.setDescription(`View __${characterSkins.length}__ available skins for ${titleCase(character.name)}?`);
 		const selectMenuOptions = {
 			menuOptions: [
@@ -205,7 +206,7 @@ async function prepareDescEmbed({ embed, data, channel, author }: DescProps) {
 		.setDescription(
 			`**Skin Name:** ${titleCase(data.name)}\n**Price:** ${numericWithComma(
 				data.price
-			)} ${emoji.blueorb}\n**Popularity:** :gem:`
+			)} ${emoji.blueorb}`
 		)
 		.setImage("attachment://card.jpg")
 		.attachFiles([ attachment ]);

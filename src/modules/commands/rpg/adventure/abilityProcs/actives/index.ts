@@ -186,12 +186,12 @@ export const bonePlating = ({
 			...playerStats.totalStats.trueDamageReductionPercent,
 			"bone plating": { percent: percent + bonePlatePercent },
 		};
-		const relDiff = getRelationalDiff(
-			baseEnemyStats.totalStats.vitality,
-			percent
-		);
-		opponentStats.totalStats.vitality =
-      opponentStats.totalStats.vitality - relDiff;
+		// 	const relDiff = getRelationalDiff(
+		// 		baseEnemyStats.totalStats.vitality,
+		// 		percent
+		// 	);
+		// 	opponentStats.totalStats.vitality =
+		//   opponentStats.totalStats.vitality - relDiff;
 		const desc =
       `Buffing all allies with **Endurance**, taking __${percent}%__ less damage. ` +
       "Ally **Endurance** will reduce by __8%__ every 3rd round.";
