@@ -54,6 +54,7 @@ export type UserProps = {
 	game_points: number;
 	vote_count?: number;
 	monthly_votes: number;
+	total_monthly_votes: number;
 }
 
 export type UserParams = {
