@@ -103,10 +103,7 @@ async function resetVoteTimers(users: U) {
 				const oneDay = 1000 * 60 * 60 * 24;
 				const diff = new Date().valueOf() - new Date(user.voted_at).valueOf();
 				if (diff >= oneDay) {
-					return updateRPGUser({ user_tag: user.user_tag }, {
-						vote_streak: 0,
-						monthly_votes: 0 
-					}, 
+					return updateRPGUser({ user_tag: user.user_tag }, { vote_streak: 0, }, 
 						// { hydrateCache: true }
 					);
 				}
