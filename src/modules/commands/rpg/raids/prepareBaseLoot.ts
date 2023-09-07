@@ -21,11 +21,11 @@ export type LevelBonusDropRateProps = {
 }
 export const levelBonusDropRate: LevelBonusDropRateProps = {
 	25: 5,
-	50: 7,
-	75: 9,
-	100: 12,
-	125: 14,
-	150: 18,
+	50: 8,
+	75: 11,
+	100: 14,
+	125: 17,
+	150: 22,
 };
 
 export type ComputedCategoryProps = {
@@ -47,11 +47,11 @@ export const computedCategoryData : ComputedCategoryProps = {
 		numberOfCards: {
 			divine: {
 				cards: 3,
-				rate: 3
+				rate: 4
 			},
 			immortal: {
 				cards: 3,
-				rate: .75
+				rate: 1.55
 			}
 		}
 	},
@@ -61,11 +61,11 @@ export const computedCategoryData : ComputedCategoryProps = {
 		numberOfCards: {
 			divine: {
 				cards: 6,
-				rate: 7
+				rate: 7.35
 			},
 			immortal: {
 				cards: 3,
-				rate: 1.5
+				rate: 2.15
 			} 
 		}
 	},
@@ -75,11 +75,11 @@ export const computedCategoryData : ComputedCategoryProps = {
 		numberOfCards: {
 			divine: {
 				cards: 9,
-				rate: 10
+				rate: 12
 			},
 			immortal: {
 				cards: 3,
-				rate: 2.25
+				rate: 3.65
 			} 
 		}
 	}
