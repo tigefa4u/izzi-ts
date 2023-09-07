@@ -203,6 +203,7 @@ export const spellBook = ({
 			const hpDiff =
         playerStats.totalStats.originalHp - playerStats.totalStats.strength;
 			ratio = getRelationalDiff(hpDiff, percent);
+			if (ratio < 0) ratio = 0;
 			playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
 			if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 				playerStats.totalStats.strength = playerStats.totalStats.originalHp;

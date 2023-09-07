@@ -72,7 +72,8 @@ export const revitalize = ({
 	// atk buff is too much
 	if (round % 3 === 0 && !playerStats.totalStats.isRevit) {
 		playerStats.totalStats.isRevit = true;
-		const missingHp = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
+		let missingHp = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
+		if (missingHp < 0) missingHp = 0;
 		const percent = calcPercentRatio(18, card.rank);
 		const restoreDiff = getRelationalDiff(missingHp, percent);
 		let restorePoints = Math.ceil(playerStats.totalStats.strength + restoreDiff);

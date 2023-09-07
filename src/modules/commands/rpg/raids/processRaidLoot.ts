@@ -335,17 +335,12 @@ async function initDrops(
 		});
 
 		/**
-		 * Hack - Do drop more than 1 immo and 2 divs
+		 * Hack - Do not drop more than 1 immo and 2 divs
 		 */
 		const immortalDrops = array.filter((a) => a.rank_id === 7);
-		const rest = array.filter(a => a.rank_id !== 7);
+		const rest = array.filter(a => ![ 6, 7 ].includes(a.rank_id));
 		const divineDrops = array.filter((a) => a.rank_id === 6);
-		if (immortalDrops.length > 1) {
-			array = [ ...rest, immortalDrops[0] ].filter(Boolean);
-		}
-		if (divineDrops.length > 2) {
-			array = [ ...rest, divineDrops[0] ].filter(Boolean);
-		}
+		array = [ ...rest, ...immortalDrops.slice(0, 1), ...divineDrops.slice(0, 2) ];
 	}
 
 	const result = array.map((item) => {
