@@ -158,7 +158,7 @@ const commandMap: CommandMapProps = {
 	"guild event": guildEvents,
 	"upgrade-card": upgradeCard,
 	wishlist: wishlist,
-	// "make a wish": makeAWish,
+	"make a wish": makeAWish,
 	guide: starterGuide,
 	console: console,
 	changelogs: viewChangeLogs,
