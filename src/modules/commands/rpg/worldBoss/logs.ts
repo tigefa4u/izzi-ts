@@ -13,7 +13,11 @@ import { getTTL } from "modules/cooldowns/channels";
 const _prepareFields = (array: WorldBossBattleProps[]) => {
 	const fields: EmbedFieldData[] = [];
 	array.map((item, i) => {
-		const gold = item.loot.gold as number || 0;
+		let gold = item.loot.gold as number || 0;
+		const extraGold = item.loot.extraGold as number || 0;
+		if (extraGold) {
+			gold = gold + extraGold;
+		}
 		fields.push({
 			name: `#${i + 1} | Damage Dealt: __${numericWithComma(item.damage_dealt)}__ | ` +
             `Total Gold Looted: __${numericWithComma(gold)}__ ${emoji.gold}`,
