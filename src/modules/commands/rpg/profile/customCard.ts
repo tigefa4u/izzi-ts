@@ -102,7 +102,7 @@ export const customCardV2 = async ({ client, context, options }: BaseProps) => {
 	try {
 		const { author } = options;
 		const embed = createEmbed(author, client).setTitle("Custom Cards And Skins")
-			.setDescription(`To submit a Custom Card or Skin Art visit: ${IZZI_WEBSITE}/@me/customcards. ` +
+			.setDescription(`To submit a Custom Card or Skin Art visit: ${IZZI_WEBSITE}/@me/customcard. ` +
 			`Read more on how it works here: ${IZZI_WEBSITE}/blogs/how-to-create-custom-cards`);
 
 		context.channel?.sendMessage(embed);

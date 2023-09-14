@@ -33,7 +33,7 @@ export const showCustomDex = async ({
 		let embed = createEmbed()
 			.setDescription(
 				"No data available. To add custom cards to your server please submit card details at " +
-          `${IZZI_WEBSITE}/@me/customcards`
+          `${IZZI_WEBSITE}/@me/customcard`
 			)
 			.setHideConsoleButtons(true);
 		let sentMessage: Message;

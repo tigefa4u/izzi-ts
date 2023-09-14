@@ -22,7 +22,7 @@ export const spawnCustomServerCardRaid = async ({ client, context, options, args
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (!characters || characters.length <= 0) {
 			embed.setDescription(`Summoner **${author.username}**, There are no custom cards on this server. ` +
-            `To submit custom cards visit: ${IZZI_WEBSITE}/@me/customcards.`)
+            `To submit custom cards visit: ${IZZI_WEBSITE}/@me/customcard.`)
 				.setHideConsoleButtons(true);
 
 			context.channel?.sendMessage(embed);
