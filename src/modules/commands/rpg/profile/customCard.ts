@@ -33,6 +33,7 @@ const prepareCustomCardDetails = (selectedCard: CardProps, status: string) => {
 	};
 };
 
+// Feature removed - DEPRICATED
 export const customCard = async ({
 	context,
 	options,
@@ -93,6 +94,21 @@ export const customCard = async ({
 		return;
 	} catch (err) {
 		loggers.error("profile.fakeProfile.fakeProfileCard: ERROR", err);
+		return;
+	}
+};
+
+export const customCardV2 = async ({ client, context, options }: BaseProps) => {
+	try {
+		const { author } = options;
+		const embed = createEmbed(author, client).setTitle("Custom Cards And Skins")
+			.setDescription(`To submit a Custom Card or Skin Art visit: ${IZZI_WEBSITE}/@me/customcards. ` +
+			`Read more on how it works here: ${IZZI_WEBSITE}/blogs/how-to-create-custom-cards`);
+
+		context.channel?.sendMessage(embed);
+		return;
+	} catch (err) {
+		loggers.error("customCard.customCardV2: ERROR", err);
 		return;
 	}
 };

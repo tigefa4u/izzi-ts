@@ -22,4 +22,10 @@ export const subcommands = [ {
 }, {
 	name: "prefix",
 	alias: []
+}, {
+	name: "dex",
+	alias: []
+}, {
+	name: "raidspawn",
+	alias: [ "rspawn" ]
 } ];

@@ -40,6 +40,7 @@ import { getZoneByLocationId } from "api/controllers/ZonesController";
 import emoji from "emojis/emoji";
 import { getCharacterPriceList } from "api/controllers/CharacterPriceListsController";
 import { RanksMetaProps } from "helpers/helperTypes";
+import { getCustomServerCardByCharacterId } from "api/controllers/CustomServerCardsController";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -47,7 +48,10 @@ async function prepareCinfoDetails(
 	location?: NormalizeFloorProps
 ) {
 	const elementTypeEmoji = emojiMap(characterInfo?.type);
-	const cardCanvas = await createSingleCanvas(characterInfo, false);
+	const [ cardCanvas, customCardInfo ] = await Promise.all([
+		createSingleCanvas(characterInfo, false),
+		getCustomServerCardByCharacterId(characterInfo.character_id),
+	]);
 	if (!cardCanvas) throw "Unable to create canvas";
 	const attachment = createAttachment(
 		cardCanvas.createJPEGStream(),
@@ -60,16 +64,17 @@ async function prepareCinfoDetails(
 		abilitydescription: characterInfo.abilitydescription,
 		is_passive: characterInfo.is_passive,
 	};
+
+	const customCardServerInfo = (customCardInfo || [])[0];
+
 	embed
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
 			`**Series:** ${titleCase(
 				characterInfo.series.trim()
-			)}\n**Card Copies:** ${
-				characterInfo.copies
-			}\n**Element:** ${titleCase(characterInfo.type)} ${
-				elementTypeEmoji ? elementTypeEmoji : ""
-			}\n**Zone:** ${
+			)}\n**Card Copies:** ${characterInfo.copies}\n**Element:** ${titleCase(
+				characterInfo.type
+			)} ${elementTypeEmoji ? elementTypeEmoji : ""}\n**Zone:** ${
 				location?.zone
 					? location.zone
 					: characterInfo.series.includes("event")
@@ -86,9 +91,17 @@ async function prepareCinfoDetails(
 				characterInfo.rank
 			)}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
 				characterInfo.averageMarketPrice
-					? `__${numericWithComma(characterInfo.averageMarketPrice)}__ Gold ${emoji.gold}`
+					? `__${numericWithComma(characterInfo.averageMarketPrice)}__ Gold ${
+						emoji.gold
+					}`
 					: "N/A"
-			} (Low digit cards can be sold for higher price)`
+			} (Low digit cards can be sold for higher price)${
+				customCardServerInfo
+					? `\n\n**Available in Server(s)**\n${customCardServerInfo.metadata?.serverInviteLinks
+						?.split(",")
+						.join(", ")}`
+					: ""
+			}`
 		)
 		.setImage("attachment://cinfo.jpg")
 		.attachFiles([ attachment ]);
@@ -111,7 +124,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 		if (!cname) return;
 		const charaInfo = await getCharacterInfo({
 			name: cname.trim(),
-			rank: params.rank 
+			rank: params.rank,
 		});
 		const embed = createEmbed(options.author, client);
 		if (!charaInfo || charaInfo.length <= 0) {
@@ -373,8 +386,8 @@ const fetchCharacterInfoMeta = async (
 			}),
 			getCharacterPriceList({
 				characterId: params.character.id,
-				rankId: ranksMeta[rank as keyof RanksMetaProps].rank_id
-			})
+				rankId: ranksMeta[rank as keyof RanksMetaProps].rank_id,
+			}),
 		]);
 		if (!card) {
 			loggers.error(
@@ -400,7 +413,8 @@ const fetchCharacterInfoMeta = async (
 			stats: clonedCharacter.stats,
 		});
 		clonedCharacter.stats = stats.totalStats;
-		clonedCharacter.averageMarketPrice = characterPriceList?.average_market_price;
+		clonedCharacter.averageMarketPrice =
+      characterPriceList?.average_market_price;
 	}
 	if (rank === "silver") {
 		clonedCharacter.stats = params.character.stats;

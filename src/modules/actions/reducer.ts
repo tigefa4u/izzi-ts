@@ -57,7 +57,7 @@ import { starterGuide } from "modules/commands/rpg/profile/guide";
 import { console } from "modules/commands/rpg/console";
 import { viewChangeLogs } from "modules/commands/basic/changelogs";
 import { userReferrals } from "modules/commands/basic/referrals";
-import { customCard } from "modules/commands/rpg/profile/customCard";
+import { customCardV2 } from "modules/commands/rpg/profile/customCard";
 import { dungeonFunc } from "modules/commands/rpg/dungeon/v2";
 import { quests } from "modules/commands/rpg/quests";
 import { worldBossCommands } from "modules/commands/rpg/worldBoss";
@@ -163,7 +163,7 @@ const commandMap: CommandMapProps = {
 	console: console,
 	changelogs: viewChangeLogs,
 	referral: userReferrals,
-	customcard: customCard,
+	customcard: customCardV2,
 	quest: quests,
 	worldboss: worldBossCommands,
 	tournament: tourneyCommands,

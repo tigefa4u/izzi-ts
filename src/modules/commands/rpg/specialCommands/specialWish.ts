@@ -33,7 +33,7 @@ export const specialWish = async ({ client, context, args, options }: BaseProps)
 					await clearCooldown(author.id, "raid-spawn");
 					embed.setDescription("Try spawning a raid.");
 				} else {
-					embed.setDescription(`Get out of here, ${emoji.sleepy}.`);
+					embed.setDescription(`Pray to wishing well, ${emoji.sleepy}.`);
 				}
 
 				context.channel?.sendMessage(embed);

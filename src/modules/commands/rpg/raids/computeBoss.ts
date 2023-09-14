@@ -176,23 +176,24 @@ function prepareLoot(
 
 		loggers.info("Computed boss by player level:", resp);
 
-		result.loot.drop.default?.map((d) => {
-			d.number = Math.floor(d.number / result.bosses);
-		});
-		result.loot.rare?.map((r) => {
-			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
-			// Make this change if you decide to add more ranks
-			if (resp.numberOfCards[rank]) {
-				r.rate = (r.rate || 0) + resp.numberOfCards[rank].rate;
-				if (!r.isStaticDrop) {
-					r.number = Math.floor(resp.numberOfCards[rank].cards / result.bosses);
-				}
-			}
-		});
+		// result.loot.drop.default?.map((d) => {
+		// 	d.number = Math.floor(d.number / result.bosses);
+		// });
+		// result.loot.rare?.map((r) => {
+		// 	const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
+		// 	// Make this change if you decide to add more ranks
+		// 	if (resp.numberOfCards[rank]) {
+		// 		r.rate = (r.rate || 0) + resp.numberOfCards[rank].rate;
+		// 		if (!r.isStaticDrop) {
+		// 			r.number = Math.floor(resp.numberOfCards[rank].cards / result.bosses);
+		// 		}
+		// 	}
+		// });
 		result.level = [ resp.lowerLevel, resp.higherLevel ];
 		result.rank = resp.ranks;
 		result.loot.gold = baseLoot[difficulty].default.loot.gold;
 		result.loot.extraGold = baseLoot[difficulty].default.loot.extraGold;
+		result.extras = resp;
 		// result.loot.gamePoints = 0;
 		// result.loot.gamePoints = baseLoot[difficulty].default.loot.gamePoints;
 	}

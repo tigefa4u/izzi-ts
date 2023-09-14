@@ -73,7 +73,10 @@ export const getRandomCard: (
   limit: number
 ) => Promise<RandomCardProps[]> = async function (params, limit = 1) {
 	const queryParams = clone(params);
-
+	const rank = queryParams.rank;
+	const character_id = queryParams.character_id;
+	delete queryParams.rank;
+	delete queryParams.character_id;
 	const group_with = queryParams.group_with;
 	const group_id = queryParams.group_id;
 	delete queryParams.group_with;
@@ -91,8 +94,21 @@ export const getRandomCard: (
 		.leftJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
 		.where(queryParams)
 		.andWhere({ is_world_boss: false });
+
+	if (typeof rank === "string") {
+		query = query.where(`${tableName}.rank`, "=", rank);
+	} else if (typeof rank === "object") {
+		query = query.whereIn(`${tableName}.rank`, rank);
+	}
+	if (typeof character_id === "number") {
+		query = query.where(`${tableName}.character_id`, "=", character_id);
+	} else if (typeof character_id === "object") {
+		query = query.whereIn(`${tableName}.character_id`, character_id);
+	}
 	if (queryParams.is_event) {
 		query = query.where(`${tableName}.has_event_ended`, "false");
+	} else if (typeof queryParams.is_random === "boolean") {
+		query = query.where(`${tableName}.is_random`, queryParams.is_random);	
 	} else {
 		query = query.where(`${tableName}.is_random`, "true");
 	}

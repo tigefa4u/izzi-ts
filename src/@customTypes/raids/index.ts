@@ -1,10 +1,14 @@
 import { AuthorProps, OverallStatsProps } from "@customTypes";
+import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { Client } from "discord.js";
 
 export type RaidActionProps = BaseProps & {
     isEvent: boolean;
+    external_character_ids?: number[];
+    customSpawn?: boolean;
+    customSpawnParams?: CardParams;
 }
 
 type L = {
@@ -120,6 +124,7 @@ export type PrepareLootProps = {
     level: number[];
     rank: string[];
     group_id?: number;
+    extras?: any;
 }
 
 export type ProcessRaidLootProps = {

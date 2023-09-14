@@ -1,3 +1,4 @@
+import { CharacterStatProps } from "@customTypes/characters";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { createRaid } from "api/controllers/RaidsController";
@@ -15,7 +16,7 @@ import {
 	WORLD_BOSS_HP_MULTIPLIER,
 	WORLD_BOSS_LEVEL,
 } from "helpers/constants";
-import { PublishMessageToAllGuilds } from "helpers/directMessages";
+// import { PublishMessageToAllGuilds } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { computeRaidBossStats } from "../../raids/actions/spawn";
@@ -78,6 +79,17 @@ export const spawnWorldBoss = async ({
 			"worldBoss.spawn.spawnWorldBoss: Preparing boss stats for worldboss - ",
 			raidBoss
 		);
+
+		/**
+		 * After the new patch the stats are not that high, need the world boss to be high PL
+		 */
+		[ "vitality", "defense", "dexterity", "intelligence", "strength" ].map((s) => {
+			const k = s as keyof CharacterStatProps;
+			if (raidBoss.stats) {
+				raidBoss.stats[k] = (raidBoss.stats[k] || 0) * 3;
+			}
+		});
+
 		const { raidStats, computedLoot } = await computeRaidBossStats({
 			raidBosses: [ raidBoss ],
 			computedBoss,

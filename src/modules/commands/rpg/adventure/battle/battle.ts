@@ -611,7 +611,7 @@ async function simulatePlayerTurns({
 		const damageDealt = updatedStats.damageDealt || 0;
 		const abilityDamage = updatedStats.abilityDamage || 0;
 		if (isPlayerFirst) {
-			totalDamage += damageDealt;
+			totalDamage += Math.floor(damageDealt);
 
 			// play with this and see if its too easy to deal damage
 			// if (!updatedStats.isDamageAbsorbed) {
@@ -756,7 +756,7 @@ function updateBattleDesc({
 	} else if (isParanoid) {
 		desc = `${desc} ${playerDesc} is **Paranoid** ${emoji.paranoid}! It cannot attack!`;
 	} else {
-		desc = `${desc} ${playerDesc} deals __${damageDealt}__ damage${
+		desc = `${desc} ${playerDesc} deals __${Math.floor(damageDealt)}__ damage${
 			isDamageAbsorbed ? ` But it was absorbed by ${enemyDesc}'s ARMOR ${emoji.armor}` : ""
 		} ${
 			isCriticalHit

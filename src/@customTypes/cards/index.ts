@@ -35,6 +35,9 @@ export type CardProps = {
 	is_world_boss: boolean;
 }
 
-export type CardParams = Omit<Partial<CardProps>, IgnoreProps | "copies" | "filepath">
+export type CardParams = Omit<Partial<CardProps>, IgnoreProps | "copies" | "filepath" | "rank" | "character_id"> & {
+	rank?: string | string[];
+	character_id?: number | number[];
+}
 
 export type RandomCardProps = CardProps & CharacterDetailsProps;

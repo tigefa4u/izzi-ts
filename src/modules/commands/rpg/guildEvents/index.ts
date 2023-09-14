@@ -2,6 +2,8 @@ import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { addGuildEvent, setPrefix } from "./actions";
+import { showCustomDex } from "./customCards/dex";
+import { spawnCustomServerCardRaid } from "./customCards/spawn";
 import { resetGuildEvents } from "./dangerZone";
 import { raidPing } from "./raidPing";
 import { abilityPing } from "./raidPing/abilityPing";
@@ -35,6 +37,10 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			raidPingView(params);
 		} else if (subcommand === "prefix") {
 			setPrefix(params);
+		} else if (subcommand === "dex") {
+			showCustomDex(params);
+		} else if (subcommand === "raidspawn") {
+			spawnCustomServerCardRaid(params);
 		}
 		return;
 	} catch (err) {

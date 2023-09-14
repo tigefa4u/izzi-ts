@@ -1,4 +1,5 @@
 import { SingleCanvasReturnType } from "@customTypes/canvas";
+import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import {
 	PrepareLootProps,
@@ -24,7 +25,6 @@ import {
 	D1_RANKS,
 	D2_RANKS,
 	DEFAULT_ERROR_TITLE,
-	FODDER_RANKS,
 	HIGH_LEVEL_RAIDS,
 	IMMORTAL_RAIDS,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
@@ -172,56 +172,105 @@ export const createRaidBoss = async ({
 	lobby,
 	isPrivate,
 	character_id,
-}: C) => {
+	customSpawnParams = {}
+}: C & {
+	customSpawnParams?: CardParams;
+}) => {
 	const computedLevel = randomNumber(
 		computedBoss.level[0],
 		computedBoss.level[1]
 	);
-	const raidBosses = (await Promise.all(
-		Array(computedBoss.bosses)
-			.fill(0)
-			.map(async (_, i) => {
-				const rank = randomElementFromArray(computedBoss.rank);
-				const params: any = {
-					is_logo: false,
-					rank,
-					is_event: isEvent,
-					is_random: true,
-				};
-				if (isEvent) {
-					if (i === 0) {
-						params.group_id = computedBoss.group_id;
-					} else if (i === 1) {
-						params.group_with = computedBoss.group_id;
-					}
+	const params: any = {
+		is_logo: false,
+		rank: computedBoss.rank,
+		is_event: isEvent,
+		is_random: true,
+		...customSpawnParams
+	};
+	if (isEvent) {
+		params.is_random = false;
+	}
+	let limit = computedBoss.bosses;
+	if ((character_id || []).length > 0) {
+		params.character_id = character_id;
+		limit = character_id?.length || 1;
+	}
+	if (computedBoss.loot.drop.default && Array.isArray(computedBoss.loot.drop.default)) {
+		computedBoss.loot?.drop?.default?.map((d) => {
+			d.number = Math.floor(d.number / limit);
+		});
+	}
+	if (computedBoss.loot.rare) {
+		computedBoss.loot.rare?.map((r) => {
+			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
+			// Make this change if you decide to add more ranks
+			if (computedBoss.extras?.numberOfCards[rank]) {
+				r.rate = (r.rate || 0) + computedBoss.extras.numberOfCards[rank].rate;
+				if (!r.isStaticDrop) {
+					r.number = Math.floor(computedBoss.extras.numberOfCards[rank].cards / limit);
 				}
+			}
+		});
+	}
+	const cards = await getRandomCard(params, limit);
+	if (!cards || cards.length <= 0) {
+		throw new Error("Could not fetch random cards for raid spawn");
+	}
+	const raidBosses = cards.map((c) => {
+		c.character_level = Math.floor(computedLevel / computedBoss.bosses);
+		return {
+			...c,
+			copies: 1,
+			user_id: 0,
+			is_on_market: false,
+			is_item: false,
+			item_id: 0,
+			exp: 1,
+			r_exp: 1,
+			souls: 1,
+			rank_id: 0,
+			is_on_cooldown: false,
+			is_tradable: true,
+		} as CollectionCardInfoProps;
+	});
+	// const raidBosses = (await Promise.all(
+	// 	Array(computedBoss.bosses)
+	// 		.fill(0)
+	// 		.map(async (_, i) => {
+	// 			// if (isEvent) {
+	// 			// 	if (i === 0) {
+	// 			// 		params.group_id = computedBoss.group_id;
+	// 			// 	} else if (i === 1) {
+	// 			// 		params.group_with = computedBoss.group_id;
+	// 			// 	}
+	// 			// }
 
-				// Raid Pity system - spawn a raid from wishlist
-				if (character_id && character_id.length > 0 && character_id[i]) {
-					params.character_id = character_id[i];
-				}
-				const card = await getRandomCard(params, 1);
-				if (!card || card.length <= 0) {
-					return;
-				}
-				const raidBoss = card[0];
-				raidBoss.character_level = Math.floor(computedLevel / computedBoss.bosses);
-				return {
-					...raidBoss,
-					copies: 1,
-					user_id: 0,
-					is_on_market: false,
-					is_item: false,
-					item_id: 0,
-					exp: 1,
-					r_exp: 1,
-					souls: 1,
-					rank_id: 0,
-					is_on_cooldown: false,
-					is_tradable: true,
-				};
-			})
-	)) as CollectionCardInfoProps[];
+	// 			// Raid Pity system - spawn a raid from wishlist
+	// 			if (character_id && character_id.length > 0 && character_id[i]) {
+	// 				params.character_id = character_id[i];
+	// 			}
+	// 			const card = await getRandomCard(params, 1);
+	// 			if (!card || card.length <= 0) {
+	// 				return;
+	// 			}
+	// 			const raidBoss = card[0];
+	// 			raidBoss.character_level = Math.floor(computedLevel / computedBoss.bosses);
+	// 			return {
+	// 				...raidBoss,
+	// 				copies: 1,
+	// 				user_id: 0,
+	// 				is_on_market: false,
+	// 				is_item: false,
+	// 				item_id: 0,
+	// 				exp: 1,
+	// 				r_exp: 1,
+	// 				souls: 1,
+	// 				rank_id: 0,
+	// 				is_on_cooldown: false,
+	// 				is_tradable: true,
+	// 			};
+	// 		})
+	// )) as CollectionCardInfoProps[];
 
 	const { raidStats, computedLoot } = await computeRaidBossStats({
 		raidBosses,
@@ -294,6 +343,9 @@ export const spawnRaid = async ({
 	client,
 	args,
 	isEvent,
+	external_character_ids,
+	customSpawn,
+	customSpawnParams
 }: RaidActionProps) => {
 	try {
 		const author = options.author;
@@ -382,6 +434,8 @@ export const spawnRaid = async ({
 			);
 		}
 
+		let character_ids;
+
 		/**
      * Raid Pity - spawn a chara from wishlist
      * This is related to market tax. Check `tax.ts`
@@ -389,14 +443,19 @@ export const spawnRaid = async ({
      *
      * Allow only 1 character to be spawned.
      */
-		const raidPityCids = await checkRaidPity(user);
+		if (!customSpawn && !isEvent) {
+			character_ids = await checkRaidPity(user);
+		} else if (external_character_ids && customSpawn) {
+			character_ids = external_character_ids;
+		}
 
 		const { raid, raidBosses } = await createRaidBoss({
 			lobby,
 			computedBoss,
 			isEvent,
 			isPrivate,
-			character_id: raidPityCids,
+			character_id: character_ids,
+			customSpawnParams
 		});
 		if (!raid) return;
 
