@@ -39,7 +39,7 @@ const statMap: any = {
 	def: "defense",
 	hp: "strength",
 	spd: "dexterity",
-	int: "intelligence",
+	arm: "intelligence",
 };
 
 async function validateAndUpgradeGuild(

@@ -141,7 +141,8 @@ export const get = async (
 			"card_count"
 		)
 		.from(tableName)
-		.where(queryParams);
+		.where(queryParams)
+		.where("card_count", ">", 0);
 
 	if (ids) {
 		query = query.whereIn("id", ids);
@@ -196,7 +197,8 @@ export const getCountForGetAll = async (params: CollectionParams) => {
 	const db = connection;
 	let query = db.select(db.raw("count(1) as total_count"))
 		.from(tableName)
-		.where(queryParams);
+		.where(queryParams)
+		.where("card_count", ">", 0);
 	if (character_ids) {
 		query = query.whereIn(`${tableName}.character_id`, character_ids);
 	}
@@ -280,6 +282,7 @@ export const getAll = async function (
 		)
 		.from(tableName)
 		.where(queryParams)
+		.where("card_count", ">", 0)
 		.as(alias);
 
 	query = db
@@ -329,7 +332,8 @@ export const getFoddersForEnchantmentV2 = async (params: CollectionParams, filte
 		.from(tableName)
 		.where("rank", "platinum")
 		.where("user_id", params.user_id)
-		.orderBy("card_count", "desc");
+		.orderBy("card_count", "desc")
+		.where("card_count", ">", 0);
 
 	if (ids && ids.length > 0) {
 		query = query.whereIn("id", ids);
@@ -396,6 +400,7 @@ export const getByRowNumber = async (params: {
 		.andWhereRaw(`not ${tableName}.is_item`)
 		.orderBy("rank_id", "desc")
 		.orderBy("id", "asc")
+		.where("card_count", ">", 0)
 		.offset(params.row_number - 1) // Need to subtract 1, to choose correct row
 		.limit(1);
 
@@ -439,6 +444,7 @@ export const verifyIds = async (params: { user_id: number; ids: number[] }): Pro
 		.select("id", "card_count")
 		.from(tableName)
 		.where(`${tableName}.user_id`, params.user_id)
+		.where("card_count", ">", 0)
 		.whereIn(`${tableName}.id`, params.ids);
 
 	return query;
@@ -454,7 +460,7 @@ export const getFodderCount = async (user_id: number): Promise<{ sum: number; }[
 	return connection(tableName).where({
 		user_id,
 		rank: "platinum" 
-	}).sum("card_count");
+	}).where("card_count", ">", 0).sum("card_count");
 };
 
 export const dbConnection = connection;
@@ -466,5 +472,6 @@ export const groupByCharacterId = async (user_id: number, character_ids: number[
 		.whereIn("character_id", character_ids)
 		.groupBy([ "character_id", "id" ])
 		.where({ user_id })
+		.where("card_count", ">", 0)
 		.limit(character_ids.length);
 };

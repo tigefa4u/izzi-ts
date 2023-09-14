@@ -30,7 +30,7 @@ export const createDexList = (
 									? "HP"
 									: stat === "dexterity"
 										? "SPD"
-										: stat.slice(0, 3).toUpperCase()
+										: stat === "intelligence" ? "ARM" : stat.slice(0, 3).toUpperCase()
 						}**: ${item.stats[stat as keyof CharacterStatProps]}${
 							j < 4 ? "," : ""
 						}`;

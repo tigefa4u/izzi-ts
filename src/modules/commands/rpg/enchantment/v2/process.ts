@@ -17,31 +17,38 @@ export const prepareRankAndFetchCardsV2 = async ({
 	forceExit = false,
 	totalXpGain,
 	isCustomName = false,
-	isCustomLimit = false
+	isCustomLimit = false,
 }: PrepareRankAndFetchCardsProps<EnchantmentAccumulatorPropsV2>): Promise<
-  {
-    accumulator: EnchantmentAccumulatorPropsV2[],
-    totalXpGain: number
-  } | undefined
+  | {
+      accumulator: EnchantmentAccumulatorPropsV2[];
+      totalXpGain: number;
+    }
+  | undefined
 > => {
 	let uniqueCards = [ ...new Set(accumulator) ];
 	if (forceExit || reqExp <= 0) {
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCardsV2: line: 29 -> data ", uniqueCards
+			"enchantment.process.prepareRankAndFetchCardsV2: line: 29 -> data ",
+			uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
 			totalXpGain,
 		};
 	}
-	const starttimer = loggers.startTimer("prepareRankAndFetchCardsV2: started...");
-	const result = await getFoddersV2({
-		rank: initialRequestPayload.rank,
-		user_id,
-		exclude_ids: initialRequestPayload.exclude,
-		character_ids: initialRequestPayload.include,
-		exclude_character_ids: initialRequestPayload.exclude_character_ids,
-	}, { limit: initialRequestPayload.limit || 1 });
+	const starttimer = loggers.startTimer(
+		"prepareRankAndFetchCardsV2: started..."
+	);
+	const result = await getFoddersV2(
+		{
+			rank: initialRequestPayload.rank,
+			user_id,
+			exclude_ids: initialRequestPayload.exclude,
+			character_ids: initialRequestPayload.include,
+			exclude_character_ids: initialRequestPayload.exclude_character_ids,
+		},
+		{ limit: initialRequestPayload.limit || 1 }
+	);
 	loggers.endTimer(starttimer);
 	if (!result || (result.length <= 0 && !initialRequestPayload.isSameName)) {
 		uniqueCards = [ ...new Set(accumulator) ];
@@ -55,33 +62,41 @@ export const prepareRankAndFetchCardsV2 = async ({
 		};
 	}
 	let remainingCount = initialRequestPayload.limit || 1;
-	accumulator = accumulator.concat(result.map((c) => {
-		if (remainingCount <= 0) return;
-		let count = 1;
-		if (!c.card_count) c.card_count = 1;
-		if (c.card_count >= remainingCount) {
-			count = remainingCount;
-			remainingCount = 0;
-		} else {
-			count = c.card_count;
-			remainingCount = remainingCount - c.card_count;
-		}
-		return {
-			id: c.id,
-			character_id: c.character_id,
-			count,
-			user_id: c.user_id
-		};
-	}).filter(Boolean) as EnchantmentAccumulatorPropsV2[]);
+	accumulator = accumulator.concat(
+    result
+    	.map((c) => {
+    		if (remainingCount <= 0) return;
+    		let count = 1;
+    		if (!c.card_count) c.card_count = 1;
+    		if (c.card_count >= remainingCount) {
+    			count = remainingCount;
+    			remainingCount = 0;
+    		} else {
+    			count = c.card_count;
+    			remainingCount = remainingCount - c.card_count;
+    		}
+    		return {
+    			id: c.id,
+    			character_id: c.character_id,
+    			count,
+    			user_id: c.user_id,
+    		};
+    	})
+    	.filter(Boolean) as EnchantmentAccumulatorPropsV2[]
+	);
 
 	uniqueCards = [ ...new Set(accumulator) ];
-	const currentCardCount = accumulator.reduce((acc, r) => (acc || 0) + r.count, 0);
+	const currentCardCount = accumulator.reduce(
+		(acc, r) => (acc || 0) + r.count,
+		0
+	);
 	if (currentCardCount >= initialRequestPayload.bucket.platinum) {
 		uniqueCards = [ ...new Set(accumulator) ];
 		totalXpGain = totalXpGain + reqExp;
 		reqExp = 0;
 		loggers.info(
-			"enchantment.process.prepareRankAndFetchCardsV2: line: 82 -> data ", uniqueCards
+			"enchantment.process.prepareRankAndFetchCardsV2: line: 82 -> data ",
+			uniqueCards
 		);
 		return {
 			accumulator: uniqueCards,
@@ -89,10 +104,10 @@ export const prepareRankAndFetchCardsV2 = async ({
 		};
 	} else {
 		const xpGain =
-        (initialRequestPayload.isSameName ? 3 : 1) *
-        currentCardCount *
-        XP_GAIN_PER_RANK.platinum;
-  
+      (initialRequestPayload.isSameName ? 3 : 1) *
+      currentCardCount *
+      XP_GAIN_PER_RANK.platinum;
+
 		totalXpGain = totalXpGain + xpGain;
 		reqExp = reqExp - xpGain;
 
@@ -100,30 +115,48 @@ export const prepareRankAndFetchCardsV2 = async ({
 			loggers.info("prepareRankAndFetchCardsV2: line 98 -> data", uniqueCards);
 			return {
 				accumulator: uniqueCards,
-				totalXpGain
+				totalXpGain,
 			};
 		}
 		if (reqExp > 0 && !isCustomName) {
 			const xpGainObject = prepareXpGainObject(reqExp);
 			loggers.info("prepareRankAndFetchCardsV2: re-computing cards needed,", {
 				reqExp,
-				...xpGainObject
+				...xpGainObject,
 			});
+
+			/**
+			 * This logic is needed to avoid consuming extra cards than required
+			 */
+			let recalculatedLimit = isCustomLimit
+				? initialRequestPayload.limit || 1
+				: xpGainObject.withDifferentName.platinum;
+
+			if (isCustomLimit) {
+				recalculatedLimit = recalculatedLimit - currentCardCount;
+			}
+			if (recalculatedLimit > xpGainObject.withDifferentName.platinum) {
+				recalculatedLimit = xpGainObject.withDifferentName.platinum;
+			}
+
 			const payload = {
 				...initialRequestPayload,
 				bucket: xpGainObject.withDifferentName,
 				exclude: [
 					...new Set([
 						...accumulator.map((a) => a.id),
-						...(initialRequestPayload.exclude || [])
-					])
+						...(initialRequestPayload.exclude || []),
+					]),
 				],
 				exclude_character_ids: initialRequestPayload.exclude_character_ids,
-				limit: isCustomLimit ? (initialRequestPayload.limit || 1) : xpGainObject.withDifferentName.platinum,
+				limit: recalculatedLimit,
 				isSameName: false,
-				include: []
+				include: [],
 			};
-			loggers.info("prepareRankAndFetchCardsV2: re-iterating with payload:", payload);
+			loggers.info(
+				"prepareRankAndFetchCardsV2: re-iterating with payload:",
+				payload
+			);
 			return prepareRankAndFetchCardsV2({
 				reqExp,
 				user_id,
@@ -131,13 +164,13 @@ export const prepareRankAndFetchCardsV2 = async ({
 				withDifferentName,
 				initialRequestPayload: payload,
 				accumulator,
-				totalXpGain
+				totalXpGain,
 			});
 		}
 		loggers.info("prepareRankAndFetchCardsV2: line 128 -> data", uniqueCards);
 		return {
 			accumulator: uniqueCards,
-			totalXpGain
+			totalXpGain,
 		};
 	}
 };
