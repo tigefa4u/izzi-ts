@@ -107,8 +107,11 @@ export const processUpVote = async (req: Request, res: Response) => {
 					const requiredExp = summoner.r_exp;
 					if (currentExp >= requiredExp) {
 						summoner.level = summoner.level + 1;
+						summoner.exp = Math.abs(currentExp - requiredExp);
+						summoner.r_exp = summoner.level * 47;
 						monthlyRewards.desc =
-              `${monthlyRewards.desc}. You have leveled up! You are now level __${summoner.level}__. ` +
+              `${monthlyRewards.desc}. You have leveled up! You are now level __${summoner.level}__ ` +
+			  `Exp [${summoner.exp} / ${summoner.r_exp}]. ` +
               `${
               	summoner.max_mana >= MAX_MANA_GAIN
               		? "You have already gained the maximum obtainable mana"
@@ -116,15 +119,13 @@ export const processUpVote = async (req: Request, res: Response) => {
               			summoner.max_mana
               		}__ -> __${summoner.max_mana + 2}__`
               }`;
-						summoner.exp = Math.abs(currentExp - requiredExp);
-						summoner.r_exp = summoner.level * 47;
 						if (summoner.max_mana < MAX_MANA_GAIN) {
 							summoner.max_mana = summoner.max_mana + 2;
 							updateObj.max_mana = summoner.max_mana;
 						}
 						summoner.mana = summoner.max_mana;
 						updateObj.mana = summoner.mana;
-						updateObj.r_exp = summoner.exp;
+						updateObj.r_exp = summoner.r_exp;
 						updateObj.level = summoner.level;
 					}
 					updateObj.exp = currentExp;

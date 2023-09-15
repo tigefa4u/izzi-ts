@@ -319,7 +319,7 @@ export const agnusScepter = ({
 	simulation,
 	baseEnemyStats
 }: BattleProcessProps) => {
-	if (!card || !card.itemStats) return;
+	if (!card || !card.itemStats || !opponentStats.totalStats.originalHp) return;
 	else if (round === 1) {
 		playerStats.totalStats = processItemStats(
 			playerStats.totalStats,
@@ -334,6 +334,9 @@ export const agnusScepter = ({
 		}
 		if (hpGain > AGNUS_SCEPTER_MAX_HP_GAIN) {
 			hpGain = AGNUS_SCEPTER_DEFAULT_HP_GAIN;
+		}
+		if (hpGain > opponentStats.totalStats.originalHp) {
+			hpGain = opponentStats.totalStats.originalHp;
 		}
 		if (!playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpGain;

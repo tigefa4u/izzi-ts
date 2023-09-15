@@ -206,6 +206,7 @@ export const createRaidBoss = async ({
 			// Make this change if you decide to add more ranks
 			if (computedBoss.extras?.numberOfCards[rank]) {
 				r.rate = (r.rate || 0) + computedBoss.extras.numberOfCards[rank].rate;
+				r.rate = Number((r.rate || 0).toFixed(2));
 				if (!r.isStaticDrop) {
 					r.number = Math.floor(computedBoss.extras.numberOfCards[rank].cards / limit);
 				}
@@ -217,7 +218,7 @@ export const createRaidBoss = async ({
 		throw new Error("Could not fetch random cards for raid spawn");
 	}
 	const raidBosses = cards.map((c) => {
-		c.character_level = Math.floor(computedLevel / computedBoss.bosses);
+		c.character_level = Math.floor(computedLevel / limit);
 		return {
 			...c,
 			copies: 1,

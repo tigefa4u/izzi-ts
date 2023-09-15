@@ -42,7 +42,7 @@ export type ComputedCategoryProps = {
 }
 export const computedCategoryData : ComputedCategoryProps = {
 	d3: {
-		maxlevel: 1500,
+		maxlevel: 1700,
 		ranks: [ "silver", "gold", "platinum" ],
 		numberOfCards: {
 			divine: {
@@ -56,7 +56,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d2: {
-		maxlevel: 1850,
+		maxlevel: 2000,
 		ranks: [ "diamond", "divine", "legend" ],
 		numberOfCards: {
 			divine: {
@@ -70,7 +70,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 1500,
+		maxlevel: 1800,
 		ranks: [ "immortal", "exclusive", "ultimate" ],
 		numberOfCards: {
 			divine: {
