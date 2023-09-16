@@ -353,8 +353,9 @@ export const spawnRaid = async ({
 	isEvent,
 	external_character_ids,
 	customSpawn,
-	customSpawnParams
-}: RaidActionProps) => {
+	customSpawnParams,
+	cb
+}: RaidActionProps & { cb?: () => void; }) => {
 	try {
 		const author = options.author;
 		const [ user, rconfig ] = await Promise.all([
@@ -473,6 +474,7 @@ export const spawnRaid = async ({
 				CDKey,
 				user.is_premium || user.is_mini_premium ? 9000 : 60 * 60 * 3
 			);
+		if (cb) cb();
 		let bossCanvas: SingleCanvasReturnType | Canvas | undefined;
 		if (raidBosses.length === 1) {
 			bossCanvas = await createSingleCanvas(raidBosses[0], false);

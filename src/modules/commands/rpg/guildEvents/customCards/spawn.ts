@@ -49,13 +49,15 @@ export const spawnCustomServerCardRaid = async ({ client, context, options, args
 			isEvent: false,
 			customSpawn: true,
 			external_character_ids: characters.map((c) => c.character_id),
-			customSpawnParams: { is_random: false }
+			customSpawnParams: { is_random: false },
+			cb: async () => {
+				await setCooldown(
+					author.id,
+					cmd,
+					user.is_premium || user.is_mini_premium ? 60 * 60 * 4 : 60 * 60 * 5
+				);
+			}
 		});
-		await setCooldown(
-			author.id,
-			cmd,
-			user.is_premium || user.is_mini_premium ? 60 * 60 * 4 : 60 * 60 * 5
-		);
 		return;
 	} catch (err) {
 		loggers.error("guildEvents.customCards.spawnCustomServerCardRaid: ERROR", err);
