@@ -1,4 +1,6 @@
 import { randomNumber } from "helpers";
+import { RankProps } from "helpers/helperTypes";
+import { ranksMeta } from "helpers/rankConstants";
 import { crates } from "./crateLoot";
 
 // const basedrops = {
@@ -31,9 +33,9 @@ export const levelBonusDropRate: LevelBonusDropRateProps = {
 export type ComputedCategoryProps = {
 	[key in "d3" | "d2" | "d1"]: {
 		maxlevel: number;
-		ranks: string[];
+		ranks: RankProps[];
 		numberOfCards: {
-			[key: string]: {
+			[key in RankProps]?: {
 				cards: number;
 				rate: number;
 			};
@@ -43,13 +45,13 @@ export type ComputedCategoryProps = {
 export const computedCategoryData : ComputedCategoryProps = {
 	d3: {
 		maxlevel: 1700,
-		ranks: [ "silver", "gold", "platinum" ],
+		ranks: [ ranksMeta.silver.name, ranksMeta.gold.name, ranksMeta.platinum.name ],
 		numberOfCards: {
-			divine: {
+			[ranksMeta.divine.name]: {
 				cards: 3,
 				rate: 4
 			},
-			immortal: {
+			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 1.55
 			}
@@ -57,13 +59,13 @@ export const computedCategoryData : ComputedCategoryProps = {
 	},
 	d2: {
 		maxlevel: 2000,
-		ranks: [ "diamond", "divine", "legend" ],
+		ranks: [ ranksMeta.diamond.name, ranksMeta.divine.name, ranksMeta.legend.name ],
 		numberOfCards: {
-			divine: {
+			[ranksMeta.divine.name]: {
 				cards: 6,
 				rate: 7.35
 			},
-			immortal: {
+			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 2.15
 			} 
@@ -71,13 +73,13 @@ export const computedCategoryData : ComputedCategoryProps = {
 	},
 	d1: {
 		maxlevel: 1800,
-		ranks: [ "immortal", "exclusive", "ultimate" ],
+		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name ],
 		numberOfCards: {
-			divine: {
+			[ranksMeta.divine.name]: {
 				cards: 9,
 				rate: 12
 			},
-			immortal: {
+			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 3.65
 			} 
@@ -99,21 +101,21 @@ const baseLoot = (): any => ({
 				gamePoints: 1,
 				drop: [
 					{
-						rank: "platinum",
-						rank_id: 3,
+						rank: ranksMeta.platinum.name,
+						rank_id: ranksMeta.platinum.rank_id,
 						number: 62,
 					},
 				],
 				rare: [
 					{
-						rank: "divine",
-						rank_id: 6,
+						rank: ranksMeta.divine.name,
+						rank_id: ranksMeta.divine.rank_id,
 						rate: 1.2,
 						number: 3,
 					},
 					{
-						rank: "immortal",
-						rank_id: 7,
+						rank: ranksMeta.immortal.name,
+						rank_id: ranksMeta.immortal.rank_id,
 						/**
 						 * Negative rate is used here as base rate
 						 * since the rate will gradually increase
@@ -146,21 +148,21 @@ const baseLoot = (): any => ({
 				gamePoints: 2,
 				drop: [
 					{
-						rank: "platinum",
-						rank_id: 3,
+						rank: ranksMeta.platinum.name,
+						rank_id: ranksMeta.platinum.rank_id,
 						number: 70,
 					},
 				],
 				rare: [
 					{
-						rank: "divine",
-						rank_id: 6,
+						rank: ranksMeta.divine.name,
+						rank_id: ranksMeta.divine.rank_id,
 						rate: 2,
 						number: 1,
 					},
 					{
-						rank: "immortal",
-						rank_id: 7,
+						rank: ranksMeta.immortal.name,
+						rank_id: ranksMeta.immortal.rank_id,
 						rate: -4.5,
 						number: 1,
 					}
@@ -184,39 +186,29 @@ const baseLoot = (): any => ({
 		default: {
 			bosses: 1,
 			level: [ 200, 350 ],
-			rank: [ "platinum", "platinum" ],
+			rank: [ ranksMeta.platinum.name, ranksMeta.platinum.name ],
 			categories: [ "d3", "d2" ],
 			loot: {
 				gold: randomNumber(26000, 30000),
 				extraGold: randomNumber(25000, 32000),
 				gamePoints: 3,
 				drop: [
-					// {
-					// 	rank: "silver",
-					// 	rank_id: 1,
-					// 	number: 6
-					// },
-					// {
-					// 	rank: "gold",
-					// 	rank_id: 2,
-					// 	number: 6
-					// },
 					{
-						rank: "platinum",
-						rank_id: 3,
+						rank: ranksMeta.platinum.name,
+						rank_id: ranksMeta.platinum.rank_id,
 						number: 78
 					},
 				],
 				rare: [
 					{
-						rank: "divine",
-						rank_id: 6,
+						rank: ranksMeta.divine.name,
+						rank_id: ranksMeta.divine.rank_id,
 						rate: 3,
 						number: 1 // depends on d3, d2, d1
 					},
 					{
-						rank: "immortal",
-						rank_id: 7,
+						rank: ranksMeta.immortal.name,
+						rank_id: ranksMeta.immortal.rank_id,
 						rate: -3.75,
 						number: 1,
 					}
@@ -225,8 +217,8 @@ const baseLoot = (): any => ({
 					// Per battle (50 mana) w 9x fodders
 					gold: randomNumber(8000, 9000),
 					default: [ {
-						rank: "divine",
-						rank_id: 6,
+						rank: ranksMeta.divine.name,
+						rank_id: ranksMeta.divine.rank_id,
 						number: 1,
 						rate: 15,
 						threshold: 2.5,
@@ -235,8 +227,8 @@ const baseLoot = (): any => ({
 						crates: crates.legendary,
 						crateDropRate: 5
 					}, {
-						rank: "immortal",
-						rank_id: 7,
+						rank: ranksMeta.immortal.name,
+						rank_id: ranksMeta.immortal.rank_id,
 						number: 1,
 						rate: 25,
 						threshold: 10,
@@ -245,8 +237,8 @@ const baseLoot = (): any => ({
 						crates: crates.legendary,
 						crateDropRate: 10
 					}, {
-						rank: "exclusive",
-						rank_id: 8,
+						rank: ranksMeta.exclusive.name,
+						rank_id: ranksMeta.exclusive.rank_id,
 						number: 1,
 						rate: 25,
 						threshold: 18,
@@ -282,22 +274,22 @@ const baseLoot = (): any => ({
 				gamePoints: 4,
 				drop: [
 					{
-						rank: "platinum",
-						rank_id: 3,
+						rank: ranksMeta.platinum.name,
+						rank_id: ranksMeta.platinum.rank_id,
 						number: 90
 					}
 				],
 				// number of cards depend on category
 				rare: [
 					{
-						rank: "divine",
-						rank_id: 6,
+						rank: ranksMeta.divine.name,
+						rank_id: ranksMeta.divine.rank_id,
 						rate: 4.5,
 						number: 8,
 					},
 					{
-						rank: "immortal",
-						rank_id: 7,
+						rank: ranksMeta.immortal.name,
+						rank_id: ranksMeta.immortal.rank_id,
 						rate: -3.15,
 						number: 1,
 					}

@@ -16,10 +16,10 @@ import {
 	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
 	CONSOLE_BUTTONS,
 	FODDER_RANKS,
-	ranksMeta,
 	REQUIRED_TRADE_LEVEL,
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

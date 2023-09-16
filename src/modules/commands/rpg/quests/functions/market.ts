@@ -1,13 +1,14 @@
 import { ProcessQuestProps, QuestCriteria } from "@customTypes/quests";
+import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import { fetchAndCompleteQuest } from "../common";
 
-const validateCriteria = (criteria: QuestCriteria, rank: string, price: number) => {
+const validateCriteria = (criteria: QuestCriteria, rank: RankProps, price: number) => {
 	return criteria.mingold && criteria.mingold <= price && criteria.rank === rank;
 };
 export const processMarketQuest = async <
   ET extends {
-    rank: string;
+    rank: RankProps;
     price: number;
   }
 >(params: ProcessQuestProps<ET>) => {

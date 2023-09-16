@@ -1,4 +1,3 @@
-import { ChannelProp } from "@customTypes";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import {
 	CollectionCreateProps,
@@ -36,15 +35,15 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DOT,
 	HIDE_VISUAL_BATTLE_ARG,
-	ranksMeta,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 	WORLD_BOSS_MANA_PER_BATTLE,
 	WORLD_BOSS_MIN_LEVEL,
 } from "helpers/constants";
-import { DMUser, PublishMessageToAllGuilds } from "helpers/directMessages";
+import { DMUser } from "helpers/directMessages";
 import { prepareRaidBossBase } from "helpers/raid";
+import { ranksMeta } from "helpers/rankConstants";
 import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
 import GA4 from "loggers/googleAnalytics";

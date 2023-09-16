@@ -26,8 +26,8 @@ import {
 	MARKET_PRICE_CAP,
 	MIN_MARKET_PRICE,
 	OS_GLOBAL_MARKET_CHANNEL,
-	ranksMeta,
 } from "helpers/constants";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

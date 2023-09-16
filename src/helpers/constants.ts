@@ -1,8 +1,9 @@
-import { ReactionsProps, XPGainPerRankProps } from "@customTypes";
+import { ReactionsProps } from "@customTypes";
 import { QuestTypes } from "@customTypes/quests";
 import { PermissionString } from "discord.js";
 import emoji from "emojis/emoji";
-import { ElementTypeColorProps, RanksMetaProps } from "./helperTypes";
+import { ElementTypeColorProps } from "./helperTypes";
+import { ranksMeta } from "./rankConstants";
 
 export const BASE_XP = 10;
 
@@ -10,8 +11,8 @@ export const XP_GAIN_EXPONENT = 1.5;
 
 export const DOT = "•";
 export const STAR = "★";
-export const BASE_RANK = "silver";
-export const STARTER_CARD_RANK = "legend";
+export const BASE_RANK = ranksMeta.silver.name;
+export const STARTER_CARD_RANK = ranksMeta.legend.name;
 export const STARTER_CARD_RANK_ID = 5;
 export const STARTER_CARD_LEVEL = 20;
 export const STARTER_CARD_EXP = 1;
@@ -22,62 +23,6 @@ export const STARTER_GOLD = 0;
 export const DEFAULT_ERROR_TITLE = "Error :no_entry:";
 export const DEFAULT_SUCCESS_TITLE = `Success ${emoji.celebration}`;
 export const DEFAULT_QUEST_COMPLETE_TITLE = `Quest Completed ${emoji.celebration}`;
-
-export const ranksMeta: RanksMetaProps = {
-	silver: {
-		size: 1,
-		rank_id: 1,
-		color: "#b6c7be",
-		emoji: "bronzestar",
-	},
-	gold: {
-		size: 2,
-		rank_id: 2,
-		color: "#c89e50",
-		emoji: "bronzestar",
-	},
-	platinum: {
-		size: 3,
-		rank_id: 3,
-		color: "#298077",
-		emoji: "bronzestar",
-	},
-	diamond: {
-		size: 1,
-		rank_id: 4,
-		color: "#73c0d3",
-		emoji: "silverstar",
-	},
-	legend: {
-		size: 2,
-		rank_id: 5,
-		color: "#c11b17",
-		emoji: "silverstar",
-	},
-	divine: {
-		size: 3,
-		rank_id: 6,
-		color: "#c35817",
-		emoji: "silverstar",
-	},
-	immortal: {
-		size: 1,
-		rank_id: 7,
-		color: "#b641c4",
-		emoji: "goldstar",
-	},
-	exclusive: {
-		size: 2,
-		rank_id: 8,
-		emoji: "goldstar",
-	},
-	ultimate: {
-		size: 3,
-		rank_id: 9,
-		max_level: 70,
-		emoji: "goldstar",
-	},
-};
 
 export const elementTypeColors: ElementTypeColorProps = {
 	electric: "#fdd023",
@@ -136,31 +81,13 @@ export const DEFAULT_PACK = {
 	num: 1000,
 	cost: 1350,
 	cardPerPage: 10,
-	rank: "platinum",
-	rank_id: 3,
+	rank: ranksMeta.platinum.name,
+	rank_id: ranksMeta.platinum.rank_id,
 };
 
 export const PAGE_FILTER = {
 	currentPage: 1,
 	perPage: 10,
-};
-
-export const XP_GAIN_PER_RANK: XPGainPerRankProps = {
-	/**
-   * These changes are related to condensed fodders.
-   * Since there will only be platinum fodders the xp gain
-   * is the average of silver (100) + gold (150) + plat (200)
-   */
-	silver: 170, // 100
-	gold: 170,
-	platinum: 170, // 200
-	diamond: 250,
-	legend: 300,
-	divine: 450,
-	immortal: 500,
-	exclusive: 800,
-	ultimate: 800,
-	prestige: 1000,
 };
 
 export const ORB_INTEREST_RATE = 0.7;
@@ -271,7 +198,11 @@ export const MAX_CARDS_IN_TRADE = 10000;
 
 export const SACRIFICE_GOLD_COST = 1350;
 
-export const ENCHANTMENT_ALLOWED_RANKS = [ "silver", "gold", "platinum" ];
+export const ENCHANTMENT_ALLOWED_RANKS = [
+	ranksMeta.silver.name,
+	ranksMeta.gold.name,
+	ranksMeta.platinum.name,
+];
 
 export const MARKET_PURCHASE_LIMIT = 5;
 
@@ -478,12 +409,12 @@ export const CONSOLE_BUTTONS = {
 	},
 	INFO_INVENTORY_CARD: {
 		id: "info_inventory_card",
-		label: "View Info"
+		label: "View Info",
 	},
 	VIEW_INVENTORY: {
 		id: "view_inventory",
-		label: "View Inventory"
-	}
+		label: "View Inventory",
+	},
 };
 
 export const ELEMENTAL_ADVANTAGES = {
@@ -563,8 +494,8 @@ export const WORLD_BOSS_EXPIRES_IN_DAYS = 14;
 export const WORLD_BOSS_MANA_PER_BATTLE = 50;
 export const WORLD_BOSS_MIN_LEVEL = 50;
 
-export const WORLD_BOSS_MARKET_CARD_RANK = "immortal";
-export const WORLD_BOSS_MARKET_CARD_RANK_ID = 7;
+export const WORLD_BOSS_MARKET_CARD_RANK = ranksMeta.immortal.name;
+export const WORLD_BOSS_MARKET_CARD_RANK_ID = ranksMeta.immortal.rank_id;
 
 export const AGNUS_SCEPTER_MAX_HP_GAIN = 2000;
 export const AGNUS_SCEPTER_DEFAULT_HP_GAIN = 1350;
@@ -576,7 +507,7 @@ export const TEAM_POINTS_PER_TASK = 1;
 export const DONATOR_PERKS_MESSAGE =
   "\n\n**__Donator Perks__**\n$15+ - **Donator Role**\n$100+ - **Ascended Role**" +
   "\n$500+ - **Exclusive Role**" +
-  "\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
+  "\n$1000+ **Ultimate 1k Role and 1 Xenex card of your choice (Izzi / Hoax / Yue)**" +
   "\n$2000+ **Insane Role and 1 Xenex card of your choice (Izzi / Hoax)**" +
   "\n**__Hyper Supporter perks:__ Claim 1 Xenex card for every $1000 donation milestone upto 3 cards.**" +
   "\n**DM HoaX#3368 (266457718942990337) to claim your Perks.**";
@@ -594,9 +525,22 @@ export const DEFAULT_DPR_GAIN = 0.1;
 export const DEFAULT_DPR_LOSS = 0.03;
 export const DPR_GAIN_ON_EVADE = 0.02;
 
-export const FODDER_RANKS = [ "silver", "gold", "platinum" ]; // D3 ranks
-export const D2_RANKS = [ "diamond", "legend", "divine" ];
-export const D1_RANKS = [ "immortal", "exclusive", "ultimate" ];
+export const FODDER_RANKS = [
+	ranksMeta.silver.name,
+	ranksMeta.gold.name,
+	ranksMeta.platinum.name,
+]; // D3 ranks
+export const D2_RANKS = [
+	ranksMeta.diamond.name,
+	ranksMeta.divine.name,
+	ranksMeta.legend.name,
+];
+export const D1_RANKS = [
+	ranksMeta.immortal.name,
+	ranksMeta.exclusive.name,
+	ranksMeta.ultimate.name,
+	// ranksMeta.mythical.name,
+];
 
 export const tutorialLinks = [
 	"https://izzi-xenex.xyz/blogs/raids-beginner-guide",
@@ -610,14 +554,14 @@ export const PVP_XP = {
 	WIN: 4,
 	LOSS: 4,
 	MMR_GAIN: 1,
-	MMR_LOSS: 1
+	MMR_LOSS: 1,
 };
 
 export const LOW_LEVEL_THRESHOLD = 25;
 
-export const RAID_CAP_PERCENT: {[key: string]: number;} = {
+export const RAID_CAP_PERCENT: { [key: string]: number } = {
 	easy: 10,
 	medium: 7,
 	hard: 6,
-	immortal: 5
+	immortal: 5,
 };

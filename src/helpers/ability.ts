@@ -1,43 +1,50 @@
+import { RankProps } from "./helperTypes";
+import { ranksMeta } from "./rankConstants";
+
 type T = { [key: string]: { operator: string; number: number; }};
 
-export const calcPercentRatio = (num: number, rank: string) => {
+export const calcPercentRatio = (num: number, rank: RankProps) => {
 	const rankRatio: T = {
-		silver: {
+		[ranksMeta.silver.name]: {
 			operator: "-",
 			number: 2,
 		},
-		gold: {
+		[ranksMeta.gold.name]: {
 			operator: "-",
 			number: 2,
 		},
-		platinum: {
+		[ranksMeta.platinum.name]: {
 			operator: "-",
 			number: 4,
 		},
-		diamond: {
+		[ranksMeta.diamond.name]: {
 			operator: "-",
 			number: 4,
 		},
-		legend: {
+		[ranksMeta.divine.name]: {
 			operator: "-",
 			number: 8,
 		},
-		divine: {
+		[ranksMeta.legend.name]: {
 			operator: "+",
 			number: 8,
 		},
-		immortal: {
+		[ranksMeta.immortal.name]: {
 			operator: "+",
 			number: 12,
 		},
-		exclusive: {
+		[ranksMeta.exclusive.name]: {
 			operator: "+",
 			number: 12,
 		},
-		ultimate: {
+		[ranksMeta.ultimate.name]: {
 			operator: "+",
 			number: 14,
 		},
+		// [ranksMeta.mythical.name]: {
+		// 	operator: "+",
+		// 	number: 16
+		// }
 	};
   
 	// const operators = {

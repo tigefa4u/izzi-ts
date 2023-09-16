@@ -1,5 +1,6 @@
 import { CardParams, CardProps, RandomCardProps } from "@customTypes/cards";
 import connection from "db";
+import { RankProps } from "helpers/helperTypes";
 import { clone } from "utility";
 
 const tableName = "cards";
@@ -143,7 +144,7 @@ export const getBySeries: (params: { series: string }) => Promise<CardProps[]> =
   };
 
 export const getForWorldBoss = (params: {
-  rank: string;
+  rank: RankProps;
   hasEventEnded?: boolean;
   id?: number | number[];
   filter?: { fromDate: Date; toDate: Date }

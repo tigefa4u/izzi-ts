@@ -7,11 +7,11 @@ import {
 	CONSOLE_BUTTONS,
 	LOW_LEVEL_THRESHOLD,
 	MAX_MANA_GAIN,
-	ranksMeta,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 } from "helpers/constants";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { clone } from "utility";
 

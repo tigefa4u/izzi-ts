@@ -2,13 +2,14 @@ import { IgnoreProps } from "@customTypes";
 import { CharacterCanvasProps } from "@customTypes/canvas";
 import { CardMetadataProps } from "@customTypes/cards";
 import { CharacterStatProps } from "@customTypes/characters";
+import { RankProps } from "helpers/helperTypes";
 
 export type CollectionProps = {
   id: number;
   user_id: number;
   character_id: number;
   character_level: number;
-  rank: string;
+  rank: RankProps;
   is_on_market: boolean;
   is_item: boolean;
   item_id: number;

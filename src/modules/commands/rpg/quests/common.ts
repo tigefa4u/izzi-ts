@@ -15,11 +15,11 @@ import {
 	DEFAULT_QUEST_COMPLETE_TITLE,
 	DOT,
 	QUEST_TYPES,
-	ranksMeta,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareRewards } from "helpers/embedLists/quests";
 import { RanksMetaProps } from "helpers/helperTypes";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

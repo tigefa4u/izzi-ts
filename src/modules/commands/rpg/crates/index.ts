@@ -18,6 +18,7 @@ import { probability } from "helpers";
 import { BASE_XP, PAGE_FILTER, XP_GAIN_EXPONENT } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCrateList } from "helpers/embedLists/crates";
+import { RankProps } from "helpers/helperTypes";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -49,7 +50,7 @@ async function openCrate({ context, client, args, options }: BaseProps) {
 			ranks.push(key);
 			probabilities.push(crate.contents.cards[key as keyof XPGainPerRankProps]);
 		});
-		const cardsReceived: { rank: string; name: string }[] = [];
+		const cardsReceived: { rank: RankProps; name: string }[] = [];
 		const collectionBody: CollectionCreateProps[] = [];
 		const num = crate.contents.numberOfCards || 1;
 		for (let i = 0; i < num; i ++) {

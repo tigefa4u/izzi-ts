@@ -3,7 +3,6 @@ import {
 	ConfirmationInteractionParams,
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { PLProps } from "@customTypes/powerLevel";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
 import { updateCollection } from "api/controllers/CollectionsController";
 import { getPowerLevelByRankId } from "api/controllers/PowerLevelController";
@@ -17,9 +16,9 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MAX_CONSUMABLE_SOULS,
-	ranksMeta,
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";

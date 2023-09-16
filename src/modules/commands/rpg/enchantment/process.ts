@@ -6,7 +6,7 @@ import {
 	ProcessEnchantmentProps,
 } from "@customTypes/enchantment";
 import { getCollection } from "api/controllers/CollectionsController";
-import { XP_GAIN_PER_RANK } from "helpers/constants";
+import { ranksMeta, XP_GAIN_PER_RANK } from "helpers/rankConstants";
 import loggers from "loggers";
 
 export async function prepareRankAndFetchCards({
@@ -133,7 +133,7 @@ export async function prepareRankAndFetchCards({
 					}
 				);
 				const initialPayload = preparePayload(
-					newRank || "silver",
+					newRank || ranksMeta.silver.name,
 					newCondition,
 					initialRequestPayload.bucket,
 					withDifferentName,
@@ -231,7 +231,7 @@ export async function prepareRankAndFetchCards({
 }
 
 export async function fetchRequiredCards({
-	rank = "silver",
+	rank = ranksMeta.silver.name,
 	user_id,
 	limit,
 	exclude_ids = [],
@@ -283,7 +283,7 @@ function prepareIteration(
 			newStashCondition,
 		};
 	}
-	if (rank === "silver" && stashRank === "gold") {
+	if (rank === ranksMeta.silver.name && stashRank === ranksMeta.gold.name) {
 		return prepareBaseIteration({
 			rank,
 			stashRank,
@@ -321,10 +321,10 @@ function prepareBaseIteration({
 	newCondition,
 	newStashCondition,
 }: IterationProps) {
-	newRank = "platinum";
+	newRank = ranksMeta.platinum.name;
 	newCondition = isSameName ? true : false;
 	if (isSameName === true) {
-		newStashRank = "silver";
+		newStashRank = ranksMeta.silver.name;
 		newStashCondition = false;
 	}
 
@@ -345,7 +345,7 @@ function prepareEOI({
 	newCondition,
 	newStashCondition,
 }: IterationProps) {
-	if (rank === "platinum" && stashRank === "silver") {
+	if (rank === ranksMeta.platinum.name && stashRank === ranksMeta.silver.name) {
 		newRank = "gold";
 		newStashRank = "platinum";
 		newCondition = false;

@@ -26,12 +26,12 @@ import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
-	ranksMeta,
 	STARTER_CARD_EXP,
 	STARTER_CARD_R_EXP,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { getReqSouls } from "helpers/evolution";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

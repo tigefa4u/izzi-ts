@@ -27,13 +27,13 @@ import {
 	CONSOLE_BUTTONS,
 	LOW_LEVEL_THRESHOLD,
 	MAX_MANA_GAIN,
-	ranksMeta,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 	USER_XP_GAIN_PER_BATTLE,
 	XP_GAIN_EXPONENT,
 } from "helpers/constants";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

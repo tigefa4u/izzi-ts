@@ -1,5 +1,6 @@
 import { ChannelProp, FilterProps, XPGainPerRankProps } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
+import { RankProps } from "helpers/helperTypes";
 
 export type ProcessEnchantmentProps = {
     reqExp: number;
@@ -37,7 +38,7 @@ export type EnchantmentBucketPayload = {
 
 export type EnchantmentAccumulatorProps = {
     id: number;
-    rank: string;
+    rank: RankProps;
     character_id: number;
 }
 

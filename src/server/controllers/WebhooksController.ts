@@ -19,6 +19,7 @@ import {
 	createCollection,
 	directUpdateCreateFodder,
 } from "api/controllers/CollectionsController";
+import { ranksMeta } from "helpers/rankConstants";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {
@@ -185,17 +186,18 @@ const monthlyCardMatrix = [
 		reward: {
 			type: "fodder",
 			number: 30,
-			rank: "platinum",
-			rank_id: 3,
+			rank: ranksMeta.platinum.name,
+			rank_id: ranksMeta.platinum.rank_id,
 		},
 	},
+	// Need to add Mythical rank to rewards.
 	{
 		vote: 7,
 		reward: {
 			type: "immortal",
 			number: 1,
-			rank: "immortal",
-			rank_id: 7,
+			rank: ranksMeta.immortal.name,
+			rank_id: ranksMeta.immortal.rank_id,
 		},
 	},
 	{

@@ -1,6 +1,6 @@
 import { MapProps } from "@customTypes";
 
-export type Ranks =
+export type RankProps =
   | "silver"
   | "gold"
   | "platinum"
@@ -9,14 +9,16 @@ export type Ranks =
   | "immortal"
   | "ultimate"
   | "legend"
-  | "divine";
+  | "divine"
+  // | "mythical";
 export type RanksMetaProps = {
-  [key in Ranks]: {
+  [key in RankProps]: {
     size: number;
     rank_id: number;
     color?: string;
     max_level?: number;
     emoji: string;
+    name: RankProps;
   };
 };
 

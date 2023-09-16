@@ -1,5 +1,6 @@
 import { CardParams, CardProps } from "@customTypes/cards";
 import Cache from "cache";
+import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import * as Cards from "../models/Cards";
 
@@ -7,7 +8,7 @@ type CProps = CardProps[] | CardProps;
 
 export const getCharacterCardByRank: (params: {
     character_id: number;
-    rank: string;
+    rank: RankProps;
 }) => Promise<CardProps | undefined> = async function(params) {
 	try {
 		const key = `card::ch-${params.character_id}:${params.rank}`;

@@ -10,12 +10,13 @@ import { GuildStatProps } from "@customTypes/guilds";
 import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { overallStats, prepareStatsDesc } from "helpers";
+import { overallStats } from "helpers";
 import loggers from "loggers";
 import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
-import { DEFAULT_DPR, ELEMENTAL_ADVANTAGES, ranksMeta } from "./constants";
-import { RanksMetaProps } from "./helperTypes";
+import { DEFAULT_DPR, ELEMENTAL_ADVANTAGES } from "./constants";
+import { RankProps, RanksMetaProps } from "./helperTypes";
+import { ranksMeta } from "./rankConstants";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];
@@ -48,7 +49,7 @@ export const preparePlayerStats = async ({
 }: {
   stats: CharacterStatProps;
   characterLevel: number;
-  rank: string;
+  rank: RankProps;
   guildStats?: GuildStatProps;
 }): Promise<{
   playerStats: BattleStats["totalStats"];

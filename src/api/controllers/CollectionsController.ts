@@ -14,16 +14,16 @@ import {
 import { ItemProps } from "@customTypes/items";
 import { PageProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
-import Cache from "cache";
 import {
-	CHARACTER_LEVEL_EXTENDABLE_LIMIT, FODDER_RANKS, ranksMeta, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
+	CHARACTER_LEVEL_EXTENDABLE_LIMIT, FODDER_RANKS, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
 } from "helpers/constants";
 import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";
-import { getCharacterById, getCharacters } from "./CharactersController";
+import { getCharacters } from "./CharactersController";
 import { getItemById } from "./ItemsController";
 
 type T = { user_id: number; };

@@ -13,10 +13,10 @@ import {
 	LOW_LEVEL_THRESHOLD,
 	MANA_PER_BATTLE,
 	MAX_GOLD_THRESHOLD,
-	ranksMeta,
 	REQUIRED_TRADE_LEVEL,
 	USER_XP_GAIN_PER_BATTLE,
 } from "helpers/constants";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -237,7 +237,7 @@ export const processBattleTransaction = async ({
 						`• You have gained __${xpGain}__xp and received __${
 							numericWithComma(userRewards?.goldReward || 0)
 						}__ gold ${emoji.gold}\n• __${multiplier}x__ ${titleCase(
-							userRewards?.rankReward || "silver"
+							userRewards?.rankReward || ranksMeta.silver.name
 						)} copy of ${titleCase(enemyCard.name)}\n**${titleCase(
 							card.name
 						)}** has also gained __${cardXpGain}xp__ through this battle!`

@@ -15,7 +15,6 @@ import {
 	BASE_RANK,
 	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
-	ranksMeta,
 } from "helpers/constants";
 import { AuthorProps, ChannelProp, FilterProps } from "@customTypes";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
@@ -39,8 +38,9 @@ import { floor } from "modules/commands/rpg/zoneAndFloor/floor";
 import { getZoneByLocationId } from "api/controllers/ZonesController";
 import emoji from "emojis/emoji";
 import { getCharacterPriceList } from "api/controllers/CharacterPriceListsController";
-import { RanksMetaProps } from "helpers/helperTypes";
+import { RankProps, RanksMetaProps } from "helpers/helperTypes";
 import { getCustomServerCardByCharacterId } from "api/controllers/CustomServerCardsController";
+import { ranksMeta } from "helpers/rankConstants";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -117,7 +117,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			cname = params.name[0];
 		}
 		if (typeof params.rank === "object") {
-			params.rank = params.rank[0]?.trim() || BASE_RANK;
+			params.rank = params.rank[0]?.trim() as RankProps || BASE_RANK;
 		} else {
 			params.rank = BASE_RANK;
 		}
@@ -298,7 +298,7 @@ async function showCharacterDetails(
 	if (filterParams?.rank) {
 		const ranks = Object.keys(ranksMeta);
 		const idx = ranks.findIndex((r) =>
-			r.includes(filterParams.rank || "silver")
+			r.includes(filterParams.rank || ranksMeta.silver.name)
 		);
 		if (idx > 0) {
 			pageFilters.currentPage = idx + 1;
@@ -375,7 +375,7 @@ const fetchCharacterInfoMeta = async (
   },
 	filter: PageProps
 ) => {
-	const ranks = Object.keys(ranksMeta);
+	const ranks = Object.keys(ranksMeta) as RankProps[];
 	const rank = ranks.slice(filter.currentPage - 1, filter.currentPage)[0];
 	const clonedCharacter = clone(params.character);
 	if (params.refetchCard) {
@@ -416,7 +416,7 @@ const fetchCharacterInfoMeta = async (
 		clonedCharacter.averageMarketPrice =
       characterPriceList?.average_market_price;
 	}
-	if (rank === "silver") {
+	if (rank === ranksMeta.silver.name) {
 		clonedCharacter.stats = params.character.stats;
 	}
 	return {

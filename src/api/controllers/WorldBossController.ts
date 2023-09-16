@@ -30,6 +30,7 @@ import { CrateProps } from "@customTypes/crates";
 import { RandomCardProps } from "@customTypes/cards";
 import { clone } from "utility";
 import { directUpdateCreateFodder } from "./CollectionsController";
+import { RankProps } from "helpers/helperTypes";
 
 export const getAllWorldBossForMarket = async (
 	params = {},
@@ -168,7 +169,7 @@ export const getWorldBossRaid = async (params?: { is_start: boolean }) => {
 	}
 };
 
-export const getWorldBossToSpawn = async (params: { rank: string }) => {
+export const getWorldBossToSpawn = async (params: { rank: RankProps }) => {
 	try {
 		loggers.info("Fetching world boss card...");
 		return Cards.getForWorldBoss({

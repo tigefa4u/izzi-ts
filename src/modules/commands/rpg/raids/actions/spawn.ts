@@ -34,6 +34,7 @@ import {
 	TAX_PAYER_RAID_PITY_THRESHOLD,
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
+import { RankProps } from "helpers/helperTypes";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
@@ -79,7 +80,7 @@ const raidDivisions = {
 const calculateDropRateByBossLevel = (
 	level: number,
 	loot: RaidLootProps,
-	rank: string
+	rank: RankProps
 ) => {
 	let category = "d3" as keyof ComputedCategoryProps;
 	if (D2_RANKS.includes(rank)) {
@@ -219,6 +220,12 @@ export const createRaidBoss = async ({
 	}
 	const raidBosses = cards.map((c) => {
 		c.character_level = Math.floor(computedLevel / limit);
+		/**
+		 * Boosting PL since 1 raid boss is kinda too easy
+		 */
+		if (c.character_level < 800 && cards.length <= 1) {
+			c.character_level = c.character_level * 1.25;
+		}
 		return {
 			...c,
 			copies: 1,

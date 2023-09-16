@@ -5,9 +5,9 @@ import { getWorldBossRaid } from "api/controllers/WorldBossController";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
 import { numericWithComma } from "helpers";
-import { ranksMeta } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
-import { RanksMetaProps } from "helpers/helperTypes";
+import { RankProps, RanksMetaProps } from "helpers/helperTypes";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { start } from "modules/commands/rpg/profile/startJourney";
 
@@ -20,9 +20,9 @@ export const setCharacterRank = async ({ client, context, options, args }: BaseP
 		}
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
-		const rank = args.shift();
+		const rank = args.shift() as RankProps;
 		if (!rank) return;
-		const rankFound = ranksMeta[rank as keyof RanksMetaProps];
+		const rankFound = ranksMeta[rank];
 		if (!rankFound) return;
 		await updateCollection({ id }, {
 			rank,

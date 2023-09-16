@@ -1,11 +1,11 @@
 import { BattleProcessProps } from "@customTypes/adventure";
-import { updateCollection } from "api/controllers/CollectionsController";
 import transaction from "db/transaction";
 import { emojiMap } from "emojis";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
-import { FODDER_RANKS, ranksMeta } from "helpers/constants";
+import { FODDER_RANKS } from "helpers/constants";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { processItemStats } from "..";

@@ -1,5 +1,6 @@
 import { AssetImageProps, IgnoreProps } from "@customTypes";
 import { CharacterDetailsProps } from "@customTypes/characters";
+import { RankProps } from "helpers/helperTypes";
 
 type Versions = "default" | "medium" | "small"
 export type CardMetadataAssetProps = {
@@ -20,7 +21,7 @@ export type CardProps = {
 	filepath: string;
 	copies: number;
 	series: string;
-	rank: string;
+	rank: RankProps;
 	character_id: number;
     shard_cost: number;
 	is_logo: boolean;

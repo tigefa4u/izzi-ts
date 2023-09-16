@@ -15,6 +15,8 @@ import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { nanoid } from "nanoid";
+import { ranksMeta } from "./rankConstants";
+import { RankProps } from "./helperTypes";
 
 export const generateUUID = (n: number): string => {
 	return nanoid(n);
@@ -29,7 +31,7 @@ export const generateUUID = (n: number): string => {
 	// return ("" + number).substring(add);
 };
 
-export const prepareAbilityDescription = (desc = "", rank?: string) => {
+export const prepareAbilityDescription = (desc = "", rank?: RankProps) => {
 	return desc
 		.replace(/\{(.*?)\}/gm, (num) => replaceDescriptionNumber(num, rank))
 		.replace(/\[(.*?)\]/gm, (num) =>
@@ -125,18 +127,19 @@ type T = {
   [key: string]: number;
 };
 const baseStatsRatioPercent: T = {
-	silver: 0,
-	gold: 0,
-	platinum: 0,
-	diamond: 40,
-	legend: 60,
-	divine: 80,
-	immortal: 100,
-	exclusive: 120,
-	ultimate: 140,
+	[ranksMeta.silver.name]: 0,
+	[ranksMeta.gold.name]: 0,
+	[ranksMeta.platinum.name]: 0,
+	[ranksMeta.diamond.name]: 40,
+	[ranksMeta.legend.name]: 60,
+	[ranksMeta.divine.name]: 80,
+	[ranksMeta.immortal.name]: 100,
+	[ranksMeta.exclusive.name]: 120,
+	[ranksMeta.ultimate.name]: 140,
+	// [ranksMeta.mythical.name]: 160
 };
 
-export const baseStatRatio = (stat: number, rank: string) =>
+export const baseStatRatio = (stat: number, rank: RankProps) =>
 // the stat ratio is for level 1
 	Math.floor(stat + stat * (baseStatsRatioPercent[rank] / 100));
 
@@ -267,7 +270,7 @@ type G = {
 
 export const prepareStatsDesc = <T extends OverallStatsProps>(
 	stats: T & G,
-	rank = "silver"
+	rank = ranksMeta.silver.name
 ) => {
 	const desc = `**ATK:** ${stats.vitality}${
 		stats.vitalityBonus ? ` (+${stats.vitalityBonus})` : ""

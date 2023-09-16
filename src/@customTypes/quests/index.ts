@@ -1,5 +1,6 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { Client } from "discord.js";
+import { RankProps } from "helpers/helperTypes";
 
 export type QuestDifficulty = "EASY" | "MEDIUM" | "HARD";
 export type QuestTypes =
@@ -20,7 +21,7 @@ export type QuestReward = {
     name: string;
     amount: number;
     description?: string;
-    rank?: string;
+    rank?: RankProps;
     emoji?: string;
   };
 };
@@ -90,5 +91,5 @@ export type QuestCompleteCardRewardProps = {
     rank_id: number;
     character_id: number;
     user_id: number;
-    rank: string;
+    rank: RankProps;
   }

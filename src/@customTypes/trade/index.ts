@@ -2,6 +2,7 @@ import { AuthorProps, ChannelProp } from "@customTypes";
 import { CollectionProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { Client, MessageEmbed } from "discord.js";
+import { RankProps } from "helpers/helperTypes";
 
 export type TradeQueueProps = {
     [key: string]: {
@@ -12,7 +13,7 @@ export type TradeQueueProps = {
         queue: {
             id: number;
             user_id: number;
-            rank: string;
+            rank: RankProps;
             name?: string;
             is_fodder?: boolean;
             count: number;

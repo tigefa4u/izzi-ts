@@ -1,4 +1,5 @@
 import { Client, CommandInteraction, Message, MessageButtonStyleResolvable } from "discord.js";
+import { RankProps } from "helpers/helperTypes";
 import { CharacterStatProps } from "./characters";
 import { PagingMetadata } from "./pagination";
 
@@ -6,7 +7,7 @@ export type IgnoreProps = "id" | "created_at" | "updated_at"
 
 export type FilterProps = {
     name?: string | string[];
-    rank?: string | string[];
+    rank?: RankProps | RankProps[];
     type?: string | string[];
     abilityname?: string | string[];
     series?: string;
@@ -48,16 +49,7 @@ export type ParamsFromArgsRT<T> = {
 }
 
 export type XPGainPerRankProps = {
-    silver: number;
-    gold: number;
-    platinum: number;
-    diamond: number;
-    legend: number;
-    divine: number;
-    immortal: number;
-    exclusive: number;
-    ultimate: number;
-    prestige: number;
+    [rank in RankProps]: number;
 }
 
 export type AssetImageProps = {

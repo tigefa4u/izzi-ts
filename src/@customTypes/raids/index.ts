@@ -3,6 +3,7 @@ import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { Client } from "discord.js";
+import { RankProps } from "helpers/helperTypes";
 
 export type RaidActionProps = BaseProps & {
     isEvent: boolean;
@@ -34,7 +35,7 @@ export type RaidLobbyProps = {
 }
 
 export type RaidLootDropProps = {
-    rank: string;
+    rank: RankProps;
     rank_id: number;
     number: number;
     rate?: number;
@@ -54,7 +55,7 @@ export type RaidLootProps = {
         worldBoss?: {
             gold: number;
             default: {
-                rank: string;
+                rank: RankProps;
                 rank_id: number;
                 number: number;
                 rate: number;
@@ -122,7 +123,7 @@ export type PrepareLootProps = {
     bosses: number;
     difficulty: string;
     level: number[];
-    rank: string[];
+    rank: RankProps[];
     group_id?: number;
     extras?: any;
 }

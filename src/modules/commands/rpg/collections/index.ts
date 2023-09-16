@@ -4,10 +4,11 @@ import { getAllCollections, getTotalFodders } from "api/controllers/CollectionsC
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { CONSOLE_BUTTONS, PAGE_FILTER, ranksMeta } from "helpers/constants";
+import { CONSOLE_BUTTONS, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
 import { RanksMetaProps } from "helpers/helperTypes";
+import { ranksMeta } from "helpers/rankConstants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { clone } from "utility";

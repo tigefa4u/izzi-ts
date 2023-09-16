@@ -14,6 +14,7 @@ import {
 	XP_GAIN_EXPONENT,
 } from "helpers/constants";
 import { prepareXpGainObject } from "helpers/enchantment";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { prepareRankAndFetchCards } from "./process";
 
@@ -224,8 +225,8 @@ function preparePayloadRank(rank?: string | string[]) {
     rank.length > 2 ||
     rank.length <= 0
 	) {
-		payloadRank = "silver";
-		stashRank = "gold";
+		payloadRank = ranksMeta.silver.name;
+		stashRank = ranksMeta.gold.name;
 	} else {
 		payloadRank = rank[0] as Key;
 		stashRank = rank[1] as Key;

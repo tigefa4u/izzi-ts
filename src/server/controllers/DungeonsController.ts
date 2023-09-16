@@ -3,6 +3,7 @@ import Cache from "cache";
 import connection from "db";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import { success } from "server/responses";
@@ -80,12 +81,13 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				divine: 23,
-				immortal: 50,
-				exclusive: 20,
-				ultimate: 7 
+				[ranksMeta.divine.name]: 23,
+				[ranksMeta.immortal.name]: 50,
+				[ranksMeta.exclusive.name]: 20,
+				[ranksMeta.ultimate.name]: 7,
+				// [ranksMeta.mythical.name]: 1
 			},
-			numberOfCards: randomNumber(3, 5),
+			numberOfCards: randomNumber(3, 4),
 			orbs: randomNumber(150, 300)
 		},
 		is_on_market: false,
@@ -95,10 +97,10 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				legend: 58,
-				divine: 22,
-				immortal: 15,
-				exclusive: 5
+				[ranksMeta.legend.name]: 58,
+				[ranksMeta.divine.name]: 22,
+				[ranksMeta.immortal.name]: 15,
+				[ranksMeta.exclusive.name]: 5
 			},
 			numberOfCards: randomNumber(2, 3),
 			orbs: randomNumber(100, 200)
@@ -110,8 +112,8 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				diamond: 50,
-				legend: 50
+				[ranksMeta.diamond.name]: 50,
+				[ranksMeta.legend.name]: 50
 			},
 			numberOfCards: randomNumber(1, 2)
 		},

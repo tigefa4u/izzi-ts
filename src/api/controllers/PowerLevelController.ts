@@ -1,9 +1,10 @@
 import { PLProps } from "@customTypes/powerLevel";
 import Cache from "cache";
+import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import * as Ranks from "../models/Ranks";
 
-export const getPowerLevelByRank = async (params: { rank: string }): Promise<PLProps | undefined> => {
+export const getPowerLevelByRank = async (params: { rank: RankProps }): Promise<PLProps | undefined> => {
 	try {
 		const key = `PL::${params.rank}`;
 		const result = await Cache.fetch(key, async () => {

@@ -2,14 +2,14 @@ import { ProcessQuestProps } from "@customTypes/quests";
 import { RaidLobbyProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
-import { Ranks } from "helpers/helperTypes";
+import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import { clone } from "utility";
 import { fetchAndCompleteQuest } from "../common";
 
 export const processRaidChallengeQuest = async <ET extends {
     lobby: RaidLobbyProps;
-    raidRank: Ranks;
+    raidRank: RankProps;
     characterId: number;
     raidId: number;
 }>(params: ProcessQuestProps<ET>) => {
