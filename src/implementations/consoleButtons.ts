@@ -46,7 +46,11 @@ const prepareConsoleDescription = async (
 		isEvent = true;
 	}
 	const cdKey = `${isEvent ? "event" : "raid"}-spawn`;
-	const raidCD = await getCooldown(user.user_tag, cdKey);
+	const customSpawn = "raid-customspawn";
+	const [ raidCD, customSpawnCD ] = await Promise.all([
+		getCooldown(user.user_tag, cdKey),
+		getCooldown(user.user_tag, customSpawn)
+	]);
 	let remainingMins = 0,
 		remainingHours = 0,
 		remainingSec = 0;
@@ -59,6 +63,20 @@ const prepareConsoleDescription = async (
 	}
 	if (remainingSec <= 0 && remainingMins <= 0) {
 		isRaidSpawnReady = true;
+	}
+
+	let cremainingMins = 0,
+		cremainingHours = 0,
+		cremainingSec = 0;
+	let isCustomSpawnReady = false;
+	if (customSpawnCD) {
+		const customSpawnCDTimer = getCDRemainingTime(customSpawnCD, user.user_tag, customSpawn);
+		cremainingMins = customSpawnCDTimer.remainingMinutes;
+		cremainingHours = customSpawnCDTimer.remainingHours;
+		cremainingSec = customSpawnCDTimer.remainingSec;
+	}
+	if (cremainingSec <= 0 && cremainingMins <= 0) {
+		isCustomSpawnReady = true;
 	}
 	const selectedSkins = await getSkinArr(user.user_tag);
 	// let raidSpawnDifficulty = "Use ``console rconfig <difficulty>(e/m/h/i)``";
@@ -114,6 +132,10 @@ const prepareConsoleDescription = async (
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins ${remainingSec} secs`
+    }\n**:ticket: Custom Raid Spawn:** ${
+    	isCustomSpawnReady
+    		? "Ready"
+    		: `${cremainingHours} hours ${cremainingMins} mins ${cremainingSec} secs`
     }\n**:watch: Hourly**: ${
     	hourlyTTlToMin > 0 && hourlyTTlToSec >= 0
     		? `${hourlyTTlToMin - 1} mins ${hourlyTTlToSec} secs`
