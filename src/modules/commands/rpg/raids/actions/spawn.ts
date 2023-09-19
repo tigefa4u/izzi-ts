@@ -224,7 +224,7 @@ export const createRaidBoss = async ({
 		 * Boosting PL since 1 raid boss is kinda too easy
 		 */
 		if (c.character_level < 800 && cards.length <= 1) {
-			c.character_level = c.character_level * 1.25;
+			c.character_level = Math.floor(c.character_level * 1.25);
 		}
 		return {
 			...c,
