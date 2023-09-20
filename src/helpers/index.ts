@@ -153,6 +153,18 @@ export const calcPower = (
 	return Math.floor((max_power / max_level) * currentLevel) + statValue;
 };
 
+/**
+ * The stat is being boosted twice. Base stat inc and PL inc.
+ * The `max_power` indicates the boost a stat can gain based on rank.
+ * `ex: max_power 40 means if base stat is 85, you can get up to 85 + 40 at max_level`
+ * to boost the stat.
+ * Note: There is no need to use `baseStatRatio` since the PL will take care of it..
+ * I'm not fixing it since it will affect the stats again.
+ * @param stat 
+ * @param character_level 
+ * @param levelPower 
+ * @returns 
+ */
 export const calcStat = (
 	stat: number,
 	character_level: number,
