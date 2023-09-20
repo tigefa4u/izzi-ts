@@ -192,9 +192,9 @@ export const spellBook = ({
 			"nothing",
 		]);
 		// calculate % based on rank
-		// Cast a spell on all enemies dealing bonus magic damage or gain __8%__ SPD/HP based on your speed.
+		// Cast a spell on all enemies dealing 25% bonus magic damage or gain __10%__ SPD/HP based on your speed.
 		// proc every round [PSV]
-		const percent = calcPercentRatio(8, card.rank);
+		const percent = calcPercentRatio(10, card.rank);
 		let ratio = getRelationalDiff(
 			basePlayerStats.totalStats.dexterity,
 			percent
@@ -218,7 +218,12 @@ export const spellBook = ({
 		} else if (temp === "nothing") {
 			desc = "**but nothing happened.**";
 		} else if (temp === "vitality") {
-			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
+			const damagePercent = calcPercentRatio(25, card.rank);
+			const damageRatio = getRelationalDiff(
+				playerStats.totalStats.dexterity,
+				damagePercent
+			);
+			playerStats.totalStats.vitality = playerStats.totalStats.vitality + damageRatio;
 			const tempDamage = getPlayerDamageDealt(
 				playerStats.totalStats,
 				opponentStats.totalStats,
@@ -252,7 +257,9 @@ export const spellBook = ({
 			);
 			if (opponentStats.totalStats.strength < 0)
 				opponentStats.totalStats.strength = 0;
-			playerStats.totalStats.vitality = playerStats.totalStats.vitality - ratio;
+
+			playerStats.totalStats.vitality = playerStats.totalStats.vitality - damageRatio;
+
 			desc = `dealing __${abilityDamage}__ **${titleCase(
 				randomElement
 			)} ${emojiMap(randomElement)}** damage to **__${opponentStats.name}__**${

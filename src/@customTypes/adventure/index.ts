@@ -106,6 +106,7 @@ export type AbilityStackProps = StatStateProps &
     bleedResetOnRound?: number;
     restrictionResetOnRound?: number;
     crusherResetOnRound?: number;
+    stormrazorResetOnRound?: number;
     isUseBleed?:boolean;
     isGuardianAngel?: boolean;
     resistByFutureSightPercent?: number;

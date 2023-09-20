@@ -160,9 +160,9 @@ export const calcStat = (
 ) => {
 	const temp = baseStatRatio(stat, levelPower.rank);
 	// compute max power since there's a % inc with each level
-	levelPower.max_power = Math.round(
-		stat * ((baseStatsRatioPercent[levelPower.rank] + 20) / 100)
-	);
+	// levelPower.max_power = Math.round(
+	// 	stat * ((baseStatsRatioPercent[levelPower.rank] + 20) / 100)
+	// );
 	return calcPower(levelPower, character_level, temp);
 };
 

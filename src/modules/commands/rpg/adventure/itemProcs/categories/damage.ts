@@ -20,7 +20,7 @@ export const duskbladeOfDraktharr = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -46,7 +46,7 @@ export const duskbladeOfDraktharr = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
@@ -93,7 +93,7 @@ export const youmuusGhostblade = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
@@ -114,7 +114,7 @@ export const navoriQuickblades = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -140,7 +140,7 @@ export const navoriQuickblades = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
@@ -163,7 +163,7 @@ export const desolator = ({
 	simulation,
 	isRaid,
 	multiplier,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -179,7 +179,8 @@ export const desolator = ({
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];
 			if (canStealSouls && !FODDER_RANKS.includes(card.rank)) {
-				const soulsToSeal = (opponentStats.cards.length || 0) * (multiplier || 1);
+				const soulsToSeal =
+          (opponentStats.cards.length || 0) * (multiplier || 1);
 				desc =
           desc +
           `**${playerStats.name}'s ${titleCase(
@@ -195,7 +196,7 @@ export const desolator = ({
 						const updatedId = await trx.raw(`update collections set 
 						souls = souls + ${soulsToSeal} where id = ${card.id} returning id`);
 						if (!updatedId) {
-							loggers.info("could not add souls to cid: ", card);	
+							loggers.info("could not add souls to cid: ", card);
 							return trx.rollback();
 						}
 						return trx.commit();
@@ -221,7 +222,7 @@ export const desolator = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	opponentStats.totalStats.defense = opponentStats.totalStats.defense - 10;
@@ -243,7 +244,7 @@ export const stormrazor = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -268,42 +269,44 @@ export const stormrazor = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
-	const hasElectrocute = playerStats.cards.find((c) => c?.abilityname === "electrocute");
-	
+	const hasElectrocute = playerStats.cards.find(
+		(c) => c?.abilityname === "electrocute"
+	);
+
 	if (!hasElectrocute) {
-		playerStats.totalStats.previousRound
-			? playerStats.totalStats.previousRound++
-			: null;
-		if (playerStats.totalStats.previousRound && round >= playerStats.totalStats.previousRound) {
-			if (opponentStats.totalStats.isStunned) {
+		if (opponentStats.totalStats.isStunned) {
+			if (
+				playerStats.totalStats.stormrazorResetOnRound &&
+        round >= playerStats.totalStats.stormrazorResetOnRound
+			) {
 				opponentStats.totalStats.isStunned = false;
 			}
-		}
-
-		const stunChance = [ 5, 100 ];
-		const stuns = [ true, false ];
-		if (stuns[probability(stunChance)]) {
-			playerStats.totalStats.previousRound = round;
-			opponentStats.totalStats.isStunned = true;
-			prepSendAbilityOrItemProcDescription({
-				playerStats,
-				enemyStats: opponentStats,
-				card,
-				message,
-				embed,
-				round,
-				isDescriptionOnly: false,
-				description: `**${opponentStats.name}** is __Stunned__, affected by **Stormrazor**`,
-				totalDamage: 0,
-				isPlayerFirst,
-				isItem: true,
-				simulation,
-				baseEnemyStats,
-				basePlayerStats
-			});
+		} else {
+			const stunChance = [ 5, 100 ];
+			const stuns = [ true, false ];
+			if (stuns[probability(stunChance)]) {
+				playerStats.totalStats.stormrazorResetOnRound = round + 1;
+				opponentStats.totalStats.isStunned = true;
+				prepSendAbilityOrItemProcDescription({
+					playerStats,
+					enemyStats: opponentStats,
+					card,
+					message,
+					embed,
+					round,
+					isDescriptionOnly: false,
+					description: `**${opponentStats.name}** is __Stunned__, affected by **Stormrazor**`,
+					totalDamage: 0,
+					isPlayerFirst,
+					isItem: true,
+					simulation,
+					baseEnemyStats,
+					basePlayerStats,
+				});
+			}
 		}
 	}
 
@@ -324,7 +327,7 @@ export const krakenSlayer = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -349,7 +352,7 @@ export const krakenSlayer = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
@@ -370,7 +373,7 @@ export const skullBasher = ({
 	card,
 	basePlayerStats,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card || !card.itemStats) return;
 	else if (round === 1) {
@@ -379,8 +382,9 @@ export const skullBasher = ({
 			card.itemStats
 		);
 		basePlayerStats.totalStats = playerStats.totalStats;
-		const desc = `and has gained __${card.itemStats.vitality}__ **ATK** ` +
-		"**Ability:** When the enemy **HP** drops below __10%__, increase the **ATK** of all allies by __95%__.";
+		const desc =
+      `and has gained __${card.itemStats.vitality}__ **ATK** ` +
+      "**Ability:** When the enemy **HP** drops below __10%__, increase the **ATK** of all allies by __95%__.";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -396,7 +400,7 @@ export const skullBasher = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
@@ -410,8 +414,9 @@ export const skullBasher = ({
 	if (opponentStats.totalStats.strength < hpRatio) {
 		const ratio = getRelationalDiff(playerStats.totalStats.vitality, 95);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
-		const desc = `**${titleCase(card.itemname || "")}** ${emojiMap(card.itemname)} ` +
-		"is **Thirsty for Blood**, increasing **ATK** of all allies by __95%__";
+		const desc =
+      `**${titleCase(card.itemname || "")}** ${emojiMap(card.itemname)} ` +
+      "is **Thirsty for Blood**, increasing **ATK** of all allies by __95%__";
 
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -427,13 +432,13 @@ export const skullBasher = ({
 			isItem: true,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 
 		return {
 			playerStats,
 			opponentStats,
 			basePlayerStats,
-		};	
+		};
 	}
 };
