@@ -54,6 +54,10 @@ export const computedCategoryData : ComputedCategoryProps = {
 			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 1.55
+			},
+			[ranksMeta.mythical.name]: {
+				cards: 3,
+				rate: 1.05
 			}
 		}
 	},
@@ -68,12 +72,16 @@ export const computedCategoryData : ComputedCategoryProps = {
 			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 2.15
-			} 
+			},
+			[ranksMeta.mythical.name]: {
+				cards: 3,
+				rate: 1.45
+			}
 		}
 	},
 	d1: {
 		maxlevel: 1800,
-		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name ],
+		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name, ranksMeta.mythical.name ],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 9,
@@ -82,7 +90,11 @@ export const computedCategoryData : ComputedCategoryProps = {
 			[ranksMeta.immortal.name]: {
 				cards: 3,
 				rate: 3.65
-			} 
+			},
+			[ranksMeta.mythical.name]: {
+				cards: 6,
+				rate: 1.95
+			}
 		}
 	}
 };
@@ -125,6 +137,14 @@ const baseLoot = (): any => ({
 						number: 1,
 					}
 				],
+				extraCards: [
+					{
+						rank: ranksMeta.mythical.name,
+						rank_id: ranksMeta.mythical.rank_id,
+						rate: -6,
+						number: 1
+					}
+				]
 			}
 		},
 		event: {
@@ -167,6 +187,14 @@ const baseLoot = (): any => ({
 						number: 1,
 					}
 				],
+				extraCards: [
+					{
+						rank: ranksMeta.mythical.name,
+						rank_id: ranksMeta.mythical.rank_id,
+						rate: -5.35,
+						number: 1
+					}
+				]
 			}
 		},
 		event: {
@@ -187,7 +215,7 @@ const baseLoot = (): any => ({
 			bosses: 1,
 			level: [ 200, 350 ],
 			rank: [ ranksMeta.platinum.name, ranksMeta.platinum.name ],
-			categories: [ "d3", "d2" ],
+			categories: [ "d3", "d2", "d1" ],
 			loot: {
 				gold: randomNumber(26000, 30000),
 				extraGold: randomNumber(25000, 32000),
@@ -213,8 +241,17 @@ const baseLoot = (): any => ({
 						number: 1,
 					}
 				],
+				extraCards: [
+					{
+						rank: ranksMeta.mythical.name,
+						rank_id: ranksMeta.mythical.rank_id,
+						rate: -4.7,
+						number: 1
+					}
+				],
 				worldBoss: {
 					// Per battle (50 mana) w 9x fodders
+					// you can get mythical cards from crates
 					gold: randomNumber(8000, 9000),
 					default: [ {
 						rank: ranksMeta.divine.name,
@@ -292,6 +329,14 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.immortal.rank_id,
 						rate: -3.15,
 						number: 1,
+					}
+				],
+				extraCards: [
+					{
+						rank: ranksMeta.mythical.name,
+						rank_id: ranksMeta.mythical.rank_id,
+						rate: -4,
+						number: 1
 					}
 				],
 			}

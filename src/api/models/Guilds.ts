@@ -57,6 +57,10 @@ export const get = async (params: GuildParams): Promise<GuildProps[]> => {
 	return connection(tableName).where(params);
 };
 
+export const getByGuildIds = async (guild_ids: string[]): Promise<GuildProps[]> => {
+	return connection(tableName).whereIn("guild_id", guild_ids);
+};
+
 export const getAll = async (): Promise<GuildProps[]> => {
 	return connection(tableName);
 };

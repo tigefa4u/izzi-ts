@@ -140,7 +140,8 @@ export const itemInfo = async ({
           `\n\n**Ability Grant**\n${item.description}`
 			)
 			.attachFiles([ attachment ])
-			.setThumbnail("attachment://item.jpg");
+			.setThumbnail("attachment://item.jpg")
+			.setFooter({ text: `Added on: ${new Date(item.created_at).toLocaleDateString()}` });
 
 		context.channel?.sendMessage(embed);
 		return;

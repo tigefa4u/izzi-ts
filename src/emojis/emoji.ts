@@ -195,6 +195,11 @@ const emoji: EmojiProps = {
 	pink2: "<:pink2:1148470738123227187>",
 	pink3: "<:pink3:1148470744083349585>",
 	heartseekerbadge: "<:heartseeker:1148505654596739132>",
+	rich: "<:rich:1154805750309339238>",
+	lvl150: "<:lvl150:1154805756982472765>",
+	lvl75: "<:lv75:1154805754583339050>",
+	topg: "<:topg:1154805766461603871>",
+	og: "<:og:1154805761747189791>",
 };
 
 export default emoji;

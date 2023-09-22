@@ -92,7 +92,7 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 
 		const stats = currentRaid.stats;
 		stats.remaining_strength = stats.remaining_strength - damage;
-		if (stats.remaining_strength < 1000) stats.remaining_strength = 10000;
+		if (stats.remaining_strength < 100) stats.remaining_strength = 100;
 		await updateRaid({ id: currentRaid.id }, {
 			lobby: currentRaid.lobby,
 			stats 

@@ -41,10 +41,10 @@ export const calcPercentRatio = (num: number, rank: RankProps) => {
 			operator: "+",
 			number: 14,
 		},
-		// [ranksMeta.mythical.name]: {
-		// 	operator: "+",
-		// 	number: 16
-		// }
+		[ranksMeta.mythical.name]: {
+			operator: "+",
+			number: 16
+		}
 	};
   
 	// const operators = {

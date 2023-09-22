@@ -135,17 +135,23 @@ export function prepareRaidBossEmbedDesc(
 		.map((c) => emojiMap(c.abilityname))
 		.join(" ")}${
 		isWorldBoss
-			? `\n**Boss Energy (Lives):** ${raid.stats.battle_stats.energy || 1} ${emoji.hp}`
+			? `\n**Boss Energy (Lives):** ${raid.stats.battle_stats.energy || 1} ${
+				emoji.hp
+			}`
 			: ""
-	}\n**Total HP:** ${numericWithComma(stats.battle_stats.stats.strength)}\n**Total ATK:** ${
-		numericWithComma(stats.battle_stats.stats.vitality)
-	}\n**Total DEF:** ${numericWithComma(stats.battle_stats.stats.defense)}\n**Total SPD:** ${
-		numericWithComma(stats.battle_stats.stats.dexterity)
-	}\n**Total ARM:** ${
-		numericWithComma(stats.battle_stats.stats.intelligence)
-	}\n\n**Power Level:** ${numericWithComma(stats.battle_stats.power_level)}\n\n${
-		prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)
-	}`;
+	}\n**Total HP:** ${numericWithComma(
+		stats.battle_stats.stats.strength
+	)}\n**Total ATK:** ${numericWithComma(
+		stats.battle_stats.stats.vitality
+	)}\n**Total DEF:** ${numericWithComma(
+		stats.battle_stats.stats.defense
+	)}\n**Total SPD:** ${numericWithComma(
+		stats.battle_stats.stats.dexterity
+	)}\n**Total ARM:** ${numericWithComma(
+		stats.battle_stats.stats.intelligence
+	)}\n\n**Power Level:** ${numericWithComma(
+		stats.battle_stats.power_level
+	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)}`;
 
 	return desc;
 }
@@ -206,7 +212,20 @@ function prepareLoot(
 			: ""
 	}\n\n**__Total Possible Drop Loot Rewards [Divided Among Lobby Members]__**\n__${numericWithComma(
 		loot.extraGold || 0
-	)}__ Gold ${emoji.gold}`;
+	)}__ Gold ${emoji.gold}${
+		loot.extraCards
+			? loot.extraCards
+				.map(
+					(d) =>
+						`\n__${d.number}x__ ${titleCase(d.rank)} of ${boss
+							.map((b) => `**${titleCase(b.name)}**`)
+							.join(", ")} (At ${d.rate}% per card)${
+							d.isStaticDropRate ? " (Fixed %)" : ""
+						}`
+				)
+				.join("")
+			: ""
+	}`;
 
 	return desc;
 }

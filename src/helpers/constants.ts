@@ -489,7 +489,7 @@ export const WORLD_BOSS_DIFFICULTY = "hard";
 export const WORLD_BOSS_LEVEL = 2000;
 // Number of iterations before the raid boss is defeated
 export const WORLD_BOSS_ENERGY = 100;
-export const WORLD_BOSS_HP_MULTIPLIER = 40; // reaching for 200m hp
+export const WORLD_BOSS_HP_MULTIPLIER = 30; // reaching for 200m hp
 export const WORLD_BOSS_EXPIRES_IN_DAYS = 14;
 export const WORLD_BOSS_MANA_PER_BATTLE = 50;
 export const WORLD_BOSS_MIN_LEVEL = 50;
@@ -539,7 +539,7 @@ export const D1_RANKS = [
 	ranksMeta.immortal.name,
 	ranksMeta.exclusive.name,
 	ranksMeta.ultimate.name,
-	// ranksMeta.mythical.name,
+	ranksMeta.mythical.name,
 ];
 
 export const tutorialLinks = [
@@ -565,3 +565,7 @@ export const RAID_CAP_PERCENT: { [key: string]: number } = {
 	hard: 6,
 	immortal: 5,
 };
+
+export const LEGENDARY_PACK_PITY_COUNT = 10;
+
+export const IZZI_OS_SERVER_ID = "784087004806774815";

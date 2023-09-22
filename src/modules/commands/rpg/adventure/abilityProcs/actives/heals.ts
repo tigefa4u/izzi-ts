@@ -1,9 +1,11 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
-import { randomElementFromArray } from "helpers";
+import { numericWithComma, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
-import { getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
+import {
+	getPercentOfTwoNumbers, getRelationalDiff, processEnergyBar, processHpBar, relativeDiff 
+} from "helpers/battle";
 
 export const lifesteal = ({
 	playerStats,
@@ -74,7 +76,7 @@ export const revitalize = ({
 		playerStats.totalStats.isRevit = true;
 		let missingHp = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
 		if (missingHp < 0) missingHp = 0;
-		const percent = calcPercentRatio(18, card.rank);
+		const percent = calcPercentRatio(38, card.rank);
 		const restoreDiff = getRelationalDiff(missingHp, percent);
 		let restorePoints = Math.ceil(playerStats.totalStats.strength + restoreDiff);
 		if (restorePoints >= playerStats.totalStats.originalHp)
@@ -130,7 +132,7 @@ export const guardian = ({
 	basePlayerStats,
 	simulation,
 	baseEnemyStats
-}: any) => {
+}: BattleProcessProps) => {
 	let damageDiff;
 	if (!card || !playerStats.totalStats.originalHp) return;
 	// restore (15% - 17%) health based on your DEF and also increase the __DEF__ of all allies for the same %
@@ -138,24 +140,49 @@ export const guardian = ({
 		playerStats.totalStats.isGuardian = true;
 		const perRatio = randomElementFromArray([
 			calcPercentRatio(15, card.rank),
-			calcPercentRatio(17, card.rank),
+			calcPercentRatio(20, card.rank),
 		]);
-		const ratio = getRelationalDiff(
-			playerStats.totalStats.defense,
-			perRatio
-		);
 		const defInc = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
 			perRatio
 		);
-		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
-		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
-			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
-			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
-		}
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defInc;
+
+		const ratio = getRelationalDiff(
+			playerStats.totalStats.defense,
+			perRatio
+		);
+
+		playerStats.totalStats.strength = playerStats.totalStats.strength + ratio;
+		let removeBleed = "";
+		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
+			let diff = Math.floor(playerStats.totalStats.strength - playerStats.totalStats.originalHp);
+
+			if (diff > 0) {
+				playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + diff;
+				let barDiff = getPercentOfTwoNumbers(
+					playerStats.totalStats.intelligence,
+					basePlayerStats.totalStats.intelligence
+				);
+				if (barDiff < 0 || isNaN(barDiff)) barDiff = 0;
+				const energy = processEnergyBar({
+					dpr: barDiff,
+					energy: opponentStats.totalStats.energy,
+				});
+				playerStats.totalStats.dpr = energy.dpr;
+				playerStats.totalStats.energy = energy.energy;
+			} else {
+				diff = 0;
+			}
+
+			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
+			playerStats.totalStats.isBleeding = false;
+			playerStats.totalStats.isUseBleed = false;
+			removeBleed = " [PSV] Overheal has stopped bleed and has " +
+			`also gained __${numericWithComma(diff)}__ **ARMOR**.`;
+		}
 		const desc = `restores __${ratio}__ ${emoji.heal} **HP**, and also increases ` +
-        `the **DEF** of all allies by __${perRatio}%__`;
+        `the **DEF** of all allies by __${perRatio}%__.${removeBleed}`;
 		damageDiff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
 
 		const processedHpBar = processHpBar(playerStats.totalStats, damageDiff);

@@ -85,7 +85,7 @@ const crates: any = {
 				[ranksMeta.immortal.name]: 50,
 				[ranksMeta.exclusive.name]: 20,
 				[ranksMeta.ultimate.name]: 7,
-				// [ranksMeta.mythical.name]: 1
+				[ranksMeta.mythical.name]: 2
 			},
 			numberOfCards: randomNumber(3, 4),
 			orbs: randomNumber(150, 300)
@@ -97,10 +97,10 @@ const crates: any = {
 		price: 0,
 		contents: {
 			cards: {
-				[ranksMeta.legend.name]: 58,
-				[ranksMeta.divine.name]: 22,
-				[ranksMeta.immortal.name]: 15,
-				[ranksMeta.exclusive.name]: 5
+				[ranksMeta.divine.name]: 65,
+				[ranksMeta.immortal.name]: 30,
+				[ranksMeta.exclusive.name]: 5,
+				[ranksMeta.mythical.name]: 1
 			},
 			numberOfCards: randomNumber(2, 3),
 			orbs: randomNumber(100, 200)

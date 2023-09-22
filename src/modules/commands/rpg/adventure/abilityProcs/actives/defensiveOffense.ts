@@ -98,7 +98,7 @@ export const lightningShield = ({
 		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defRatio;
 
-		const atkPercent = calcPercentRatio(10, card.rank);
+		const atkPercent = calcPercentRatio(25, card.rank);
 		abilityDamage = getRelationalDiff(opponentStats.totalStats.vitality, atkPercent);
 		opponentStats.totalStats.strength =
         opponentStats.totalStats.strength - abilityDamage;

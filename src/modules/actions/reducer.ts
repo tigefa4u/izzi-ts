@@ -69,6 +69,7 @@ import { izziChoose, payRespect } from "modules/commands/basic/funCommands";
 import { shipCouple } from "modules/commands/rpg/marriage/ship";
 import { giftPartner } from "modules/commands/rpg/marriage/gifts";
 import { badge } from "modules/commands/rpg/badges";
+import { gachaPacks } from "modules/commands/rpg/misc/gacha";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -173,7 +174,8 @@ const commandMap: CommandMapProps = {
 	choose: izziChoose,
 	ship: shipCouple,
 	gifts: giftPartner,
-	badge: badge
+	badge: badge,
+	gacha: gachaPacks
 	// spbt: spbt, // removed
 	// sort: sort, // removed
 };

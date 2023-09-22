@@ -136,7 +136,7 @@ const baseStatsRatioPercent: T = {
 	[ranksMeta.immortal.name]: 100,
 	[ranksMeta.exclusive.name]: 120,
 	[ranksMeta.ultimate.name]: 140,
-	// [ranksMeta.mythical.name]: 160
+	[ranksMeta.mythical.name]: 160
 };
 
 export const baseStatRatio = (stat: number, rank: RankProps) =>
@@ -171,10 +171,12 @@ export const calcStat = (
 	levelPower: PLProps
 ) => {
 	const temp = baseStatRatio(stat, levelPower.rank);
-	// compute max power since there's a % inc with each level
-	// levelPower.max_power = Math.round(
-	// 	stat * ((baseStatsRatioPercent[levelPower.rank] + 20) / 100)
-	// );
+	if (levelPower.max_power <= 0) {
+		// compute max power since there's a % inc with each level
+		levelPower.max_power = Math.round(
+			stat * ((baseStatsRatioPercent[levelPower.rank] + 20) / 100)
+		);
+	}
 	return calcPower(levelPower, character_level, temp);
 };
 

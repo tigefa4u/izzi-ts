@@ -60,7 +60,7 @@ const computeBossByPlayerLevel = (
 	if (level <= 25) {
 		categoryAndlevelPercent = {
 			d3: 100,
-			d2: 25,
+			d2: 50,
 		};
 		chances = [ 100, 25 ];
 	} else if (level <= 30) {
@@ -71,27 +71,27 @@ const computeBossByPlayerLevel = (
 		chances = [ 100, 50 ];
 	} else if (level <= 50) {
 		categoryAndlevelPercent = {
-			d3: 100,
+			d3: 125,
 			d2: 100,
-			d1: 25,
+			d1: 50,
 		};
-		chances = [ 100, 60, 25 ];
+		chances = [ 10, 60, 25 ];
 	} else if (level <= 124) {
 		categoryAndlevelPercent = {
-			d3: 100,
-			d2: 100,
+			d3: 150,
+			d2: 125,
 			d1: 100,
 		};
-		chances = [ 100, 100, 100 ];
+		chances = [ 10, 100, 100 ];
 	} else if (level <= 125) {
 		categoryAndlevelPercent = {
-			d2: 100,
+			d2: 150,
 			d1: 100,
 		};
 		chances = [ 100, 500 ];	
 	} else if (level <= 160) {
 		categoryAndlevelPercent = {
-			d2: 125,
+			d2: 150,
 			d1: 125,
 		};
 		chances = [ 100, 500 ];		
@@ -113,10 +113,10 @@ const computeBossByPlayerLevel = (
 			spawnCategory = raidBossCategories[raidBossCategories.length - 1];
 		}
 	}
-	const lowerLevel = Math.ceil(computedCategoryData[spawnCategory].maxlevel * .25);
+	const lowerLevel = Math.ceil(computedCategoryData[spawnCategory].maxlevel * .5);
 	const higherLevel = Math.ceil(
 		(computedCategoryData[spawnCategory].maxlevel *
-      (categoryAndlevelPercent[spawnCategory as keyof C] || 25) / 100)
+      (categoryAndlevelPercent[spawnCategory as keyof C] || 50) / 100)
 	);
 	const ranks = computedCategoryData[spawnCategory].ranks;
 	return {
@@ -173,6 +173,9 @@ function prepareLoot(
 		result.bosses = resp.bosses || 1;
 		result.loot.drop.default = baseLoot[difficulty].default.loot.drop;
 		result.loot.rare = baseLoot[difficulty].default.loot.rare;
+		// Extra cards are drops that are truly divided among lobby members
+		// similar to extraGold
+		result.loot.extraCards = baseLoot[difficulty].default.loot.extraCards;
 
 		loggers.info("Computed boss by player level:", resp);
 

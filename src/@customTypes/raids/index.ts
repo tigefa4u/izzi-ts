@@ -41,6 +41,8 @@ export type RaidLootDropProps = {
     rate?: number;
     isStaticDropRate?: boolean;
     isStaticDrop?: boolean;
+    character_id?: number;
+    name?: string;
 }
 export type RaidLootProps = {
     gold: number;
@@ -72,7 +74,8 @@ export type RaidLootProps = {
             }[];
         };
     };
-    rare?: RaidLootDropProps[]
+    rare?: RaidLootDropProps[];
+    extraCards?: RaidLootDropProps[];
     division?: string;
 }
 

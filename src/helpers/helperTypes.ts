@@ -10,7 +10,7 @@ export type RankProps =
   | "ultimate"
   | "legend"
   | "divine"
-  // | "mythical";
+  | "mythical";
 export type RanksMetaProps = {
   [key in RankProps]: {
     size: number;

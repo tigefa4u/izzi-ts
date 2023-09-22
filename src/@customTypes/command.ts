@@ -117,6 +117,7 @@ export type CommandMapProps = {
 	ship: (params: BaseProps) => void;
 	gifts: (params: BaseProps) => void;
 	badge: (params: BaseProps) => void;
+	gacha: (params: BaseProps) => void;
     // TODO: below commands
 	// customize: (params: BaseProps) => void; // removed
 	// sort: (params: BaseProps) => void; // removed

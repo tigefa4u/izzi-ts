@@ -104,6 +104,11 @@ const calculateDropRateByBossLevel = (
 				drop.rate = (drop.rate || 1) + rate;
 			}
 		});
+		loot.extraCards?.map((drop) => {
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + rate;
+			}
+		});
 	}
 
 	loot.division = category;
@@ -203,6 +208,19 @@ export const createRaidBoss = async ({
 	}
 	if (computedBoss.loot.rare) {
 		computedBoss.loot.rare?.map((r) => {
+			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
+			// Make this change if you decide to add more ranks
+			if (computedBoss.extras?.numberOfCards[rank]) {
+				r.rate = (r.rate || 0) + computedBoss.extras.numberOfCards[rank].rate;
+				r.rate = Number((r.rate || 0).toFixed(2));
+				if (!r.isStaticDrop) {
+					r.number = Math.floor(computedBoss.extras.numberOfCards[rank].cards / limit);
+				}
+			}
+		});
+	}
+	if (computedBoss.loot.extraCards) {
+		computedBoss.loot.extraCards?.map((r) => {
 			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
 			// Make this change if you decide to add more ranks
 			if (computedBoss.extras?.numberOfCards[rank]) {

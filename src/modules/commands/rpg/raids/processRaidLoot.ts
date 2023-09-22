@@ -25,6 +25,7 @@ import {
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { getLobbyMvp } from "helpers/raid";
+import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey, isEmptyValue } from "utility";
@@ -54,10 +55,33 @@ export const processRaidLoot = async ({
 
 		const lobby = raid.lobby;
 		const keys = Object.keys(lobby).map((i) => Number(i));
+		const leechers = keys.filter(
+			(x) =>
+				raid.lobby[x].total_damage <=
+        Math.floor(raid.stats.original_strength * 0.1)
+		);
+
+		const mvpUserId = getLobbyMvp(lobby);
+		let mvp: number | null = null;
+		if (mvpUserId) {
+			mvp = mvpUserId;
+		}
+
+		const allUsers = (await Promise.all(
+			keys
+				.map((key) => getRPGUser({ user_tag: lobby[key].user_tag }))
+				.filter(Boolean)
+		)) as UserProps[];
+
+		const usersMeta = allUsers.reduce((acc, r) => {
+			acc[r.id] = r;
+			return acc;
+		}, {} as { [key: number]: UserProps });
+
 		const allRewards = await Promise.all(
 			keys.map(async (key) => {
 				const rewards = { user_tag: lobby[key].user_tag } as R;
-				const user = await getRPGUser({ user_tag: lobby[key].user_tag });
+				const user = usersMeta[key];
 				if (!user) return rewards;
 				const goldReward =
           raid.loot.gold + Math.floor((raid.loot.extraGold || 0) / keys.length);
@@ -83,35 +107,104 @@ export const processRaidLoot = async ({
 				if (!raid.loot.drop.default || isEmptyValue(raid.loot.drop.default)) {
 					return rewards;
 				}
-				const promises = [ initDrops(raid.loot.drop.default, raid, user, false) ];
-				if (raid.loot.rare) {
-					const mvpUserId = getLobbyMvp(lobby);
-					let mvp;
-					if (mvpUserId) {
-						mvp = mvpUserId;
+				const promises = [
+					initDrops(raid.loot.drop.default, raid, user, false).then(
+						(res) => (rewards.defaultDrops = res)
+					),
+				];
+				if (leechers.length > 0) {
+					const leecher = leechers.find(
+						(l) => raid.lobby[l].user_id === user.id
+					);
+					if (leecher) {
+						await Promise.all(promises);
+						return rewards;
 					}
+				}
+				if (raid.loot.rare) {
+					/**
+			 * Pre-fill the array with all the number of cards that are available to be dropped
+			 */
+					const array: RaidLootDropProps[] = raid.raid_boss
+						.map((boss) =>
+							(raid.loot.rare || []).map((r) => Array(r.number).fill("").map((_) => ({
+								...r,
+								name: boss.name,
+								character_id: boss.character_id
+							})).flat()).flat()
+						)
+						.flat();
 					promises.push(
 						initDrops(
-							raid.loot.rare,
+							array,
 							raid,
 							user,
 							true,
 							mvp ? lobby[mvp] : undefined
-						)
+						).then((res) => (rewards.rareDrops = res))
 					);
 				}
-				const [ defaultDrops, rareDrops ] = await Promise.all(promises);
-				rewards.defaultDrops = defaultDrops || [];
-				rewards.rareDrops = rareDrops || [];
+				await Promise.all(promises);
 				return rewards;
 			})
 		);
 
+		if (raid.loot.extraCards && raid.loot.extraCards.length > 0) {
+			/**
+       * Card drop which is divided among players.
+       * Added a pity system to atleast drop 1 card
+       * if they have not received any drops for 15 raids.
+       */
+			const sortedLobby = keys
+				.sort((a, b) =>
+					raid.lobby[a].total_damage <= raid.lobby[b].total_damage ? 1 : -1
+				)
+				.filter((uid) => {
+					const leecher = leechers.find((l) => raid.lobby[l].user_id === uid);
+					return leecher ? false : true;
+				});
+
+			/**
+			 * Pre-fill the array with all the number of cards that are available to be dropped
+			 */
+			const extraLoot = clone(raid.loot.extraCards);
+			const extraLootArray: RaidLootDropProps[] = raid.raid_boss
+				.map((boss) =>
+					(extraLoot || []).map((r) => Array(r.number).fill("").map((_) => ({
+						...r,
+						name: boss.name,
+						character_id: boss.character_id
+					})).flat()).flat()
+				)
+				.flat();
+
+			for (const uid of sortedLobby) {
+				const user = usersMeta[uid];
+				if (!user) continue;
+				if (extraLoot.length <= 0) break;
+				const drops = await initDrops(
+					extraLootArray,
+					raid,
+					user,
+					true,
+					mvp ? lobby[mvp] : undefined
+				);
+				if (drops.length > 0) {
+					extraLoot.splice(0, drops.length);
+					allRewards.push({
+						rareDrops: drops,
+						user_tag: user.user_tag,
+						gold: 0,
+					});
+				}
+			}
+		}
+
 		const collections = allRewards
 			.map((reward) => {
 				const resp = clone(reward);
-				resp.defaultDrops?.map((d) => delete d.name);
-				resp.rareDrops?.map((d) => delete d.name);
+				resp.defaultDrops?.map((d: any) => delete d.name);
+				resp.rareDrops?.map((d: any) => delete d.name);
 				return [
 					...(resp.defaultDrops || []),
 					...(resp.rareDrops || []),
@@ -307,21 +400,12 @@ async function initDrops(
 ) {
 	if (!drop || drop.length <= 0) return [];
 	let array = clone(drop);
-	const leechers = Object.keys(raid.lobby)
-		.map((i) => Number(i))
-		.filter(
-			(x) =>
-				raid.lobby[x].total_damage <=
-        Math.floor(raid.stats.original_strength * 0.10)
-		);
 	if (isRare) {
+		/**
+     * The number of cards and bosses dropped are pre-calculated
+     * before this func
+     */
 		array = array.filter((item) => {
-			if (leechers.length > 0) {
-				const leecher = leechers.find((l) => raid.lobby[l].user_id === user.id);
-				if (leecher) {
-					return false;
-				}
-			}
 			let rate = item.rate || 10;
 			if (mvp && user.id === mvp.user_id && !item.isStaticDropRate) {
 				rate = rate + 5;
@@ -335,39 +419,67 @@ async function initDrops(
 		});
 
 		/**
-		 * Hack - Do not drop more than 1 immo and 2 divs
-		 */
-		const immortalDrops = array.filter((a) => a.rank_id === 7);
-		const rest = array.filter(a => ![ 6, 7 ].includes(a.rank_id));
-		const divineDrops = array.filter((a) => a.rank_id === 6);
-		array = [ ...rest, ...immortalDrops.slice(0, 1), ...divineDrops.slice(0, 2) ];
+     * Hack - Do not drop more than 1 immo and 2 divs
+     */
+		const immortalDrops = array.filter(
+			(a) => a.rank_id === ranksMeta.immortal.rank_id
+		);
+		const rest = array.filter(
+			(a) =>
+				![
+					ranksMeta.divine.rank_id,
+					ranksMeta.immortal.rank_id,
+					ranksMeta.mythical.rank_id,
+				].includes(a.rank_id)
+		);
+		const divineDrops = array.filter(
+			(a) => a.rank_id === ranksMeta.divine.rank_id
+		);
+		const mythicalDrops = array.filter(
+			(a) => a.rank_id === ranksMeta.mythical.rank_id
+		);
+		array = [
+			...rest,
+			...immortalDrops.slice(0, 1),
+			...divineDrops.slice(0, 2),
+			...mythicalDrops.slice(0, 2),
+		];
+	} else {
+		// FODDERS
+		array = raid.raid_boss
+			.map((boss) => {
+				return array
+					.map((item) => {
+						return Array(item.number)
+							.fill("")
+							.map((_) => {
+								return {
+									...item,
+									character_id: boss.character_id,
+									name: boss.name,
+								};
+							});
+					})
+					.flat();
+			})
+			.flat();
 	}
 
-	const result = array.map((item) => {
-		return raid.raid_boss
-			.map((boss) =>
-				Array(item.number)
-					.fill("")
-					.map(
-						(_) =>
-							({
-								character_id: boss.character_id,
-								character_level: STARTER_CARD_LEVEL,
-								exp: STARTER_CARD_EXP,
-								r_exp: STARTER_CARD_R_EXP,
-								is_item: false,
-								is_on_market: false,
-								rank: item.rank,
-								rank_id: item.rank_id,
-								user_id: user.id,
-								name: boss.name,
-								is_on_cooldown: false,
-								is_tradable: true,
-							} as CollectionCreateProps & { name?: string })
-					)
-			)
-			.flat();
-	});
-
-	return result.flat();
+	return array.map(
+		(item) =>
+			({
+				character_id: item.character_id,
+				character_level: STARTER_CARD_LEVEL,
+				exp: STARTER_CARD_EXP,
+				r_exp: STARTER_CARD_R_EXP,
+				is_item: false,
+				is_on_market: false,
+				rank: item.rank,
+				rank_id: item.rank_id,
+				user_id: user.id,
+				name: item.name,
+				is_on_cooldown: false,
+				is_tradable: true,
+			} as CollectionCreateProps & { name?: string })
+	);
 }

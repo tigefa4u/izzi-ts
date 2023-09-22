@@ -3,7 +3,7 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { redeemBadge } from "./redeem";
+import { badges, redeemBadge } from "./redeem";
 import { subcommands } from "./subcommands";
 
 export const badge = async ({ context, client, args, options }: BaseProps) => {
@@ -22,10 +22,10 @@ export const badge = async ({ context, client, args, options }: BaseProps) => {
 		/** Need to change the logic later on */
 		const embed = createEmbed(author, client).setTitle("Profile Badges")
 			.setDescription("To redeem a badge type `iz badge redeem <ID>`")
-			.addFields([ {
-				name: `Heartseeker ${emoji.heartseekerbadge} | ID 1`,
-				value: "Must have all 3 cards from Heartseeker Event or married for 2 or more years to redeem."
-			} ])
+			.addFields(badges.map((b) => ({
+				name: `ID: ${b.id} | ${b.name} ${b.emoji}`,
+				value: b.description
+			})))
 			.setHideConsoleButtons(true);
 
 		context.channel?.sendMessage(embed);

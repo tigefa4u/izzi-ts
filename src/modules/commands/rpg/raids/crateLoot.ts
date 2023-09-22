@@ -11,7 +11,7 @@ export const crates = {
 				[ranksMeta.immortal.name]: 50,
 				[ranksMeta.exclusive.name]: 20,
 				[ranksMeta.ultimate.name]: 7,
-				// [ranksMeta.mythical.name]: 1
+				[ranksMeta.mythical.name]: 1
 			},
 			numberOfCards: randomNumber(3, 4),
 			orbs: randomNumber(150, 300)

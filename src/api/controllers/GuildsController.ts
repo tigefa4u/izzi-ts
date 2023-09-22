@@ -14,6 +14,15 @@ export const getGuild = async (params: GuildParams) => {
 	}
 };
 
+export const getGuildByGuildIds = async (guild_ids: string[]) => {
+	try {
+		return Guilds.getByGuildIds(guild_ids);
+	} catch (err) {
+		loggers.error("GuildsController.getGuildByGuildIds: ERROR", err);
+		return;
+	}
+};
+
 export const updateGuild = async (params: GuildParams, data: GuildUpdateProps) => {
 	try {
 		loggers.info("api.controllers.GuildsController.updateGuild: updating guild => ", {

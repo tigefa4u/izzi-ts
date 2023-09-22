@@ -53,11 +53,12 @@ const validateAndUpgradeCard = async (
 	const card = collectionResult[0];
 	if (
 		card.rank_id !== ranksMeta.exclusive.rank_id &&
-    card.rank_id !== ranksMeta.ultimate.rank_id
+    card.rank_id !== ranksMeta.ultimate.rank_id &&
+	card.rank_id !== ranksMeta.mythical.rank_id
 	) {
-		let text = "You can only increase the level of an Exclusive or Ultimate ranked card.";
+		let text = "You can only increase the level of an Exclusive / Ultimate / Mythical ranked card.";
 		if (isConsumeSouls) {
-			text = "Your card must be Exclusive or Ultimate rank before it can consume souls.";
+			text = "Your card must be Exclusive / Ultimate / Mythical rank before it can consume souls.";
 		}
 		embed.setDescription(
 			text

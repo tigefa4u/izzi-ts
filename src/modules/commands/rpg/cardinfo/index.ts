@@ -41,6 +41,8 @@ import { getCharacterPriceList } from "api/controllers/CharacterPriceListsContro
 import { RankProps, RanksMetaProps } from "helpers/helperTypes";
 import { getCustomServerCardByCharacterId } from "api/controllers/CustomServerCardsController";
 import { ranksMeta } from "helpers/rankConstants";
+import { getGuildByGuildIds } from "api/controllers/GuildsController";
+import { GuildProps } from "@customTypes/guilds";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -66,6 +68,19 @@ async function prepareCinfoDetails(
 	};
 
 	const customCardServerInfo = (customCardInfo || [])[0];
+
+	let serverInfo = "";
+	if (customCardServerInfo?.guild_ids) {
+		const guildIds = customCardServerInfo.guild_ids;
+		const inviteLinks = (customCardServerInfo.metadata?.serverInviteLinks || "").split(",");
+		const guilds = await getGuildByGuildIds(guildIds);
+		if (guilds) {
+			serverInfo = `${guildIds.map((g, i) => {
+				const item: GuildProps | undefined = guilds.find((gg) => gg.guild_id === g);
+				return `[${item?.guild_name}](${inviteLinks[i]})`;
+			}).join(", ")}`;
+		}
+	}
 
 	embed
 		.setTitle(titleCase(characterInfo.name))
@@ -96,15 +111,14 @@ async function prepareCinfoDetails(
 					}`
 					: "N/A"
 			} (Low digit cards can be sold for higher price)${
-				customCardServerInfo
-					? `\n\n**Available in Server(s)**\n${customCardServerInfo.metadata?.serverInviteLinks
-						?.split(",")
-						.join(", ")}`
+				serverInfo
+					? `\n\n**Available in Server(s)**\n${serverInfo}`
 					: ""
 			}`
 		)
 		.setImage("attachment://cinfo.jpg")
-		.attachFiles([ attachment ]);
+		.attachFiles([ attachment ])
+		.setFooter({ text: `Added on: ${new Date(characterInfo.created_at).toLocaleDateString()}` });
 
 	return embed;
 }

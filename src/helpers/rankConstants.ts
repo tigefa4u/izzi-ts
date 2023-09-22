@@ -64,13 +64,13 @@ export const ranksMeta: RanksMetaProps = {
 		emoji: "goldstar",
 		name: "ultimate"
 	},
-	// mythical: {
-	// 	size: 4,
-	// 	rank_id: 10,
-	// 	max_level: 70,
-	// 	emoji: "goldstar",
-	// 	name: "mythical"
-	// },
+	mythical: {
+		size: 4,
+		rank_id: 10,
+		max_level: 70,
+		emoji: "goldstar",
+		name: "mythical"
+	},
 };
 
 export const XP_GAIN_PER_RANK = {
@@ -88,5 +88,5 @@ export const XP_GAIN_PER_RANK = {
 	[ranksMeta.immortal.name]: 500,
 	[ranksMeta.exclusive.name]: 800,
 	[ranksMeta.ultimate.name]: 800,
-	// [ranksMeta.mythical.name]: 1000,
+	[ranksMeta.mythical.name]: 1000,
 } as XPGainPerRankProps;

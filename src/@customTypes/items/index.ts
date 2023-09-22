@@ -8,4 +8,5 @@ export type ItemProps = {
 	filepath: string;
 	category: string[]
 	price: number;
+	created_at: Date;
 }
