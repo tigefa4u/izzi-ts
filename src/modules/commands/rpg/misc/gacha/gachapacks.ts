@@ -51,10 +51,9 @@ const packContains: P = {
 			ranksMeta.legend.name,
 			ranksMeta.divine.name,
 			ranksMeta.immortal.name,
-			ranksMeta.mythical.name,
 		],
-		chances: [ 50, 35, 15, 0.25 ],
-		cost: 100000,
+		chances: [ 40, 35, 25 ],
+		cost: 120000,
 		name: "Silver Pack",
 	},
 	epic: {
