@@ -436,8 +436,8 @@ const fetchCharacterInfoMeta = async (
 	return {
 		data: clonedCharacter,
 		metadata: {
-			totalCount: 9,
-			totalPages: 9,
+			totalCount: 10,
+			totalPages: 10,
 			...filter,
 		},
 	};
