@@ -175,7 +175,7 @@ export const desolator = ({
 		let desc =
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
-		if (isRaid && card.rank_id === ranksMeta.ultimate.rank_id) {
+		if (isRaid && (card.rank_id === ranksMeta.ultimate.rank_id || card.rank_id === ranksMeta.mythical.rank_id)) {
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];
 			if (canStealSouls && !FODDER_RANKS.includes(card.rank)) {
