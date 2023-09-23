@@ -419,6 +419,13 @@ export const spawnRaid = async ({
 			difficulty = "e";
 		}
 		if (!difficulty) return;
+		if (isEvent && user.level < MIN_RAID_USER_LEVEL) {
+			context.channel?.sendMessage(
+				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
+          "to be able to spawn or join Event Raids."
+			);
+			return;	
+		}
 		if (
 			user.level < MIN_RAID_USER_LEVEL &&
       HIGH_LEVEL_RAIDS.includes(difficulty)
