@@ -46,7 +46,7 @@ const confirmAndEnchantCard = async (
 	if (user.gold < cost) {
 		embed.setDescription(
 			"You do not have sufficient gold to Enchant your card. " +
-			`Required ${numericWithComma(cost)} Gold ${emoji.gold}`
+			`Required __${numericWithComma(cost)}__ Gold ${emoji.gold}`
 		);
 		params.channel?.sendMessage(embed);
 		return;

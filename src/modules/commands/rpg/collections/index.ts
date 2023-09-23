@@ -4,6 +4,7 @@ import { getAllCollections, getTotalFodders } from "api/controllers/CollectionsC
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
+import { numericWithComma } from "helpers";
 import { CONSOLE_BUTTONS, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCollectionList } from "helpers/embedLists/collections";
@@ -90,7 +91,7 @@ export const cardCollection = async ({
 		if (cmd === "fodders") {
 			const fodderCount = await getTotalFodders(user.id);
 			context.channel?.sendMessage(`Summoner **${author.username}**, you currently have ` +
-			`__${((fodderCount || [])[0] || {}).sum || 0}x__ Platinum Fodders in Total.`);
+			`__${numericWithComma(((fodderCount || [])[0] || {}).sum || 0)}x__ Platinum Fodders in Total.`);
 			return;
 		} else if (cmd === "lock") {
 			lockFodders(subcommandParams);
