@@ -142,6 +142,7 @@ const confirmAndPurchasePack = async (
 
 		try {
 			const cards = clone(result)
+				.sort((a, b) => a.rank_id > b.rank_id ? -1 : 1)
 				.slice(0, 3)
 				.map((r) => ({
 					...r,
