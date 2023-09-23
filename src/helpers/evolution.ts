@@ -1,12 +1,15 @@
+import { ranksMeta } from "./rankConstants";
+
 type T = {
   [key: number]: number;
 };
 const soulMap: T = {
-	5: 1.4,
-	6: 1.75,
-	7: 1.95,
-	8: 1.95,
-	9: 1.95
+	[ranksMeta.legend.rank_id]: 1.4,
+	[ranksMeta.divine.rank_id]: 1.75,
+	[ranksMeta.immortal.rank_id]: 1.95,
+	[ranksMeta.exclusive.rank_id]: 1.95,
+	[ranksMeta.ultimate.rank_id]: 1.95,
+	[ranksMeta.mythical.rank_id]: 1.95
 };
 
 export function getReqSouls(rank_id: number): number {
