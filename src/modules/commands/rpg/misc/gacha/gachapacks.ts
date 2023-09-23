@@ -74,7 +74,7 @@ const packContains: P = {
 			ranksMeta.mythical.name,
 		],
 		// chances: [ 60, 30, 10 ], -> to show info
-		chances: [ 100, 40, 1 ],
+		chances: [ 100, 40, .5 ],
 		cost: 400000,
 		name: "Legendary Pack",
 	},
