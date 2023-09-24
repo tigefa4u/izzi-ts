@@ -566,6 +566,6 @@ export const RAID_CAP_PERCENT: { [key: string]: number } = {
 	immortal: 5,
 };
 
-export const LEGENDARY_PACK_PITY_COUNT = 10;
+export const LEGENDARY_PACK_PITY_COUNT = 15;
 
 export const IZZI_OS_SERVER_ID = "784087004806774815";
