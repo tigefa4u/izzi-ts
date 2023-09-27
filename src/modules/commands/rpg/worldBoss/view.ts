@@ -34,7 +34,7 @@ const _prepareLoot = (raid: RaidProps) => {
                 `\n__${item.souls}x__ Souls ${emoji.soul}` +
           `\n__${item.number}x__ ${titleCase(item.rank)} of **${bosses}** (At ${
           	item.rate
-          }% per card)` +
+          }% per each card)` +
           `\n__1x__ **${titleCase(item.crates.category)}** Crate (At ${
           	item.crateDropRate
           }%)`
