@@ -111,7 +111,7 @@ export const battleBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-		  `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
 			);
 			return;
 		}
@@ -169,7 +169,7 @@ export const battleBoss = async ({
 		const damageCapPercent = 10;
 		const damageCap = Math.floor(
 			currentRaid.stats.original_strength *
-		((multiplier * damageCapPercent) / 100)
+        ((multiplier * damageCapPercent) / 100)
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const result = await simulateBattle({
@@ -225,10 +225,10 @@ export const battleBoss = async ({
 				result.totalDamage = damageCap;
 			} else {
 				let percentDamageDealt =
-			  (result.totalDamage || 0) /
-			  (result.enemyStats?.totalStats.originalHp ||
-			    result.enemyStats?.totalStats.strength ||
-			    1);
+          (result.totalDamage || 0) /
+          (result.enemyStats?.totalStats.originalHp ||
+            result.enemyStats?.totalStats.strength ||
+            1);
 
 				if (percentDamageDealt > 1) percentDamageDealt = 1;
 				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
@@ -377,7 +377,9 @@ async function processRaidResult({
 		.setDescription(
 			`**Summoner ${
 				author.username
-			}, You have dealt:**\n\n**__${numericWithComma(
+			}, You have dealt:**\n\n**Team Damage: __${numericWithComma(
+				result.totalTeamDamage || 0
+			)}__**\n**Total __${numericWithComma(
 				result.totalDamage || 0
 			)}__** Damage to ${isEvent ? "Event" : "Raid"} Boss${
 				result.soulGainText ? `\n${result.soulGainText}` : ""
