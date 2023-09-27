@@ -257,7 +257,8 @@ export const createRaidBoss = async ({
 			rank_id: 0,
 			is_on_cooldown: false,
 			is_tradable: true,
-		} as CollectionCardInfoProps;
+			series: c.series
+		} as CollectionCardInfoProps & { series?: string; };
 	});
 	// const raidBosses = (await Promise.all(
 	// 	Array(computedBoss.bosses)
@@ -311,7 +312,7 @@ export const createRaidBoss = async ({
 		raid_boss: JSON.stringify(raidBosses),
 		loot: computedLoot,
 		filter_data: `${raidBosses.map(
-			(b) => `${b.name}, ${b.rank}, ${b.type}`
+			(b) => `${b.name}, ${b.rank}, ${b.type}, ${b.series}, ${b.abilityname}`
 		)}, ${raidStats.difficulty.toLowerCase()}`,
 	});
 	loggers.info("Created Raid with data -> ", raid);

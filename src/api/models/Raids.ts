@@ -174,10 +174,10 @@ export const getRaids = (
 	// All the filter data is concatinated into one column for easy query
 	if (Object.keys(filters).length > 0) {
 		Object.keys(filters).forEach((key) => {
-			if (![ "name", "rank", "type" ].includes(key)) return;
+			if (![ "name", "rank", "type", "series", "abilityname" ].includes(key)) return;
 			const item = filters[key as keyof FilterProps];
 			if (typeof item === "object") {
-				query = query.where(`${tableName}.filter_data`, "~*", `${item.join("|")}.*`);
+				query = query.where(`${tableName}.filter_data`, "~*", `(${item.join("|")}).*`);
 			}
 		});
 	}

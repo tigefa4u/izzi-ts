@@ -250,6 +250,7 @@ export function prepareInitialLobbyMember(
 			votes: 0,
 			timestamp: new Date().getTime(),
 			is_leader: is_leader,
+			total_team_damage: 0
 		},
 	};
 }
