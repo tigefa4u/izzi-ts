@@ -156,7 +156,6 @@ export const crate = async ({ context, client, args, options }: BaseProps) => {
 						pageCount: data.data.length,
 						client,
 					});
-					return;
 				} else {
 					embed.setDescription("You do not have any crates. Participate in dungeon battles to earn more!");
 				}
