@@ -53,16 +53,11 @@ export const getLobbyMvp = (lobby: RaidLobbyProps) => {
 	if (keys.length <= 1) {
 		return;
 	}
-	const maxDmg = Math.max(...keys.map((k) => lobby[k].total_damage));
+	const maxDmg = Math.max(...keys.map((k) => lobby[k].total_team_damage));
 	if (maxDmg === 0) {
 		return;
 	}
-	const mvpArr = keys
-		.sort((a, b) => {
-			const a_lastattack = new Date(lobby[a].timestamp).getTime();
-			const b_lastattack = new Date(lobby[b].timestamp).getTime();
-			return a_lastattack > b_lastattack ? -1 : 1;
-		}).filter((k) => lobby[k].total_damage === maxDmg);
+	const mvpArr = keys.filter((k) => lobby[k].total_team_damage === maxDmg);
 	let mvp = mvpArr[0];
 	if (mvpArr.length > 1) {
 		const minAtk = Math.min(...mvpArr.map((k) => lobby[k].total_attack));

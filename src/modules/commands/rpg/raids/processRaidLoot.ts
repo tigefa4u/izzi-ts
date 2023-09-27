@@ -169,13 +169,8 @@ export const processRaidLoot = async ({
 			const sortedLobby = keys
 				.sort((a) => (premiumUsers.includes(a) ? -1 : 1))
 				.sort((a, b) =>
-					raid.lobby[a].total_damage > raid.lobby[b].total_damage ? -1 : 1
+					(raid.lobby[a].total_team_damage || 0) > (raid.lobby[b].total_team_damage || 0) ? -1 : 1
 				)
-				.sort((a, b) => {
-					const a_lastattack = new Date(raid.lobby[a].timestamp).getTime();
-					const b_lastattack = new Date(raid.lobby[b].timestamp).getTime();
-					return a_lastattack > b_lastattack ? -1 : 1;
-				})
 				.filter((uid) => {
 					const leecher = leechers.find((l) => raid.lobby[l].user_id === uid);
 					return leecher ? false : true;

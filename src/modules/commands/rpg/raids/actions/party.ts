@@ -88,7 +88,9 @@ export function prepareRaidParty(lobby: RaidLobbyProps) {
 				lobby[l].level
 			}\nVote Kick ID: ${lobby[l].user_id}\nEnergy: ${
 				lobby[l].energy
-			}\nTotal Damage: ${lobby[l].total_damage}\nTotal Attacks: ${
+			}\nTotal Damage: ${lobby[l].total_damage}\nTotal Team Damage: ${
+				lobby[l].total_team_damage || 0
+			}\nTotal Attacks: ${
 				lobby[l].total_attack
 			}\nLast Attack: ${elapsedHours ? `${elapsedHours}h` : ""} ${
 				elapsedMinutes ? `${elapsedMinutes}m` : ""

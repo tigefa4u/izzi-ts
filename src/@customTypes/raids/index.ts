@@ -19,6 +19,7 @@ type L = {
     energy: number;
     total_energy: number;
     total_damage: number;
+    total_team_damage: number;
     total_attack: number;
     timestamp: number;
     is_leader: boolean;

@@ -211,7 +211,7 @@ export const battleBoss = async ({
 		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
-			await consumeEnergy(updateObj.id, user.id, multiplier, 0);
+			await consumeEnergy(updateObj.id, user.id, multiplier, 0, 0);
 			result.totalDamage = 0;
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
@@ -219,6 +219,7 @@ export const battleBoss = async ({
 				return;
 			}
 
+			result.totalTeamDamage = clone(result.totalDamage || 0);
 			// Enemy stats will always be raid boss
 			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;
@@ -239,7 +240,8 @@ export const battleBoss = async ({
 				updateObj.id,
 				user.id,
 				multiplier,
-				result.totalDamage
+				result.totalDamage,
+				result.totalTeamDamage
 			);
 			if (updatedLobby) {
 				updateObj.lobby = updatedLobby;
@@ -424,7 +426,8 @@ async function consumeEnergy(
 	raidId: number,
 	user_id: number,
 	multiplier = 1,
-	totalDamage = 0
+	totalDamage = 0,
+	totalTeamDamage = 0
 ) {
 	const raid = await getRaid({ id: raidId });
 	if (!raid) {
@@ -440,6 +443,7 @@ async function consumeEnergy(
 	if (member.energy < 0) member.energy = 0;
 	member.total_attack = member.total_attack + multiplier;
 	member.total_damage = (member.total_damage || 0) + totalDamage;
+	member.total_team_damage = (member.total_team_damage || 0) + totalTeamDamage;
 	member.timestamp = Date.now();
 	lobby[member.user_id] = member;
 	await updateLobby({
