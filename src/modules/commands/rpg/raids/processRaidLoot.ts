@@ -191,11 +191,13 @@ export const processRaidLoot = async ({
 				);
 				if (drops.length > 0) {
 					extraLoot.splice(0, drops.length);
-					allRewards.push({
-						rareDrops: drops,
-						user_tag: user.user_tag,
-						gold: 0,
-					});
+					const idx = allRewards.findIndex((r) => r.user_tag === user.user_tag);
+					if (idx >= 0) {
+						allRewards[idx].rareDrops = [
+							...(allRewards[idx].rareDrops || []),
+							...drops
+						];
+					}
 				}
 			}
 		}
@@ -442,7 +444,7 @@ async function initDrops(
 			...rest,
 			...immortalDrops.slice(0, 1),
 			...divineDrops.slice(0, 2),
-			...mythicalDrops.slice(0, 2),
+			...mythicalDrops.slice(0, 1),
 		];
 	} else {
 		// FODDERS
