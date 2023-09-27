@@ -18,6 +18,7 @@ import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
 import { probability, randomElementFromArray } from "helpers";
 import {
+	MIN_LEVEL_FOR_HIGH_RAIDS,
 	QUEST_TYPES,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
@@ -123,15 +124,22 @@ export const processRaidLoot = async ({
 				}
 				if (raid.loot.rare) {
 					/**
-			 * Pre-fill the array with all the number of cards that are available to be dropped
-			 */
+           * Pre-fill the array with all the number of cards that are available to be dropped
+           */
 					const array: RaidLootDropProps[] = raid.raid_boss
 						.map((boss) =>
-							(raid.loot.rare || []).map((r) => Array(r.number).fill("").map((_) => ({
-								...r,
-								name: boss.name,
-								character_id: boss.character_id
-							})).flat()).flat()
+							(raid.loot.rare || [])
+								.map((r) =>
+									Array(r.number)
+										.fill("")
+										.map((_) => ({
+											...r,
+											name: boss.name,
+											character_id: boss.character_id,
+										}))
+										.flat()
+								)
+								.flat()
 						)
 						.flat();
 					promises.push(
@@ -155,32 +163,52 @@ export const processRaidLoot = async ({
        * Added a pity system to atleast drop 1 card
        * if they have not received any drops for 15 raids.
        */
+			const premiumUsers = allUsers
+				.filter((u) => u.is_premium)
+				.map((p) => p.id);
 			const sortedLobby = keys
+				.sort((a) => (premiumUsers.includes(a) ? -1 : 1))
 				.sort((a, b) =>
-					raid.lobby[a].total_damage <= raid.lobby[b].total_damage ? 1 : -1
+					raid.lobby[a].total_damage > raid.lobby[b].total_damage ? -1 : 1
 				)
+				.sort((a, b) => {
+					const a_lastattack = new Date(raid.lobby[a].timestamp).getTime();
+					const b_lastattack = new Date(raid.lobby[b].timestamp).getTime();
+					return a_lastattack > b_lastattack ? -1 : 1;
+				})
 				.filter((uid) => {
 					const leecher = leechers.find((l) => raid.lobby[l].user_id === uid);
 					return leecher ? false : true;
 				});
 
 			/**
-			 * Pre-fill the array with all the number of cards that are available to be dropped
-			 */
+       * Pre-fill the array with all the number of cards that are available to be dropped
+       */
 			const extraLoot = clone(raid.loot.extraCards);
 			const extraLootArray: RaidLootDropProps[] = raid.raid_boss
 				.map((boss) =>
-					(extraLoot || []).map((r) => Array(r.number).fill("").map((_) => ({
-						...r,
-						name: boss.name,
-						character_id: boss.character_id
-					})).flat()).flat()
+					(extraLoot || [])
+						.map((r) =>
+							Array(r.number)
+								.fill("")
+								.map((_) => ({
+									...r,
+									name: boss.name,
+									character_id: boss.character_id,
+								}))
+								.flat()
+						)
+						.flat()
 				)
 				.flat();
 
 			for (const uid of sortedLobby) {
 				const user = usersMeta[uid];
-				if (!user) continue;
+				if (
+					!user ||
+          (user.level < MIN_LEVEL_FOR_HIGH_RAIDS && !user.is_premium)
+				)
+					continue;
 				if (extraLoot.length <= 0) break;
 				const drops = await initDrops(
 					extraLootArray,
@@ -195,7 +223,7 @@ export const processRaidLoot = async ({
 					if (idx >= 0) {
 						allRewards[idx].rareDrops = [
 							...(allRewards[idx].rareDrops || []),
-							...drops
+							...drops,
 						];
 					}
 				}

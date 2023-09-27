@@ -88,6 +88,7 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 		}
 		member.total_damage = member.total_damage + damage;
 		member.total_attack = member.total_attack + 2;
+		member.timestamp = Date.now();
 		currentRaid.lobby[member.user_id] = member;
 
 		const stats = currentRaid.stats;

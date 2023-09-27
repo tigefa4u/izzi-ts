@@ -48,11 +48,13 @@ export const raidParty = async ({
 			.setDescription(
 				`**Level ${currentRaid.stats.battle_stats.boss_level} ${
 					isEvent ? "Event" : "Raid"
-				} Boss [${titleCase(currentRaid.stats.difficulty)}]\n${
-					numericWithComma(currentRaid.stats.remaining_strength)
-				} / ${numericWithComma(currentRaid.stats.original_strength)} ${emoji.hp}**\n${fakeHp
-					.map((i) => i)
-					.join("")}\n\n${prepareRaidParty(currentRaid.lobby)}`
+				} Boss [${titleCase(currentRaid.stats.difficulty)}]\n${numericWithComma(
+					currentRaid.stats.remaining_strength
+				)} / ${numericWithComma(currentRaid.stats.original_strength)} ${
+					emoji.hp
+				}**\n${fakeHp.map((i) => i).join("")}\n\n${prepareRaidParty(
+					currentRaid.lobby
+				)}`
 			)
 			.setFooter({
 				text: `Lobby code: ${currentRaid.id}`,
@@ -62,10 +64,7 @@ export const raidParty = async ({
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
-		loggers.error(
-			"modules.commands.rpg.raids.actions.raidParty: ERROR",
-			err
-		);
+		loggers.error("modules.commands.rpg.raids.actions.raidParty: ERROR", err);
 		return;
 	}
 };
@@ -77,17 +76,14 @@ export function prepareRaidParty(lobby: RaidLobbyProps) {
 	);
 	return lobbyMembers
 		.map((l, i) => {
-			const timeElapsed =
-        Math.abs(
-        	new Date(lobby[l].timestamp).valueOf() - new Date().valueOf()
-        ) /
-        1000 /
-        60;
-			const elapsedHours = Math.floor(timeElapsed / 60);
-			const elapsedMinutes = Math.floor(timeElapsed % 60);
+			const timeElapsed = Math.abs(new Date(lobby[l].timestamp).valueOf() - new Date().valueOf()) / 1000;
+			const remainingMS = timeElapsed / 60;
+			const elapsedHours = Math.floor(remainingMS / 60);
+			const elapsedMinutes = Math.floor(remainingMS % 60);
+			const elapsedSeconds = timeElapsed % 60;
 			const mvpUserId = getLobbyMvp(lobby);
 			return `#${i + 1} **${lobby[l].username} (${lobby[l].user_tag}) ${
-				mvpUserId && mvpUserId === l ? ":crown:" : ""
+				mvpUserId && mvpUserId === l ? "[MVP] :crown:" : ""
 			}**${lobby[l].is_leader ? "\n**Lobby Leader**" : ""}\nLevel: ${
 				lobby[l].level
 			}\nVote Kick ID: ${lobby[l].user_id}\nEnergy: ${
@@ -96,7 +92,9 @@ export function prepareRaidParty(lobby: RaidLobbyProps) {
 				lobby[l].total_attack
 			}\nLast Attack: ${elapsedHours ? `${elapsedHours}h` : ""} ${
 				elapsedMinutes ? `${elapsedMinutes}m` : ""
-			}${!elapsedMinutes && !elapsedHours ? "0" : ""}`;
+			} ${elapsedSeconds > 0 ? `${elapsedSeconds.toFixed(0)}sec` : ""}${
+				!elapsedMinutes && !elapsedHours && !elapsedSeconds ? "0" : ""
+			}`;
 		})
 		.join("\n\n");
 }
