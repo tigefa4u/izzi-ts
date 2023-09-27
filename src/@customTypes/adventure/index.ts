@@ -165,6 +165,7 @@ export type BattleStats = {
       isDamageAbsorbed?: boolean;
     };
   totalDamage?: number;
+  totalTeamDamage?: number;
   isVictory?: boolean;
   isForfeit?: boolean;
   soulGainText?: string;
