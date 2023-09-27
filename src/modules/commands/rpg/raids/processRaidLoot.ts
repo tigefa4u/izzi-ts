@@ -441,7 +441,7 @@ async function initDrops(
 				rate = rate + 5;
 			}
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
-				rate = rate + 10;
+				rate = rate + 15;
 			}
 			const dropChance = [ rate, 100 ];
 			const ratebool = [ true, false ];
