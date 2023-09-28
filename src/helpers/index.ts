@@ -286,15 +286,15 @@ export const prepareStatsDesc = <T extends OverallStatsProps>(
 	stats: T & G,
 	rank = ranksMeta.silver.name
 ) => {
-	const desc = `**ATK:** ${stats.vitality}${
+	const desc = `**ATK:** ${stats.vitality - (stats.vitalityBonus || 0)}${
 		stats.vitalityBonus ? ` (+${stats.vitalityBonus})` : ""
-	}\n**HP:** ${stats.strength}${
+	}\n**HP:** ${stats.strength - (stats.strengthBonus || 0)}${
 		stats.strengthBonus ? ` (+${stats.strengthBonus})` : ""
-	}\n**DEF:** ${stats.defense}${
+	}\n**DEF:** ${stats.defense - (stats.defenseBonus || 0)}${
 		stats.defenseBonus ? ` (+${stats.defenseBonus})` : ""
-	}\n**SPD:** ${stats.dexterity}${
+	}\n**SPD:** ${stats.dexterity - (stats.dexterityBonus || 0)}${
 		stats.dexterityBonus ? ` (+${stats.dexterityBonus})` : ""
-	}\n**ARM:** ${stats.intelligence}${
+	}\n**ARM:** ${stats.intelligence - (stats.intelligenceBonus || 0)}${
 		stats.intelligenceBonus ? ` (+${stats.intelligenceBonus})` : ""
 	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
 		stats.abilityname || ""
