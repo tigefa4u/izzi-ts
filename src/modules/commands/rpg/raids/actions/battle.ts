@@ -120,7 +120,9 @@ export const battleBoss = async ({
 			user.id,
 			user.user_tag,
 			user.selected_team_id,
-			context.channel
+			context.channel,
+			true,
+			false
 		);
 		if (!playerStats) return;
 

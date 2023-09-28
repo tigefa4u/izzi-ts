@@ -212,7 +212,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			team: dgTeam.team as TeamProps,
 			user_id: user.id,
 			id: author.id,
-			canAddGuildStats: false,
+			canAddGuildStats: true,
 			isDungeon: true
 		});
 		if (!playerStats) {
