@@ -23,7 +23,9 @@ docker container stop \$id && docker container rm \$id"
 
 clearBattleCache="export NODE_PATH=src/ && npm run flush:cooldown"
 
-dockerrun="docker run -v ./izzi-cloud-logging.json:/app/izzi-cloud-logging.json -d --restart unless-stopped -p 6379:6379 \
+dockerrun="docker run -v ./izzi-cloud-logging.json:/app/izzi-cloud-logging.json \
+-v ./imagecache.sqlite:/app/imagecache.sqlite \
+-d --restart unless-stopped -p 6379:6379 \
 --env-file .env --network host --memory=5g izzi && docker stats"
 
 cmd="cd ../home/izzi-ts && ${gitpull} && ${pullcomplete} && ${dockerbuild} && \

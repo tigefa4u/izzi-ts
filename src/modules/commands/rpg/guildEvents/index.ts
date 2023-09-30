@@ -2,6 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { addGuildEvent, setPrefix } from "./actions";
+import { updateServerName } from "./actions/server";
 import { showCustomDex } from "./customCards/dex";
 import { spawnCustomServerCardRaid } from "./customCards/spawn";
 import { resetGuildEvents } from "./dangerZone";
@@ -41,6 +42,8 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			showCustomDex(params);
 		} else if (subcommand === "raidspawn") {
 			spawnCustomServerCardRaid(params);
+		} else if (subcommand === "update") {
+			updateServerName(params);
 		}
 		return;
 	} catch (err) {

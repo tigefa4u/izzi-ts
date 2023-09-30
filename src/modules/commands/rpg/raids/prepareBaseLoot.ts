@@ -27,7 +27,7 @@ export const levelBonusDropRate: LevelBonusDropRateProps = {
 	75: 11,
 	100: 14,
 	125: 17,
-	150: 22,
+	150: 20,
 };
 
 export type ComputedCategoryProps = {
@@ -57,7 +57,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: 1.05
+				rate: .35
 			}
 		}
 	},
@@ -75,7 +75,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: 1.45
+				rate: .65
 			}
 		}
 	},
@@ -93,7 +93,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 6,
-				rate: 1.95
+				rate: 1
 			}
 		}
 	}
@@ -133,7 +133,7 @@ const baseLoot = (): any => ({
 						 * since the rate will gradually increase
 						 * when you add category and level rate
 						 */
-						rate: -5.25,
+						rate: -8.75,
 						number: 1,
 					}
 				],
@@ -191,7 +191,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -5.35,
+						rate: -8.25,
 						number: 1
 					}
 				]
@@ -245,7 +245,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -4.7,
+						rate: -7.75,
 						number: 1
 					}
 				],
@@ -335,7 +335,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -4,
+						rate: -7.25,
 						number: 1
 					}
 				],

@@ -28,4 +28,7 @@ export const subcommands = [ {
 }, {
 	name: "raidspawn",
 	alias: [ "rspawn" ]
+}, {
+	name: "update",
+	alias: []
 } ];

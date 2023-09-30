@@ -1,14 +1,11 @@
 export type DarkZoneProfileProps = {
     id: number;
     user_tag: string;
-    mana: number;
-    zone: number;
-    max_zone: number;
+    fragments: number;
     floor: number;
     max_floor: number;
-    max_zone_floor: number;
-    reached_max_zone_at?: string;
-    slots: number;
+    reached_max_floor_at?: string;
+    level: number;
     exp: number;
     r_exp: number;
     selected_team_id?: number;

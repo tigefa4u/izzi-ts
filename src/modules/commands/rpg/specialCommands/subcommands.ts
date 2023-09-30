@@ -32,6 +32,9 @@ export const subcommands = [ {
 	name: "wsend",
 	alias: []
 }, {
-	name: "force-start",
+	name: "force-start", // start a izzi player acc
 	alias: [ "ustart" ]
+}, {
+	name: "clearimagecache",
+	alias: [ "cc" ]
 } ];

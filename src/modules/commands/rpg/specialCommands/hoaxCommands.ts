@@ -15,7 +15,7 @@ export const setCharacterRank = async ({ client, context, options, args }: BaseP
 	try {
 		const author = options.author;
 		if (author.id !== OWNER_DISCORDID) {
-			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			context.channel?.sendMessage("Sorry, this command can only be used by HoaX! " + emoji.cry);
 			return;
 		}
 		const id = Number(args.shift());
@@ -28,7 +28,7 @@ export const setCharacterRank = async ({ client, context, options, args }: BaseP
 			rank,
 			rank_id: rankFound.rank_id 
 		});
-		const msg = `Hey Dad, I've updated the character rank to __${rank}__ for the card ID: __${id}__`;
+		const msg = `Hey HoaX, I've updated the character rank to __${rank}__ for the card ID: __${id}__`;
 		context.channel?.sendMessage(msg);
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 	} catch (err) {
@@ -41,7 +41,7 @@ export const setCharacterLevel = async ({ client, context, options, args }: Base
 	try {
 		const author = options.author;
 		if (author.id !== OWNER_DISCORDID) {
-			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			context.channel?.sendMessage("Sorry, this command can only be used by HoaX! " + emoji.cry);
 			return;
 		}
 		const id = Number(args.shift());
@@ -51,7 +51,7 @@ export const setCharacterLevel = async ({ client, context, options, args }: Base
 		const maxlevel = 100, minlevel = 1;
 		if (level < minlevel || level > maxlevel) return;
 		await updateCollection({ id }, { character_level: level });
-		const msg = `Hey Dad, I've updated the character level to __${level}__ for the card ID: __${id}__`;
+		const msg = `Hey HoaX, I've updated the character level to __${level}__ for the card ID: __${id}__`;
 		context.channel?.sendMessage(msg);
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 		return;
@@ -65,7 +65,7 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 	try {
 		const author = options.author;
 		if (author.id !== OWNER_DISCORDID) {
-			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			context.channel?.sendMessage("Sorry, this command can only be used by HoaX! " + emoji.cry);
 			return;
 		} 
 		const raidId = Number(args.shift());
@@ -99,7 +99,7 @@ export const addRaidDamage = async ({ client, context, options, args }: BaseProp
 			lobby: currentRaid.lobby,
 			stats 
 		});
-		const msg = "Hi dad, I've updated the raid lobby for raid ID: " + currentRaid.id;
+		const msg = "Hi HoaX, I've updated the raid lobby for raid ID: " + currentRaid.id;
 		context.channel?.sendMessage(msg);
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);
 		return;
@@ -113,7 +113,7 @@ export const addWorldBossDamage = async ({ options, client, context, args }: Bas
 	try {
 		const author = options.author;
 		if (author.id !== OWNER_DISCORDID) {
-			context.channel?.sendMessage("Sorry mom, this command can only be used by Dad! " + emoji.cry);
+			context.channel?.sendMessage("Sorry, this command can only be used by Hoax! " + emoji.cry);
 			return;
 		}
 		const dmg = Number(args.shift());
@@ -126,7 +126,7 @@ export const addWorldBossDamage = async ({ options, client, context, args }: Bas
 		raid.stats.remaining_strength = raid.stats.remaining_strength - dmg;
 		if (raid.stats.remaining_strength < 10000) raid.stats.remaining_strength = 10000;
 		updateRaid({ id: raid.id }, { stats: raid.stats });
-		const msg = "Hi dad, I've updated the world boss HP for ID: " + raid.id + 
+		const msg = "Hi HoaX, I've updated the world boss HP for ID: " + raid.id + 
 		"\nCurrent HP: " + numericWithComma(raid.stats.remaining_strength || 0);
 		context.channel?.sendMessage(msg);
 		DMUser(client, msg + " Modified by: " + author.id, OWNER_DISCORDID);

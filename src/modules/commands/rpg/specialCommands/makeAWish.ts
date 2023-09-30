@@ -12,8 +12,10 @@ import { subcommands } from "./subcommands";
 import { startWB } from "./worldboss/start";
 import { finishWB } from "./worldboss/end";
 import { sendSpawnMessage } from "./worldboss/sendMessage";
+import { clear as clearImageCache } from "cache/imageCache";
+import { OWNER_DISCORDID } from "environment";
 
-const wishesFrom = [ "266457718942990337" ];
+const wishesFrom = [ OWNER_DISCORDID ];
 export const makeAWish = async (params: BaseProps) => {
 	try {
 		const { context, options, args } = params;
@@ -61,6 +63,14 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "force-start") {
 				forceStartJourney(params);
+				return;
+			} else if (subcommand === "clearimagecache") {
+				if (author.id !== OWNER_DISCORDID) {
+					context.channel?.sendMessage("You are not allowed to use this command");
+					return;
+				}
+				clearImageCache();
+				context.channel?.sendMessage("Hoax, Disk image cache has been cleared");
 				return;
 			}
 		}

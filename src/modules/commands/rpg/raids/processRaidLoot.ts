@@ -204,6 +204,21 @@ export const processRaidLoot = async ({
           (user.level < MIN_LEVEL_FOR_HIGH_RAIDS && !user.is_premium)
 				)
 					continue;
+
+				/**
+				 * This logic prevents the player from getting back to back
+				 * Mythical drops easily
+				 */
+				const key = "myth-drops::" + user.user_tag;
+				const dropcd = await Cache.get(key);
+				if (dropcd) {
+					if (+dropcd <= 0) {
+						await Cache.del(key);
+					} else {
+						await Cache.decr(key);
+						continue;
+					}
+				}
 				if (extraLoot.length <= 0) break;
 				const drops = await initDrops(
 					extraLootArray,
@@ -213,6 +228,7 @@ export const processRaidLoot = async ({
 					mvp ? lobby[mvp] : undefined
 				);
 				if (drops.length > 0) {
+					await Cache.set(key, user.is_premium ? "2" : "4");
 					extraLoot.splice(0, drops.length);
 					const idx = allRewards.findIndex((r) => r.user_tag === user.user_tag);
 					if (idx >= 0) {
@@ -296,29 +312,29 @@ export const processRaidLoot = async ({
 		}
 
 		// Collect gold from treasury - hoax acc
-		if (OWNER_DISCORDID && raid.loot.extraGold) {
-			await Promise.all([
-				startTransaction(async (trx) => {
-					try {
-						await trx("users")
-							.where({ user_tag: OWNER_DISCORDID })
-							.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
-						return;
-					} catch (err) {
-						loggers.error(
-							"processRaidLoot.goldTreasury: Transaction Failed",
-							err
-						);
-						return;
-					}
-				}),
-				DMUser(
-					client,
-					`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
-					OWNER_DISCORDID
-				),
-			]);
-		}
+		// if (OWNER_DISCORDID && raid.loot.extraGold) {
+		// 	await Promise.all([
+		// 		startTransaction(async (trx) => {
+		// 			try {
+		// 				await trx("users")
+		// 					.where({ user_tag: OWNER_DISCORDID })
+		// 					.update({ gold: trx.raw(`gold - ${Number(raid.loot.extraGold)}`), });
+		// 				return;
+		// 			} catch (err) {
+		// 				loggers.error(
+		// 					"processRaidLoot.goldTreasury: Transaction Failed",
+		// 					err
+		// 				);
+		// 				return;
+		// 			}
+		// 		}),
+		// 		DMUser(
+		// 			client,
+		// 			`Raid loot from treasury. ID: ${raid.id}, gold: ${raid.loot.extraGold}, lobby: ${keys.length}`,
+		// 			OWNER_DISCORDID
+		// 		),
+		// 	]);
+		// }
 
 		return;
 	} catch (err) {
@@ -433,12 +449,13 @@ async function initDrops(
 		array = array.filter((item) => {
 			let rate = item.rate || 10;
 			if (mvp && user.id === mvp.user_id && !item.isStaticDropRate) {
-				rate = rate + 5;
+				rate = rate + 3; // used to be 5
 			}
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
-				rate = rate + 15;
+				rate = rate + 10;
 			}
-			const dropChance = [ rate, 100 ];
+			const num2 = user.is_premium ? 150 : 200;
+			const dropChance = [ rate, num2 ];
 			const ratebool = [ true, false ];
 			return ratebool[probability(dropChance)];
 		});

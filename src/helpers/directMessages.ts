@@ -13,6 +13,9 @@ export const DMUser = async (
 		await delay(1200);
 		const author = await client.users.fetch(authorId);
 		const DM = await author.createDM();
+		if (content instanceof MessageEmbed) {
+			content.setHideConsoleButtons(true);
+		}
 		DM.sendMessage(content);
 	} catch (err) {
 		loggers.error(

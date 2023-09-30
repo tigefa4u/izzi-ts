@@ -96,7 +96,8 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 						embed.description +
               `\n\n**__${month} ${year}, Calendar Card (Total Monthly Votes: ${user.monthly_votes})__**` +
               `\nName: **${cardName} (Tradable)**\nSeries: **${titleCase(card.series)}**` +
-              `\nTotal Collectables: **__5x__ Immortal ${cardName}, __150x__ Platinum ${cardName} Fodders.**`
+              `\nTotal Collectables: **__1x__ Mythical ${cardName}, __4x__ Immortal ${cardName}, ` +
+			  `__150x__ Platinum ${cardName} Fodders.**`
 					)
 					.setFooter({
 						text: "After 40 votes you receive 6,000 Gold per vote",

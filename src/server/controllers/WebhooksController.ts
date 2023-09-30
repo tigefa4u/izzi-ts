@@ -206,6 +206,15 @@ const monthlyCardMatrix = [
 		premiumReward: { shards: 25 },
 	},
 ];
+const mythicalRewardObj: any = {
+	vote: 39,
+	reward: {
+		type: "mythical",
+		number: 1,
+		rank: ranksMeta.mythical.name,
+		rank_id: ranksMeta.mythical.rank_id
+	},
+};
 
 const prepMatrix = () => {
 	// total 40 votes
@@ -232,14 +241,17 @@ const processMonthlyVoteReward = async (user: UserProps) => {
 			reward: { gold: 6000 },
 		};
 	const rewardArray = prepMatrix();
-	const item = rewardArray[user.monthly_votes - 1];
+	let item = rewardArray[user.monthly_votes - 1];
+	if (user.monthly_votes === mythicalRewardObj.vote) {
+		item = mythicalRewardObj;
+	}
 	if (!item) {
 		return {
 			desc: `__6,000__ Gold ${emoji.gold}`,
 			reward: { gold: 6000 },
 		};
 	}
-	if (item.reward.type === "immortal" || item.reward.type === "fodder") {
+	if (item.reward.type === "immortal" || item.reward.type === "fodder" || item.reward.type === "mythical") {
 		if (item.reward.type === "fodder") {
 			await directUpdateCreateFodder([
 				{
@@ -248,8 +260,7 @@ const processMonthlyVoteReward = async (user: UserProps) => {
 					count: item.reward.number,
 				},
 			]);
-		}
-		if (item.reward.type === "immortal") {
+		} else {
 			await createCollection({
 				exp: STARTER_CARD_EXP,
 				character_level: STARTER_CARD_LEVEL,
