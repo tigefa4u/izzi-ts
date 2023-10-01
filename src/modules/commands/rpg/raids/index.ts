@@ -204,7 +204,7 @@ function prepareLoot(
 					(d) =>
 						`\n__${d.number}x__ ${titleCase(d.rank)} of ${boss
 							.map((b) => `**${titleCase(b.name)}**`)
-							.join(", ")} (At ${d.rate}% per each card)${
+							.join(", ")} (At ${d.rate?.toFixed(2)}% per each card)${
 							d.isStaticDropRate ? " (Fixed %)" : ""
 						}`
 				)
@@ -219,7 +219,7 @@ function prepareLoot(
 					(d) =>
 						`\n__${d.number}x__ ${titleCase(d.rank)} of ${boss
 							.map((b) => `**${titleCase(b.name)}**`)
-							.join(", ")} (At ${d.rate}% per each card)${
+							.join(", ")} (At ${d.rate?.toFixed(2)}% per each card)${
 							d.isStaticDropRate ? " (Fixed %)" : ""
 						}`
 				)
