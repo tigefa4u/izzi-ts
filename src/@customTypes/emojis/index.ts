@@ -124,7 +124,7 @@ export type EmojiProps = {
 	shield: "<:shield:859771545974341633>",
 	shield2: ":shield:",
 	gem: "<:style4:872539468576489482>",
-	dreameater: " <:dreameater:890562182440427591>",
+	dreameater: "<:dreameater:890562182440427591>",
 	staffofmedana: "<:staffofmedana:890562183291887636>",
 	lunarwand: "<:lunarwand:890562182960541737>",
 	beginner: ":beginner:",

@@ -131,7 +131,7 @@ const emoji: EmojiProps = {
 	skull: "<:skull:859771546229932042>",
 	shield: "<:shield:859771545974341633>",
 	gem: "<:style4:872539468576489482>",
-	dreameater: " <:dreameater:890562182440427591>",
+	dreameater: "<:dreameater:890562182440427591>",
 	staffofmedana: "<:staffofmedana:890562183291887636>",
 	lunarwand: "<:lunarwand:890562182960541737>",
 	beginner: ":beginner:",
