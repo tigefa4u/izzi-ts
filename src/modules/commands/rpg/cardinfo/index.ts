@@ -43,6 +43,7 @@ import { getCustomServerCardByCharacterId } from "api/controllers/CustomServerCa
 import { ranksMeta } from "helpers/rankConstants";
 import { getGuildByGuildIds } from "api/controllers/GuildsController";
 import { GuildProps } from "@customTypes/guilds";
+import { UserUpdateProps } from "@customTypes/users";
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -267,12 +268,13 @@ const handleJumpToFloor = async ({
 		);
 		return;
 	}
+	const object = { ruin: location.zone } as UserUpdateProps;
+	if (zoneDetails.location_id !== user.ruin) {
+		object.max_floor = user.max_ruin_floor;
+	}
 	await updateRPGUser(
 		{ user_tag: author.id },
-		{
-			ruin: location.zone,
-			max_floor: zoneDetails.max_floor,
-		}
+		object
 	);
 	floor(options);
 	return;
