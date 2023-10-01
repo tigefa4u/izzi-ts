@@ -223,6 +223,7 @@ export const battleBoss = async ({
 
 			result.totalTeamDamage = clone(result.totalDamage || 0);
 			result.totalTeamDamage = Math.floor(result.totalTeamDamage * multiplier);
+			if (result.totalTeamDamage > result.totalDamage) result.totalTeamDamage = result.totalDamage;
 			// Enemy stats will always be raid boss
 			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;

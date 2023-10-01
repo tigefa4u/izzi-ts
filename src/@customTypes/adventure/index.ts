@@ -174,6 +174,7 @@ export type BattleStats = {
   isBot?: boolean;
   username?: string;
   enemyStats?: BattleStats;
+  isRageMode?: boolean;
 };
 
 export type PrepareBattleDescriptionProps = {

@@ -545,6 +545,7 @@ async function simulatePlayerTurns({
 			});
 			enemyStats = boost.enemyStats;
 			if (round === RAGE_MODE_ROUND && i === 1) {
+				enemyStats.isRageMode = true;
 				const desc = await simulateBattleDescription({
 					playerStats,
 					enemyStats,

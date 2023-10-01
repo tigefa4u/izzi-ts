@@ -202,9 +202,13 @@ export const prepareBattleDesc = ({
 
 function showStatsDesc(stats: BattleStats["totalStats"]) {
 	const desc =
-    `${emoji.crossedswords} \`${Math.floor(stats.vitality)}\` ${emoji.shield2} \`${Math.floor(stats.defense)}\` ` +
-    `${emoji.armor} \`${Math.floor(stats.intelligence)}\` ${emoji.dash} \`${Math.floor(stats.dexterity)}\` ` +
-	`${emoji.criticalDamage} \`${stats.criticalDamage.toFixed(2)}\``;
+    `${emoji.crossedswords} \`${Math.floor(stats.vitality)}\` ${
+    	emoji.shield2
+    } \`${Math.floor(stats.defense)}\` ` +
+    `${emoji.armor} \`${Math.floor(stats.intelligence)}\` ${
+    	emoji.dash
+    } \`${Math.floor(stats.dexterity)}\` ` +
+    `${emoji.criticalDamage} \`${stats.criticalDamage.toFixed(2)}\``;
 	return desc;
 }
 
@@ -212,7 +216,9 @@ function showBattleDesc(playerStats: BattleStats, enemyStats: BattleStats) {
 	const filterPlayerCards = playerStats.cards.filter(
 		Boolean
 	) as CollectionCardInfoProps[];
-	const desc = `**${playerStats.name}**\nElement Type: ${filterPlayerCards
+	const desc = `**${playerStats.name}${
+		playerStats.isRageMode ? ` ${emoji.angry}` : ""
+	}**\nElement Type: ${filterPlayerCards
 		.map((c) => `${emojiMap(c.type)} ${c.itemname ? emojiMap(c.itemname) : ""}`)
 		.join(" ")}${
 		enemyStats.totalStats.effective < 1
@@ -226,7 +232,11 @@ function showBattleDesc(playerStats: BattleStats, enemyStats: BattleStats) {
 			? `Rank: ${Array(
 				ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].size
 			)
-				.fill(emojiMap(ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].emoji))
+				.fill(
+					emojiMap(
+						ranksMeta[filterPlayerCards[0].rank as keyof RanksMetaProps].emoji
+					)
+				)
 				.map((i) => i)
 				.join("")}\n`
 			: ""
