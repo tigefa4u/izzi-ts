@@ -141,7 +141,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -6,
+						rate: -7.75,
 						number: 1
 					}
 				]
@@ -191,7 +191,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -8.25,
+						rate: -7.55,
 						number: 1
 					}
 				]
@@ -245,7 +245,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.75,
+						rate: -7.25,
 						number: 1
 					}
 				],
@@ -335,7 +335,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.25,
+						rate: -7.03,
 						number: 1
 					}
 				],

@@ -1,3 +1,4 @@
+import { OverallStatsProps } from "@customTypes";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { RaidLootProps, RaidProps, RaidStatsProps } from "@customTypes/raids";
@@ -8,10 +9,11 @@ import { numericWithComma } from "helpers";
 import { prepareHPBar } from "helpers/adventure";
 import { processHpBar, relativeDiff } from "helpers/battle";
 import { MAX_ENERGY_PER_RAID } from "helpers/constants";
+import { statMultiplier } from "helpers/raid";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { groupByKey, isEmptyValue } from "utility";
+import { clone, groupByKey, isEmptyValue } from "utility";
 import { battleRaidBoss } from "./actions/battle";
 import { showEnergy } from "./actions/energy";
 import { inviteToRaid } from "./actions/invite";
@@ -110,7 +112,7 @@ export function prepareRaidBossEmbedDesc(
 	isWorldBoss = false,
 	prepareLootCb?: () => string
 ) {
-	const stats = raid.stats;
+	const stats = clone(raid.stats);
 	const loot = raid.loot;
 	const boss = raid.raid_boss;
 	const damageDiff = relativeDiff(
@@ -118,6 +120,20 @@ export function prepareRaidBossEmbedDesc(
 		stats.original_strength,
 		8
 	);
+
+	let pl = stats.battle_stats.stats["strength"];
+	const keys = Object.keys(stats.battle_stats.stats);
+	keys.forEach((key) => {
+		if ([ "vitality", "dexterity", "intelligence", "defense" ].includes(key)) {
+			stats.battle_stats.stats[key as keyof OverallStatsProps] = Math.round(
+				(stats.battle_stats.stats[key as keyof OverallStatsProps] || 0) *
+          statMultiplier[raid.stats.rawDifficulty.toLowerCase()]
+			);
+
+			pl = pl + (stats.battle_stats.stats[key as keyof OverallStatsProps] || 0);
+		}
+	});
+
 	const overAllStats = prepareFakeHp(stats);
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 
@@ -150,7 +166,7 @@ export function prepareRaidBossEmbedDesc(
 	)}\n**Total ARM:** ${numericWithComma(
 		stats.battle_stats.stats.intelligence
 	)}\n\n**Power Level:** ${numericWithComma(
-		stats.battle_stats.power_level
+		pl
 	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)}`;
 
 	return desc;
@@ -250,7 +266,7 @@ export function prepareInitialLobbyMember(
 			votes: 0,
 			timestamp: new Date().getTime(),
 			is_leader: is_leader,
-			total_team_damage: 0
+			total_team_damage: 0,
 		},
 	};
 }

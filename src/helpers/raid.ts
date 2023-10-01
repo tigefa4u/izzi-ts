@@ -7,7 +7,7 @@ import { clone } from "utility";
 import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { DEFAULT_DPR } from "./constants";
 
-const statMultiplier: {[key: string]: number;} = {
+export const statMultiplier: {[key: string]: number;} = {
 	easy: 1,
 	medium: 1,
 	hard: 1,
