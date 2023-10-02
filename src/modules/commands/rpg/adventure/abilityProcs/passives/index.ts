@@ -6,6 +6,7 @@ import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPlayerDamageDealt,
 	getRelationalDiff,
+	processEnergyBar,
 	processHpBar,
 	relativeDiff,
 } from "helpers/battle";
@@ -24,7 +25,7 @@ export const wrecker = ({
 	card,
 	simulation,
 	basePlayerStats,
-	baseEnemyStats
+	baseEnemyStats,
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Rework - wrecker should buff all team atk
@@ -36,11 +37,23 @@ export const wrecker = ({
 		//   playerStats.totalStats.vitality - card.stats.vitality;
 		const percent = calcPercentRatio(90, card.rank);
 		const percentDec = calcPercentRatio(8, card.rank);
-		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, percent);
+		const ratio = getRelationalDiff(
+			basePlayerStats.totalStats.vitality,
+			percent
+		);
 		// const atkInc = card.stats.vitality + ratio;
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
-		const desc = `increasing all ally **ATK** by __${percent}%__. ` +
-		`All ally **ATK** will decrease by __${percentDec}%__ each round.`;
+
+		const intRatio = getRelationalDiff(
+			basePlayerStats.totalStats.intelligence,
+			percent
+		);
+		playerStats.totalStats.intelligence =
+      playerStats.totalStats.intelligence + intRatio;
+
+		const desc =
+      `increasing all ally **ATK** and **ARMOR** by __${percent}%__. ` +
+      `All ally **ATK** and **ARMOR** will decrease by __${percentDec}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -55,16 +68,40 @@ export const wrecker = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	} else {
 		if (playerStats.totalStats.isWrecker && card.isUseWreckerPassive) {
 			const inc = calcPercentRatio(8, card.rank);
-			const decRatio = getRelationalDiff(basePlayerStats.totalStats.vitality, inc);
+			const decRatio = getRelationalDiff(
+				basePlayerStats.totalStats.vitality,
+				inc
+			);
 			playerStats.totalStats.vitality =
         playerStats.totalStats.vitality - decRatio;
 			if (playerStats.totalStats.vitality <= 0)
 				playerStats.totalStats.vitality = 1;
+
+			if (playerStats.totalStats.intelligence > 0) {
+				const intDecRatio = getRelationalDiff(
+					basePlayerStats.totalStats.intelligence,
+					inc
+				);
+				playerStats.totalStats.intelligence - intDecRatio;
+				if (playerStats.totalStats.intelligence < 0)
+					playerStats.totalStats.intelligence = 0;
+
+				const diff = getRelationalDiff(
+					playerStats.totalStats.intelligence,
+					basePlayerStats.totalStats.intelligence
+				);
+				const energy = processEnergyBar({
+					dpr: diff,
+					energy: playerStats.totalStats.energy
+				});
+				playerStats.totalStats.dpr = energy.dpr;
+				playerStats.totalStats.energy = energy.energy;
+			}
 		}
 	}
 	return {
@@ -83,22 +120,25 @@ export const berserk = ({
 	basePlayerStats,
 	card,
 	simulation,
-	baseEnemyStats
+	baseEnemyStats,
 }: any) => {
 	if (!card) return;
 	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __20%__
 	const playerHpRatio = playerStats.totalStats.strength / 100;
 	const enemyHpRatio = opponentStats.totalStats.strength / 100;
-	playerStats.totalStats.previousRound ? playerStats.totalStats.previousRound ++ : null;
+	playerStats.totalStats.previousRound
+		? playerStats.totalStats.previousRound++
+		: null;
 	if (playerHpRatio <= enemyHpRatio && !playerStats.totalStats.isBerserk) {
 		playerStats.totalStats.isBerserk = true;
 		playerStats.totalStats.previousRound = round;
 		const temp = randomElementFromArray([ "vitality", "defense", "critical" ]);
-		
+
 		const percent = calcPercentRatio(20, card.rank);
 
 		const ratio = basePlayerStats.totalStats[temp] * (percent / 100);
-		playerStats.totalStats[temp] = playerStats.totalStats[temp] + Number(ratio.toFixed(2));
+		playerStats.totalStats[temp] =
+      playerStats.totalStats[temp] + Number(ratio.toFixed(2));
 		const desc = `increasing it's **${
 			temp === "vitality" ? "ATK" : temp === "defense" ? "DEF" : "CRIT Chance"
 		}** by __${percent}%__`;
@@ -116,7 +156,7 @@ export const berserk = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -157,7 +197,8 @@ export const fightingSpirit = ({
 			percent
 		);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
-		playerStats.totalStats.defense = playerStats.totalStats.defense + defIncRation;
+		playerStats.totalStats.defense =
+      playerStats.totalStats.defense + defIncRation;
 		const desc = `increasing **ATK** and **DEF** of all allies by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -173,7 +214,7 @@ export const fightingSpirit = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {
@@ -192,7 +233,7 @@ export const dreamEater = ({
 	card,
 	simulation,
 	baseEnemyStats,
-	basePlayerStats
+	basePlayerStats,
 }: BattleProcessProps) => {
 	if (
 		!card ||
@@ -204,7 +245,9 @@ export const dreamEater = ({
 	// and heal for 80% based on damage dealt.
 	let abilityDamage, damageDiff;
 	if (opponentStats.totalStats.isAsleep) {
-		const atkDifference = Math.abs(opponentStats.totalStats.vitality - playerStats.totalStats.vitality);
+		const atkDifference = Math.abs(
+			opponentStats.totalStats.vitality - playerStats.totalStats.vitality
+		);
 		const percent = calcPercentRatio(120, card.rank);
 		abilityDamage = getRelationalDiff(atkDifference, percent);
 		opponentStats.totalStats.strength =
@@ -216,7 +259,7 @@ export const dreamEater = ({
 			opponentStats.totalStats.originalHp
 		);
 		if (damageDiff <= 0) damageDiff = 0;
-		
+
 		const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
@@ -226,7 +269,8 @@ export const dreamEater = ({
 		playerStats.totalStats.strength = playerStats.totalStats.strength + heal;
 		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {
 			playerStats.totalStats.strength = playerStats.totalStats.originalHp;
-			if (playerStats.totalStats.isBleeding) playerStats.totalStats.isBleeding = false;
+			if (playerStats.totalStats.isBleeding)
+				playerStats.totalStats.isBleeding = false;
 		}
 		const healDiff = relativeDiff(
 			playerStats.totalStats.strength,
@@ -237,8 +281,9 @@ export const dreamEater = ({
 		playerStats.totalStats.health = processedHealHpBar.health;
 		playerStats.totalStats.strength = processedHealHpBar.strength;
 
-		const desc = `Inflitcing a stack of **Nightmare** ${emoji.nightmare} on __${opponentStats.name}__ ` +
-		`dealing __${abilityDamage}__ damage and restores __${heal}__ **HP**`;
+		const desc =
+      `Inflitcing a stack of **Nightmare** ${emoji.nightmare} on __${opponentStats.name}__ ` +
+      `dealing __${abilityDamage}__ damage and restores __${heal}__ **HP**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -253,7 +298,7 @@ export const dreamEater = ({
 			isItem: false,
 			simulation,
 			baseEnemyStats,
-			basePlayerStats
+			basePlayerStats,
 		});
 	}
 	return {

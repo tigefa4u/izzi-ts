@@ -18,16 +18,33 @@ import { crates } from "./crateLoot";
 // 	100: 12
 // }
 
-export type LevelBonusDropRateProps = {
+export type LevelAndPLBonusDropRateProps = {
 	[key: string]: number;
 }
-export const levelBonusDropRate: LevelBonusDropRateProps = {
+export const levelBonusDropRate: LevelAndPLBonusDropRateProps = {
 	25: 5,
 	50: 8,
 	75: 11,
 	100: 14,
 	125: 17,
 	150: 20,
+};
+
+export const PLBonusDropRate: LevelAndPLBonusDropRateProps = {
+	3000: .37,
+	5000: .82,
+	8000: 1.04,
+	12000: 1.39,
+	15000: 1.74,
+	18000: 2.09,
+	22000: 2.55,
+	25000: 3,
+	28000: 3.65,
+	32000: 4.45,
+	38000: 6,
+	55000: 10.35,
+	60000: 25,
+	100000: 50
 };
 
 export type ComputedCategoryProps = {
@@ -141,7 +158,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.75,
+						rate: 1.25,
 						number: 1
 					}
 				]
@@ -191,7 +208,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.55,
+						rate: 1.75,
 						number: 1
 					}
 				]
@@ -245,7 +262,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.25,
+						rate: 2.25,
 						number: 1
 					}
 				],
@@ -335,7 +352,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: -7.03,
+						rate: 2.75,
 						number: 1
 					}
 				],

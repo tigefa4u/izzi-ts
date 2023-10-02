@@ -1,3 +1,4 @@
+import { OverallStatsProps } from "@customTypes";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
@@ -35,9 +36,14 @@ import {
 } from "helpers/constants";
 import { DMUser } from "helpers/directMessages";
 import { RankProps } from "helpers/helperTypes";
+import { statMultiplier } from "helpers/raid";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
-import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
+import {
+	getCooldown,
+	sendCommandCDResponse,
+	setCooldown,
+} from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { clone } from "utility";
 import {
@@ -50,7 +56,8 @@ import {
 	computedCategoryData,
 	ComputedCategoryProps,
 	levelBonusDropRate,
-	LevelBonusDropRateProps,
+	LevelAndPLBonusDropRateProps,
+	PLBonusDropRate,
 } from "../prepareBaseLoot";
 
 const spawnImmunity = [ "266457718942990337", "476049957904711682" ];
@@ -77,10 +84,11 @@ const raidDivisions = {
 	},
 };
 
-const calculateDropRateByBossLevel = (
+const calculateDropRateByBossLevelAndPL = (
 	level: number,
 	loot: RaidLootProps,
-	rank: RankProps
+	rank: RankProps,
+	pl: number
 ) => {
 	let category = "d3" as keyof ComputedCategoryProps;
 	if (D2_RANKS.includes(rank)) {
@@ -93,7 +101,9 @@ const calculateDropRateByBossLevel = (
 	const percentToLoop = Object.keys(levelBonusDropRate);
 	for (const percent of percentToLoop) {
 		if (levelPercent <= +percent) {
-			rate = Number(levelBonusDropRate[percent as keyof LevelBonusDropRateProps].toFixed(2));
+			rate = Number(
+				levelBonusDropRate[percent as keyof LevelAndPLBonusDropRateProps].toFixed(2)
+			);
 			break;
 		}
 	}
@@ -104,13 +114,39 @@ const calculateDropRateByBossLevel = (
 				drop.rate = (drop.rate || 1) + rate;
 			}
 		});
-		loot.extraCards?.map((drop) => {
-			if (!drop.isStaticDropRate) {
-				drop.rate = (drop.rate || 1) + rate;
-			}
-		});
+		/**
+		 * Extra cards are ultra rare (myth) hence,
+		 * consider raid PL to boost drop rate instead of level.
+		 * This logic is commented since it makes it possible
+		 * for easy raid to have higher drop rate % than immo
+		 */
+		// loot.extraCards?.map((drop) => {
+		// 	if (!drop.isStaticDropRate) {
+		// 		drop.rate = (drop.rate || 1) + rate;
+		// 	}
+		// });
 	}
 
+	/**
+	 * Boost mythical drop rate based on boss PL
+	 */
+	let plRate = 0;
+	const pltoLoop = Object.keys(PLBonusDropRate);
+	for (const power of pltoLoop) {
+		if (pl <= +power) {
+			plRate = Number(
+				PLBonusDropRate[power].toFixed(2)
+			);
+			break;
+		}
+	}
+	if (plRate > 0) {
+		loot.extraCards?.map((drop) => {
+			if (!drop.isStaticDropRate) {
+				drop.rate = (drop.rate || 1) + plRate;
+			}
+		});	
+	}
 	loot.division = category;
 	return loot;
 };
@@ -130,6 +166,23 @@ export const computeRaidBossStats = async ({
 		throw new Error("Unable to prepare raid boss stats");
 	}
 
+	/**
+   * Pre-calculating PL & stats due to immo raids
+   * having 1.45 multiplier to stats
+   */
+	let pl = stats.totalOverallStats.strength;
+	Object.keys(stats.totalOverallStats).forEach((key) => {
+		if ([ "vitality", "dexterity", "intelligence", "defense" ].includes(key)) {
+			const k = key as keyof OverallStatsProps;
+			stats.totalOverallStats[k] = Math.round(
+				(stats.totalOverallStats[k] || 1) *
+          statMultiplier[computedBoss.difficulty.toLowerCase()]
+			);
+
+			pl = pl + (stats.totalOverallStats[k] || 0);
+		}
+	});
+
 	if (stats.totalOverallStats.originalHp === 0) {
 		stats.totalOverallStats.originalHp = stats.totalOverallStats.strength;
 	}
@@ -141,20 +194,20 @@ export const computeRaidBossStats = async ({
 		},
     { character_level: 0 } as { character_level: number }
 	);
-	
 
 	const totalBossLevel: number = reducedLevel.character_level;
-	const computedLoot = calculateDropRateByBossLevel(
+	const computedLoot = calculateDropRateByBossLevelAndPL(
 		totalBossLevel,
 		computedBoss.loot,
-		raidBosses[0].rank
+		raidBosses[0].rank,
+		pl
 	);
 
 	const raidStats = {
 		battle_stats: {
 			boss_level: totalBossLevel,
 			bosses: computedBoss.bosses,
-			power_level: stats.totalPowerLevel,
+			power_level: pl,
 			stats: stats.totalOverallStats,
 		},
 		remaining_strength: stats.totalOverallStats.strength * totalBossLevel,
@@ -178,9 +231,9 @@ export const createRaidBoss = async ({
 	lobby,
 	isPrivate,
 	character_id,
-	customSpawnParams = {}
+	customSpawnParams = {},
 }: C & {
-	customSpawnParams?: CardParams;
+  customSpawnParams?: CardParams;
 }) => {
 	const computedLevel = randomNumber(
 		computedBoss.level[0],
@@ -191,7 +244,7 @@ export const createRaidBoss = async ({
 		rank: computedBoss.rank,
 		is_event: isEvent,
 		is_random: true,
-		...customSpawnParams
+		...customSpawnParams,
 	};
 	if (isEvent) {
 		params.is_random = false;
@@ -201,33 +254,46 @@ export const createRaidBoss = async ({
 		params.character_id = character_id;
 		limit = character_id?.length || 1;
 	}
-	if (computedBoss.loot.drop.default && Array.isArray(computedBoss.loot.drop.default)) {
+	if (
+		computedBoss.loot.drop.default &&
+    Array.isArray(computedBoss.loot.drop.default)
+	) {
 		computedBoss.loot?.drop?.default?.map((d) => {
 			d.number = Math.floor(d.number / limit);
 		});
 	}
 	if (computedBoss.loot.rare) {
 		computedBoss.loot.rare?.map((r) => {
-			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
+			const rank = r.rank as keyof ComputedCategoryProps[
+        | "d3"
+        | "d2"
+        | "d1"]["numberOfCards"];
 			// Make this change if you decide to add more ranks
 			if (computedBoss.extras?.numberOfCards[rank]) {
 				r.rate = (r.rate || 0) + computedBoss.extras.numberOfCards[rank].rate;
 				r.rate = Number((r.rate || 0).toFixed(2));
 				if (!r.isStaticDrop) {
-					r.number = Math.floor(computedBoss.extras.numberOfCards[rank].cards / limit);
+					r.number = Math.floor(
+						computedBoss.extras.numberOfCards[rank].cards / limit
+					);
 				}
 			}
 		});
 	}
 	if (computedBoss.loot.extraCards) {
 		computedBoss.loot.extraCards?.map((r) => {
-			const rank = r.rank as keyof ComputedCategoryProps["d3" | "d2" | "d1"]["numberOfCards"];
+			const rank = r.rank as keyof ComputedCategoryProps[
+        | "d3"
+        | "d2"
+        | "d1"]["numberOfCards"];
 			// Make this change if you decide to add more ranks
 			if (computedBoss.extras?.numberOfCards[rank]) {
 				r.rate = (r.rate || 0) + computedBoss.extras.numberOfCards[rank].rate;
 				r.rate = Number((r.rate || 0).toFixed(2));
 				if (!r.isStaticDrop) {
-					r.number = Math.floor(computedBoss.extras.numberOfCards[rank].cards / limit);
+					r.number = Math.floor(
+						computedBoss.extras.numberOfCards[rank].cards / limit
+					);
 				}
 			}
 		});
@@ -239,8 +305,8 @@ export const createRaidBoss = async ({
 	const raidBosses = cards.map((c) => {
 		c.character_level = Math.floor(computedLevel / limit);
 		/**
-		 * Boosting PL since 1 raid boss is kinda too easy
-		 */
+     * Boosting PL since 1 raid boss is kinda too easy
+     */
 		if (c.character_level < 800 && cards.length <= 1) {
 			c.character_level = Math.floor(c.character_level * 1.25);
 		}
@@ -257,8 +323,8 @@ export const createRaidBoss = async ({
 			rank_id: 0,
 			is_on_cooldown: false,
 			is_tradable: true,
-			series: c.series
-		} as CollectionCardInfoProps & { series?: string; };
+			series: c.series,
+		} as CollectionCardInfoProps & { series?: string };
 	});
 	// const raidBosses = (await Promise.all(
 	// 	Array(computedBoss.bosses)
@@ -373,8 +439,8 @@ export const spawnRaid = async ({
 	external_character_ids,
 	customSpawn,
 	customSpawnParams,
-	cb
-}: RaidActionProps & { cb?: () => void; }) => {
+	cb,
+}: RaidActionProps & { cb?: () => void }) => {
 	try {
 		const author = options.author;
 		const [ user, rconfig ] = await Promise.all([
@@ -425,7 +491,7 @@ export const spawnRaid = async ({
 				`You must be atleast level __${MIN_RAID_USER_LEVEL}__ ` +
           "to be able to spawn or join Event Raids."
 			);
-			return;	
+			return;
 		}
 		if (
 			user.level < MIN_RAID_USER_LEVEL &&
@@ -490,7 +556,7 @@ export const spawnRaid = async ({
 			isEvent,
 			isPrivate,
 			character_id: character_ids,
-			customSpawnParams
+			customSpawnParams,
 		});
 		if (!raid) return;
 

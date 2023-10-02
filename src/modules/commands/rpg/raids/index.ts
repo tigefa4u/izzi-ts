@@ -121,19 +121,6 @@ export function prepareRaidBossEmbedDesc(
 		8
 	);
 
-	let pl = stats.battle_stats.stats["strength"];
-	const keys = Object.keys(stats.battle_stats.stats);
-	keys.forEach((key) => {
-		if ([ "vitality", "dexterity", "intelligence", "defense" ].includes(key)) {
-			stats.battle_stats.stats[key as keyof OverallStatsProps] = Math.round(
-				(stats.battle_stats.stats[key as keyof OverallStatsProps] || 0) *
-          statMultiplier[raid.stats.rawDifficulty.toLowerCase()]
-			);
-
-			pl = pl + (stats.battle_stats.stats[key as keyof OverallStatsProps] || 0);
-		}
-	});
-
 	const overAllStats = prepareFakeHp(stats);
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 
@@ -166,7 +153,7 @@ export function prepareRaidBossEmbedDesc(
 	)}\n**Total ARM:** ${numericWithComma(
 		stats.battle_stats.stats.intelligence
 	)}\n\n**Power Level:** ${numericWithComma(
-		pl
+		stats.battle_stats.power_level
 	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)}`;
 
 	return desc;
