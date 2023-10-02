@@ -50,6 +50,15 @@ export const transformation = {
 		type: "boolean",
 		columnName: "is_world_boss",
 	},
+	isDarkZone: {
+		type: "boolean",
+		columnName: "is_dark_zone"
+	},
+	metadata: { type: "jsonb" },
+	cardTypeMetadata: {
+		type: "jsonb",
+		columnName: "card_type_metadata" 
+	},
 };
 export const get: (
   params: CardParams & { id?: number }

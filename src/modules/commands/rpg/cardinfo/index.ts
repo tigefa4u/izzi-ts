@@ -44,6 +44,32 @@ import { ranksMeta } from "helpers/rankConstants";
 import { getGuildByGuildIds } from "api/controllers/GuildsController";
 import { GuildProps } from "@customTypes/guilds";
 import { UserUpdateProps } from "@customTypes/users";
+import { CardTypeMetadataProps } from "@customTypes/cards";
+
+const prepCardTypeDesc = ({
+	isCustomCard,
+	isDarkZone,
+	isEvent,
+	isMonthlyCard,
+	isWorldBoss,
+	isReferralCard
+}: CardTypeMetadataProps) => {
+	let cardType = "";
+	if (isCustomCard) {
+		cardType = "Custom";
+	} else if (isEvent) {
+		cardType = "Event";
+	} else if (isWorldBoss) {
+		cardType = "World Boss";
+	} else if (isDarkZone) {
+		cardType = "Dark Zone";
+	} else if (isMonthlyCard) {
+		cardType = "Monthly Calendar";
+	} else if (isReferralCard) {
+		cardType = "Referral";
+	}
+	return cardType !== "" ? `\n**Card Type:** ${cardType}` : "";
+};
 
 async function prepareCinfoDetails(
 	embed: MessageEmbed,
@@ -73,13 +99,19 @@ async function prepareCinfoDetails(
 	let serverInfo = "";
 	if (customCardServerInfo?.guild_ids) {
 		const guildIds = customCardServerInfo.guild_ids;
-		const inviteLinks = (customCardServerInfo.metadata?.serverInviteLinks || "").split(",");
+		const inviteLinks = (
+			customCardServerInfo.metadata?.serverInviteLinks || ""
+		).split(",");
 		const guilds = await getGuildByGuildIds(guildIds);
 		if (guilds) {
-			serverInfo = `${guildIds.map((g, i) => {
-				const item: GuildProps | undefined = guilds.find((gg) => gg.guild_id === g);
-				return `[${item?.guild_name}](${inviteLinks[i]})`;
-			}).join(", ")}`;
+			serverInfo = `${guildIds
+				.map((g, i) => {
+					const item: GuildProps | undefined = guilds.find(
+						(gg) => gg.guild_id === g
+					);
+					return `[${item?.guild_name}](${inviteLinks[i]})`;
+				})
+				.join(", ")}`;
 		}
 	}
 
@@ -88,9 +120,11 @@ async function prepareCinfoDetails(
 		.setDescription(
 			`**Series:** ${titleCase(
 				characterInfo.series.trim()
-			)}\n**Card Copies:** ${characterInfo.copies}\n**Element:** ${titleCase(
-				characterInfo.type
-			)} ${elementTypeEmoji ? elementTypeEmoji : ""}\n**Zone:** ${
+			)}\n**Card Copies:** ${characterInfo.copies}${prepCardTypeDesc(
+				characterInfo.card_type_metadata || {}
+			)}\n**Element:** ${titleCase(characterInfo.type)} ${
+				elementTypeEmoji ? elementTypeEmoji : ""
+			}\n**Zone:** ${
 				location?.zone
 					? location.zone
 					: characterInfo.series.includes("event")
@@ -112,14 +146,16 @@ async function prepareCinfoDetails(
 					}`
 					: "N/A"
 			} (Low digit cards can be sold for higher price)${
-				serverInfo
-					? `\n\n**Available in Server(s)**\n${serverInfo}`
-					: ""
+				serverInfo ? `\n\n**Available in Server(s)**\n${serverInfo}` : ""
 			}`
 		)
 		.setImage("attachment://cinfo.jpg")
 		.attachFiles([ attachment ])
-		.setFooter({ text: `Added on: ${new Date(characterInfo.created_at).toLocaleDateString()}` });
+		.setFooter({
+			text: `Added on: ${new Date(
+				characterInfo.created_at
+			).toLocaleDateString()}`,
+		});
 
 	return embed;
 }
@@ -132,7 +168,7 @@ export const cinfo = async ({ context, client, args, options }: BaseProps) => {
 			cname = params.name[0];
 		}
 		if (typeof params.rank === "object") {
-			params.rank = params.rank[0]?.trim() as RankProps || BASE_RANK;
+			params.rank = (params.rank[0]?.trim() as RankProps) || BASE_RANK;
 		} else {
 			params.rank = BASE_RANK;
 		}
@@ -274,10 +310,7 @@ const handleJumpToFloor = async ({
 	} else if (zoneDetails.location_id === user.max_ruin) {
 		object.max_floor = user.max_ruin_floor;
 	}
-	await updateRPGUser(
-		{ user_tag: author.id },
-		object
-	);
+	await updateRPGUser({ user_tag: author.id }, object);
 	floor(options);
 	return;
 };
@@ -421,6 +454,8 @@ const fetchCharacterInfoMeta = async (
 		clonedCharacter.metadata = card.metadata;
 		clonedCharacter.rank = card.rank;
 		clonedCharacter.copies = card.copies;
+		clonedCharacter.is_event = card.is_event;
+		clonedCharacter.is_world_boss = card.is_world_boss;
 		const PL = await getPowerLevelByRank({ rank: card.rank });
 		if (!PL) {
 			return;
