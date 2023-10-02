@@ -47,7 +47,7 @@ export default class DiskStorage<T extends object> {
 			.run(id);
 	}
 	public flashall() {
-		return this.db.prepare(`delete from ${this.tableName}`);
+		return this.db.prepare(`delete from ${this.tableName}`).run();
 	}
 	public dropTable() {
 		return this.db.exec(`drop table ${this.tableName}`);
