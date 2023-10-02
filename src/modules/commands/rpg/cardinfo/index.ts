@@ -269,7 +269,9 @@ const handleJumpToFloor = async ({
 		return;
 	}
 	const object = { ruin: location.zone } as UserUpdateProps;
-	if (zoneDetails.location_id !== user.ruin) {
+	if (zoneDetails.location_id < user.max_ruin) {
+		object.max_floor = zoneDetails.max_floor;
+	} else if (zoneDetails.location_id === user.max_ruin) {
 		object.max_floor = user.max_ruin_floor;
 	}
 	await updateRPGUser(
