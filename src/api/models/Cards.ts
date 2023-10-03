@@ -85,6 +85,8 @@ export const getRandomCard: (
 	const queryParams = clone(params);
 	const rank = queryParams.rank;
 	const character_id = queryParams.character_id;
+	const isDarkZone = queryParams.is_dark_zone;
+	delete queryParams.is_dark_zone;
 	delete queryParams.rank;
 	delete queryParams.character_id;
 	const group_with = queryParams.group_with;
@@ -126,6 +128,11 @@ export const getRandomCard: (
 		query = query.where(`${tableName}.is_referral_card`, true);
 	} else {
 		query = query.where(`${tableName}.is_referral_card`, false);
+	}
+	if (typeof isDarkZone === "boolean") {
+		query = query.where(`${tableName}.is_dark_zone`, isDarkZone);
+	} else {
+		query = query.where(`${tableName}.is_dark_zone`, false);
 	}
 	if (!queryParams.series) {
 		query = query.whereNot(`${tableName}.series`, "=", "xenex");
