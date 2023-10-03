@@ -4,6 +4,7 @@ import { probability, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
+	compare,
 	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
 	getRelationalDiff,
@@ -257,13 +258,19 @@ export const dominator = ({
 	basePlayerStats,
 }: BattleProcessProps) => {
 	if (!card) return;
-	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 2;
+	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 3;
 	// Parmanently decrease the **AFK** of all enemies by __14%__ as well as decreasing their **INT** by __3%__
 	if (
-		round % 3 === 0 &&
+		round % playerStats.totalStats.domNum === 0 &&
     !playerStats.totalStats.isDominator
 	) {
 		playerStats.totalStats.isDominator = true;
+		const hasMoreSpd = compare(
+			playerStats.totalStats.dexterity,
+			opponentStats.totalStats.dexterity
+		);
+		const num = hasMoreSpd ? 2 : 3;
+		playerStats.totalStats.domNum = playerStats.totalStats.domNum + num;
 		const percent = calcPercentRatio(14, card.rank);
 		const ratio = getRelationalDiff(
 			baseEnemyStats.totalStats.vitality,

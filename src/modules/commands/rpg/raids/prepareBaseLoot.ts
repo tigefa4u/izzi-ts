@@ -61,7 +61,7 @@ export type ComputedCategoryProps = {
 }
 export const computedCategoryData : ComputedCategoryProps = {
 	d3: {
-		maxlevel: 1800,
+		maxlevel: 1700,
 		ranks: [ ranksMeta.silver.name, ranksMeta.gold.name, ranksMeta.platinum.name ],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
@@ -79,7 +79,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d2: {
-		maxlevel: 1800,
+		maxlevel: 2000,
 		ranks: [ ranksMeta.diamond.name, ranksMeta.divine.name, ranksMeta.legend.name ],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
@@ -97,8 +97,8 @@ export const computedCategoryData : ComputedCategoryProps = {
 		}
 	},
 	d1: {
-		maxlevel: 1500,
-		// spawning mythical boss in raids was too hard for players
+		maxlevel: 1800,
+		// spawning mythical boss in raids was too hard for players.
 		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name ],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {

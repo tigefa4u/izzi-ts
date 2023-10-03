@@ -1,8 +1,10 @@
-import { BattleProcessProps } from "@customTypes/adventure";
+import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
+import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { addTeamEffectiveness } from "helpers/adventure";
 import {
 	getPlayerDamageDealt,
 	getRelationalDiff,
@@ -252,7 +254,18 @@ export const dreamEater = ({
 		const percent = calcPercentRatio(80, card.rank);
 		abilityDamage = getRelationalDiff(atkDifference, percent);
 
+		const elementalEffectiveness = addTeamEffectiveness({
+			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
+			enemyCards: opponentStats.cards,
+			playerStats: { effective: 1 } as BattleStats["totalStats"],
+			opponentStats: { effective: 1 } as BattleStats["totalStats"],
+		});
+		const effective = elementalEffectiveness.playerStats.effective;
+
 		if (abilityDamage > 5000) abilityDamage = 5000;
+		abilityDamage = Math.floor(abilityDamage * effective);
+		if (abilityDamage > 5000) abilityDamage = 5000;
+
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength <= 0)

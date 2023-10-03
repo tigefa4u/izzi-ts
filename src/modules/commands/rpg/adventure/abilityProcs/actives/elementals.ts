@@ -65,7 +65,7 @@ export const elementalStrike = ({
 			};
 		}
 	}
-	if (round % 3 === 0) {
+	if (round % 2 === 0) {
 		const percent = calcPercentRatio(30, card.rank);
 
 		const incPercent = calcPercentRatio(25, card.rank);
