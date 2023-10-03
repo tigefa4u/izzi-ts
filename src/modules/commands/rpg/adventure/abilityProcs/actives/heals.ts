@@ -24,7 +24,7 @@ export const lifesteal = ({
 	if (round % 3 === 0 && !playerStats.totalStats.isLifestealProc) {
 		playerStats.totalStats.isLifesteal = true;
 		playerStats.totalStats.isLifestealProc = true;
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(28, card.rank);
 		const atkPercent = calcPercentRatio(10, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, atkPercent);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
@@ -76,7 +76,7 @@ export const revitalize = ({
 		playerStats.totalStats.isRevit = true;
 		let missingHp = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
 		if (missingHp < 0) missingHp = 0;
-		const percent = calcPercentRatio(38, card.rank);
+		const percent = calcPercentRatio(58, card.rank);
 		const restoreDiff = getRelationalDiff(missingHp, percent);
 		let restorePoints = Math.ceil(playerStats.totalStats.strength + restoreDiff);
 		if (restorePoints >= playerStats.totalStats.originalHp)
@@ -84,7 +84,7 @@ export const revitalize = ({
 		playerStats.totalStats.strength = restorePoints;
 		// Use the same for all abilities that buff stats
 		// buff stats from base stats
-		const incPercent = calcPercentRatio(10, card.rank);
+		const incPercent = calcPercentRatio(15, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, incPercent);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		const damageDiff = relativeDiff(
@@ -135,12 +135,12 @@ export const guardian = ({
 }: BattleProcessProps) => {
 	let damageDiff;
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// restore (15% - 17%) health based on your DEF and also increase the __DEF__ of all allies for the same %
+	// restore (25% - 30%) health based on your DEF and also increase the __DEF__ of all allies for the same %
 	if (round % 2 === 0 && !playerStats.totalStats.isGuardian) {
 		playerStats.totalStats.isGuardian = true;
 		const perRatio = randomElementFromArray([
-			calcPercentRatio(15, card.rank),
-			calcPercentRatio(20, card.rank),
+			calcPercentRatio(25, card.rank),
+			calcPercentRatio(30, card.rank),
 		]);
 		const defInc = getRelationalDiff(
 			basePlayerStats.totalStats.defense,

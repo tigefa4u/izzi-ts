@@ -4,7 +4,6 @@ import { probability, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
-	compare,
 	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
 	getRelationalDiff,
@@ -70,7 +69,7 @@ export const exhaust = ({
 		const num = 2;
 		playerStats.totalStats.exhNum = playerStats.totalStats.exhNum + num;
 		const temp = randomElementFromArray([ "dexterity", "intelligence" ]);
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(20, card.rank);
 		const key = temp as keyof CharacterStatProps;
 		const relDiff = getRelationalDiff(baseEnemyStats.totalStats[key], percent);
 		const buffDiff = getRelationalDiff(

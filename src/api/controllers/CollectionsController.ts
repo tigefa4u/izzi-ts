@@ -356,7 +356,7 @@ export const getAllCollections = async (
 			}),
 			...result.map(async (c) => {
 				let reqSouls = 0;
-				if (c.rank_id === ranksMeta.ultimate.rank_id) {
+				if (c.rank_id === ranksMeta.ultimate.rank_id || c.rank_id === ranksMeta.mythical.rank_id) {
 					const souls = getReqSouls(c.rank_id);
 					const levelDifference = c.character_level - (ranksMeta.ultimate.max_level || 70);
 					if (levelDifference < CHARACTER_LEVEL_EXTENDABLE_LIMIT) {

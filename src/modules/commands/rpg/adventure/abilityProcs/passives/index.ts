@@ -36,6 +36,7 @@ export const wrecker = ({
 		// 	playerStats.totalStats.vitality =
 		//   playerStats.totalStats.vitality - card.stats.vitality;
 		const percent = calcPercentRatio(90, card.rank);
+		const intPercent = calcPercentRatio(28, card.rank);
 		const percentDec = calcPercentRatio(8, card.rank);
 		const ratio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
@@ -46,13 +47,13 @@ export const wrecker = ({
 
 		const intRatio = getRelationalDiff(
 			basePlayerStats.totalStats.intelligence,
-			percent
+			intPercent
 		);
 		playerStats.totalStats.intelligence =
       playerStats.totalStats.intelligence + intRatio;
 
 		const desc =
-      `increasing all ally **ATK** and **ARMOR** by __${percent}%__. ` +
+      `increasing all ally **ATK** by __${percent}%__ and **ARMOR** by __${intPercent}%__. ` +
       `All ally **ATK** and **ARMOR** will decrease by __${percentDec}%__ each round.`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -248,8 +249,10 @@ export const dreamEater = ({
 		const atkDifference = Math.abs(
 			opponentStats.totalStats.vitality - playerStats.totalStats.vitality
 		);
-		const percent = calcPercentRatio(120, card.rank);
+		const percent = calcPercentRatio(80, card.rank);
 		abilityDamage = getRelationalDiff(atkDifference, percent);
+
+		if (abilityDamage > 5000) abilityDamage = 5000;
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
 		if (opponentStats.totalStats.strength <= 0)
@@ -264,7 +267,7 @@ export const dreamEater = ({
 		opponentStats.totalStats.health = processedHpBar.health;
 		opponentStats.totalStats.strength = processedHpBar.strength;
 
-		const healPercent = calcPercentRatio(80, card.rank);
+		const healPercent = calcPercentRatio(33, card.rank);
 		const heal = getRelationalDiff(abilityDamage, healPercent);
 		playerStats.totalStats.strength = playerStats.totalStats.strength + heal;
 		if (playerStats.totalStats.strength > playerStats.totalStats.originalHp) {

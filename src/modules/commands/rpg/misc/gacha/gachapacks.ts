@@ -53,29 +53,29 @@ const packContains: P = {
 			ranksMeta.immortal.name,
 		],
 		chances: [ 40, 35, 25 ],
-		cost: 120000,
+		cost: 250000,
 		name: "Silver Pack",
 	},
 	epic: {
 		ranks: [
 			ranksMeta.divine.name,
 			ranksMeta.immortal.name,
-			ranksMeta.mythical.name,
+			// ranksMeta.mythical.name,
 		],
-		chances: [ 100, 30, .1 ],
+		chances: [ 100, 30 ],
 		// chances: [ 65, 30, 5 ],
-		cost: 285000,
+		cost: 385000,
 		name: "Epic Pack",
 	},
 	legendary: {
 		ranks: [
 			ranksMeta.divine.name,
 			ranksMeta.immortal.name,
-			ranksMeta.mythical.name,
+			// ranksMeta.mythical.name,
 		],
 		// chances: [ 60, 30, 10 ], -> to show info
-		chances: [ 100, 40, .5 ],
-		cost: 400000,
+		chances: [ 100, 40 ],
+		cost: 600000,
 		name: "Legendary Pack",
 	},
 };
@@ -101,6 +101,16 @@ const confirmAndPurchasePack = async (
 		return;
 	}
 	if (options?.isConfirm) {
+		const gachaKey = "gacha-count:" + params.author.id;
+		const packsPurchased = await Cache.get(gachaKey) || "0";
+		/**
+		 * Control the myth card drop from packs
+		 */
+		if (pack.name !== packContains.silver.name && +packsPurchased >= 5) {
+			pack.ranks.push(ranksMeta.mythical.name);
+			pack.chances.push(.25);
+			await Cache.incr(gachaKey);
+		}
 		const result = (await Promise.all(
 			Array(5)
 				.fill("")
@@ -112,6 +122,8 @@ const confirmAndPurchasePack = async (
 							is_random: true,
 							is_event: false,
 							is_world_boss: false,
+							is_dark_zone: false,
+							is_referral_card: false
 						},
 						1
 					);
@@ -119,6 +131,10 @@ const confirmAndPurchasePack = async (
 						return;
 					}
 					const card = cards[0];
+					if (card.rank === ranksMeta.mythical.name) {
+						pack.ranks.pop();
+						pack.chances.pop();
+					}
 					return {
 						id: card.id,
 						character_id: card.character_id,
@@ -155,11 +171,14 @@ const confirmAndPurchasePack = async (
 		} catch (err) {
 			console.log(err);
 		}
+		const hasMythical = result.find(
+			(r) => r.rank_id === ranksMeta.mythical.rank_id
+		);
+		if (hasMythical) {
+			await Cache.del(gachaKey);
+		}
 		if (pack.name === packContains["legendary"].name) {
 			const key = `packpity-${params.author.id}`;
-			const hasMythical = result.find(
-				(r) => r.rank_id === ranksMeta.mythical.rank_id
-			);
 			if (hasMythical) {
 				await Cache.del(key);
 			} else {
