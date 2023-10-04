@@ -40,7 +40,7 @@ function prepareInfoDescription(
 	overAllStatData: OverallStatsProps
 ) {
 	let reqSouls = 0;
-	if (infoData.rank_id === ranksMeta.ultimate.rank_id) {
+	if (infoData.rank_id === ranksMeta.ultimate.rank_id || infoData.rank_id === ranksMeta.mythical.rank_id) {
 		const souls = getReqSouls(infoData.rank_id);
 		const levelDifference =
       infoData.character_level - (ranksMeta.ultimate.max_level || 70);
