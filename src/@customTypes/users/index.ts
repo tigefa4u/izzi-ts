@@ -45,7 +45,7 @@ export type UserProps = {
 		// based on the tax they have paid.
 		raidPityCount?: number;
 		raidDropPity?: boolean;
-		badge?: Pick<BadgeProps, "name" | "emoji">;
+		badges?: Pick<BadgeProps, "name" | "emoji">[];
 	};
 	is_mini_premium?: boolean;
 	mini_premium_days_left?: number;
@@ -55,6 +55,7 @@ export type UserProps = {
 	vote_count?: number;
 	monthly_votes: number;
 	total_monthly_votes: number;
+	last_active_at?: Date;
 }
 
 export type UserParams = {

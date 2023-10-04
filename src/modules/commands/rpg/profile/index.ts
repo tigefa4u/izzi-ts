@@ -1,5 +1,3 @@
-import { CharacterCanvasProps } from "@customTypes/canvas";
-import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { UserProps } from "@customTypes/users";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
@@ -8,7 +6,6 @@ import { getGuild } from "api/controllers/GuildsController";
 import { getMarriage } from "api/controllers/MarriagesController";
 import { getUserRank } from "api/controllers/UserRanksController";
 import { getRPGUser } from "api/controllers/UsersController";
-import { getZoneByLocationId } from "api/controllers/ZonesController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { EmbedFieldData, MessageAttachment } from "discord.js";
@@ -218,10 +215,10 @@ function prepareProfileFields(user: UserProps & P) {
 		},
 	];
 
-	if (user.metadata?.badge) {
+	if (user.metadata?.badges) {
 		fields.splice(1, 0, {
 			name: "Badges",
-			value: user.metadata.badge.emoji,
+			value: user.metadata.badges.map((b) => b.emoji).join(" "),
 			inline: false
 		});
 	}

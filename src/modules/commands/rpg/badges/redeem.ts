@@ -80,7 +80,8 @@ export const redeemBadge = async ({
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
-		if (user.metadata?.badge?.name?.toLowerCase() === badge.name.toLowerCase()) {
+		const hasBadge = user.metadata?.badges?.find((b) => b.name.toLowerCase() === badge.name.toLowerCase());
+		if (hasBadge) {
 			context.channel?.sendMessage(`Summoner **${author.username}**, ` +
             `You have already redeem The ${badge.name} Badge ${badge.emoji}.`);
 			return;
@@ -137,10 +138,14 @@ export const redeemBadge = async ({
 					`Congratulations summoner **${author.username}** ${emoji.celebration}, ` +
                     `You have successfully redeem The **${badge.name} ${badge.emoji}** Badge.`
 				);
+				const userBadges = [
+					...(user.metadata || {}).badges || [],
+					badge
+				];
 				await updateRPGUser({ user_tag: author.id }, {
 					metadata: {
 						...(user.metadata || {}),
-						badge
+						badges: userBadges
 					}
 				});
 				return;
@@ -160,10 +165,14 @@ export const redeemBadge = async ({
 							`Congratulations summoner **${author.username}** ${emoji.celebration}, ` +
                     `You have successfully redeem The **${badge.name} ${badge.emoji}** Badge.`
 						);
+						const userBadges = [
+							...(user.metadata || {}).badges || [],
+							badge
+						];
 						await updateRPGUser({ user_tag: author.id }, {
 							metadata: {
 								...(user.metadata || {}),
-								badge
+								badges: userBadges
 							}
 						});
 						return;
@@ -179,10 +188,14 @@ export const redeemBadge = async ({
 			`Congratulations summoner **${author.username}** ${emoji.celebration}, ` +
 	`You have successfully redeem The **${badge.name} ${badge.emoji}** Badge.`
 		);
+		const userBadges = [
+			...(user.metadata || {}).badges || [],
+			badge
+		];
 		await updateRPGUser({ user_tag: author.id }, {
 			metadata: {
 				...(user.metadata || {}),
-				badge
+				badges: userBadges
 			}
 		});
 		return;

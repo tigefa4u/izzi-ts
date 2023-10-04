@@ -1,11 +1,14 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
+import { UserUpdateProps } from "@customTypes/users";
 import { getUserBan } from "api/controllers/BansController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
+import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { isEmptyValue } from "utility";
 
 export const checkUserBanned = async (
 	context: BaseProps["context"],
@@ -40,12 +43,27 @@ export const checkUserBanned = async (
 		context.channel?.sendMessage(embed);
 		return;
 	}
+	const updateObj = {} as UserUpdateProps;
 	if (user && !user.is_active) {
 		context.channel?.sendMessage("Welcome back! We have set your account status to active");
-		await updateRPGUser({ user_tag: user.user_tag }, { is_active: true });
+		updateObj.is_active = true;
 	}
 	if (user?.is_premium) {
 		author.username = `${emoji.premium} ${author.username}`;
+	}
+
+	/**
+	 * log user last active at after 24hours
+	 */
+	const key = "activity-log:" + author.id;
+	const activityLogged = await Cache.get(key);
+	if (!activityLogged && user) {
+		await Cache.set(key, "1");
+		Cache.expire && (await Cache.expire(key, 60 * 60 * 24));
+		updateObj.last_active_at = new Date();
+	}
+	if (!isEmptyValue(updateObj) && user) {
+		await updateRPGUser({ user_tag: user.user_tag }, updateObj);
 	}
 	return true;
 };
