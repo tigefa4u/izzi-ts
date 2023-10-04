@@ -320,9 +320,6 @@ export const dominator = ({
 			basePlayerStats,
 		});
 	}
-	if (round % 3 === 2 && playerStats.totalStats.isDominator) {
-		playerStats.totalStats.isDominator = false;
-	}
 	return {
 		playerStats,
 		opponentStats,
