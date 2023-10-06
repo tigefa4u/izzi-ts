@@ -190,7 +190,7 @@ export const getRaids = (
 	if (Object.keys(filters).length > 0) {
 		let op = "~*";
 		if (filters.isExactMatch) {
-			op = "=";
+			op = "in";
 		}
 		Object.keys(filters).forEach((key) => {
 			if (![ "name", "rank", "type", "series", "abilityname" ].includes(key))
@@ -201,14 +201,14 @@ export const getRaids = (
          * This is the most effecient way to query
          * jsonb with array of objects
          */
-				let queryFilter = `(${item.join("|")}).*`;
+				let queryFilter = `'(${item.join("|")}).*'`;
 				if (filters.isExactMatch) {
-					queryFilter = `${item[0]}`;
+					queryFilter = `(${item.map((i) => `'${i}'`).join(",")})`;
 				}
 				query = query.whereRaw(
-					`(${tableName}.raid_boss->0->>'${key}' ${op} '${queryFilter}' or 
-					${tableName}.raid_boss->1->>'${key}' ${op} '${queryFilter}' or 
-					${tableName}.raid_boss->2->>'${key}' ${op} '${queryFilter}')`
+					`(${tableName}.raid_boss->0->>'${key}' ${op} ${queryFilter} or 
+					${tableName}.raid_boss->1->>'${key}' ${op} ${queryFilter} or 
+					${tableName}.raid_boss->2->>'${key}' ${op} ${queryFilter})`
 				);
 				// query = query.where(`${tableName}.filter_data`, "~*", `(${item.join("|")}).*`);
 			}
