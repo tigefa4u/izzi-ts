@@ -20,9 +20,10 @@ export const tagTeamBattle = async (params: RaidActionProps) => {
 		const arg = args.shift();
 		if (arg === "all") isBtAll = true;
 		const { author } = options;
-		const cd = await  getCooldown(author.id, "tag-raid-battle");
+		const cmd = "raid-tag";
+		const cd = await  getCooldown(author.id, cmd);
 		if (cd) {
-			sendCommandCDResponse(context.channel, cd, author.id, "tag-raid-battle");
+			sendCommandCDResponse(context.channel, cd, author.id, cmd);
 			return;
 		}
 		const tagTeam = await GetTagTeamPlayer({ user_tag: author.id });
@@ -50,7 +51,7 @@ export const tagTeamBattle = async (params: RaidActionProps) => {
 				loggers.info("Tag Raid Battle has completed for raid:", raidId);
 				const [ dmChannel ] = await Promise.all([
 					player2.createDM(),
-					setCooldown(author.id, "tag-raid-battle", 60 * 60 * 2), // 2hr cd
+					setCooldown(author.id, cmd, 60 * 60 * 2), // 2hr cd
 					updateTagTeamPoints({ id: tagTeam.id }, TEAM_POINTS_PER_TASK)
 				]);
 				const dmEmbed = createEmbed(author, client).setTitle("Tag Team Battle")
