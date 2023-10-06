@@ -20,6 +20,9 @@ export const subcommands =  [ {
 	name: "vote_count",
 	alias: [ "vc", "streak", "vote" ]
 }, {
+	name: "mythical",
+	alias: [ "myth" ]
+}, {
 	name: "ultimate",
-	alias: [ "ult", "ultimate" ]
+	alias: [ "ult" ]
 } ];

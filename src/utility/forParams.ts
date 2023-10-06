@@ -68,6 +68,10 @@ const argMap = [
 	{
 		name: "collection_ids",
 		alias: [ "-cid" ]
+	},
+	{
+		name: "isExactMatch",
+		alias: [ "-exm" ]
 	}
 ];
 

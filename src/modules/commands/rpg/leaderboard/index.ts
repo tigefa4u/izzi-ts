@@ -58,6 +58,12 @@ export const leaderboard = async ({
 			// 	orderName: "Clan Level",
 			// 	order: "level"
 			// });
+		} else if (subcommand === "mythical") {
+			Object.assign(params, {
+				lb: "ultimate",
+				orderName: "mythical cards",
+				order: "myth"
+			});
 		} else if (subcommand === "ultimate") {
 			Object.assign(params, {
 				lb: "ultimate",
@@ -83,8 +89,8 @@ export const leaderboard = async ({
 };
 
 function prepareUrl(lb: string, order: string) {
-	// const base = "http://localhost:5011/api/v1/ums";
-	const base = `${API_DOMAIN}/api/v1/ums`;
+	const base = "http://localhost:5011/api/v1/ums";
+	// const base = `${API_DOMAIN}/api/v1/ums`;
 	const url = `/leaderboards/${lb}?per_page=10&order=${order}`;
 	return base + url;
 }
@@ -112,7 +118,7 @@ async function getLB(
 
 		if (lb === "ultimate") {
 			embed.setDescription(
-				"Users with most Ultimate Cards on Izzi are shown below."
+				`Users with most ${titleCase(orderName)} on Izzi are shown below.`
 			);
 		} else {
 			embed.setDescription(

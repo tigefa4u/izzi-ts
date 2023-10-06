@@ -13,11 +13,12 @@ import loggers from "loggers";
 import { titleCase } from "title-case";
 
 const getMaxStat = (array: CharacterDetailsProps[], key = "strength") => {
+	const k = key as keyof CharacterStatProps;
 	return array.reduce((acc, r) => {
-		return acc.stats[key as keyof CharacterStatProps] >
-      r.stats[key as keyof CharacterStatProps]
+		if (!acc?.stats) return acc;
+		return acc.stats[k] > r.stats[k]
 			? acc
-			: r;
+			: acc.stats[k] === r.stats[k] ? {} as CharacterDetailsProps : r;
 	});
 };
 
@@ -27,10 +28,12 @@ function createCharacterStatList(array: CharacterDetailsProps[]) {
 	[ "strength", "dexterity", "vitality", "defense", "intelligence" ].forEach(
 		(stat) => {
 			const obj = getMaxStat(array, stat);
-			maxStatObj[obj.id] = {
-				...maxStatObj[obj.id],
-				[stat]: `${obj.stats[stat as keyof CharacterStatProps]} ★`, 
-			};
+			if (obj?.id) {
+				maxStatObj[obj.id] = {
+					...maxStatObj[obj.id],
+					[stat]: `${obj.stats[stat as keyof CharacterStatProps]} ${STAR}`, 
+				};
+			}
 		}
 	);
 	array.map((character) => {

@@ -55,11 +55,11 @@ export const transformation = {
 	isWorldBoss: {
 		type: "boolean",
 		columnName: "is_world_boss",
-		default: false
+		default: false,
 	},
 	filterData: {
 		type: "string",
-		columnName: "filter_data"
+		columnName: "filter_data",
 		// This column contains all boss names, ranks, difficulty, type
 		// to make query easier and straightforward
 	},
@@ -79,7 +79,10 @@ export const create = async (data: RaidCreateProps): Promise<RaidProps> => {
 };
 
 export const get = async (params: { id: number }): Promise<RaidProps[]> => {
-	return connection.select("*").from(tableName).where(params)
+	return connection
+		.select("*")
+		.from(tableName)
+		.where(params)
 		.where({ is_world_boss: false });
 };
 
@@ -96,10 +99,15 @@ export const updateLobby = async ({
   user_id: number;
   data: RaidLobbyProps[0];
 }) => {
-	return connection(tableName).where({ id: raid_id }).update({
-		lobby: connection.raw(`
-		jsonb_set(??, '{${user_id}}', ?)`, [ "lobby", JSON.stringify(data) ])
-	});
+	return connection(tableName)
+		.where({ id: raid_id })
+		.update({
+			lobby: connection.raw(
+				`
+		jsonb_set(??, '{${user_id}}', ?)`,
+				[ "lobby", JSON.stringify(data) ]
+			),
+		});
 };
 
 export const refillEnergy = async (params: {
@@ -108,15 +116,20 @@ export const refillEnergy = async (params: {
 }) => {
 	return Promise.all(
 		Object.keys(params.data).map(async (id) => {
-			await connection(tableName).where({ id: params.id }).update({
-				lobby: connection.raw(`
-				jsonb_set(??, '{${Number(id)}, energy}', ?)`, [ "lobby", params.data[Number(id)].energy ])
-			});
+			await connection(tableName)
+				.where({ id: params.id })
+				.update({
+					lobby: connection.raw(
+						`
+				jsonb_set(??, '{${Number(id)}, energy}', ?)`,
+						[ "lobby", params.data[Number(id)].energy ]
+					),
+				});
 		})
 	);
 };
 
-export const destroy = async (params: { id: number | number[]; }) => {
+export const destroy = async (params: { id: number | number[] }) => {
 	let query = connection(tableName).del();
 	if (typeof params.id === "number") {
 		query = query.where({ id: params.id });
@@ -130,7 +143,8 @@ export const getAll = async (
 	params?: Partial<RaidProps>
 ): Promise<RaidProps[]> => {
 	const raidDisabled = await Cache.get("disable-raids");
-	let query = connection(tableName).where({ is_event: raidDisabled ? true : false, })
+	let query = connection(tableName)
+		.where({ is_event: raidDisabled ? true : false })
 		.where({ is_world_boss: false });
 	if (params && (params.is_start === true || params.is_start === false)) {
 		query = query.where(`${tableName}.is_start`, params.is_start);
@@ -163,7 +177,8 @@ export const getRaids = (
 ): Promise<RaidProps[]> => {
 	const db = connection;
 
-	let query = db.select(db.raw(`${tableName}.*, count(1) over() as total_count`))
+	let query = db
+		.select(db.raw(`${tableName}.*, count(1) over() as total_count`))
 		.from(tableName)
 		.where(`${tableName}.is_start`, false)
 		.where(`${tableName}.is_private`, false)
@@ -173,17 +188,37 @@ export const getRaids = (
 
 	// All the filter data is concatinated into one column for easy query
 	if (Object.keys(filters).length > 0) {
+		let op = "~*";
+		if (filters.isExactMatch) {
+			op = "=";
+		}
 		Object.keys(filters).forEach((key) => {
-			if (![ "name", "rank", "type", "series", "abilityname" ].includes(key)) return;
+			if (![ "name", "rank", "type", "series", "abilityname" ].includes(key))
+				return;
 			const item = filters[key as keyof FilterProps];
 			if (typeof item === "object") {
-				query = query.where(`${tableName}.filter_data`, "~*", `(${item.join("|")}).*`);
+				/**
+         * This is the most effecient way to query
+         * jsonb with array of objects
+         */
+				let queryFilter = `(${item.join("|")}).*`;
+				if (filters.isExactMatch) {
+					queryFilter = `${item[0]}`;
+				}
+				query = query.whereRaw(
+					`(${tableName}.raid_boss->0->>'${key}' ${op} '${queryFilter}' or 
+					${tableName}.raid_boss->1->>'${key}' ${op} '${queryFilter}' or 
+					${tableName}.raid_boss->2->>'${key}' ${op} '${queryFilter}')`
+				);
+				// query = query.where(`${tableName}.filter_data`, "~*", `(${item.join("|")}).*`);
 			}
 		});
 	}
 	if (filters.difficulty && typeof filters.difficulty === "object") {
 		const difficulty = filters.difficulty[0];
-		query = query.whereRaw(`${tableName}.stats ->> 'difficulty' ilike '%${difficulty}%'`);
+		query = query.whereRaw(
+			`${tableName}.stats ->> 'difficulty' ilike '%${difficulty}%'`
+		);
 	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
@@ -191,9 +226,11 @@ export const getRaids = (
 	return query;
 };
 
-export const getWorldBoss = async (params?: { is_start: boolean; }): Promise<RaidProps> => {
-	let query = connection(tableName).where({ is_world_boss: true, });
-	
+export const getWorldBoss = async (params?: {
+  is_start: boolean;
+}): Promise<RaidProps> => {
+	let query = connection(tableName).where({ is_world_boss: true });
+
 	if (typeof params?.is_start === "boolean") {
 		query = query.where({ is_start: params.is_start });
 	}

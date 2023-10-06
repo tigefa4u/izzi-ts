@@ -17,6 +17,9 @@ export const raidLobbies = async ({
 	try {
 		const author = options.author;
 		const params = fetchParamsFromArgs<FilterProps>(args);
+		if (args.includes("-exm")) {
+			params.isExactMatch = true;
+		}
 		Object.assign(params, { isEvent });
 		let embed = createEmbed();
 		let sentMessage: Message;

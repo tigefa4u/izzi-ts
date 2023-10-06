@@ -39,9 +39,11 @@ export const createLBEmbedList = (
 						name: `#${obj.index + 1}| ${array[obj.index].name || ""} (${
 							array[obj.index].guild_id
 						}) | ${numericWithComma(array[obj.index].gold)} ${emoji.gold}`,
-						value: `Clan Level **${numericWithComma(array[obj.index].guild_level || 0)}** ${
-							emoji.up
-						} | Reputation **${numericWithComma(array[obj.index].points)}**`,
+						value: `Clan Level **${numericWithComma(
+							array[obj.index].guild_level || 0
+						)}** ${emoji.up} | Reputation **${numericWithComma(
+							array[obj.index].points
+						)}**`,
 					}
 				);
 			} else if (lb === "ranks") {
@@ -79,7 +81,9 @@ export const createLBEmbedList = (
 					value: `${titleCase(orderName)} **${
 						order === "gold" || order === "ultimate cards"
 							? numericWithComma(array[obj.index][order])
-							: array[obj.index][order]
+							: order === "mythical cards"
+								? numericWithComma(array[obj.index]["ultimate cards"])
+								: array[obj.index][order]
 					}** ${
 						order === "zone"
 							? `Max Floor **${array[obj.index]["max_floor"]}**`
