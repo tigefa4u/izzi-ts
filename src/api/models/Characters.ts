@@ -124,13 +124,14 @@ export const getCharactersForDex: (
 		)
 		.from(tableName)
 		.innerJoin(abilities, `${tableName}.passive_id`, `${abilities}.id`)
-		.whereNot(`${tableName}.id`, 426) // Luna
 		.as(alias);
 	if (filter.ids && filter.ids.length > 0) {
 		query = query.whereIn(`${tableName}.id`, filter.ids);
 	}
-	if (filter.abilityname) {
+	if (typeof filter.abilityname === "string") {
 		query = query.where(`${abilities}.name`, "ilike", `%${filter.abilityname}%`);
+	} else if (typeof filter.abilityname === "object") {
+		query = query.where(`${abilities}.name`, "~*", `(${filter.abilityname.join("|")}).*`);
 	}
 	if (typeof filter.type === "string") {
 		query = query.where(`${tableName}.type`, "ilike", `%${filter.type}%`);
