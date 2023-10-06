@@ -226,7 +226,7 @@ export const battleBoss = async ({
 			// Enemy stats will always be raid boss
 			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;
-				if (result.totalTeamDamage > result.totalDamage) result.totalTeamDamage = result.totalDamage;
+				if (result.totalTeamDamage > damageCap) result.totalTeamDamage = damageCap;
 			} else {
 				let percentDamageDealt =
           (result.totalDamage || 0) /
@@ -240,6 +240,10 @@ export const battleBoss = async ({
 
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;
+
+			if (result.totalTeamDamage > updateObj.stats.remaining_strength) {
+				result.totalTeamDamage = updateObj.stats.remaining_strength;
+			}
 			const updatedLobby = await consumeEnergy(
 				updateObj.id,
 				user.id,
