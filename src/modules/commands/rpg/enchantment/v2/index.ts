@@ -127,7 +127,8 @@ const confirmAndEnchantCard = async (
 					client: params.client,
 					channel: params.channel,
 					extras: { count: computed.accumulator.reduce((acc, r) => acc + r.count, 0) }
-				}
+				},
+				isDMUser: true
 			})
 		]);
 		loggers.endTimer(updatetimer);

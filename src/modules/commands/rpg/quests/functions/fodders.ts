@@ -11,7 +11,7 @@ const validateConsumedFodders = (criteria: QuestCriteriaProps, total: number) =>
 
 export const processConsumeFodderQuest = async <ET extends { count: number; }>(params: ProcessQuestProps<ET>) => {
 	try {
-		loggers.info("processConsumeFodderQuest: started", { params });
+		loggers.info("[fodder-quest] processConsumeFodderQuest: started", { params });
 		if (!params.options.extras) return;
 		const { count } = params.options.extras;
 		if (!count || isNaN(count)) return;
@@ -30,6 +30,7 @@ export const processConsumeFodderQuest = async <ET extends { count: number; }>(p
 			}
 		}
 		if (typeof Cache.expire === "function") {
+			loggers.info("[fodder-quest] setting total fodders consumed: ", { totalFoddersConsumed });
 			const { toDate } = getWeeklyQuestDates();
 			const timems = toDate - new Date().getTime();
 			const seconds = Math.floor(timems / 1000);
@@ -47,7 +48,7 @@ export const processConsumeFodderQuest = async <ET extends { count: number; }>(p
 			return false;
 		});
 	} catch (err) {
-		loggers.error("processCunsumeFodderQuest: ERROR", err);
+		loggers.error("[fodder-quest] processConsumeFodderQuest: ERROR", err);
 		return;
 	}
 };

@@ -97,7 +97,7 @@ export const directUpdateCreateFodder = async (data: DirectUpdateCreateFodderPro
 				}
 				return res;
 			} catch (err) {
-				loggers.error("directUpdateCreateFodder: update failed, creating new cards", err);
+				loggers.info("directUpdateCreateFodder: update failed, creating new cards", err);
 				dataToInsert.push({
 					user_id: d.user_id,
 					character_id: d.character_id,
