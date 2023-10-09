@@ -1,6 +1,6 @@
 import { ExternalApiCreateProps, ExternalApiParamProps, ExternalApiProps } from "@customTypes/externalApi";
 import connection from "db";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 
 const tableName = "external_api_auth";
 
@@ -35,7 +35,7 @@ export const transformation = {
 };
 
 export const get = (params: ExternalApiParamProps): Promise<ExternalApiProps[]> => {
-	if (isEmptyValue(params)) {
+	if (isEmptyObject(params)) {
 		throw new Error("Params must not be empty");
 	}
 	const db = connection;

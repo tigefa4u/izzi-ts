@@ -1,9 +1,9 @@
-import { ProcessQuestProps, QuestCriteria } from "@customTypes/quests";
+import { ProcessQuestProps, QuestCriteriaProps } from "@customTypes/quests";
 import loggers from "loggers";
 import { fetchAndCompleteQuest } from "../common";
 
 const validateCriteria = (
-	criteria: QuestCriteria,
+	criteria: QuestCriteriaProps,
 	characterlevelAfterEnh: number,
 	maxlevel: number,
 	levelcounter: number

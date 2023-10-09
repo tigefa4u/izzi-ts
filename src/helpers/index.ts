@@ -198,6 +198,15 @@ export const sanitizeArgs = (args: string[]) => {
 				args.splice(i, 1);
 			}
 		}
+		/**
+		 * Removing special characters to avoid query issues.
+		 * I still need to retain '#@' since these characters
+		 * will be there when someone pings a user or channel.
+		 */
+		if (typeof val === "string") {
+			args[i] = val.replace(/'/g, "''")
+				.replace(/[\^$%]/g, "");
+		}
 	});
 	return args;
 };

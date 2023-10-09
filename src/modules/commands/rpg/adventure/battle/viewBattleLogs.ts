@@ -9,7 +9,7 @@ import { generateUUID } from "helpers";
 import { recreateBattleEmbed } from "helpers/battle";
 import { createBattleCanvas } from "helpers/canvas";
 import loggers from "loggers";
-import { clone, isEmptyValue } from "utility";
+import { clone, isEmptyObject } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 
 type V = {
@@ -44,7 +44,7 @@ export const viewBattleLogs = async ({
 		const allDescriptions = roundKeys
 			.map((key) => {
 				const descriptionsToMap = clone(rounds[key].descriptions);
-				if (!isEmptyValue(lastObject)) {
+				if (!isEmptyObject(lastObject)) {
 					descriptionsToMap.unshift(lastObject);
 					lastObject = {} as SimulationRound["descriptions"][0];
 				}
@@ -60,7 +60,7 @@ export const viewBattleLogs = async ({
 			})
 			.flat();
 
-		if (!isEmptyValue(lastObject)) {
+		if (!isEmptyObject(lastObject)) {
 			allDescriptions.push(lastObject.description);
 		}
 		if (allDescriptions.length % 2 === 0) {

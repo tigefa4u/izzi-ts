@@ -4,6 +4,7 @@ import {
 	UserQuestCreateProps,
 } from "@customTypes/quests/users";
 import connection from "db";
+import { getDailyQuestDates, getWeeklyQuestDates } from "helpers/quest";
 import { Knex } from "knex";
 
 const tableName = "user_quests";
@@ -61,9 +62,20 @@ export const get = async (
 		});
 
 	const filterDate = (builder: Knex.QueryBuilder) => {
-		if (params.is_daily_quest) {
-			const fromDate = new Date().setHours(0, 0, 0, 0);
-			const toDate = new Date().setHours(24, 0, 0, 0);
+		if (params.is_daily_quest || params.is_weekly_quest) {
+			let fromDate, toDate;
+			const _dailyDates = getDailyQuestDates();
+			fromDate = _dailyDates.fromDate;
+			toDate = _dailyDates.toDate;
+			if (params.is_weekly_quest) {
+				/**
+				 * Weekly quest resets every Monday 00.00.00 hrs.
+				 * The duration is from Monday to end of Sunday.
+				 */
+				const _weeklydates = getWeeklyQuestDates();
+				fromDate = _weeklydates.fromDate;
+				toDate = _weeklydates.toDate;
+			}
 			if (params.useAndClause) {
 				query = builder.andWhereBetween("created_at", [
 					new Date(fromDate),
@@ -106,6 +118,7 @@ export const getByQuestType = async (params: {
   user_tag: string;
   type: string;
   is_daily?: boolean;
+  is_weekly?: boolean;
 }): Promise<UserQuestProps[]> => {
 	const db = connection;
 	let query = db
@@ -123,9 +136,19 @@ export const getByQuestType = async (params: {
 		.andWhere(`${quests}.type`, params.type)
 		.andWhere(`${tableName}.user_tag`, params.user_tag);
 
-	if (params.is_daily) {
-		const fromDate = new Date().setHours(0, 0, 0, 0);
-		const toDate = new Date().setHours(24, 0, 0, 0);
+	if (params.is_daily || params.is_weekly) {
+		const _dailyDates = getDailyQuestDates();
+		let fromDate = _dailyDates.fromDate;
+		let toDate = _dailyDates.toDate;
+		if (params.is_weekly) {
+			/**
+			 * Weekly quest resets every Monday 00.00.00 hrs.
+			 * The duration is from Monday to end of Sunday.
+			 */
+			const _weeklydates = getWeeklyQuestDates();
+			fromDate = _weeklydates.fromDate;
+			toDate = _weeklydates.toDate;
+		}
 		query = query.andWhereBetween(`${tableName}.created_at`, [
 			new Date(fromDate),
 			new Date(toDate),

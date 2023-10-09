@@ -29,15 +29,22 @@ const Cache: CacheProps & {
 	 */
 	expire: (key, ttl) => client.expire(key, ttl),
 	keys: (pattern = "*") => client.keys(pattern),
-	fetch: async <T>(key: string, cb: () => Promise<T>) => {
+	/**
+	 * Fetch and cache data
+	 * @param key 
+	 * @param cb 
+	 * @param ttl in seconds
+	 * @returns 
+	 */
+	fetch: async <T>(key: string, cb: () => Promise<T>, ttl?: number) => {
 		const data = await client.get(key);
 		if (!data) {
-			const ttl = 60 * 60;
+			const expireIn = ttl || 60 * 60;
 			// loggers.info("Cache miss for: " + key + " and expires in: " + ttl + "sec");
 			const resp = await cb();
 			if (resp) {
 				client.set(key, JSON.stringify(resp));
-				client.expire(key, ttl);
+				client.expire(key, expireIn);
 			}
 			return resp;
 		}

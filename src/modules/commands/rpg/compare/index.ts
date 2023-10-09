@@ -1,3 +1,4 @@
+import { FilterProps } from "@customTypes";
 import {
 	CharacterDetailsProps,
 	CharacterStatProps,
@@ -11,6 +12,7 @@ import { statRelationMap } from "helpers/ability";
 import { DEFAULT_ERROR_TITLE, STAR } from "helpers/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { fetchParamsFromArgs } from "utility/forParams";
 
 const getMaxStat = (array: CharacterDetailsProps[], key = "strength") => {
 	const k = key as keyof CharacterStatProps;
@@ -71,18 +73,19 @@ export const compareCards = async ({
 		const embed = createEmbed(author, client);
 		embed.setTitle(DEFAULT_ERROR_TITLE);
 
-		const charaArgs = args.join(" ");
-		if (!args) {
-			return;
-		}
-		let charanames = charaArgs.split(",").map((e) => `^${e.trim()}`);
+		const params = <FilterProps>fetchParamsFromArgs(args);
+		let charanames = params.name;
+		if (typeof charanames === "string" || !charanames) return;
 		if (charanames.length > 3) {
 			charanames = charanames.slice(0, 3);
 			// embed.setDescription("You cannot compare more than 3 Cards");
 			// context.channel?.sendMessage(embed);
 			// return;
 		}
-		const characters = await getCharacters({ name: charanames });
+		const characters = await getCharacters({
+			name: charanames,
+			isExactMatch: params.isExactMatch || false 
+		});
 		if (characters.length > 0) {
 			const list = createCharacterStatList(characters);
 			embed.setTitle("Base Stats").addFields(list)

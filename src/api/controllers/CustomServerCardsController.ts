@@ -1,6 +1,7 @@
 import { FilterProps, ResponseWithPagination } from "@customTypes";
 import { CustomServerCardAndCharacterProps } from "@customTypes/guildEvents/customServerCards";
 import { PageProps } from "@customTypes/pagination";
+import Cache from "cache";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as Model from "../models/CustomServerCards";
@@ -48,7 +49,11 @@ export const getRandomCustomCard = async (guild_id: string) => {
 
 export const getCustomServerCardByCharacterId = async (cid: number | number[]) => {
 	try {
-		return Model.getByCharacterId(cid);
+		const key = "custom-server-card:" + cid;
+		const result = await Cache.fetch(key, () => {
+			return Model.getByCharacterId(cid);
+		}, 60 * 60 * 48);
+		return result;
 	} catch (err) {
 		loggers.error("getCustomServerCardByCharacterId: ERROR", err);
 		return;

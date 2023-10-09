@@ -8,7 +8,7 @@ import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { DEFAULT_ERROR_TITLE } from "helpers/constants";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 
 export const checkUserBanned = async (
 	context: BaseProps["context"],
@@ -62,7 +62,7 @@ export const checkUserBanned = async (
 		Cache.expire && (await Cache.expire(key, 60 * 60 * 24));
 		updateObj.last_active_at = new Date();
 	}
-	if (!isEmptyValue(updateObj) && user) {
+	if (!isEmptyObject(updateObj) && user) {
 		await updateRPGUser({ user_tag: user.user_tag }, updateObj);
 	}
 	return true;

@@ -8,6 +8,7 @@ import { QuestCompleteCardRewardProps, QuestProps, QuestResultProps, QuestTypes 
 import { UserQuestCreateProps } from "@customTypes/quests/users";
 import { startTransaction } from "api/models/Users";
 import Cache from "cache";
+import { CACHE_KEYS } from "helpers/cacheConstants";
 import {
 	QUEST_TYPES,
 	STARTER_CARD_EXP,
@@ -16,6 +17,7 @@ import {
 } from "helpers/constants";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
+import { isEmptyObject } from "utility";
 import * as Quests from "../models/Quests";
 import * as UserQuests from "../models/UserQuests";
 
@@ -44,8 +46,9 @@ export const getUserQuests = async (
 
 		const resp = await UserQuests.get({
 			user_tag: params.user_tag,
-			quest_id: result.filter((q) => !q.is_daily).map((r) => r.id),
+			quest_id: result.filter((q) => !q.is_daily && !q.is_weekly).map((r) => r.id),
 			is_daily_quest: true,
+			is_weekly_quest: true
 		});
 		const userQuestIds = resp.map((r) => r.quest_id);
 		const data = await Promise.all(result.map(async (item) => {
@@ -54,21 +57,40 @@ export const getUserQuests = async (
 				object.hasCompleted = true;
 			} else {
 				if (item.type === QUEST_TYPES.RAID_CHALLENGE) {
-					const cacheKey = "raid_challenge_" + params.user_tag;
+					const cacheKey = CACHE_KEYS.RAID_CHALLENGE + params.user_tag;
 					const cacheData = await Cache.get(cacheKey);
 					if (cacheData) {
-						object.completedRaids = JSON.parse(cacheData);
+						object.completed = JSON.parse(cacheData);
 					} else {
-						object.completedRaids = 0;
+						object.completed = 0;
 					}
 				} else if (item.type === QUEST_TYPES.RAID_CARRY) {
-					const cacheKey = "raid_mvp_challenge_" + params.user_tag;
+					const cacheKey = CACHE_KEYS.RAID_MVP_CHALLENGE + params.user_tag;
 					const cacheData = await Cache.get(cacheKey);
 					if (cacheData) {
-						object.completedRaids = JSON.parse(cacheData);
+						object.completed = JSON.parse(cacheData);
 					} else {
-						object.completedRaids = 0;
+						object.completed = 0;
 					} 
+				} else if (item.type === QUEST_TYPES.MARKET_PURCHASE) {
+					const key = CACHE_KEYS.MARKET_PURCHASE + params.user_tag;
+					const marketPurchaseCache = await Cache.get(key);
+					if (marketPurchaseCache) {
+						object.totalMarketPurchase = Number(marketPurchaseCache);
+					} else {
+						object.totalMarketPurchase = 0;
+					}
+					if (isNaN(object.totalMarketPurchase)) {
+						object.totalMarketPurchase = 0;
+					}
+				} else if (item.type === QUEST_TYPES.CONSUME_FODDERS) {
+					const key = CACHE_KEYS.FODDERS_CONSUMED + params.user_tag;
+					const fodderConsumedCache = await Cache.get(key);
+					if (fodderConsumedCache) {
+						object.completed = Number(fodderConsumedCache);
+					} else {
+						object.completed = 0;
+					}
 				}
 				object.hasCompleted = false;
 			}
@@ -102,6 +124,7 @@ export const getUserQuestByQuestid = async (params: {
   user_tag: string;
   quest_id: number | number[];
   is_daily?: boolean;
+  is_weekly?: boolean;
 }) => {
 	try {
 		loggers.info(
@@ -112,6 +135,7 @@ export const getUserQuestByQuestid = async (params: {
 			user_tag: params.user_tag,
 			is_daily_quest: params.is_daily || false,
 			useAndClause: true,
+			is_weekly_quest: params.is_weekly || false
 		});
 	} catch (err) {
 		loggers.error("api.UserQuestsController.getUserQuestByQuestId: ERROR", err);
@@ -119,11 +143,18 @@ export const getUserQuestByQuestid = async (params: {
 	}
 };
 
+/**
+ * Method not in use
+ * 
+ * @param params
+ * @returns 
+ */
 export const getUserQuestByType = async (params: {
   level: number;
   user_tag: string;
   type: QuestTypes;
   is_daily?: boolean;
+  is_weekly?: boolean;
 }) => {
 	try {
 		loggers.info("fetching user quest by type: ", params);
@@ -148,7 +179,10 @@ export const completeQuest = async (
 	try {
 		return startTransaction(async (trx) => {
 			try {
-				const bodyParams = { gold: trx.raw(`gold + ${questReward.gold.amount}`), } as any;
+				const bodyParams = {} as any;
+				if (questReward.gold) {
+					bodyParams.gold = trx.raw(`gold + ${questReward.gold.amount}`);
+				}
 				if (questReward.orbs) {
 					bodyParams.orbs = trx.raw(`orbs + ${questReward.orbs.amount}`);
 				}
@@ -156,6 +190,18 @@ export const completeQuest = async (
 					bodyParams.raid_pass = trx.raw(
 						`raid_pass + ${questReward.raid_pass.amount}`
 					);
+				}
+				if (questReward.souls) {
+					bodyParams.souls = trx.raw(
+						`souls + ${questReward.souls.amount}`
+					);
+				}
+				if (isEmptyObject(bodyParams)) {
+					loggers.error("There are no rewards from quest: ", {
+						questReward,
+						params
+					});
+					throw new Error("There are no rewards from Quest");
 				}
 				loggers.info(
 					"UserQuestsController: [transaction] Updating user quest rewards with data: ",

@@ -79,6 +79,10 @@ const exceptionalFilters = [ "is_favorite", "is_on_market", "is_on_cooldown" ];
 
 export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 	const params = {} as ParamsFromArgsRT<T>;
+	let exactMatch = false;
+	if (args.includes("-exm")) {
+		exactMatch = true;
+	}
 	for (let i = 0; i < args.length; i++) {
 		const temp = args.shift();
 		if (!temp) break;
@@ -112,6 +116,9 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 			}
 		}
 		i--;
+	}
+	if (exactMatch) {
+		Object.assign(params, { isExactMatch: exactMatch });
 	}
 	return params;
 };

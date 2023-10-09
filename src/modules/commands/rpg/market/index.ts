@@ -9,9 +9,10 @@ import { Message } from "discord.js";
 import { DEFAULT_ERROR_TITLE, PAGE_FILTER } from "helpers/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createMarketList } from "helpers/embedLists/market";
+import { ranksMeta } from "helpers/rankConstants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
-import { clone, isEmptyValue } from "utility";
+import { clone, isEmptyObject } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { purchaseCard } from "./shop/buy";
@@ -54,7 +55,9 @@ export const market = async ({ context, client, options, args }: BaseProps) => {
 			return;
 		}
 		const params = fetchParamsFromArgs<FilterProps>(args);
-		if (isEmptyValue(params)) return;
+		if (isEmptyObject(params)) {
+			params.rank = [ ranksMeta.immortal.name ];
+		}
 		const filter = clone(PAGE_FILTER);
 		if (params.page && !isNaN(+params.page[0])) {
 			filter.currentPage = Number(params.page[0]);

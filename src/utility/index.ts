@@ -27,7 +27,7 @@ export const groupByKey = <T>(arr: T[], key: string): {
 	return group;
 };
 
-export const isEmptyValue = (val = {}) => {
+export const isEmptyObject = (val = {}) => {
 	return isEmpty(val);
 };
 

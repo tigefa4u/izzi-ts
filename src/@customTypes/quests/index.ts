@@ -12,9 +12,11 @@ export type QuestTypes =
   | "MARKET"
   | "DUNGEON"
   | "PVP"
-  | "WORLD_BOSS";
+  | "WORLD_BOSS"
+  | "MARKET_PURCHASE"
+  | "CONSUME_FODDERS";
 
-type T = "gold" | "orbs" | "raid_pass" | "cards";
+type T = "gold" | "orbs" | "raid_pass" | "cards" | "souls";
 export type QuestReward = {
   [key in T]: {
     key: string;
@@ -26,7 +28,7 @@ export type QuestReward = {
   };
 };
 
-export type QuestCriteria = {
+export type QuestCriteriaProps = {
     toComplete?: number;
     difficulty?: string;
     isMvp?: boolean;
@@ -38,6 +40,7 @@ export type QuestCriteria = {
     cardsToTrade?: number;
     incrementLevelBy?: number;
     isAnyDifficulty?: boolean;
+    purchase?: number;
 }
 export type QuestProps = {
   id: number;
@@ -45,10 +48,11 @@ export type QuestProps = {
   description: string;
   difficulty: QuestDifficulty;
   reward: QuestReward;
-  criteria: QuestCriteria;
+  criteria: QuestCriteriaProps;
   min_level: number;
   max_level: number;
   is_daily: boolean;
+  is_weekly: boolean;
   is_premium: boolean;
   parent_id?: number;
   metadata?: Record<string, unknown>;
@@ -71,7 +75,8 @@ export type QuestParams = {
 
 export type QuestResultProps = QuestProps & {
   hasCompleted: boolean;
-  completedRaids?: number;
+  completed?: number;
+  totalMarketPurchase?: number;
 };
 
 export type ProcessQuestProps<ET> = {

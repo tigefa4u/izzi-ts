@@ -39,7 +39,7 @@ export const transformation = {
 };
 
 export const getAll = async (
-	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type" | "collection_ids">,
+	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type" | "collection_ids" | "isExactMatch">,
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
@@ -62,11 +62,15 @@ export const getAll = async (
 	if (typeof params.name === "string") {
 		query = query.where(`${characters}.name`, "ilike", `%${params.name}%`);
 	} else if (typeof params.name === "object") {
-		query = query.where(
-			`${characters}.name`,
-			"~*",
-			`(${params.name.join("|")}).*`
-		);
+		if (params.isExactMatch) {
+			query = query.whereIn(`${characters}.name`, params.name);
+		} else {
+			query = query.where(
+				`${characters}.name`,
+				"~*",
+				`(${params.name.join("|")}).*`
+			);
+		}
 	}
 	if (typeof params.type === "string") {
 		query = query.where(`${characters}.type`, "ilike", `%${params.type}%`);

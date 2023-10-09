@@ -14,7 +14,7 @@ import { getPowerLevelByRank } from "api/controllers/PowerLevelController";
 import { getTeamById, updateTeam } from "api/controllers/TeamsController";
 import { overallStats } from "helpers";
 import loggers from "loggers";
-import { clone, isEmptyValue, reorderObjectKey } from "utility";
+import { clone, isEmptyObject, reorderObjectKey } from "utility";
 import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { getItemById } from "api/controllers/ItemsController";
@@ -30,9 +30,9 @@ const prepareItemStats = ({
 }) => {
 	if (
 		!guildItemStats ||
-    isEmptyValue(guildItemStats) ||
+    isEmptyObject(guildItemStats) ||
     !itemStats ||
-    isEmptyValue(itemStats)
+    isEmptyObject(itemStats)
 	)
 		return itemStats;
 	const stats = {} as GuildStatProps;
@@ -256,7 +256,7 @@ export const prepareTeamForBattle = async ({
 		const guild = await getGuild({ id: guildMember.guild_id });
 		if (guild) {
 			guildStats = guild.guild_stats;
-			if (!isEmptyValue(guild.item_stats || {})) {
+			if (!isEmptyObject(guild.item_stats || {})) {
 				itemStats = guild.item_stats;
 			}
 		}

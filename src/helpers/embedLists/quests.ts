@@ -45,16 +45,20 @@ export const createQuestList = (
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} | ${titleCase(item.name)}${
 				item.criteria.toComplete && !item.hasCompleted
-					? ` (${item.completedRaids || 0} / ${item.criteria.toComplete})`
+					? ` (${numericWithComma(item.completed || 0)} / ${numericWithComma(item.criteria.toComplete)})`
+					: ""
+			}${
+				item.criteria.purchase
+					? ` (${numericWithComma(
+						item.totalMarketPurchase || 0
+					)} / ${numericWithComma(item.criteria.purchase)})`
 					: ""
 			}${item.is_daily ? ` [${STAR} daily]` : ""}${
-				item.hasCompleted ? ` [completed] ${emoji.dance}` : ""
-			}`,
-			value: `${
-				item.description
-			}.${item.is_daily ? `**\nReset: <t:${secondsInEpoch}:R>**` : ""}\n**[Rewards] ${prepareRewards(
-				item.reward
-			)}**`,
+				item.is_weekly ? ` [${STAR} weekly]` : ""
+			}${item.hasCompleted ? ` [completed] ${emoji.dance}` : ""}`,
+			value: `${item.description}.${
+				item.is_daily ? `**\nReset: <t:${secondsInEpoch}:R>**` : ""
+			}\n**[Rewards] ${prepareRewards(item.reward)}**`,
 		});
 	});
 	return fields;

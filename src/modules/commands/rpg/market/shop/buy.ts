@@ -26,8 +26,6 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MARKET_COMMISSION,
-	MARKET_LOG_MIN_COLLECTION_ID_DIGITS,
-	MARKET_PURCHASE_LIMIT,
 	QUEST_TYPES,
 	RAID_TREASURY_PERCENT,
 } from "helpers/constants";
@@ -37,7 +35,6 @@ import GA4 from "loggers/googleAnalytics";
 import {
 	clearCooldown,
 	getCooldown,
-	sendCommandCDResponse,
 	setCooldown,
 } from "modules/cooldowns";
 import { titleCase } from "title-case";
@@ -125,6 +122,18 @@ async function notifySeller(
 			},
 			isDMUser: true,
 			type: QUEST_TYPES.MARKET
+		}),
+		validateAndCompleteQuest({
+			user_tag: buyer.user_tag,
+			level: buyer.level,
+			options: {
+				client,
+				channel: {} as ChannelProp,
+				author: {} as AuthorProps,
+				extras: { price: marketCard.price }
+			},
+			isDMUser: true,
+			type: QUEST_TYPES.MARKET_PURCHASE
 		})
 	]);
 

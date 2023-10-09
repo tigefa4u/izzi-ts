@@ -29,7 +29,7 @@ import { getLobbyMvp } from "helpers/raid";
 import { ranksMeta } from "helpers/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { clone, groupByKey, isEmptyValue } from "utility";
+import { clone, groupByKey, isEmptyObject } from "utility";
 import { validateAndCompleteQuest } from "../quests";
 import { prepareRaidParty } from "./actions/party";
 
@@ -105,7 +105,7 @@ export const processRaidLoot = async ({
 				}
 
 				await updateRPGUser({ user_tag: user.user_tag }, updateObj);
-				if (!raid.loot.drop.default || isEmptyValue(raid.loot.drop.default)) {
+				if (!raid.loot.drop.default || isEmptyObject(raid.loot.drop.default)) {
 					return rewards;
 				}
 				const promises = [

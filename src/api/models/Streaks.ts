@@ -1,6 +1,6 @@
 import { StreakCreateProps, StreakProps, StreakUpdateProps } from "@customTypes/streaks";
 import connection from "db";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 
 const tableName = "streaks";
 
@@ -70,7 +70,7 @@ export const update = async (params: { user_tag: string; }, data: StreakUpdatePr
 	if (data.metadata) {
 		Object.assign(bodyParams, { metadata: data.metadata });
 	}
-	if (isEmptyValue(bodyParams)) return;
+	if (isEmptyObject(bodyParams)) return;
 
 	return db(tableName).where("user_tag", params.user_tag).update(bodyParams);
 };

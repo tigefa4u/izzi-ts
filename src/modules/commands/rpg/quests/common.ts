@@ -1,7 +1,7 @@
 import {
 	ProcessQuestProps,
 	QuestCompleteCardRewardProps,
-	QuestCriteria,
+	QuestCriteriaProps,
 } from "@customTypes/quests";
 import { getQuestByTypeAndLevel } from "api/controllers/QuestsController";
 import { getUserStreaks } from "api/controllers/StreaksController";
@@ -36,7 +36,7 @@ const clearRaidChallengeCache = async (uid: string, type: string) => {
 
 export const fetchAndCompleteQuest = async (
 	params: ProcessQuestProps<unknown>,
-	validateCriteria: (criteria: QuestCriteria, isDaily?: boolean) => boolean,
+	validateCriteria: (criteria: QuestCriteriaProps, isDaily?: boolean, isWeekly?: boolean) => boolean,
 	cardRewardParams?: { character_id: number; user_id: number }
 ) => {
 	try {
@@ -57,7 +57,7 @@ export const fetchAndCompleteQuest = async (
 		const quest = quests[0];
 		params.options.author = _author;
 		const author = _author;
-		const isCriteriaValid = validateCriteria(quest.criteria, quest.is_daily);
+		const isCriteriaValid = validateCriteria(quest.criteria, quest.is_daily, quest.is_weekly);
 		if (!isCriteriaValid) return;
 
 		if (!author.id) {
@@ -72,6 +72,7 @@ export const fetchAndCompleteQuest = async (
 				quest_id: quest.id,
 				user_tag: user_tag,
 				is_daily: quest.is_daily,
+				is_weekly: quest.is_weekly
 			}),
 			getUserStreaks({ user_tag: user_tag }),
 		]);
@@ -119,9 +120,9 @@ export const fetchAndCompleteQuest = async (
               	true,
               	(collections || []).map((c) => c.id) || []
               )}` +
-              `\n${DOT} Total quest streaks: __${questStreaks}__ :fire:${
+              `\n${DOT} Total quests completed: __${questStreaks}__ :fire:${
               	quest.is_daily ? "\n\nCheck back again tomorrow for more." : ""
-              }`
+              }${quest.is_weekly ? "\n\nCheck back again on Monday for more." : ""}`
 					)
 					.setHideConsoleButtons(true);
 

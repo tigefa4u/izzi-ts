@@ -210,7 +210,6 @@ export const getRaids = (
 					${tableName}.raid_boss->1->>'${key}' ${op} ${queryFilter} or 
 					${tableName}.raid_boss->2->>'${key}' ${op} ${queryFilter})`
 				);
-				// query = query.where(`${tableName}.filter_data`, "~*", `(${item.join("|")}).*`);
 			}
 		});
 	}

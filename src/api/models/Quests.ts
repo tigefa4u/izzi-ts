@@ -32,6 +32,11 @@ export const transformation = {
 		columnName: "is_daily",
 		defaultsTo: false,
 	},
+	isWeekly: {
+		type: "boolean",
+		columnName: "is_weekly",
+		defaultsTo: false,
+	},
 	isPremium: {
 		type: "boolean",
 		columnName: "is_premium",
@@ -75,7 +80,8 @@ export const getByid = async (params: QuestParams): Promise<QuestProps[]> => {
 			"parent_id",
 			"metadata",
 			"type",
-			"criteria"
+			"criteria",
+			"is_weekly"
 		)
 		.from(tableName)
 		.orderBy("created_at", "desc")
@@ -117,6 +123,7 @@ export const getByUserLevel = async (
             ${tableName}.parent_id,
             ${tableName}.type,
             ${tableName}.criteria,
+			${tableName}.is_weekly,
             ${tableName}.metadata, count(1) over() as total_count`)
 		)
 		.from(tableName)

@@ -9,7 +9,7 @@ import emoji from "emojis/emoji";
 import { MAX_GOLD_THRESHOLD } from "helpers/constants";
 import { Knex } from "knex";
 import { DMUserViaApi } from "server/pipes/directMessage";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 
 const tableName = "users";
 export const transformation = {
@@ -134,7 +134,7 @@ export const update: (
 			DMUserViaApi(params.user_tag, { content: message });
 		}
 	}
-	if (isEmptyValue(data)) return;
+	if (isEmptyObject(data)) return;
 	return connection(tableName).where(params).update(data);
 };
 

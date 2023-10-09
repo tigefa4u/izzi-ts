@@ -29,7 +29,7 @@ import {
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 import { upgradeGuildBeyond150 } from "./beyond150";
@@ -177,7 +177,7 @@ async function validateAndUpgradeGuild(
 		const updateObj = { guild_level: validGuild.guild.guild_level };
 
 		if (validGuild.guild.guild_level > GUILD_MIN_LEVEL_FOR_ITEM_BONUS) {
-			if (isEmptyValue(validGuild.guild.item_stats || {})) {
+			if (isEmptyObject(validGuild.guild.item_stats || {})) {
 				Object.assign(updateObj, {
 					item_stats: {
 						vitality: 0.05,

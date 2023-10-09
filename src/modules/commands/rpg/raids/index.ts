@@ -13,7 +13,7 @@ import { statMultiplier } from "helpers/raid";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { titleCase } from "title-case";
-import { clone, groupByKey, isEmptyValue } from "utility";
+import { clone, groupByKey, isEmptyObject } from "utility";
 import { battleRaidBoss } from "./actions/battle";
 import { showEnergy } from "./actions/energy";
 import { inviteToRaid } from "./actions/invite";
@@ -190,7 +190,7 @@ function prepareLoot(
 	}${
 		loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points :game_die:` : ""
 	}\n${eventDesc}${
-		loot.drop && loot.drop.default && !isEmptyValue(loot.drop.default)
+		loot.drop && loot.drop.default && !isEmptyObject(loot.drop.default)
 			? loot.drop.default
 				.map(
 					(d) =>

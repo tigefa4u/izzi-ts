@@ -11,7 +11,7 @@ import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
 import { CONSOLE_BUTTONS, MAX_ADMINS_PER_GUILD } from "helpers/constants";
 import loggers from "loggers";
-import { isEmptyValue } from "utility";
+import { isEmptyObject } from "utility";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 import { upgradeGuild } from "../upgrades";
@@ -22,7 +22,7 @@ type P = {
 };
 
 function prepareItemBonusDesc(stats: GuildStatProps) {
-	if (!stats || isEmptyValue(stats)) return "";
+	if (!stats || isEmptyObject(stats)) return "";
 	const desc =
     `\n\n**Clan Bonus Item Stats ${emoji.up}**` +
     `\n\n${emoji.crossedswords} **Bonus ATK:** (+__${stats.vitality}__)` +
