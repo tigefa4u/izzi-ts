@@ -10,8 +10,8 @@ import {
 	NewsChannel,
 	TextChannel,
 	ThreadChannel,
-  StageChannel,
-  VoiceChannel
+	StageChannel,
+	VoiceChannel
 } from "discord.js";
 import implementSendMessage, {
 	editMessage as implementEditMessage,
@@ -86,11 +86,11 @@ ThreadChannel.prototype.sendMessage = function (content: CustomProps) {
 	return implementSendMessage(this, content);
 };
 StageChannel.prototype.sendMessage = function (content: CustomProps) {
-  return implementSendMessage(this, content)
-}
+	return implementSendMessage(this, content);
+};
 VoiceChannel.prototype.sendMessage = function () {
-  throw new Error("Unimplemented");
-}
+	throw new Error("Unimplemented");
+};
 NewsChannel.prototype.sendMessage = function () {
 	throw new Error("Unimplemented");
 };

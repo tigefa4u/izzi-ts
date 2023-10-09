@@ -11,8 +11,7 @@ const validateConsumedFodders = (criteria: QuestCriteriaProps, total: number) =>
 
 export const processConsumeFodderQuest = async <ET extends { count: number; }>(params: ProcessQuestProps<ET>) => {
 	try {
-		loggers.info("[fodder-quest] processConsumeFodderQuest: started", { params });
-		console.log("processConsumeFodderQuest: started", { params });
+		loggers.info("[fodder-quest] processConsumeFodderQuest: started", { user_tag: params.user_tag });
 		if (!params.options.extras) return;
 		const { count } = params.options.extras;
 		if (!count || isNaN(count)) return;
@@ -49,6 +48,7 @@ export const processConsumeFodderQuest = async <ET extends { count: number; }>(p
 			}
 			return false;
 		});
+		return;
 	} catch (err) {
 		loggers.error("[fodder-quest] processConsumeFodderQuest: ERROR", err);
 		return;

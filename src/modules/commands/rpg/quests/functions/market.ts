@@ -88,6 +88,7 @@ export const processMarketPurchaseQuest = async <ET extends { price: number; }>(
 			}
 			return false;
 		});
+		return;
 	} catch (err) {
 		loggers.error("processMarketPurchaseQuest: ERROR", err);
 		return;
