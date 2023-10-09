@@ -102,35 +102,33 @@ const confirmAndEnchantCard = async (
 			updateRPGUser({ user_tag: user.user_tag }, { gold: user.gold }),
 			consumeFodders(computed.accumulator)
 		]);
-		await Promise.all([
-			validateAndCompleteQuest({
-				type: QUEST_TYPES.CARD_LEVELING,
-				level: user.level,
-				user_tag: user.user_tag,
-				options: {
-					author: params.author,
-					client: params.client,
-					channel: params.channel,
-					extras: {
-						levelCounter: computed.levelCounter,
-						maxlevel: computed.max_level,
-						characterlevelAfterEnh: cardToEnchant.character_level
-					}
+		await validateAndCompleteQuest({
+			type: QUEST_TYPES.CARD_LEVELING,
+			level: user.level,
+			user_tag: user.user_tag,
+			options: {
+				author: params.author,
+				client: params.client,
+				channel: params.channel,
+				extras: {
+					levelCounter: computed.levelCounter,
+					maxlevel: computed.max_level,
+					characterlevelAfterEnh: cardToEnchant.character_level
 				}
-			}),
-			validateAndCompleteQuest({
-				type: QUEST_TYPES.CONSUME_FODDERS,
-				level: user.level,
-				user_tag: user.user_tag,
-				options: {
-					author: params.author,
-					client: params.client,
-					channel: params.channel,
-					extras: { count: computed.accumulator.reduce((acc, r) => acc + r.count, 0) }
-				},
-				isDMUser: true
-			})
-		]);
+			}
+		});
+		await validateAndCompleteQuest({
+			type: QUEST_TYPES.CONSUME_FODDERS,
+			level: user.level,
+			user_tag: user.user_tag,
+			options: {
+				author: params.author,
+				client: params.client,
+				channel: params.channel,
+				extras: { count: computed.accumulator.reduce((acc, r) => acc + r.count, 0) }
+			},
+			isDMUser: true
+		});
 		loggers.endTimer(updatetimer);
 		return;
 	}
