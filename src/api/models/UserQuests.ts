@@ -98,6 +98,7 @@ export const get = async (
 
 		if (params.is_weekly_quest) {
 			query = query.andWhere((builder) => {
+				builder.where("quest_id", qId);
 				filterDate(builder, true);
 			});
 		}
@@ -109,6 +110,7 @@ export const get = async (
 
 		if (params.is_weekly_quest) {
 			query = query.andWhere((builder) => {
+				builder.whereIn("quest_id", qId);
 				filterDate(builder, true);
 			});
 		}
