@@ -20,6 +20,7 @@ import loggers from "loggers";
 import { isEmptyObject } from "utility";
 import * as Quests from "../models/Quests";
 import * as UserQuests from "../models/UserQuests";
+import { getQuestsByUserLevel } from "./QuestsController";
 
 export const getUserQuests = async (
 	params: { level: number; user_tag: string },
@@ -31,18 +32,15 @@ export const getUserQuests = async (
 			"UserQuestsController.getUserQuests: Fetching user quest details for user level: " +
         params.level
 		);
-		const result = await Quests.getByUserLevel(
-			params,
-			await paginationParams({
-				currentPage: filter.currentPage,
-				perPage: filter.perPage,
-			})
-		);
-
-		const pagination = await paginationForResult({
-			data: result,
-			query: filter,
-		});
+		/**
+		 * Fetching quests from controller for effecient caching
+		 * quests will rarely change - unless more are added, cache needs to be refreshed
+		 */
+		const questData = await getQuestsByUserLevel(params, filter);
+		if (!questData) {
+			throw new Error("No quests available");
+		}
+		const result = questData.data;
 
 		const resp = await UserQuests.get({
 			user_tag: params.user_tag,
@@ -100,7 +98,7 @@ export const getUserQuests = async (
 		// data = data.filter((item) => !item.hasCompleted);
 		return {
 			data,
-			metadata: pagination,
+			metadata: questData.metadata,
 		};
 	} catch (err) {
 		loggers.error("api.UserQuestsController.getUserQuests: ERROR", err);

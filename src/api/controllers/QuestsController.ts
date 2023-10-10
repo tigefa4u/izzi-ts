@@ -1,7 +1,10 @@
 import { ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
 import { QuestProps } from "@customTypes/quests";
+import Cache from "cache";
+import { CACHE_KEYS } from "helpers/cacheConstants";
 import { paginationForResult, paginationParams } from "helpers/pagination";
+import { questLevelsMap } from "helpers/questConstants";
 import loggers from "loggers";
 import * as Quests from "../models/Quests";
 
@@ -10,16 +13,26 @@ export const getQuestsByUserLevel = async (
 	filters: PageProps
 ): Promise<ResponseWithPagination<QuestProps[]> | undefined> => {
 	try {
-		const result = await Quests.getByUserLevel(
-			{
-				level: params.level,
-				user_tag: params.user_tag 
-			},
-			await paginationParams({
-				currentPage: filters.currentPage,
-				perPage: filters.perPage,
-			})
-		);
+		let questLevelByUserLevel = 15;
+		for (const lvl of Object.keys(questLevelsMap)) {
+			if (params.level <= +lvl) {
+				questLevelByUserLevel = questLevelsMap[+lvl];
+				break;
+			}
+		}
+		const key = CACHE_KEYS.QUEST_BY_LEVEL + questLevelByUserLevel;
+		const result = await Cache.fetch(key, async () => {
+			return Quests.getByUserLevel(
+				{
+					level: params.level,
+					user_tag: params.user_tag 
+				},
+				await paginationParams({
+					currentPage: filters.currentPage,
+					perPage: filters.perPage,
+				})
+			);
+		}, 60 * 60 * 24 * 7);
 		const pagination = await paginationForResult({
 			data: result,
 			query: {
@@ -40,7 +53,23 @@ export const getQuestsByUserLevel = async (
 
 export const getQuestByTypeAndLevel = async (params: { type: string; level: number; }) => {
 	try {
-		return Quests.getByType(params);
+		let result;
+		let questLevelByUserLevel = 15;
+		for (const lvl of Object.keys(questLevelsMap)) {
+			if (params.level <= +lvl) {
+				questLevelByUserLevel = questLevelsMap[+lvl];
+				break;
+			}
+		}
+		const key = CACHE_KEYS.QUEST_BY_LEVEL + questLevelByUserLevel;
+		const res = await Cache.get(key);
+		if (res) {
+			const data: QuestProps[] = JSON.parse(res);
+			result = data.filter((d) => d.type === params.type);
+		} else {
+			result = await Quests.getByType(params);
+		}
+		return result;
 	} catch (err) {
 		loggers.error("api.controllers.QuestsController.getQuestByTypeAndLevel: ERROR", err);
 		return;
