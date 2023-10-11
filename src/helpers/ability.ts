@@ -1,5 +1,5 @@
 import { RankProps } from "./helperTypes";
-import { ranksMeta } from "./rankConstants";
+import { ranksMeta } from "./constants/rankConstants";
 
 type T = { [key: string]: { operator: string; number: number; }};
 

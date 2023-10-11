@@ -7,7 +7,7 @@ import { OWNER_DISCORDID } from "environment";
 import { numericWithComma } from "helpers";
 import { DMUser } from "helpers/directMessages";
 import { RankProps, RanksMetaProps } from "helpers/helperTypes";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { start } from "modules/commands/rpg/profile/startJourney";
 

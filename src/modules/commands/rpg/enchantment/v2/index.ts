@@ -11,7 +11,7 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, QUEST_TYPES } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, QUEST_TYPES } from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	clearCooldown,

@@ -15,7 +15,7 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { probability } from "helpers";
-import { BASE_XP, PAGE_FILTER, XP_GAIN_EXPONENT } from "helpers/constants";
+import { BASE_XP, PAGE_FILTER, XP_GAIN_EXPONENT } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createCrateList } from "helpers/embedLists/crates";
 import { RankProps } from "helpers/helperTypes";

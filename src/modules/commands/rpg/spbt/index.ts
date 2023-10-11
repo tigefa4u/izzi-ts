@@ -15,7 +15,7 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
 import {

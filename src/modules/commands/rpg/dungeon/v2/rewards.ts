@@ -13,7 +13,7 @@ import { emojiMap } from "emojis";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getGuildMember } from "api/controllers/GuildMembersController";
 import { GuildMemberProps } from "@customTypes/guildMembers";
-import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, PVP_XP } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, PVP_XP } from "helpers/constants/constants";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 

@@ -16,7 +16,7 @@ import { Client, Message, MessageEmbed } from "discord.js";
 import emoji from "emojis/emoji";
 import { IZZI_WEBSITE } from "environment";
 import { numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import { clientSidePagination } from "helpers/pagination";
 import loggers from "loggers";
 import { titleCase } from "title-case";

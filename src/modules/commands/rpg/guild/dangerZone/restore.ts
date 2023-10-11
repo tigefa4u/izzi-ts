@@ -8,7 +8,7 @@ import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { getMemberPermissions } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 

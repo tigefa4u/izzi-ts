@@ -13,7 +13,7 @@ import {
 	processStatDeBuffCap,
 	relativeDiff,
 } from "helpers/battle";
-import { DPR_MAX_BUFF, HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
+import { DPR_MAX_BUFF, HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants/constants";
 import { clone } from "utility";
 import abilityProcMap from "../abilityProcs/index";
 import itemProcMap from "../itemProcs/index";

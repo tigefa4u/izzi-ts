@@ -6,7 +6,7 @@ import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { BANNED_TERMS, DEFAULT_ERROR_TITLE, MAX_CARD_NICKNAME_LENGTH } from "helpers/constants";
+import { BANNED_TERMS, DEFAULT_ERROR_TITLE, MAX_CARD_NICKNAME_LENGTH } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { getSortCache } from "../sorting/sortCache";

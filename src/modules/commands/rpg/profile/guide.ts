@@ -3,7 +3,7 @@ import { getRPGUser, updateUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { GUIDE_DOCS } from "environment";
-import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE, tutorialLinks } from "helpers/constants";
+import { CONSOLE_BUTTONS, DEFAULT_STARTER_GUIDE_TITLE, tutorialLinks } from "helpers/constants/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { cardCollection } from "../collections";

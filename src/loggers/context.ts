@@ -1,5 +1,5 @@
 import { createNamespace } from "cls-hooked";
-import { LOGGER_CONTEXT } from "helpers/constants";
+import { LOGGER_CONTEXT } from "helpers/constants/constants";
 
 /**
  * cls hooked uses call stack to map each context

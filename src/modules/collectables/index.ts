@@ -17,7 +17,7 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { collectableInteraction } from "utility/ButtonInteractions";

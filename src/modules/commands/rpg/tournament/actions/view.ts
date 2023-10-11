@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
-import { DOT } from "helpers/constants";
+import { DOT } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const viewTourneySettings = async ({

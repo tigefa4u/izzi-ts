@@ -10,7 +10,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

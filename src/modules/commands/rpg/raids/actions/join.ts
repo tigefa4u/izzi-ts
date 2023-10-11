@@ -15,7 +15,7 @@ import {
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { prepareInitialLobbyMember } from "..";
 import { prepareRaidViewEmbed } from "./view";

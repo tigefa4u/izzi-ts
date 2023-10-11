@@ -4,7 +4,7 @@ import { ItemProps } from "@customTypes/items";
 import { getItems } from "api/controllers/ItemsController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createItemList } from "helpers/embedLists/items";
 import loggers from "loggers";

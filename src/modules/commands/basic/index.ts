@@ -26,7 +26,7 @@ import {
 	CONSOLE_BUTTONS,
 	REQUIRED_TRADE_LEVEL,
 	STARTER_CARD_RANK,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { PageProps } from "@customTypes/pagination";
 import { findAndSwap } from "helpers";
 import { clientSidePagination } from "helpers/pagination";

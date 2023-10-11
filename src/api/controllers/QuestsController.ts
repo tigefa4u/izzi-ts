@@ -2,7 +2,7 @@ import { ResponseWithPagination } from "@customTypes";
 import { PageProps } from "@customTypes/pagination";
 import { QuestProps } from "@customTypes/quests";
 import Cache from "cache";
-import { CACHE_KEYS } from "helpers/cacheConstants";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import { questLevelsMap } from "helpers/questConstants";
 import loggers from "loggers";

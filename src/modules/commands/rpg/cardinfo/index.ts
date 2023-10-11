@@ -15,7 +15,7 @@ import {
 	BASE_RANK,
 	CONSOLE_BUTTONS,
 	DEFAULT_ERROR_TITLE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { AuthorProps, ChannelProp, FilterProps } from "@customTypes";
 import { selectionInteraction } from "utility/SelectMenuInteractions";
 import {
@@ -40,7 +40,7 @@ import emoji from "emojis/emoji";
 import { getCharacterPriceList } from "api/controllers/CharacterPriceListsController";
 import { RankProps, RanksMetaProps } from "helpers/helperTypes";
 import { getCustomServerCardByCharacterId } from "api/controllers/CustomServerCardsController";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { getGuildByGuildIds } from "api/controllers/GuildsController";
 import { GuildProps } from "@customTypes/guilds";
 import { UserUpdateProps } from "@customTypes/users";

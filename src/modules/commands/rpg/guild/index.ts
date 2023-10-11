@@ -5,7 +5,7 @@ import { getGuildMember } from "api/controllers/GuildMembersController";
 import { getGuild } from "api/controllers/GuildsController";
 import { createEmbed } from "commons/embeds";
 import { MessageEmbed } from "discord.js";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { addGuild, renameGuild, setBanner, setGuildStatus } from "./actions";

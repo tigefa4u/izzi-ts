@@ -5,7 +5,7 @@ import { getWishlist } from "api/controllers/WishlistsContorller";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { getIdFromMentionedString } from "helpers";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createWishlistEmbedList } from "helpers/embedLists/wishlist";
 import loggers from "loggers";

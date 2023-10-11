@@ -15,7 +15,7 @@ import { clone } from "utility";
 import { prepareBattleDesc } from "./adventure";
 import {
 	ABILITY_BUFF_MAX_PERCENT, ABILITY_DEBUFF_MAX_PERCENT, BATTLE_TYPES, DPR_MAX_BUFF, MANA_PER_BATTLE 
-} from "./constants";
+} from "./constants/constants";
 
 export const compare = (x1: number, x2: number) => {
 	return gt(x1, x2);

@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { createEmbed } from "commons/embeds";
 import { prepareXpGainObject } from "helpers/enchantment";
-import { XP_GAIN_PER_RANK } from "helpers/rankConstants";
+import { XP_GAIN_PER_RANK } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { getReqExpBetweenLevels } from "../enchantment/compute";
 import { consumeCardsToShards } from "./consumeCardsToShards";

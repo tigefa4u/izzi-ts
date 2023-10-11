@@ -25,7 +25,7 @@ import {
 	SEAL_ID,
 	SOUL_ID,
 	UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

@@ -6,7 +6,7 @@ import {
 } from "@customTypes/users";
 import Cache from "cache";
 import { parsePremiumUsername } from "helpers";
-import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants";
+import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clone } from "utility";
 import * as Users from "../models/Users";

@@ -6,7 +6,7 @@ import {
 	ProcessEnchantmentProps,
 } from "@customTypes/enchantment";
 import { getCollection } from "api/controllers/CollectionsController";
-import { ranksMeta, XP_GAIN_PER_RANK } from "helpers/rankConstants";
+import { ranksMeta, XP_GAIN_PER_RANK } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 
 export async function prepareRankAndFetchCards({

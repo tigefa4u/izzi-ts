@@ -17,7 +17,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, QUEST_TYPES } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, QUEST_TYPES } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

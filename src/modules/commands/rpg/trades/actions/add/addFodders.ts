@@ -1,7 +1,7 @@
 import { FilterProps } from "@customTypes";
 import { AddCardsToTradeProps, TradeActionProps, TradeQueueProps } from "@customTypes/trade";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, MAX_CARDS_IN_TRADE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, MAX_CARDS_IN_TRADE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { fetchParamsFromArgs } from "utility/forParams";

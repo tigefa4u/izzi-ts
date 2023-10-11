@@ -3,7 +3,7 @@ import { createGuildEvent, getGuildEventByName, updateGuildEvent } from "api/con
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { getMemberPermissions, getMentionedChannel, getMentionedRole, validateChannelPermissions } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, RAID_PING_NAME } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, RAID_PING_NAME } from "helpers/constants/constants";
 import loggers from "loggers";
 import { fetchParamsFromArgs } from "utility/forParams";
 

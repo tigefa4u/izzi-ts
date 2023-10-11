@@ -8,13 +8,13 @@ import { QuestCompleteCardRewardProps, QuestProps, QuestResultProps, QuestTypes 
 import { UserQuestCreateProps } from "@customTypes/quests/users";
 import { startTransaction } from "api/models/Users";
 import Cache from "cache";
-import { CACHE_KEYS } from "helpers/cacheConstants";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import {
 	QUEST_TYPES,
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import { isEmptyObject } from "utility";

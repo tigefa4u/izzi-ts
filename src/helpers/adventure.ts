@@ -14,9 +14,9 @@ import { overallStats } from "helpers";
 import loggers from "loggers";
 import { getElementalEffectiveStatus } from "modules/commands/rpg/adventure/battle/battle";
 import { clone } from "utility";
-import { DEFAULT_DPR, ELEMENTAL_ADVANTAGES } from "./constants";
+import { DEFAULT_DPR, ELEMENTAL_ADVANTAGES } from "./constants/constants";
 import { RankProps, RanksMetaProps } from "./helperTypes";
-import { ranksMeta } from "./rankConstants";
+import { ranksMeta } from "./constants/rankConstants";
 
 export const prepareHPBar = (num = 12) => {
 	const health = [];

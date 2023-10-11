@@ -1,6 +1,6 @@
 import { CreateButtonParams } from "@customTypes/button";
 import { MessageButton } from "discord.js";
-import { REACTIONS_DEFAULT_STYLE } from "helpers/constants";
+import { REACTIONS_DEFAULT_STYLE } from "helpers/constants/constants";
 
 export const createButton: CreateButtonParams = (id, options) => {
 	const button = new MessageButton()

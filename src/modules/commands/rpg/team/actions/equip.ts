@@ -8,7 +8,7 @@ import { getItemById } from "api/controllers/ItemsController";
 import { getAllTeams, getTeamById, updateTeam } from "api/controllers/TeamsController";
 import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { titleCase } from "title-case";
 import { clone } from "utility";
 import { prepareAndSendTeamMenuEmbed, showTeam } from "..";

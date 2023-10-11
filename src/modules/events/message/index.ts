@@ -13,7 +13,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 import loggers from "loggers";
-import { COMMANDS_WITH_RAW_ARGS, MAX_REQUESTS_PER_CHANNEL } from "helpers/constants";
+import { COMMANDS_WITH_RAW_ARGS, MAX_REQUESTS_PER_CHANNEL } from "helpers/constants/constants";
 import {
 	getChannelCooldown,
 	getTTL,

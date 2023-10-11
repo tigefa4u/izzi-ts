@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getDGTeam, updateDGTeam, createDGTeam as create } from "api/controllers/DungeonsController";
 import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { createEmbed } from "commons/embeds";
-import { BANNED_TERMS, DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { BANNED_TERMS, DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const createDGTeam = async ({ args, client, options, context }: BaseProps) => {

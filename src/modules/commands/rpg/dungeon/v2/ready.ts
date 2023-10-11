@@ -6,7 +6,7 @@ import { getGuildMember } from "api/controllers/GuildMembersController";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const dgTeamReady = async ({ client, context, options }: BaseProps) => {

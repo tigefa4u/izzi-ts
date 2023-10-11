@@ -10,7 +10,7 @@ import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { getRemainingTimer, numericWithComma } from "helpers";
 import { createBattleCanvas, createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { prepareRaidBossEmbedDesc } from "../raids";

@@ -8,7 +8,7 @@ import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { prepareHPBar } from "helpers/adventure";
 import { processHpBar, relativeDiff } from "helpers/battle";
-import { MAX_ENERGY_PER_RAID } from "helpers/constants";
+import { MAX_ENERGY_PER_RAID } from "helpers/constants/constants";
 import { statMultiplier } from "helpers/raid";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";

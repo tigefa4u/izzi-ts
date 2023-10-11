@@ -11,7 +11,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	RDT_ADMIN_PERMISSION,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { removeChannel, resetChannels, viewChannels } from "./actions";

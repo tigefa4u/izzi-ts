@@ -5,7 +5,7 @@ import { RaidLobbyProps, RaidProps } from "@customTypes/raids";
 import { updateRaidEnergy } from "api/controllers/RaidsController";
 import { clone } from "utility";
 import { prepareEnergyBar, prepareHPBar } from "./adventure";
-import { DEFAULT_DPR } from "./constants";
+import { DEFAULT_DPR } from "./constants/constants";
 
 export const statMultiplier: {[key: string]: number;} = {
 	easy: 1,

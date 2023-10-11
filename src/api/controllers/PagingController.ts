@@ -3,7 +3,7 @@ import { PageProps } from "@customTypes/pagination";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, EmbedFieldData, Message } from "discord.js";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { clientSidePagination } from "helpers/pagination";
 import loggers from "loggers";

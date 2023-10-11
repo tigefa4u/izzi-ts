@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

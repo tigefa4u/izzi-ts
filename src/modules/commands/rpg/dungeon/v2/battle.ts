@@ -18,7 +18,7 @@ import { addTeamEffectiveness } from "helpers/adventure";
 import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
 import {
 	BATTLE_TYPES, DEFAULT_ERROR_TITLE, DUNGEON_DEFAULTS, DUNGEON_MANA_PER_BATTLE, DUNGEON_MIN_LEVEL 
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { prepareSkewedCollectionsForBattle, prepareTeamForBattle } from "helpers/teams";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";

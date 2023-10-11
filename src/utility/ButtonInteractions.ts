@@ -8,7 +8,7 @@ import { PageProps } from "@customTypes/pagination";
 import { createButton } from "commons/buttons";
 import { Client, Message, MessageActionRow } from "discord.js";
 import { interactionFilter, generateUUID, verifyFilter } from "helpers";
-import { REACTIONS } from "helpers/constants";
+import { REACTIONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 import { isAsyncFunction } from "util/types";

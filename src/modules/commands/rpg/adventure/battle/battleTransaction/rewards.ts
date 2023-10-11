@@ -10,8 +10,8 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
-import { ranksMeta } from "helpers/rankConstants";
+} from "helpers/constants/constants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { clone } from "utility";
 

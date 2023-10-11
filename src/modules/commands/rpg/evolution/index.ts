@@ -28,10 +28,10 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	STARTER_CARD_EXP,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import { getReqSouls } from "helpers/evolution";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

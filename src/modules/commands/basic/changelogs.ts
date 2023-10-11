@@ -6,7 +6,7 @@ import { paginatorFunc } from "api/controllers/PagingController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
-import { DOT } from "helpers/constants";
+import { DOT } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clone, toLocaleDate } from "utility";
 import { paginatorInteraction, } from "utility/ButtonInteractions";

@@ -6,10 +6,10 @@ import {
 } from "api/controllers/MarketsController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { DEFAULT_ERROR_TITLE, PAGE_FILTER } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createMarketList } from "helpers/embedLists/market";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { clone, isEmptyObject } from "utility";

@@ -1,5 +1,5 @@
 import { randomNumber } from "helpers";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 
 export const crates = {
 	premium: {

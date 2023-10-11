@@ -8,7 +8,7 @@ import {
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { PAGE_FILTER, REFERRAL_BG_IMG_URL } from "helpers/constants";
+import { PAGE_FILTER, REFERRAL_BG_IMG_URL } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createReferralsList } from "helpers/embedLists/referrals";
 import loggers from "loggers";

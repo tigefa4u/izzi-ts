@@ -3,7 +3,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { numericWithComma, probability, randomNumber } from "helpers";
-import { BET_LIMIT, GAMBLE_EMOJIS } from "helpers/constants";
+import { BET_LIMIT, GAMBLE_EMOJIS } from "helpers/constants/constants";
 import loggers from "loggers";
 
 const bucket = [

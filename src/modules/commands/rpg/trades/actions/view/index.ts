@@ -111,46 +111,7 @@ export const viewTrade = async ({
 				)
 					.map((id) => {
 						const trader = tradeQueue[id];
-						const nonFodderCards = trader.queue.filter((q) => !q.is_fodder);
-						const fodders = trader.queue.filter((q) => q.is_fodder);
-						const rankGroup = groupByKey(nonFodderCards, "rank");
-						const keys = Object.keys(rankGroup);
-						return `**${trader.username}'s Queue**${
-							keys.length > 0
-								? `\n${keys
-									.map(
-										(k) =>
-											`__${rankGroup[k].length}x__ ${titleCase(
-												k
-											)} ${rankGroup[k]
-												.slice(0, 10)
-												.map(
-													(r) =>
-														`**${titleCase(r.name || "No Name")} (${r.id})**`
-												)
-												.join(", ")}${
-												rankGroup[k].length > 10
-													? ` (__${rankGroup[k].length - 10}__ more)`
-													: ""
-											} card(s)`
-									)
-									.join("\n")}`
-								: ""
-						}${
-							fodders.length > 0
-								? `\n${fodders
-									.slice(0, 5)
-									.map(
-										(f) =>
-											`__${f.count}x__ Platinum ${titleCase(
-												f.name || "No Name"
-											)}`
-									)
-									.join(", ")}${
-									fodders.length > 5 ? `(__${fodders.length - 5}__ more)` : ""
-								} card(s) **(Fodders)**`
-								: ""
-						}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
+						return prepareTradeQueue(trader);
 					})
 					.join("\n\n")}`
 			)
@@ -172,4 +133,47 @@ export const viewTrade = async ({
 		);
 		return;
 	}
+};
+
+export const prepareTradeQueue = (trader: TradeQueueProps[""]) => {
+	const nonFodderCards = trader.queue.filter((q) => !q.is_fodder);
+	const fodders = trader.queue.filter((q) => q.is_fodder);
+	const rankGroup = groupByKey(nonFodderCards, "rank");
+	const keys = Object.keys(rankGroup);
+	return `**${trader.username}'s Queue**${
+		keys.length > 0
+			? `\n${keys
+				.map(
+					(k) =>
+						`__${rankGroup[k].length}x__ ${titleCase(
+							k
+						)} ${rankGroup[k]
+							.slice(0, 10)
+							.map(
+								(r) =>
+									`**${titleCase(r.name || "No Name")} (${r.id})**`
+							)
+							.join(", ")}${
+							rankGroup[k].length > 10
+								? ` (__${rankGroup[k].length - 10}__ more)`
+								: ""
+						} card(s)`
+				)
+				.join("\n")}`
+			: ""
+	}${
+		fodders.length > 0
+			? `\n${fodders
+				.slice(0, 5)
+				.map(
+					(f) =>
+						`__${f.count}x__ Platinum ${titleCase(
+							f.name || "No Name"
+						)}`
+				)
+				.join(", ")}${
+				fodders.length > 5 ? `(__${fodders.length - 5}__ more)` : ""
+			} card(s) **(Fodders)**`
+			: ""
+	}\n__${numericWithComma(trader.gold)}__ gold ${emoji.gold}`;
 };

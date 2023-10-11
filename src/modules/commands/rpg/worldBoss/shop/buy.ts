@@ -18,7 +18,7 @@ import {
 	STARTER_CARD_R_EXP,
 	WORLD_BOSS_MARKET_CARD_RANK,
 	WORLD_BOSS_MARKET_CARD_RANK_ID,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";

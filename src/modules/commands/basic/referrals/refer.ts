@@ -15,7 +15,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MAX_REFERRAL_REWARD_POINTS,
 	MIN_LEVEL_FOR_REFERRAL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";

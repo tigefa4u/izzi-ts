@@ -8,7 +8,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Message } from "discord.js";
 import { parsePremiumUsername } from "helpers";
-import { DEFAULT_ERROR_TITLE, PAGE_FILTER, REQUIRED_TRADE_LEVEL } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, PAGE_FILTER, REQUIRED_TRADE_LEVEL } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createZoneList } from "helpers/embedLists/zone";
 import loggers from "loggers";

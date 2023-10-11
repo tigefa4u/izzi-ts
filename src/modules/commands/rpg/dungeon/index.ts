@@ -18,7 +18,7 @@ import {
 	DUNGEON_MANA_PER_BATTLE,
 	DUNGEON_MIN_LEVEL,
 	HIDE_VISUAL_BATTLE_ARG,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import {
 	prepareSkewedCollectionsForBattle,
 	validateAndPrepareTeam,

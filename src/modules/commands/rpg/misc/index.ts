@@ -12,7 +12,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	LOTTERY_PRICE,
 	MAX_MANA_GAIN,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	getCooldown,

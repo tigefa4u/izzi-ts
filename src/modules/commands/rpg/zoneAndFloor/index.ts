@@ -2,7 +2,7 @@ import { ChannelProp } from "@customTypes";
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import { BaseProps } from "@customTypes/command";
 import { CustomEmbedProps } from "@customTypes/embed";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { startBattle } from "../adventure";

@@ -10,7 +10,7 @@ import {
 	CONSOLE_BUTTONS,
 	DUNGEON_MAX_MANA,
 	MAX_CHOSEN_SKINS_ALLOWED,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { startBattle } from "modules/commands/rpg/adventure";
 import { floor } from "modules/commands/rpg/zoneAndFloor/floor";

@@ -2,7 +2,7 @@ import { RandomCardProps } from "@customTypes/cards";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
 import { getRemainingTimer, numericWithComma } from "helpers";
-import { STARTER_CARD_LEVEL, WORLD_BOSS_MARKET_CARD_RANK } from "helpers/constants";
+import { STARTER_CARD_LEVEL, WORLD_BOSS_MARKET_CARD_RANK } from "helpers/constants/constants";
 import { titleCase } from "title-case";
 
 export const createWorldBossMarketList = (

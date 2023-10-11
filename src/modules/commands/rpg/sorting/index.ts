@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { SortProps } from "@customTypes/sorting";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { delSortCache, setSortCache } from "./sortCache";
 

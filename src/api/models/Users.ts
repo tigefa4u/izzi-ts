@@ -6,7 +6,7 @@ import {
 } from "@customTypes/users";
 import connection from "db";
 import emoji from "emojis/emoji";
-import { MAX_GOLD_THRESHOLD } from "helpers/constants";
+import { MAX_GOLD_THRESHOLD } from "helpers/constants/constants";
 import { Knex } from "knex";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import { isEmptyObject } from "utility";

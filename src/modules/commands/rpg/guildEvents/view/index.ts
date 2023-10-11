@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { getAllGuildEvents } from "api/controllers/GuildEventsController";
 import { createEmbed } from "commons/embeds";
-import { DATE_OPTIONS } from "helpers/constants";
+import { DATE_OPTIONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

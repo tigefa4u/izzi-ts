@@ -6,7 +6,7 @@ import { getCharacterInfo } from "api/controllers/CharactersController";
 import { createWishlist, getWishlist } from "api/controllers/WishlistsContorller";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { groupByKey } from "utility";

@@ -9,7 +9,7 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { Request, Response } from "express";
 import { UserProps, UserUpdateProps } from "@customTypes/users";
 import { getMonthlyCard } from "api/controllers/MonthlyCardsController";
@@ -19,7 +19,7 @@ import {
 	createCollection,
 	directUpdateCreateFodder,
 } from "api/controllers/CollectionsController";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {

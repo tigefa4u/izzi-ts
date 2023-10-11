@@ -21,7 +21,7 @@ import {
 	MIN_RAID_USER_LEVEL,
 	PERMIT_PER_RAID,
 	REACTIONS,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";

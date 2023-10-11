@@ -4,7 +4,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { IZZI_WEBSITE } from "environment";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { spawnRaid } from "../../raids/actions/spawn";

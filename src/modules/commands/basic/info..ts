@@ -11,7 +11,7 @@ import {
 	OFFICIAL_SERVER_LINK,
 	XENEX_VOTE_LINK,
 } from "environment";
-import { DONATOR_PERKS_MESSAGE } from "helpers/constants";
+import { DONATOR_PERKS_MESSAGE } from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";

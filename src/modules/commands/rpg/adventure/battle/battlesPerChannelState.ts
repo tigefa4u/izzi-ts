@@ -1,4 +1,4 @@
-import { BATTLES_PER_CHANNEL } from "helpers/constants";
+import { BATTLES_PER_CHANNEL } from "helpers/constants/constants";
 
 let battlesInChannel: Map<string, number> = new Map();
 

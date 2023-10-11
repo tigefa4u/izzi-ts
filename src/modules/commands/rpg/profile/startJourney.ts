@@ -16,7 +16,7 @@ import {
 	STARTER_CARD_RANK_ID,
 	STARTER_CARD_R_EXP,
 	STARTER_GOLD,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { createAttachment } from "commons/attachments";
 import { createSingleCanvas } from "helpers/canvas";

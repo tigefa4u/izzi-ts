@@ -9,7 +9,7 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import { statRelationMap } from "helpers/ability";
-import { DEFAULT_ERROR_TITLE, STAR } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, STAR } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { fetchParamsFromArgs } from "utility/forParams";
@@ -75,7 +75,12 @@ export const compareCards = async ({
 
 		const params = <FilterProps>fetchParamsFromArgs(args);
 		let charanames = params.name;
-		if (typeof charanames === "string" || !charanames) return;
+		if (typeof charanames === "string" || !charanames) {
+			context.channel?.sendMessage(
+				"Command usage has been changed to `iz cmp -n name1,name2`. For more info type `iz h cmp`."
+			);
+			return;
+		}
 		if (charanames.length > 3) {
 			charanames = charanames.slice(0, 3);
 			// embed.setDescription("You cannot compare more than 3 Cards");

@@ -1,6 +1,6 @@
 import { DungeonLevelProps } from "@customTypes/dungeon";
 import { randomElementFromArray, randomNumber } from "helpers";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { reorderObjectKey } from "utility";
 
 export const computeLevel = (rank = "duke") => {

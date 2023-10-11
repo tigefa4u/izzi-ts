@@ -23,9 +23,9 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { RankProps } from "helpers/helperTypes";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import {
 	clearCooldown,

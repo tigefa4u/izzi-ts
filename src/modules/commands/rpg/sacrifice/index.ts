@@ -23,7 +23,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	SACRIFICE_GOLD_COST,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";

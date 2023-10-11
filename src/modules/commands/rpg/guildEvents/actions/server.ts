@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { updateGuild } from "api/controllers/GuildsController";
 import { createEmbed } from "commons/embeds";
 import { getMemberPermissions } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const updateServerName = async ({ context, options, client }: BaseProps) => {

@@ -1,7 +1,7 @@
 import { AuthorProps } from "@customTypes";
 import { createEmbed } from "commons/embeds";
 import { Client, EmbedFieldData } from "discord.js";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 
 type DexEmbedProps = {
   author: AuthorProps;

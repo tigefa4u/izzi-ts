@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getGuildMarket } from "api/controllers/GuildMarketsController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { GUILD_MARKET_IDS, PAGE_FILTER } from "helpers/constants";
+import { GUILD_MARKET_IDS, PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createGuildMarketItemList } from "helpers/embedLists/guildItems";
 import loggers from "loggers";

@@ -18,7 +18,7 @@ import { clone, isEmptyObject, reorderObjectKey } from "utility";
 import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { getItemById } from "api/controllers/ItemsController";
-import { DEFAULT_DPR } from "./constants";
+import { DEFAULT_DPR } from "./constants/constants";
 import { GuildMemberProps } from "@customTypes/guildMembers";
 
 const prepareItemStats = ({

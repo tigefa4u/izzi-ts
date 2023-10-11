@@ -3,7 +3,7 @@ import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
-import { MAX_RAID_LOBBY_MEMBERS } from "helpers/constants";
+import { MAX_RAID_LOBBY_MEMBERS } from "helpers/constants/constants";
 import { titleCase } from "title-case";
 
 export const createLobbiesList = (

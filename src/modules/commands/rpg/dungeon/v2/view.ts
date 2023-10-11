@@ -6,7 +6,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { prepareTotalOverallStats } from "helpers/teams";
 import loggers from "loggers";
 import { titleCase } from "title-case";

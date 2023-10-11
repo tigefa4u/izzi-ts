@@ -40,10 +40,10 @@ import {
 	STARTER_CARD_R_EXP,
 	WORLD_BOSS_MANA_PER_BATTLE,
 	WORLD_BOSS_MIN_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareRaidBossBase } from "helpers/raid";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { validateAndPrepareTeam } from "helpers/teams";
 import loggers from "loggers";
 import GA4 from "loggers/googleAnalytics";

@@ -5,7 +5,7 @@ import {
 	ENERGY_PER_ATTACK,
 	HIDE_VISUAL_BATTLE_ARG,
 	RAID_CAP_PERCENT,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { validateCurrentRaid } from "./validateRaid";

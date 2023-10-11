@@ -12,7 +12,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MAX_ADMINS_PER_GUILD,
 	UNLOCK_EXTRA_GUILD_ADMIN_AT_NTH_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
 

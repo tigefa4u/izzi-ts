@@ -4,7 +4,7 @@ import { updateCollection } from "api/controllers/CollectionsController";
 import { delFromMarket } from "api/controllers/MarketsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { validateMarketCard } from "..";

@@ -15,8 +15,8 @@ import {
 	MAX_GOLD_THRESHOLD,
 	REQUIRED_TRADE_LEVEL,
 	USER_XP_GAIN_PER_BATTLE,
-} from "helpers/constants";
-import { ranksMeta } from "helpers/rankConstants";
+} from "helpers/constants/constants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

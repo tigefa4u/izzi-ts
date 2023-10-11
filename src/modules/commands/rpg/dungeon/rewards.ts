@@ -9,7 +9,7 @@ import { Client } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
-import { CONSOLE_BUTTONS, DUNGEON_DEFAULTS, PVP_XP } from "helpers/constants";
+import { CONSOLE_BUTTONS, DUNGEON_DEFAULTS, PVP_XP } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

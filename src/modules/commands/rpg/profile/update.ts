@@ -3,7 +3,7 @@ import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import emoji from "emojis/emoji";
 import { parsePremiumUsername } from "helpers";
-import { BANNED_TERMS, MAX_USER_STATUS_LENGTH } from "helpers/constants";
+import { BANNED_TERMS, MAX_USER_STATUS_LENGTH } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const updateIzziProfile = async ({ context, options, args }: BaseProps) => {

@@ -18,7 +18,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	FODDER_RANKS,
 	MAX_CARDS_IN_TRADE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey } from "utility";

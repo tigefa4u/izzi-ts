@@ -1,6 +1,6 @@
 import { ProcessQuestProps, QuestCriteriaProps } from "@customTypes/quests";
 import Cache from "cache";
-import { CACHE_KEYS } from "helpers/cacheConstants";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import { RankProps } from "helpers/helperTypes";
 import { getWeeklyQuestDates } from "helpers/quest";
 import loggers from "loggers";

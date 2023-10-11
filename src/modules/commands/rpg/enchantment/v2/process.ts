@@ -4,7 +4,7 @@ import {
 } from "@customTypes/enchantment";
 import { getFoddersV2 } from "api/controllers/CollectionsController";
 import { prepareXpGainObject } from "helpers/enchantment";
-import { XP_GAIN_PER_RANK } from "helpers/rankConstants";
+import { XP_GAIN_PER_RANK } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 
 export const prepareRankAndFetchCardsV2 = async ({

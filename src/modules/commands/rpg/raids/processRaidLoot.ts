@@ -23,10 +23,10 @@ import {
 	STARTER_CARD_EXP,
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import { getLobbyMvp } from "helpers/raid";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { clone, groupByKey, isEmptyObject } from "utility";

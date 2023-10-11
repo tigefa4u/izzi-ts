@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { getGuildEventByName } from "api/controllers/GuildEventsController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, RAID_PING_NAME } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, RAID_PING_NAME } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

@@ -6,7 +6,7 @@ import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
 import { getRemainingTimer, numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { getTTL } from "modules/cooldowns/channels";
 

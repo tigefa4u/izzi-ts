@@ -17,7 +17,7 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { baseStatRatio, calcPower, parsePremiumUsername, prepareAbilityDescription } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
-import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE, REQUIRED_TRADE_LEVEL } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_STARTER_GUIDE_TITLE, REQUIRED_TRADE_LEVEL } from "helpers/constants/constants";
 import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import { titleCase } from "title-case";
