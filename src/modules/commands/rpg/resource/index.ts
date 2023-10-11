@@ -7,6 +7,7 @@ import {
 } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { taskQueue } from "handlers/taskQueue/gcp";
 import {
 	getIdFromMentionedString,
 	numericWithComma,
@@ -127,20 +128,31 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 			} to **${mentionedUser.username}**`
 		);
 
-		const logChannel = (await client.channels.fetch(
-			OS_LOG_CHANNELS.GIVE
-		)) as ChannelProp | null;
-		if (logChannel) {
-			logChannel.sendMessage(
-				`Server: ${context.guild?.name || "Unknown"} (${
-					context.guild?.id || "Unknown"
-				}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
-				`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
-					"en-us",
-					DATE_OPTIONS
-				)}`
-			);
-		}
+		const msg = `Server: ${context.guild?.name || "Unknown"} (${
+			context.guild?.id || "Unknown"
+		}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
+					`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
+						"en-us",
+						DATE_OPTIONS
+					)}`;
+		taskQueue("log-give", {
+			message: msg,
+			channelId: OS_LOG_CHANNELS.GIVE
+		});
+		// const logChannel = (await client.channels.fetch(
+		// 	OS_LOG_CHANNELS.GIVE
+		// )) as ChannelProp | null;
+		// if (logChannel) {
+		// 	logChannel.sendMessage(
+		// 		`Server: ${context.guild?.name || "Unknown"} (${
+		// 			context.guild?.id || "Unknown"
+		// 		}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
+		// 		`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
+		// 			"en-us",
+		// 			DATE_OPTIONS
+		// 		)}`
+		// 	);
+		// }
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.resource.give: ERROR", err);

@@ -20,6 +20,7 @@ import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { taskQueue } from "handlers/taskQueue/gcp";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
@@ -626,19 +627,29 @@ export const spawnRaid = async ({
 			iconURL: author.displayAvatarURL(),
 		});
 		DMUser(client, embed, author.id);
-		const logChannel = (await client.channels.fetch(
-			OS_LOG_CHANNELS.RAID_SPAWN
-		)) as ChannelProp | null;
-		if (logChannel) {
-			logChannel.sendMessage(
-				`Server: ${context.guild?.name || "Unknown"} (${
-					context.guild?.id || "Unknown"
-				}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
-					"en-us",
-					DATE_OPTIONS
-				)}`
-			);
-		}
+
+		taskQueue("log-raid-spawn", {
+			message: `Server: ${context.guild?.name || "Unknown"} (${
+				context.guild?.id || "Unknown"
+			}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
+				"en-us",
+				DATE_OPTIONS
+			)}`,
+			channelId: OS_LOG_CHANNELS.RAID_SPAWN
+		});
+		// const logChannel = (await client.channels.fetch(
+		// 	OS_LOG_CHANNELS.RAID_SPAWN
+		// )) as ChannelProp | null;
+		// if (logChannel) {
+		// 	logChannel.sendMessage(
+		// 		`Server: ${context.guild?.name || "Unknown"} (${
+		// 			context.guild?.id || "Unknown"
+		// 		}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
+		// 			"en-us",
+		// 			DATE_OPTIONS
+		// 		)}`
+		// 	);
+		// }
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.spawnRaid: ERROR", err);

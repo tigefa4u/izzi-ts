@@ -30,6 +30,13 @@ function isWebhookAuth(req: Request, res: Response, next: () => void) {
 
 app.use("/dblwebhook-secret", isWebhookAuth, webhook);
 app.use("/dungeon", isAuth, dungeon);
+// app.get("/task-queue", (req, res) => {
+// 	taskQueue("test", {
+// 		message: "hello world",
+// 		channelId: OS_LOG_CHANNELS.GIVE
+// 	});
+// 	return res.status(200).send({ message: "ok" });
+// });
 app.use("/", isAuth, bot);
 
 app.listen(5000, () => {

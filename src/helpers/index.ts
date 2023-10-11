@@ -511,3 +511,13 @@ export const getRemainingHoursAndMinutes = (timestamp: number) => {
 		remainingMinutes,
 	};
 };
+
+export const debounce = <T, R = void>(func: (...args: T[]) => R, timeout = 300) => {
+	let timer: NodeJS.Timeout;
+	return (...args: T[]) => {
+	  clearTimeout(timer);
+	  timer = setTimeout(() => {
+			func.apply(this, args); 
+		}, timeout);
+	};
+};
