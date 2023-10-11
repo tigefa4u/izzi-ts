@@ -3,7 +3,7 @@ import Cache from "cache";
 import connection from "db";
 import emoji from "emojis/emoji";
 import { randomNumber } from "helpers";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import { success } from "server/responses";

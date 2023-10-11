@@ -1,5 +1,5 @@
 import { XPGainPerRankProps } from "@customTypes";
-import { XP_GAIN_PER_RANK } from "./rankConstants";
+import { XP_GAIN_PER_RANK } from "./constants/rankConstants";
 
 export const prepareXpGainObject = (reqExp: number) => {
 	const withSameName = {} as XPGainPerRankProps;

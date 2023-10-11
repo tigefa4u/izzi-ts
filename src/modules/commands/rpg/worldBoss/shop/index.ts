@@ -2,7 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getAllWorldBossForMarket } from "api/controllers/WorldBossController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createWorldBossMarketList } from "helpers/embedLists/worldBossMarket";
 import loggers from "loggers";

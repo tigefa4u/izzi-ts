@@ -3,7 +3,7 @@ import { updateGuildEvent } from "api/controllers/GuildEventsController";
 import { delRaidPing } from "api/models/GuildEvents";
 import { createEmbed } from "commons/embeds";
 import { getMemberPermissions } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const resetGuildEvents = async ({ client, options, context, args }: BaseProps) => {

@@ -3,7 +3,7 @@ import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { getEodTimeRemainingInSec, numericWithComma } from "helpers";
-import { STAR } from "helpers/constants";
+import { STAR } from "helpers/constants/constants";
 import { titleCase } from "title-case";
 
 export const prepareRewards = (

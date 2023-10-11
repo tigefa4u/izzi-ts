@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { getWishlistById, removeFromWishlist } from "api/controllers/WishlistsContorller";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const removeWishlist = async ({ context, args, client, options }: BaseProps) => {

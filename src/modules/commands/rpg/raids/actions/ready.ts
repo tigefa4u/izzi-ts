@@ -2,7 +2,7 @@ import { RaidActionProps, RaidLobbyProps } from "@customTypes/raids";
 import { updateRaid } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { validateCurrentRaid } from "./validateRaid";

@@ -2,7 +2,7 @@ import { CollectionReturnType } from "@customTypes/collections";
 import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { FODDER_RANKS } from "helpers/constants";
+import { FODDER_RANKS } from "helpers/constants/constants";
 import { titleCase } from "title-case";
 
 const renderSoulsOrCardCount = (card: CollectionReturnType) => {

@@ -3,7 +3,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_GOLD_IN_TRADE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, MAX_GOLD_IN_TRADE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { delFromQueue, getTradeQueue, setTradeQueue } from "../../queue";
 import { viewTrade } from "../view";

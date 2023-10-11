@@ -6,7 +6,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	FODDER_RANKS,
 	MAX_CARDS_IN_TRADE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { getSortCache } from "modules/commands/rpg/sorting/sortCache";
 import { titleCase } from "title-case";

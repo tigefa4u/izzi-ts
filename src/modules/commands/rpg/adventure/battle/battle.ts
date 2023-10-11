@@ -25,7 +25,7 @@ import {
 	CONSOLE_BUTTONS,
 	ELEMENTAL_ADVANTAGES,
 	RAGE_MODE_ROUND,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clone } from "utility";
 import { BattleProcess } from "./battleProcess";

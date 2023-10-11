@@ -1,6 +1,6 @@
 import { randomNumber } from "helpers";
 import { RankProps } from "helpers/helperTypes";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { crates } from "./crateLoot";
 
 // const basedrops = {

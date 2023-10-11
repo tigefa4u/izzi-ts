@@ -21,7 +21,7 @@ import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import Cache from "cache";
 import { Simulation } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import { viewBattleLogs } from "modules/commands/rpg/adventure/battle/viewBattleLogs";
 
 async function confirmAndBattle(

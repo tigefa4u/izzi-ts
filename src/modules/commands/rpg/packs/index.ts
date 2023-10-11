@@ -12,7 +12,7 @@ import {
 	DEFAULT_PACK,
 	DEFAULT_SUCCESS_TITLE,
 	IZZI_OS_SERVER_ID,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

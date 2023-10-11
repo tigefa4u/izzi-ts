@@ -8,14 +8,15 @@ import {
 } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
+import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import {
 	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, MIN_TRADE_CARDS_FOR_QUEST, QUEST_TYPES 
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { validateAndCompleteQuest } from "modules/commands/rpg/quests";
 import { titleCase } from "title-case";
 import * as queue from "../../queue";
-import { viewTrade } from "../view";
+import { prepareTradeQueue, viewTrade } from "../view";
 
 async function validateTraderQueue(
 	trader: TradeQueueProps[""],
@@ -307,6 +308,16 @@ export const confirmTrade = async ({
 		// }));
 		embed.setDescription("Trade completed!").setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
+
+		const logChannel = await client.channels.fetch(OS_LOG_CHANNELS.TRADE) as ChannelProp | null;
+		if (logChannel) {
+			const logEmbed = createEmbed(author, client)
+				.setTitle(`Trade Completed between ${trader_1.username} and ${trader_2.username}`)
+				.setDescription(`${prepareTradeQueue(trader_1)}\n\n${prepareTradeQueue(trader_2)}`)
+				.setHideConsoleButtons(true);
+
+			logChannel.sendMessage(logEmbed);
+		}
 		return;
 	} catch (err) {
 		loggers.error(

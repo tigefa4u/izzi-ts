@@ -39,6 +39,7 @@ const manager = new ShardingManager(path.join(__dirname, "client.js"), {
 });
 
 manager.spawn().catch((err) => {
+	console.log("Unable to spawn shard: ", err);
 	loggers.error("Unable to spawn Shard (might be rate limited): ", err);
 });
 manager.on("shardCreate", (shard) => {

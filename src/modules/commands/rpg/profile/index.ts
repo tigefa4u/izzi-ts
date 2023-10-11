@@ -17,7 +17,7 @@ import {
 	parsePremiumUsername,
 } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
-import { DATE_OPTIONS } from "helpers/constants";
+import { DATE_OPTIONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

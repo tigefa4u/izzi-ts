@@ -1,4 +1,4 @@
-import { OverallStatsProps } from "@customTypes";
+import { ChannelProp, OverallStatsProps } from "@customTypes";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
@@ -22,6 +22,7 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { randomElementFromArray, randomNumber } from "helpers";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
+import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import {
 	D1_RANKS,
 	D2_RANKS,
@@ -33,7 +34,7 @@ import {
 	PERMIT_PER_RAID,
 	TAXPAYER_RETURN_PERCENT,
 	TAX_PAYER_RAID_PITY_THRESHOLD,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import { RankProps } from "helpers/helperTypes";
 import { statMultiplier } from "helpers/raid";
@@ -45,7 +46,7 @@ import {
 	setCooldown,
 } from "modules/cooldowns";
 import { titleCase } from "title-case";
-import { clone } from "utility";
+import { clone, DATE_OPTIONS } from "utility";
 import {
 	prepareInitialLobbyMember,
 	prepareRaidBossEmbedDesc,
@@ -625,6 +626,19 @@ export const spawnRaid = async ({
 			iconURL: author.displayAvatarURL(),
 		});
 		DMUser(client, embed, author.id);
+		const logChannel = (await client.channels.fetch(
+			OS_LOG_CHANNELS.RAID_SPAWN
+		)) as ChannelProp | null;
+		if (logChannel) {
+			logChannel.sendMessage(
+				`Server: ${context.guild?.name || "Unknown"} (${
+					context.guild?.id || "Unknown"
+				}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
+					"en-us",
+					DATE_OPTIONS
+				)}`
+			);
+		}
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.spawnRaid: ERROR", err);

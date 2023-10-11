@@ -7,7 +7,7 @@ import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { isEmptyObject } from "utility";
 
 export const checkUserBanned = async (

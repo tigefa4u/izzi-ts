@@ -17,9 +17,9 @@ import {
 	CONSOLE_BUTTONS,
 	FODDER_RANKS,
 	REQUIRED_TRADE_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

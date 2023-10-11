@@ -2,7 +2,7 @@ import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { getAllTeams, createTeam as create } from "api/controllers/TeamsController";
 import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/controllers/UserBlacklistsController";
-import { BANNED_TERMS, MAX_TEAMS_ALLOWED } from "helpers/constants";
+import { BANNED_TERMS, MAX_TEAMS_ALLOWED } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const createTeam = async ({

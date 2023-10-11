@@ -1,5 +1,5 @@
 import { XPGainPerRankProps } from "@customTypes";
-import { RankProps, RanksMetaProps } from "./helperTypes";
+import { RankProps, RanksMetaProps } from "../helperTypes";
 
 export const ranksMeta: RanksMetaProps = {
 	silver: {

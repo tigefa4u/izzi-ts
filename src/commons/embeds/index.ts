@@ -4,7 +4,7 @@
 import { Client, EmbedAuthorData, MessageEmbed } from "discord.js";
 import { EmbedProps } from "@customTypes/embed";
 import { AuthorProps } from "@customTypes";
-import { EMBED_DEFAULT_COLOR } from "helpers/constants";
+import { EMBED_DEFAULT_COLOR } from "helpers/constants/constants";
 import { parsePremiumUsername } from "helpers";
 
 export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) => {

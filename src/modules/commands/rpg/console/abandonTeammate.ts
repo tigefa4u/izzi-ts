@@ -5,7 +5,7 @@ import { createEmbed } from "commons/embeds";
 import { Message, User } from "discord.js";
 import emoji from "emojis/emoji";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 

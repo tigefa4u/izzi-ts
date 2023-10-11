@@ -3,7 +3,7 @@ import { getDGTeam } from "api/controllers/DungeonsController";
 import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

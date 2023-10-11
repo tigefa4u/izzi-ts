@@ -5,7 +5,7 @@ import { updateUserRank } from "api/controllers/UserRanksController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DEFAULT_SUCCESS_TITLE, DUNGEON_DEFAULTS } from "helpers/constants";
+import { DEFAULT_SUCCESS_TITLE, DUNGEON_DEFAULTS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 

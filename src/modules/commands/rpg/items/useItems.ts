@@ -11,7 +11,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { getSortCache } from "../sorting/sortCache";

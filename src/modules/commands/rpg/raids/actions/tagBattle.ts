@@ -3,7 +3,7 @@ import { getUserRaidLobby } from "api/controllers/RaidsController";
 import { GetTagTeamPlayer, updateTagTeamPoints } from "api/controllers/TagTeamsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, TEAM_POINTS_PER_TASK } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, TEAM_POINTS_PER_TASK } from "helpers/constants/constants";
 import loggers from "loggers";
 import { getCooldown, sendCommandCDResponse, setCooldown } from "modules/cooldowns";
 import { battleRaidBoss } from "./battle";

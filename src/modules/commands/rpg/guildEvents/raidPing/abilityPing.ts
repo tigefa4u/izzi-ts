@@ -4,7 +4,7 @@ import { getGuildEventByName, updateGuildEvent } from "api/controllers/GuildEven
 import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { getMemberPermissions } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, RAID_PING_NAME } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, RAID_PING_NAME } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 

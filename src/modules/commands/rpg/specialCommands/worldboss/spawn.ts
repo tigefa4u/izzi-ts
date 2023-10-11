@@ -15,7 +15,7 @@ import {
 	WORLD_BOSS_EXPIRES_IN_DAYS,
 	WORLD_BOSS_HP_MULTIPLIER,
 	WORLD_BOSS_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 // import { PublishMessageToAllGuilds } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";

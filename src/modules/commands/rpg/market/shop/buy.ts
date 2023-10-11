@@ -28,7 +28,7 @@ import {
 	MARKET_COMMISSION,
 	QUEST_TYPES,
 	RAID_TREASURY_PERCENT,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import GA4 from "loggers/googleAnalytics";

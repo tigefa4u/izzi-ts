@@ -10,7 +10,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	MAX_CHOSEN_SKINS_ALLOWED,
 	PAGE_FILTER,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createSkinList } from "helpers/embedLists/skin";
 import loggers from "loggers";

@@ -10,7 +10,7 @@ import {
 	RAID_TREASURY_PERCENT,
 	TAXPAYER_RETURN_PERCENT,
 	TAX_PAYER_RAID_PITY_THRESHOLD,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const showTaxInfo = async ({

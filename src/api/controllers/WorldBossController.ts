@@ -10,7 +10,7 @@ import {
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 	WORLD_BOSS_MANA_PER_BATTLE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { paginationForResult, paginationParams } from "helpers/pagination";
 import loggers from "loggers";
 import * as WorldBossBattles from "../models/WorldBossBattles";

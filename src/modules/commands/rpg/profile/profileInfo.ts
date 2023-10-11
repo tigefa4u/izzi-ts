@@ -6,7 +6,7 @@ import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
-import { DUNGEON_MAX_MANA } from "helpers/constants";
+import { DUNGEON_MAX_MANA } from "helpers/constants/constants";
 import loggers from "loggers";
 
 async function getProfileInfo(key: string, id: string) {

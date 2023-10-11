@@ -10,7 +10,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MAX_DONATION,
 	MAX_GOLD_THRESHOLD,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
 

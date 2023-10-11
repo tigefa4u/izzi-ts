@@ -3,7 +3,7 @@ import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import { getIdFromMentionedString } from "helpers";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { filterSubCommands } from "helpers/subcommands";
 import { prepareAndSendConsoleMenu } from "implementations/consoleButtons";
 import loggers from "loggers";

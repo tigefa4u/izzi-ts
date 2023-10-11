@@ -3,7 +3,7 @@ import { NormalizeFloorProps, StageProps } from "@customTypes/stages";
 import { calcPercentRatio } from "./ability";
 import { getRPGUser } from "api/controllers/UsersController";
 import { AuthorProps, MapProps, OverallStatsProps } from "@customTypes";
-import { BASE_RANK, BOT_GLOBAL_PERMISSIONS } from "./constants";
+import { BASE_RANK, BOT_GLOBAL_PERMISSIONS } from "./constants/constants";
 import { BaseProps } from "@customTypes/command";
 import { PLProps } from "@customTypes/powerLevel";
 import { MessageComponentInteraction } from "discord.js";
@@ -15,7 +15,7 @@ import { BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { nanoid } from "nanoid";
-import { ranksMeta } from "./rankConstants";
+import { ranksMeta } from "./constants/rankConstants";
 import { RankProps } from "./helperTypes";
 
 export const generateUUID = (n: number): string => {

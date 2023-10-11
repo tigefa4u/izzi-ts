@@ -32,8 +32,8 @@ import {
 	STARTER_CARD_R_EXP,
 	USER_XP_GAIN_PER_BATTLE,
 	XP_GAIN_EXPONENT,
-} from "helpers/constants";
-import { ranksMeta } from "helpers/rankConstants";
+} from "helpers/constants/constants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";

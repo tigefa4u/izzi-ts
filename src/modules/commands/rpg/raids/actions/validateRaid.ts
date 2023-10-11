@@ -2,7 +2,7 @@ import { AuthorProps, ChannelProp } from "@customTypes";
 import { getUserRaidLobby } from "api/controllers/RaidsController";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 
 export const validateCurrentRaid = async (
 	user_id: number,

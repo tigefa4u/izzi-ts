@@ -1,5 +1,5 @@
 import { PagingMetadata } from "@customTypes/pagination";
-import { PAGE_FILTER } from "./constants";
+import { PAGE_FILTER } from "./constants/constants";
 
 export const paginationParams = async ({ perPage = 10, currentPage = 1 }) => {
 	if (currentPage <= 0) currentPage = 1;

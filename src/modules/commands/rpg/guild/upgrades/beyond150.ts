@@ -17,7 +17,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MAX_LEVEL,
 	IMMORTAL_SHIELDBOW_ID,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 
 type UB = {

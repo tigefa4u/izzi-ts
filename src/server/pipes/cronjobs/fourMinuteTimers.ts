@@ -1,7 +1,7 @@
 import { getAllRaids } from "api/controllers/RaidsController";
 import connection from "db";
 import { delay, generateUUID } from "helpers";
-import { DUNGEON_MAX_MANA } from "helpers/constants";
+import { DUNGEON_MAX_MANA } from "helpers/constants/constants";
 import { refillEnergy } from "helpers/raid";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";

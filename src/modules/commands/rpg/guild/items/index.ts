@@ -3,7 +3,7 @@ import { getAllGuildItems } from "api/controllers/GuildItemsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
-import { PAGE_FILTER } from "helpers/constants";
+import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createGuildItemList } from "helpers/embedLists/guildItems";
 import loggers from "loggers";

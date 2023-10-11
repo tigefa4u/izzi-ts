@@ -3,7 +3,7 @@ import emoji from "emojis/emoji";
 import { probability, randomElementFromArray } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff } from "helpers/battle";
-import { AGNUS_SCEPTER_DEFAULT_HP_GAIN, AGNUS_SCEPTER_MAX_HP_GAIN } from "helpers/constants";
+import { AGNUS_SCEPTER_DEFAULT_HP_GAIN, AGNUS_SCEPTER_MAX_HP_GAIN } from "helpers/constants/constants";
 import { clone } from "utility";
 import { processItemStats } from "..";
 

@@ -17,7 +17,7 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	REACTIONS,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	clearCooldown,

@@ -21,7 +21,7 @@ import {
 	DEFAULT_STARTER_GUIDE_TITLE,
 	HIDE_VISUAL_BATTLE_ARG,
 	MANA_PER_BATTLE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

@@ -10,7 +10,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { DOT } from "helpers/constants";
+import { DOT } from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";

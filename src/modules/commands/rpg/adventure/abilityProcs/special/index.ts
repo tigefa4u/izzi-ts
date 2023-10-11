@@ -9,7 +9,7 @@ import {
 	getRelationalDiff,
 	processEnergyBar,
 } from "helpers/battle";
-import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants";
+import { HARBINGER_OF_DEATH_PROC_ROUND } from "helpers/constants/constants";
 
 export const harbingerOfDeath = ({
 	playerStats,

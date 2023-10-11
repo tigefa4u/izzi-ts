@@ -22,7 +22,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	GUILD_MARKET_IDS,
 	MAX_GUILD_ITEMS_PURCHASABLE,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";

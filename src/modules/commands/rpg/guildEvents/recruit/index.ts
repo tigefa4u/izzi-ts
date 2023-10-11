@@ -18,7 +18,7 @@ import {
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	PERMIT_PER_RAID,
 	RAID_PING_NAME,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	getCooldown,

@@ -15,7 +15,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	REACTIONS,
 	REQUIRED_TRADE_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";

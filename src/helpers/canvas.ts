@@ -6,7 +6,7 @@ import { CollectionCardInfoProps } from "@customTypes/collections";
 import * as ImageCache from "cache/imageCache";
 import { createCanvas, loadImage, Canvas, Image } from "canvas";
 import loggers from "loggers";
-import { CANVAS_DEFAULTS } from "./constants";
+import { CANVAS_DEFAULTS } from "./constants/constants";
 
 const _fetchAndSaveToCache = async (
 	path: string,

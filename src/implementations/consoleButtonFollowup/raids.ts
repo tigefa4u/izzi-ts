@@ -1,7 +1,7 @@
 import { CustomButtonInteractionParams } from "@customTypes/button";
 import { BaseProps } from "@customTypes/command";
 import Cache from "cache";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import { prepareAndSendConsoleMenu } from "implementations/consoleButtons";
 import loggers from "loggers";
 import { raidActions } from "modules/commands/rpg/raids";

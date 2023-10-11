@@ -16,10 +16,10 @@ import { PageProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
 import {
 	CHARACTER_LEVEL_EXTENDABLE_LIMIT, FODDER_RANKS, STARTER_CARD_EXP, STARTER_CARD_LEVEL, STARTER_CARD_R_EXP 
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";

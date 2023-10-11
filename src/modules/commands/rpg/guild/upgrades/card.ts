@@ -27,7 +27,7 @@ import {
 	MAX_ABSORBABLE_SOULS,
 	SEAL_ID,
 	SOUL_ID,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";

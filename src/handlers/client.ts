@@ -1,10 +1,12 @@
+import { ChannelProp } from "@customTypes";
 import { registerSlashCommands } from "commands/slashCommands";
-import { Client, Message } from "discord.js";
+import { Client, Guild, Message } from "discord.js";
 import {
 	checkReadMessagePerms,
 	generateUUID,
 	validateChannelPermissions,
 } from "helpers";
+import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import loggers from "loggers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
 import {
@@ -77,11 +79,27 @@ export const handleClientEvents = (client: Client) => {
 
 	client.on("guildCreate", (guild) => {
 		handleDiscordServerJoin(client, guild);
+		logServerAdd(guild, client);
 	});
 
 	client.on("guildDelete", (guild) => {
 		handleDiscordServerLeave(guild);
+		logServerLeave(guild, client);
 	});
+};
+
+const logServerLeave = async (guild: Guild, client: Client) => {
+	const logChannel = await client.channels.fetch(OS_LOG_CHANNELS.BOT_SERVER_ADD_LEAVE) as ChannelProp | null;
+	if (logChannel) {
+		logChannel.sendMessage(`Izzi has left server: ${guild.name} (${guild.id})`);
+	}
+};
+
+const logServerAdd = async (guild: Guild, client: Client) => {
+	const logChannel = await client.channels.fetch(OS_LOG_CHANNELS.BOT_SERVER_ADD_LEAVE) as ChannelProp | null;
+	if (logChannel) {
+		logChannel.sendMessage(`Izzi was added to server: ${guild.name} (${guild.id})`);
+	}
 };
 
 export const handleClient = (client: Client) => {

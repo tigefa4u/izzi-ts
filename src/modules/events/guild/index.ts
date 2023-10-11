@@ -4,7 +4,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { Client, Guild, TextChannel } from "discord.js";
 import { GUIDE_DOCS, IZZI_WEBSITE, OFFICIAL_SERVER_LINK } from "environment";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { getWebsiteUrls } from "modules/commands/basic";
 import { starterGuide } from "modules/commands/rpg/profile/guide";

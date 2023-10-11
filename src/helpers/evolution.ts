@@ -1,4 +1,4 @@
-import { ranksMeta } from "./rankConstants";
+import { ranksMeta } from "./constants/rankConstants";
 
 type T = {
   [key: number]: number;

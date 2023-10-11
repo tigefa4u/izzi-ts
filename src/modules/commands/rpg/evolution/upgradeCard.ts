@@ -16,9 +16,9 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	MAX_CONSUMABLE_SOULS,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";

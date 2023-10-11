@@ -7,7 +7,7 @@ import {
 import loggers from "loggers";
 import * as Characters from "../models/Characters";
 import { getCharacterCardByRank } from "./CardsController";
-import { BASE_RANK } from "helpers/constants";
+import { BASE_RANK } from "helpers/constants/constants";
 import { getBySeries } from "api/models/Cards";
 import { PageProps } from "@customTypes/pagination";
 import { paginationForResult, paginationParams } from "helpers/pagination";

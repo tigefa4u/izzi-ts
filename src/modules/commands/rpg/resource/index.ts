@@ -1,3 +1,4 @@
+import { ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import {
 	getRPGUser,
@@ -11,19 +12,21 @@ import {
 	numericWithComma,
 	randomElementFromArray,
 } from "helpers";
+import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	GOLD_LIMIT,
 	HOURLY_MANA_REGEN,
 	REQUIRED_TRADE_LEVEL,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	getCooldown,
 	sendCommandCDResponse,
 	setCooldown,
 } from "modules/cooldowns";
+import { DATE_OPTIONS } from "utility";
 
 export const hourly = async ({ context, options, client }: BaseProps) => {
 	try {
@@ -47,9 +50,12 @@ export const hourly = async ({ context, options, client }: BaseProps) => {
 			updateRPGUser({ user_tag: author.id }, { mana: user.mana }),
 			setCooldown(author.id, "hourly", hourInSec),
 		]);
-		const embed = createEmbed(author, client).setTitle(DEFAULT_SUCCESS_TITLE)
-			.setDescription(`Congratulations Summoner **${author.username}** ${emoji.celebration}! ` +
-			`You have received __${randomManaRegen}__ Mana for your hourly bonus`);
+		const embed = createEmbed(author, client)
+			.setTitle(DEFAULT_SUCCESS_TITLE)
+			.setDescription(
+				`Congratulations Summoner **${author.username}** ${emoji.celebration}! ` +
+          `You have received __${randomManaRegen}__ Mana for your hourly bonus`
+			);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
@@ -120,6 +126,21 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 				emoji.gold
 			} to **${mentionedUser.username}**`
 		);
+
+		const logChannel = (await client.channels.fetch(
+			OS_LOG_CHANNELS.GIVE
+		)) as ChannelProp | null;
+		if (logChannel) {
+			logChannel.sendMessage(
+				`Server: ${context.guild?.name || "Unknown"} (${
+					context.guild?.id || "Unknown"
+				}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
+				`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
+					"en-us",
+					DATE_OPTIONS
+				)}`
+			);
+		}
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.resource.give: ERROR", err);

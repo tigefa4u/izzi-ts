@@ -6,7 +6,7 @@ import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { numericWithComma } from "helpers";
 import { addTeamEffectiveness } from "helpers/adventure";
-import { CONSOLE_BUTTONS, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants";
+import { CONSOLE_BUTTONS, HIDE_VISUAL_BATTLE_ARG } from "helpers/constants/constants";
 import {
 	prepareSkewedCollectionsForBattle,
 	validateAndPrepareTeam,

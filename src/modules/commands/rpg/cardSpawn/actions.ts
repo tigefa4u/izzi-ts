@@ -6,7 +6,7 @@ import {
 } from "api/controllers/CardSpawnsController";
 import { createEmbed } from "commons/embeds";
 import { Client, GuildBasedChannel } from "discord.js";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const removeChannel = async (params: {

@@ -23,7 +23,7 @@ import {
 	GUILD_CREATION_COST,
 	GUILD_STATUS_MAX_LENGTH,
 	INPUT_CHARACTERS_MAX_COUNT,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import loggers from "loggers";
 import { verifyMemberPermissions } from "..";
 

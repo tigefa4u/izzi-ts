@@ -4,7 +4,7 @@ import { getUserQuests } from "api/controllers/UserQuestsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import {  Message } from "discord.js";
-import { PAGE_FILTER, QUEST_TYPES, STAR } from "helpers/constants";
+import { PAGE_FILTER, QUEST_TYPES, STAR } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createQuestList } from "helpers/embedLists/quests";
 import loggers from "loggers";

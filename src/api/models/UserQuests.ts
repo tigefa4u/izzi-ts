@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import {
 	UserQuestParams,
 	UserQuestProps,
@@ -61,32 +62,30 @@ export const get = async (
 			user_tag: params.user_tag 
 		});
 
-	const filterDate = (builder: Knex.QueryBuilder) => {
-		if (params.is_daily_quest || params.is_weekly_quest) {
-			let fromDate, toDate;
-			const _dailyDates = getDailyQuestDates();
-			fromDate = _dailyDates.fromDate;
-			toDate = _dailyDates.toDate;
-			if (params.is_weekly_quest) {
-				/**
+	const filterDate = (builder: Knex.QueryBuilder, isWeeklyQuest: boolean) => {
+		let fromDate, toDate;
+		const _dailyDates = getDailyQuestDates();
+		fromDate = _dailyDates.fromDate;
+		toDate = _dailyDates.toDate;
+		if (isWeeklyQuest) {
+			/**
 				 * Weekly quest resets every Monday 00.00.00 hrs.
 				 * The duration is from Monday to end of Sunday.
 				 */
-				const _weeklydates = getWeeklyQuestDates();
-				fromDate = _weeklydates.fromDate;
-				toDate = _weeklydates.toDate;
-			}
-			if (params.useAndClause) {
-				query = builder.andWhereBetween("created_at", [
-					new Date(fromDate),
-					new Date(toDate),
-				]);
-			} else {
-				query = builder.orWhereBetween("created_at", [
-					new Date(fromDate),
-					new Date(toDate),
-				]);
-			}
+			const _weeklydates = getWeeklyQuestDates();
+			fromDate = _weeklydates.fromDate;
+			toDate = _weeklydates.toDate;
+		}
+		if (params.useAndClause) {
+			query = builder.andWhereBetween("created_at", [
+				new Date(fromDate),
+				new Date(toDate),
+			]);
+		} else {
+			query = builder.orWhereBetween("created_at", [
+				new Date(fromDate),
+				new Date(toDate),
+			]);
 		}
 	};
 
@@ -94,17 +93,35 @@ export const get = async (
 	if (typeof qId === "number") {
 		query = query.andWhere(builder => {
 			builder.where("quest_id", qId);
-			filterDate(builder);
+			filterDate(builder, false);
 		});
+
+		if (params.is_weekly_quest) {
+			query = query.andWhere((builder) => {
+				builder.where("quest_id", qId);
+				filterDate(builder, true);
+			});
+		}
 	} else if (typeof qId === "object") {
 		query = query.andWhere((builder) => {
 			builder.whereIn("quest_id", qId);
-			filterDate(builder);
+			filterDate(builder, false);
 		});
+
+		if (params.is_weekly_quest) {
+			query = query.andWhere((builder) => {
+				builder.whereIn("quest_id", qId);
+				filterDate(builder, true);
+			});
+		}
 	}
 
 	if (!qId) {
-		filterDate(query);
+		filterDate(query, false);
+
+		if (params.is_weekly_quest) {
+			filterDate(query, true);
+		}
 	}
 	return query;
 };

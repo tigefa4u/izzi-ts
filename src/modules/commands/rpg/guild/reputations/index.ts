@@ -3,7 +3,7 @@ import { updateGuildMember } from "api/controllers/GuildMembersController";
 import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
-import { DEFAULT_ERROR_TITLE, MAX_GUILD_REPUTATION_POINTS, MINIMUM_LEVEL_FOR_REPUTATION } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, MAX_GUILD_REPUTATION_POINTS, MINIMUM_LEVEL_FOR_REPUTATION } from "helpers/constants/constants";
 import loggers from "loggers";
 import {
 	getCooldown,

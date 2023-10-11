@@ -15,11 +15,11 @@ import {
 	DEFAULT_QUEST_COMPLETE_TITLE,
 	DOT,
 	QUEST_TYPES,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import { prepareRewards } from "helpers/embedLists/quests";
 import { RanksMetaProps } from "helpers/helperTypes";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 
@@ -114,7 +114,7 @@ export const fetchAndCompleteQuest = async (
 						`**__${titleCase(quest.name)}__**\nCongratulations summoner **${
 							author.username
 						}**! You have completed your ` +
-              `${quest.is_daily ? "Daily Quest." : ""}` +
+              `${quest.is_daily ? "Daily " : quest.is_weekly ? "Weekly " : ""}Quest.` +
               `\n\n**__Rewards__**\n${prepareRewards(
               	quest.reward,
               	true,

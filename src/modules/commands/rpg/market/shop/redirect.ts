@@ -3,7 +3,7 @@ import { BaseProps } from "@customTypes/command";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { getMemberPermissions, getMentionedChannel } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 
 export const globalMarketRedirect = async ({

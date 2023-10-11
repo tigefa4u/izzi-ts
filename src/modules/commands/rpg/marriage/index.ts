@@ -20,7 +20,7 @@ import { Message } from "discord.js";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
-import { MARRIAGE_BONUS } from "helpers/constants";
+import { MARRIAGE_BONUS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { confirmationInteraction } from "utility/ButtonInteractions";

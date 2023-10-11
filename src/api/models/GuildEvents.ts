@@ -1,6 +1,6 @@
 import { GuildEventsCreateProps, GuildEventsProps, GuildEventsUpdateProps } from "@customTypes/guildEvents";
 import connection from "db";
-import { RAID_PING_NAME } from "helpers/constants";
+import { RAID_PING_NAME } from "helpers/constants/constants";
 
 const tableName = "guild_events";
 

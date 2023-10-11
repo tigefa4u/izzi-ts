@@ -2,7 +2,7 @@ import { ReactionsProps } from "@customTypes";
 import { QuestTypes } from "@customTypes/quests";
 import { PermissionString } from "discord.js";
 import emoji from "emojis/emoji";
-import { ElementTypeColorProps } from "./helperTypes";
+import { ElementTypeColorProps } from "../helperTypes";
 import { ranksMeta } from "./rankConstants";
 
 export const BASE_XP = 10;

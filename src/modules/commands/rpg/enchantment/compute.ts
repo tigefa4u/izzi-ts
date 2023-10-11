@@ -12,9 +12,9 @@ import {
 	BASE_XP,
 	ENCHANTMENT_ALLOWED_RANKS,
 	XP_GAIN_EXPONENT,
-} from "helpers/constants";
+} from "helpers/constants/constants";
 import { prepareXpGainObject } from "helpers/enchantment";
-import { ranksMeta } from "helpers/rankConstants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { prepareRankAndFetchCards } from "./process";
 

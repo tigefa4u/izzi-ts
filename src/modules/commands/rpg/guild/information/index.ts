@@ -9,7 +9,7 @@ import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
-import { CONSOLE_BUTTONS, MAX_ADMINS_PER_GUILD } from "helpers/constants";
+import { CONSOLE_BUTTONS, MAX_ADMINS_PER_GUILD } from "helpers/constants/constants";
 import loggers from "loggers";
 import { isEmptyObject } from "utility";
 import { customButtonInteraction } from "utility/ButtonInteractions";

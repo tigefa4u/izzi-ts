@@ -1,6 +1,6 @@
 import { ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
-import { CONSOLE_BUTTONS } from "helpers/constants";
+import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import loggers from "loggers";
 import { customButtonInteraction } from "utility/ButtonInteractions";
 import { battleWB } from "./battle";
