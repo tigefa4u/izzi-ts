@@ -200,6 +200,7 @@ const emoji: EmojiProps = {
 	lvl75: "<:lv75:1154805754583339050>",
 	topg: "<:topg:1154805766461603871>",
 	og: "<:og:1154805761747189791>",
+	fragments: "<:fragments:1161632795920171109>",
 };
 
 export default emoji;

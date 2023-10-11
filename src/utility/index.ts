@@ -1,5 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import cloneDeep from "lodash/cloneDeep";
+import { RawUpdateProps, RawUpdateReturnType } from "@customTypes/utility";
+import connection from "db";
 
 type G<T> = { [key: string | number]: T }
 
@@ -43,3 +45,13 @@ export const toLocaleDate = (data: string | number) => new Date(data).toLocaleDa
 	"en-us",
 	DATE_OPTIONS
 );
+
+export const prepareRawUpdateObject = <T>(data: RawUpdateProps<T>): RawUpdateReturnType<T> => {
+	const keys = Object.keys(data);
+	const result = {} as RawUpdateReturnType<T>;
+	keys.forEach((key) => {
+		const obj = data[key as keyof T];
+		Object.assign(result, { [key]: connection.raw(`${key} ${obj.op} ??`, [ obj.value as any ]) });
+	});
+	return result;
+};

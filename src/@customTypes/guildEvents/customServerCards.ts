@@ -10,6 +10,7 @@ export type CustomServerCardProps = {
   };
   submitted_by: string;
   is_deleted: boolean;
+  is_dark_zone?: boolean;
 };
 
 export type CustomServerCardAndCharacterProps = CustomServerCardProps &

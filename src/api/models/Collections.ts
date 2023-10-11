@@ -308,7 +308,7 @@ export const getAll = async function (
 		query = query.where(`${alias}.is_on_cooldown`, isOnCooldown);
 	}
 	if (isTradable === true || isTradable === false) {
-		query = query.where(`${alias}.isTradable`, isOnMarket);
+		query = query.where(`${alias}.isTradable`, isTradable);
 	}
 	query = query.limit(pagination.limit).offset(pagination.offset);
 	return query;

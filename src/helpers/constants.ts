@@ -571,3 +571,5 @@ export const RAID_CAP_PERCENT: { [key: string]: number } = {
 export const LEGENDARY_PACK_PITY_COUNT = 15;
 
 export const IZZI_OS_SERVER_ID = "784087004806774815";
+
+export const DARK_ZONE_MIN_LEVEL = 50;

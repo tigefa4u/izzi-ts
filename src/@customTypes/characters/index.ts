@@ -20,6 +20,7 @@ export type CharacterProps = {
 	passive_id: number;
 	created_at: string;
 	updated_at: string;
+    is_dark_zone?: boolean;
 }
 
 export type CharacterDetailsProps = CharacterProps & {
