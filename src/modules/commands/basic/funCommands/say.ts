@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { IZZI_SAY_BANNER_TEXT_LIMIT } from "helpers/funCommandConstants";
+import { IZZI_SAY_BANNER_TEXT_LIMIT } from "helpers/constants/funCommandConstants";
 import loggers from "loggers";
 
 export const izziSpeak = async ({ context, options, args }: BaseProps) => {

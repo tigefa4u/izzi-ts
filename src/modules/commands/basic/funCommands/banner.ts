@@ -1,7 +1,7 @@
 import { BaseProps } from "@customTypes/command";
 import { EmojiProps } from "@customTypes/emojis";
 import emoji from "emojis/emoji";
-import { IZZI_SAY_BANNER_TEXT_LIMIT } from "helpers/funCommandConstants";
+import { IZZI_SAY_BANNER_TEXT_LIMIT } from "helpers/constants/funCommandConstants";
 import loggers from "loggers";
 
 export const izziBanner = async ({ context, options, args }: BaseProps) => {
