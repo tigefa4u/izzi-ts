@@ -126,8 +126,11 @@ const baseLoot = (): any => ({
 			categories: [ "d3" ],
 			chances: [ 100 ],
 			loot: {
-				gold: randomNumber(18000, 20000),
-				extraGold: randomNumber(16000, 18000),
+				gold: randomNumber(17000, 19000),
+				extraGold: randomNumber(15000, 17000),
+				// gold: randomNumber(18000, 20000), // original
+				// gold: randomNumber(15000, 17000),
+				// extraGold: randomNumber(16000, 18000),
 				gamePoints: 1,
 				drop: [
 					{
@@ -169,8 +172,8 @@ const baseLoot = (): any => ({
 			level: [ 50, 100 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(18000, 25000),
-				extraGold: randomNumber(19000, 20000),
+				gold: randomNumber(17000, 19000),
+				extraGold: randomNumber(15000, 17000),
 				drop: { shard: randomNumber(10, 14), }
 			}
 		}
@@ -181,8 +184,14 @@ const baseLoot = (): any => ({
 			level: [ 100, 200 ],
 			categories: [ "d3", "d2" ],
 			loot: {
-				gold: randomNumber(21000, 25000),
-				extraGold: randomNumber(22000, 25000),
+				gold: randomNumber(20000, 23000),
+				extraGold: randomNumber(18000, 20000),
+				// original
+				// gold: randomNumber(21000, 25000),
+				// extraGold: randomNumber(22000, 25000),
+				//
+				// gold: randomNumber(18000, 20000),
+				// extraGold: randomNumber(19000, 21000),
 				gamePoints: 2,
 				drop: [
 					{
@@ -219,8 +228,8 @@ const baseLoot = (): any => ({
 			level: [ 100, 150 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(25000, 32000),
-				extraGold: randomNumber(18000, 18999),
+				gold: randomNumber(20000, 23000),
+				extraGold: randomNumber(18000, 20000),
 				drop: {
 					shard: randomNumber(15, 18),
 					orbs: randomNumber(2, 3),
@@ -235,8 +244,14 @@ const baseLoot = (): any => ({
 			rank: [ ranksMeta.platinum.name, ranksMeta.platinum.name ],
 			categories: [ "d3", "d2", "d1" ],
 			loot: {
-				gold: randomNumber(26000, 30000),
-				extraGold: randomNumber(25000, 32000),
+				gold: randomNumber(25000, 27000),
+				extraGold: randomNumber(23000, 25000),
+				// original
+				// gold: randomNumber(26000, 30000),
+				// extraGold: randomNumber(25000, 32000),
+				//
+				// gold: randomNumber(21000, 23000),
+				// extraGold: randomNumber(22000, 24000),
 				gamePoints: 3,
 				drop: [
 					{
@@ -309,8 +324,8 @@ const baseLoot = (): any => ({
 			level: [ 160, 200 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(32000, 40000),
-				extraGold: randomNumber(16000, 17999),
+				gold: randomNumber(25000, 27000),
+				extraGold: randomNumber(23000, 25000),
 				drop: {
 					shard: randomNumber(20, 32),
 					orbs: randomNumber(3, 4),
@@ -324,8 +339,14 @@ const baseLoot = (): any => ({
 			level: [ 1000, 1500 ],
 			categories: [ "d3", "d2", "d1" ],
 			loot: {
-				gold: randomNumber(31000, 35000),
-				extraGold: randomNumber(32000, 35000),
+				gold: randomNumber(29000, 31000),
+				extraGold: randomNumber(27000, 29000),
+				// original
+				// gold: randomNumber(31000, 35000),
+				// extraGold: randomNumber(32000, 35000),
+				//
+				// gold: randomNumber(24000, 26000),
+				// extraGold: randomNumber(25000, 27000),
 				gamePoints: 4,
 				drop: [
 					{
@@ -363,8 +384,8 @@ const baseLoot = (): any => ({
 			level: [ 200, 250 ],
 			rank: [ "exclusive", "exclusive" ],
 			loot: {
-				gold: randomNumber(40000, 48000),
-				extraGold: randomNumber(15000, 15999),
+				gold: randomNumber(29000, 31000),
+				extraGold: randomNumber(27000, 29000),
 				drop: {
 					shard: randomNumber(27, 40),
 					orbs: randomNumber(3, 5),
