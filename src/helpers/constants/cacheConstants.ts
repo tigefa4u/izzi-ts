@@ -3,5 +3,6 @@ export const CACHE_KEYS = {
 	MARKET_PURCHASE: "market-purchase:",
 	RAID_MVP_CHALLENGE: "raid_mvp_challenge_",
 	RAID_CHALLENGE: "raid_challenge_",
-	QUEST_BY_LEVEL: "quest-by-level:"
+	QUEST_BY_LEVEL: "quest-by-level:",
+	ENH_LOCK: "enhlock::",
 };

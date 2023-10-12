@@ -29,6 +29,7 @@ import {
 	SEAL_ID,
 	SOUL_ID,
 } from "helpers/constants/constants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -151,11 +152,11 @@ async function validateAndUpgradeCard(
 		return;
 	}
 	const cardToEvolve = collection[0];
-	if (cardToEvolve.rank_id >= 9) {
+	if (cardToEvolve.rank_id >= ranksMeta.ultimate.rank_id) {
 		embed.setDescription("This card has already reached its max Evolution!");
 		params.channel?.sendMessage(embed);
 		return;
-	} else if (cardToEvolve.rank_id < 4) {
+	} else if (cardToEvolve.rank_id < ranksMeta.diamond.rank_id) {
 		embed.setDescription(
 			"Your card must be of Diamond rank to be able to be able to absorb souls!"
 		);

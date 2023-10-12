@@ -4,7 +4,10 @@ import { emojiMap } from "emojis";
 import { probability } from "helpers";
 import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { getRelationalDiff } from "helpers/battle";
-import { FODDER_RANKS } from "helpers/constants/constants";
+import {
+	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
+	FODDER_RANKS,
+} from "helpers/constants/constants";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -175,7 +178,16 @@ export const desolator = ({
 		let desc =
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
-		if (isRaid && (card.rank_id === ranksMeta.ultimate.rank_id || card.rank_id === ranksMeta.mythical.rank_id)) {
+	  let allowUptoLevel = (ranksMeta.ultimate.max_level || 0) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
+	  if (card.rank_id === ranksMeta.mythical.rank_id) {
+			allowUptoLevel = (ranksMeta.mythical.max_level || 0) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
+	  }
+		if (
+			isRaid &&
+      (card.rank_id === ranksMeta.ultimate.rank_id ||
+        card.rank_id === ranksMeta.mythical.rank_id) &&
+      card.character_level < allowUptoLevel
+		) {
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];
 			if (canStealSouls && !FODDER_RANKS.includes(card.rank)) {

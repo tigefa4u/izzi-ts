@@ -52,13 +52,12 @@ const validateAndUpgradeCard = async (
 	}
 	const card = collectionResult[0];
 	if (
-		card.rank_id !== ranksMeta.exclusive.rank_id &&
-    card.rank_id !== ranksMeta.ultimate.rank_id &&
+		card.rank_id !== ranksMeta.ultimate.rank_id &&
 	card.rank_id !== ranksMeta.mythical.rank_id
 	) {
-		let text = "You can only increase the level of an Exclusive / Ultimate / Mythical ranked card.";
+		let text = "You can only increase the level of an Ultimate / Mythical ranked card.";
 		if (isConsumeSouls) {
-			text = "Your card must be Exclusive / Ultimate / Mythical rank before it can consume souls.";
+			text = "Your card must be Ultimate / Mythical rank before it can consume souls.";
 		}
 		embed.setDescription(
 			text
@@ -78,9 +77,17 @@ const validateAndUpgradeCard = async (
 		channel?.sendMessage(`Unable to ${isConsumeSouls ? "consume souls" : "level up"}, please contact support.`);
 		return;
 	}
+	const maxUpgradableLevel = powerLevel.max_level + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
 	if (card.character_level < powerLevel.max_level) {
 		embed.setDescription(
 			"This card must be max level before you can increase its level further."
+		);
+		channel?.sendMessage(embed);
+		return;
+	} else if (card.character_level >= maxUpgradableLevel) {
+		embed.setDescription(
+			"Your card has already reached max upgradable level " +
+			`__${maxUpgradableLevel}__ and can no longer consume souls.`
 		);
 		channel?.sendMessage(embed);
 		return;

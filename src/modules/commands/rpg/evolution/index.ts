@@ -2,7 +2,6 @@ import {
 	ConfirmationInteractionOptions,
 	ConfirmationInteractionParams,
 } from "@customTypes";
-import { CharacterCanvasProps } from "@customTypes/canvas";
 import { BaseProps } from "@customTypes/command";
 import {
 	getCardInfoByRowNumber,
@@ -24,6 +23,7 @@ import { numericWithComma } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
+	CHARACTER_LEVEL_EXTENDABLE_LIMIT,
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	STARTER_CARD_EXP,
@@ -75,6 +75,7 @@ async function verifyAndProcessEvolution(
 		return;
 	}
 	const cardToEvolve = collection[0];
+	// Change to myth
 	if (cardToEvolve.rank_id >= ranksMeta.ultimate.rank_id) {
 		embed.setDescription("This card has already reached its max Evolution!");
 		params.channel?.sendMessage(embed);
@@ -91,6 +92,14 @@ async function verifyAndProcessEvolution(
 	if (cardToEvolve.character_level < powerLevel.max_level) {
 		embed.setDescription(
 			`Your card must be **Level __${powerLevel.max_level}__** before it can be used in Evolution!`
+		);
+		params.channel?.sendMessage(embed);
+		return;
+	}
+	const extendedLevel = powerLevel.max_level + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
+	if (cardToEvolve.character_level > powerLevel.max_level && cardToEvolve.character_level < extendedLevel) {
+		embed.setDescription(
+			`Your card must be **Level __${extendedLevel}__** before it can be used in Evolution!`
 		);
 		params.channel?.sendMessage(embed);
 		return;

@@ -2,6 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { getCharacters } from "api/controllers/CharactersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -21,11 +22,28 @@ export const lockFodders = async ({
 }: BaseProps) => {
 	try {
 		const { author } = options;
-		const key = "enhlock::" + author.id;
-		const params = fetchParamsFromArgs<{ name: string | string[] }>(args);
+		const key = CACHE_KEYS.ENH_LOCK + author.id;
+		const params = fetchParamsFromArgs<{ name: string | string[]; isExactMatch: boolean; }>(args);
 		if (!params.name || params.name.length <= 0) return;
-		const characters = await getCharacters({ name: params.name });
+		const cachedData = await Cache.get(key);
+		let lockedCards = [];
+		if (cachedData) {
+			lockedCards = JSON.parse(cachedData).lockcards;
+		}
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
+		if (lockedCards.length >= 10) {
+			embed.setDescription("You cannot lock more than 10 cards.");
+			context.channel?.sendMessage(embed);
+			return;
+		}
+		if (lockedCards.length > 0 && typeof params.name === "object") {
+			const diff = 10 - lockedCards.length;
+			params.name = params.name.slice(0, diff);
+		}
+		const characters = await getCharacters({
+			name: params.name,
+			isExactMatch: params.isExactMatch 
+		});
 		if (!characters || characters.length <= 0) {
 			embed.setDescription("The character you are looking for does not exist.");
 			context.channel?.sendMessage(embed);
@@ -40,12 +58,18 @@ export const lockFodders = async ({
 			id: c.id,
 			name: c.name,
 		}));
-		await Cache.set(key, JSON.stringify({ lockcards: result }));
+		lockedCards = [
+			...new Set([
+				...lockedCards,
+				...result
+			])
+		];
+		await Cache.set(key, JSON.stringify({ lockcards: lockedCards }));
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				"The following Platinum Fodders are locked and will not be consumed during Enchantment.\n\n" +
-          `**${result
+          `**${lockedCards
           	.map((r) => titleCase(r.name))
           	.join(
           		"\n"
