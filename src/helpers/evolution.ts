@@ -9,7 +9,7 @@ const soulMap: T = {
 	[ranksMeta.immortal.rank_id]: 1.95,
 	[ranksMeta.exclusive.rank_id]: 1.95,
 	[ranksMeta.ultimate.rank_id]: 1.99,
-	[ranksMeta.mythical.rank_id]: 2.12
+	[ranksMeta.mythical.rank_id]: 2
 };
 
 export function getReqSouls(rank_id: number): number {
