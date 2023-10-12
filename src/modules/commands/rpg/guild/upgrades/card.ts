@@ -18,6 +18,7 @@ import { updateGuild } from "api/controllers/GuildsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
+import { numericWithComma } from "helpers";
 import { createConfirmationEmbed } from "helpers/confirmationEmbed";
 import {
 	DEFAULT_ERROR_TITLE,
@@ -140,9 +141,11 @@ async function validateAndUpgradeCard(
 	const totalCost =
     souls.price * params.extras.numOfSouls + seals.price * reqSeals;
 	if (validGuild.member.donation < totalCost) {
+		const diff = totalCost - validGuild.member.donation;
 		embed.setDescription(
 			"You do not have enough contribution to your guild to use this item! " +
-        "you can donate more to your guild to be able to access more items!"
+        "you can donate more to your guild to be able to access more items!" +
+		`\nYou need to donate **__${numericWithComma(diff)}__** more to your guild.`
 		);
 		params.channel?.sendMessage(embed);
 		return;
