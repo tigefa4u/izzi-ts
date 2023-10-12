@@ -41,3 +41,4 @@ export const GCP_TASK_QUEUE = "izzi-logs";
 export const GCP_TASK_QUEUE_LOCATION = "us-central1";
 export const WEBHOOK_BOT_HOST = process.env.WEBHOOK_BOT_HOST;
 export const WEBHOOK_BOT_PORT = process.env.WEBHOOK_BOT_PORT;
+export const WEBHOOK_BOT_HTTP_PROTOCOL = process.env.WEBHOOK_BOT_HTTP_PROTOCOL;

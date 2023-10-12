@@ -5,6 +5,7 @@ import {
 	GCP_TASK_QUEUE,
 	GCP_TASK_QUEUE_LOCATION,
 	WEBHOOK_BOT_HOST,
+	WEBHOOK_BOT_HTTP_PROTOCOL,
 	WEBHOOK_BOT_PORT,
 } from "environment";
 import loggers from "loggers";
@@ -67,7 +68,7 @@ export const taskQueue = async (
 				// Do not send name
 				// name: prepareTaskQueueName(name),
 				httpRequest: {
-					url: `${WEBHOOK_BOT_HOST}:${WEBHOOK_BOT_PORT}/task-queue/logs`,
+					url: `${WEBHOOK_BOT_HTTP_PROTOCOL}://${WEBHOOK_BOT_HOST}:${WEBHOOK_BOT_PORT}/task-queue/logs`,
 					httpMethod: "POST",
 					body: Buffer.from(JSON.stringify(payload)).toString("base64"),
 					headers: {
