@@ -1,5 +1,6 @@
 import express from "express";
 import * as controller from "../controllers/BotsController";
+import * as taskQueueController from "../controllers/TaskQueueController";
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ router.post("/remove_item_from_cache", controller.removeItemFromCache);
 router.post("/remove_stages_and_cards_from_cache", controller.removeAllStagesAndCardsFromCache);
 router.post("/remove_command_from_cache", controller.removeCommandsFromCache);
 router.post("/clear_image_cache", controller.clearImageCache);
+router.post("/task-queue/logs", taskQueueController.handleLogTask);
 
 export default router;

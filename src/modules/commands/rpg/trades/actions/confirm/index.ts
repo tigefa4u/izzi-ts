@@ -10,7 +10,11 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import {
-	DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE, FODDER_RANKS, MIN_TRADE_CARDS_FOR_QUEST, QUEST_TYPES 
+	DEFAULT_ERROR_TITLE,
+	DEFAULT_SUCCESS_TITLE,
+	FODDER_RANKS,
+	MIN_TRADE_CARDS_FOR_QUEST,
+	QUEST_TYPES,
 } from "helpers/constants/constants";
 import loggers from "loggers";
 import { validateAndCompleteQuest } from "modules/commands/rpg/quests";
@@ -31,10 +35,12 @@ async function validateTraderQueue(
 	if (trader.queue.length > 0) {
 		const hasNoCharacterId = trader.queue.find((q) => !q.character_id);
 		if (hasNoCharacterId) {
-			embed.setDescription(
-				"Trade has been cancelled due to corrupted data. " +
-				"Please restart the trade using ``iz tr <@user>``."
-			).setHideConsoleButtons(true);
+			embed
+				.setDescription(
+					"Trade has been cancelled due to corrupted data. " +
+            "Please restart the trade using ``iz tr <@user>``."
+				)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -46,79 +52,97 @@ async function validateTraderQueue(
 		};
 		const collections = await getCollection(params);
 		if (!collections || collections.length !== trader.queue.length) {
-			embed.setDescription(
-				"Trade has been cancelled due to insufficient cards. " +
-          "(Hint: The card you are trying to Trade might be on the Global Market)"
-			).setHideConsoleButtons(true);
+			embed
+				.setDescription(
+					"Trade has been cancelled due to insufficient cards. " +
+            "(Hint: The card you are trying to Trade might be on the Global Market)"
+				)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
 		const fodders = trader.queue.filter((q) => q.is_fodder);
-		const fodderCollections = collections.filter((c) => FODDER_RANKS.includes(c.rank));
+		const fodderCollections = collections.filter((c) =>
+			FODDER_RANKS.includes(c.rank)
+		);
 
 		const fodderMeta = fodders.reduce((acc, r) => {
 			acc[r.character_id] = r.count;
 			return acc;
-		}, {} as { [key: string]: number; });
+		}, {} as { [key: string]: number });
 		const fodderCollectionMeta = fodderCollections.reduce((acc, r) => {
 			acc[r.character_id] = r.card_count || 1;
 			return acc;
-		}, {} as { [key: string]: number; });
+		}, {} as { [key: string]: number });
 
 		const invalidFodders = Object.keys(fodderMeta).find((cid) => {
-			return (fodderCollectionMeta[cid] < fodderMeta[cid] || !fodderCollectionMeta[cid]);
+			return (
+				fodderCollectionMeta[cid] < fodderMeta[cid] ||
+        !fodderCollectionMeta[cid]
+			);
 		});
 		if (invalidFodders) {
-			embed.setDescription(
-				"Trade has been cancelled due to insufficient cards. " +
-	  "(Hint: Make sure you have the right amount of fodders you are trying to trade)"
-			).setHideConsoleButtons(true);
+			embed
+				.setDescription(
+					"Trade has been cancelled due to insufficient cards. " +
+            "(Hint: Make sure you have the right amount of fodders you are trying to trade)"
+				)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
 
 		if (user.selected_card_id) {
-			const hasSelectedCard = trader.queue
-				.find((q) => {
-					return q.id === user.selected_card_id;
-				});
+			const hasSelectedCard = trader.queue.find((q) => {
+				return q.id === user.selected_card_id;
+			});
 			if (hasSelectedCard) {
 				user.selected_card_id = null;
 
-				embed.setTitle("Warning :warning:").setDescription(
-					"You are trading a card you've selected. " +
-					`**__${titleCase(hasSelectedCard.rank)}__ ` +
-					`${titleCase(hasSelectedCard.name || "No Name")} (${hasSelectedCard.id})**`
-				).setHideConsoleButtons(true);
+				embed
+					.setTitle("Warning :warning:")
+					.setDescription(
+						"You are trading a card you've selected. " +
+              `**__${titleCase(hasSelectedCard.rank)}__ ` +
+              `${titleCase(hasSelectedCard.name || "No Name")} (${
+              	hasSelectedCard.id
+              })**`
+					)
+					.setHideConsoleButtons(true);
 				channel?.sendMessage(embed);
 				// return;
 			}
 		}
 	}
 	if (user.gold < trader.gold) {
-		embed.setDescription("Trade has been cancelled due to insufficient gold.").setHideConsoleButtons(true);
+		embed
+			.setDescription("Trade has been cancelled due to insufficient gold.")
+			.setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 		return;
 	}
 	return user;
 }
 
-const invokeTradeFodders = async (fodder: TradeQueueProps[0]["queue"], receiver_uid: number) => {
+const invokeTradeFodders = async (
+	fodder: TradeQueueProps[0]["queue"],
+	receiver_uid: number
+) => {
 	const cards = fodder.map((f) => ({
 		character_id: f.character_id,
 		user_id: receiver_uid,
-		count: f.count
+		count: f.count,
 	}));
-	
+
 	const consumeable = fodder.map((f) => ({
 		character_id: f.character_id,
 		user_id: f.user_id,
-		count: f.count
+		count: f.count,
 	}));
 	loggers.info("Invoking fodder trade: ", consumeable, cards);
 	return Promise.all([
 		consumeFodders(consumeable),
-		directUpdateCreateFodder(cards)
+		directUpdateCreateFodder(cards),
 	]);
 };
 
@@ -135,14 +159,19 @@ export const confirmTrade = async ({
 
 		const embed = createEmbed(author, client).setTitle(DEFAULT_SUCCESS_TITLE);
 
-		const cardCount = trader.queue.reduce((acc, r) => acc = (acc || 0) + r.count, 0);
+		const cardCount = trader.queue.reduce(
+			(acc, r) => (acc = (acc || 0) + r.count),
+			0
+		);
 
 		if (trader.hasConfirmed === true) {
-			embed.setDescription(
-				`Summoner **${author.username}**, you have already confirmed this Trade, ` +
-          "please wait for the other participant to confirm." +
-		  `\n\n**You are trading __${cardCount}__ card(s) in total.**`
-			).setHideConsoleButtons(true);
+			embed
+				.setDescription(
+					`Summoner **${author.username}**, you have already confirmed this Trade, ` +
+            "please wait for the other participant to confirm." +
+            `\n\n**You are trading __${cardCount}__ card(s) in total.**`
+				)
+				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			return;
 		}
@@ -160,8 +189,11 @@ export const confirmTrade = async ({
 			}
 			refetchQueue[trader.user_tag] = trader;
 			queue.setTradeQueue(tradeId, refetchQueue);
-			embed.setDescription("Trade Confirmed" +
-			`\n\n**You are trading __${cardCount}x__ card(s) in total!**`)
+			embed
+				.setDescription(
+					"Trade Confirmed" +
+            `\n\n**You are trading __${cardCount}x__ card(s) in total!**`
+				)
 				.setHideConsoleButtons(true);
 			channel?.sendMessage(embed);
 			viewTrade({
@@ -197,11 +229,10 @@ export const confirmTrade = async ({
 			participantTow.gold = participantTow.gold - trader_2.gold;
 			participantOne.gold = participantOne.gold + trader_2.gold;
 		}
-		loggers.info(
-			"trades.actions.confirm.confirmTrade: Completing Trade", {
-				trader_1,
-				trader_2
-			});
+		loggers.info("trades.actions.confirm.confirmTrade: Completing Trade", {
+			trader_1,
+			trader_2,
+		});
 		// Update user only if there's gold trade
 		if (trader_1.gold > 0 || trader_2.gold > 0) {
 			promises.push(
@@ -226,19 +257,24 @@ export const confirmTrade = async ({
 					trader_1.queue.splice(index, 1);
 				}
 			}
-			const trader1totalCardsTraded = trader_1.queue.reduce((acc, r) => acc + r.count, 0);
+			const trader1totalCardsTraded = trader_1.queue.reduce(
+				(acc, r) => acc + r.count,
+				0
+			);
 			if (trader1totalCardsTraded >= MIN_TRADE_CARDS_FOR_QUEST) {
-				promises.push(validateAndCompleteQuest({
-					user_tag: trader_1.user_tag,
-					type: QUEST_TYPES.TRADING,
-					options: {
-						channel,
-						client,
-						author: {} as AuthorProps,
-						extras: { tradeQueueLen: trader1totalCardsTraded },
-					},
-					level: 0
-				}));
+				promises.push(
+					validateAndCompleteQuest({
+						user_tag: trader_1.user_tag,
+						type: QUEST_TYPES.TRADING,
+						options: {
+							channel,
+							client,
+							author: {} as AuthorProps,
+							extras: { tradeQueueLen: trader1totalCardsTraded },
+						},
+						level: 0,
+					})
+				);
 			}
 			promises.push(
 				updateCollection(
@@ -267,19 +303,24 @@ export const confirmTrade = async ({
 					trader_2.queue.splice(index, 1);
 				}
 			}
-			const trader2totalCardsTraded = trader_2.queue.reduce((acc, r) => acc + r.count, 0);
+			const trader2totalCardsTraded = trader_2.queue.reduce(
+				(acc, r) => acc + r.count,
+				0
+			);
 			if (trader2totalCardsTraded >= MIN_TRADE_CARDS_FOR_QUEST) {
-				promises.push(validateAndCompleteQuest({
-					user_tag: trader_2.user_tag,
-					type: QUEST_TYPES.TRADING,
-					options: {
-						channel,
-						client,
-						author: {} as AuthorProps,
-						extras: { tradeQueueLen: trader2totalCardsTraded },
-					},
-					level: 0
-				}));
+				promises.push(
+					validateAndCompleteQuest({
+						user_tag: trader_2.user_tag,
+						type: QUEST_TYPES.TRADING,
+						options: {
+							channel,
+							client,
+							author: {} as AuthorProps,
+							extras: { tradeQueueLen: trader2totalCardsTraded },
+						},
+						level: 0,
+					})
+				);
 			}
 			promises.push(
 				updateCollection(
@@ -309,11 +350,18 @@ export const confirmTrade = async ({
 		embed.setDescription("Trade completed!").setHideConsoleButtons(true);
 		channel?.sendMessage(embed);
 
-		const logChannel = await client.channels.fetch(OS_LOG_CHANNELS.TRADE) as ChannelProp | null;
+		const logChannel = (await client.channels.fetch(
+			OS_LOG_CHANNELS.TRADE
+		)) as ChannelProp | null;
 		if (logChannel) {
 			const logEmbed = createEmbed(author, client)
-				.setTitle(`Trade Completed between ${trader_1.username} and ${trader_2.username}`)
-				.setDescription(`${prepareTradeQueue(trader_1)}\n\n${prepareTradeQueue(trader_2)}`)
+				.setTitle(
+					`Trade Completed between ${trader_1.username} (${trader_1.user_tag}) ` +
+					`and ${trader_2.username} (${trader_2.user_tag})`
+				)
+				.setDescription(
+					`${prepareTradeQueue(trader_1)}\n\n${prepareTradeQueue(trader_2)}`
+				)
 				.setHideConsoleButtons(true);
 
 			logChannel.sendMessage(logEmbed);

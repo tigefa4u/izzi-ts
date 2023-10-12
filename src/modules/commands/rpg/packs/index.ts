@@ -6,6 +6,7 @@ import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { createSingleCanvas } from "helpers/canvas";
 import {
 	DEFAULT_ERROR_TITLE,
@@ -83,9 +84,9 @@ export const packs = async ({ context, client, args, options }: BaseProps) => {
 		embed
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
-				`You have successfully spent __${cost}__ gold ${
+				`You have successfully spent __${numericWithComma(cost)}__ gold ${
 					emoji.gold
-				} and received __${DEFAULT_PACK.cardPerPage * num}x__ **${titleCase(
+				} and received __${numericWithComma(DEFAULT_PACK.cardPerPage * num)}x__ **${titleCase(
 					details.name
 				)}** ${titleCase(DEFAULT_PACK.rank)} card.`
 			)

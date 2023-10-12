@@ -10,12 +10,10 @@ import { UserProps } from "@customTypes/users";
 import { createCollection } from "api/controllers/CollectionsController";
 import { deleteRaid, getRaid } from "api/controllers/RaidsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
-import { startTransaction } from "api/models/Users";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { OWNER_DISCORDID } from "environment";
 import { probability, randomElementFromArray } from "helpers";
 import {
 	MIN_LEVEL_FOR_HIGH_RAIDS,
@@ -483,10 +481,12 @@ async function initDrops(
 		);
 		array = [
 			...rest,
-			...immortalDrops.slice(0, 1),
 			...divineDrops.slice(0, 2),
 			...mythicalDrops.slice(0, 1),
 		];
+		if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
+			array.push(...immortalDrops.slice(0, 1));
+		}
 	} else {
 		// FODDERS
 		array = raid.raid_boss

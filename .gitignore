@@ -7,3 +7,4 @@ logs/
 
 *logging.json
 *.DS_Store
+*task-queue.json
