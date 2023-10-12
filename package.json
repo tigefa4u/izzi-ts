@@ -14,7 +14,8 @@
     "start:server": "ts-node -r dotenv/config src/server/app.ts",
     "build": "tsc -p tsconfig.json",
     "build:pipe": "forever stop lib/server/shard.js && rm -rf lib/ && export NODE_PATH=lib/ && npm run build",
-    "profiler": "node -r ts-node/register --prof -r dotenv/config src/server/shard.ts"
+    "profiler": "node -r ts-node/register --prof -r dotenv/config src/server/shard.ts",
+    "db:listen": "ts-node -r dotenv/config src/server/dbListener.ts"
   },
   "keywords": [
     "izzi",
@@ -41,7 +42,7 @@
   "dependencies": {
     "@google-cloud/logging-winston": "^5.1.7",
     "@google-cloud/tasks": "^4.0.1",
-    "@hoax7/memory_cache": "^1.0.18",
+    "@hoax7/memory_cache": "^1.0.20",
     "@top-gg/sdk": "^3.1.2",
     "axios": "^0.24.0",
     "better-sqlite3": "^7.4.6",

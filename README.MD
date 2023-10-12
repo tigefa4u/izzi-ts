@@ -93,3 +93,8 @@ Forever creates logs that can increase disk size upto more than 21GB
 Use the above command to find file size of all dir
 
 - Optimize DB to remove millions of rows and update a count for fodders
+
+# Listening to DB updates Pub/Sub
+- Create functions and triggers for the tables you want to listen to.
+- You must use query: listen <tablename>.
+- Since we only need to trigger the event once, we will write a separate app for it.

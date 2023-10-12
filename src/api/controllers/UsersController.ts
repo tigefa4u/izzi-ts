@@ -6,6 +6,7 @@ import {
 } from "@customTypes/users";
 import Cache from "cache";
 import { parsePremiumUsername } from "helpers";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clone } from "utility";
@@ -101,17 +102,20 @@ export const getRPGUser: (
   }
 ) => Promise<UserProps | undefined> = async (params, options) => {
 	try {
-		const key = "user::" + params.user_tag;
-		if (options?.cached) {
-			const result = await Cache.get(key);
-			if (result) {
-				const is_premium = await Users.getIsPremium({ user_tag: params.user_tag });
-				const data = JSON.parse(result);
-				if (!is_premium) data.username = parsePremiumUsername(data.username);
-				return data;
-			}
-		}
-		const user = await getUser(params);
+		const key = CACHE_KEYS.USER + params.user_tag;
+		// if (options?.cached) {
+		// 	const result = await Cache.get(key);
+		// 	if (result) {
+		// 		const is_premium = await Users.getIsPremium({ user_tag: params.user_tag });
+		// 		const data = JSON.parse(result);
+		// 		if (!is_premium) data.username = parsePremiumUsername(data.username);
+		// 		return data;
+		// 	}
+		// }
+		/**
+		 * Cache will always be populated by db listener
+		 */
+		const user = await Cache.fetch(key, () => getUser(params), 60 * 60 * 23);
 		if (!user) {
 			loggers.info(
 				"api.controllers.UsersController.getRPGUser: User not found " +
@@ -125,20 +129,20 @@ export const getRPGUser: (
 		} else if (user.is_banned) {
 			Cache.del(key);
 		}
-		if (options?.cached) {
-			Cache.set(
-				key,
-				JSON.stringify({
-					id: user.id,
-					user_tag: user.user_tag,
-					username: parsePremiumUsername(user.username),
-					voted_at: user.voted_at,
-					vote_streak: user.vote_streak,
-					selected_team_id: user.selected_team_id
-				})
-			);
-			Cache.expire && Cache.expire(key, 60 * 60 * 23);
-		}
+		// if (options?.cached) {
+		// 	Cache.set(
+		// 		key,
+		// 		JSON.stringify({
+		// 			id: user.id,
+		// 			user_tag: user.user_tag,
+		// 			username: parsePremiumUsername(user.username),
+		// 			voted_at: user.voted_at,
+		// 			vote_streak: user.vote_streak,
+		// 			selected_team_id: user.selected_team_id
+		// 		})
+		// 	);
+		// 	Cache.expire && Cache.expire(key, 60 * 60 * 23);
+		// }
 		// await hydrateUserCache(user);
 		return user;
 		// }
