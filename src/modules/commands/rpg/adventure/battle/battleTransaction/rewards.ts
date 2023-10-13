@@ -129,17 +129,19 @@ export const calculateUserRewards = (user: UserProps, multiple = 1) => {
 	try {
 		const rankReward = "platinum";
 		const rankId = ranksMeta.platinum.rank_id;
-		let goldReward = randomNumber(80, 109);
+		let goldReward = randomNumber(80, 200);
 		if (user.max_ruin >= 20 && user.max_ruin < 40) {
-			goldReward = randomNumber(110, 150);
+			goldReward = randomNumber(200, 400);
 			// rankReward = "gold";
 			// rankId = 2;
-		} else if (user.max_ruin >= 40 && user.max_ruin < 100) {
-			goldReward = randomNumber(160, 200);
+		} else if (user.max_ruin >= 40 && user.max_ruin < 70) {
+			goldReward = randomNumber(400, 600);
 			// rankReward = "platinum";
 			// rankId = 3;
+		} else if (user.max_ruin >= 70 && user.max_ruin < 100) {
+			goldReward = randomNumber(600, 700);
 		} else if (user.max_ruin >= 100) {
-			goldReward = randomNumber(210, 500);
+			goldReward = randomNumber(700, 800);
 			// rankReward = "platinum";
 			// rankId = 3;
 		}
