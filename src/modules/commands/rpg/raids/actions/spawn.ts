@@ -104,7 +104,9 @@ const calculateDropRateByBossLevelAndPL = (
 	for (const percent of percentToLoop) {
 		if (levelPercent <= +percent) {
 			rate = Number(
-				levelBonusDropRate[percent as keyof LevelAndPLBonusDropRateProps].toFixed(2)
+				levelBonusDropRate[
+          percent as keyof LevelAndPLBonusDropRateProps
+				].toFixed(2)
 			);
 			break;
 		}
@@ -117,11 +119,11 @@ const calculateDropRateByBossLevelAndPL = (
 			}
 		});
 		/**
-		 * Extra cards are ultra rare (myth) hence,
-		 * consider raid PL to boost drop rate instead of level.
-		 * This logic is commented since it makes it possible
-		 * for easy raid to have higher drop rate % than immo
-		 */
+     * Extra cards are ultra rare (myth) hence,
+     * consider raid PL to boost drop rate instead of level.
+     * This logic is commented since it makes it possible
+     * for easy raid to have higher drop rate % than immo
+     */
 		// loot.extraCards?.map((drop) => {
 		// 	if (!drop.isStaticDropRate) {
 		// 		drop.rate = (drop.rate || 1) + rate;
@@ -130,15 +132,13 @@ const calculateDropRateByBossLevelAndPL = (
 	}
 
 	/**
-	 * Boost mythical drop rate based on boss PL
-	 */
+   * Boost mythical drop rate based on boss PL
+   */
 	let plRate = 0;
 	const pltoLoop = Object.keys(PLBonusDropRate);
 	for (const power of pltoLoop) {
 		if (pl <= +power) {
-			plRate = Number(
-				PLBonusDropRate[power].toFixed(2)
-			);
+			plRate = Number(PLBonusDropRate[power].toFixed(2));
 			break;
 		}
 	}
@@ -147,7 +147,7 @@ const calculateDropRateByBossLevelAndPL = (
 			if (!drop.isStaticDropRate) {
 				drop.rate = (drop.rate || 1) + plRate;
 			}
-		});	
+		});
 	}
 	loot.division = category;
 	return loot;
@@ -631,11 +631,10 @@ export const spawnRaid = async ({
 		taskQueue("log-raid-spawn", {
 			message: `Server: ${context.guild?.name || "Unknown"} (${
 				context.guild?.id || "Unknown"
-			}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
-				"en-us",
-				DATE_OPTIONS
-			)}`,
-			channelId: OS_LOG_CHANNELS.RAID_SPAWN
+			}) ${author.username} (${author.id}) has spawned a${
+				customSpawn ? " custom" : ""
+			} raid. ${new Date().toLocaleDateString("en-us", DATE_OPTIONS)}`,
+			channelId: OS_LOG_CHANNELS.RAID_SPAWN,
 		});
 		// const logChannel = (await client.channels.fetch(
 		// 	OS_LOG_CHANNELS.RAID_SPAWN

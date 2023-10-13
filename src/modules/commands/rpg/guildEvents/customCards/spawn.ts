@@ -54,7 +54,7 @@ export const spawnCustomServerCardRaid = async ({ client, context, options, args
 				await setCooldown(
 					author.id,
 					cmd,
-					user.is_premium || user.is_mini_premium ? 60 * 60 * 4 : 60 * 60 * 5
+					(user.is_premium || user.is_mini_premium) ? 60 * 60 * 3 : 60 * 60 * 4
 				);
 			}
 		});
