@@ -99,7 +99,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 	d1: {
 		maxlevel: 1800,
 		// spawning mythical boss in raids was too hard for players.
-		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name ],
+		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name, ranksMeta.mythical.name ],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 9,

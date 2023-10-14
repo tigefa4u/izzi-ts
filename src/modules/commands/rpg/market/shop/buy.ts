@@ -61,8 +61,8 @@ async function processPurchase(
 	 * Dealer takes 2% as raid treasury
 	 * Hoax acc
 	 */
-	const dealerCommission = Math.floor(commission * RAID_TREASURY_PERCENT);
-	dealer.gold = dealer.gold + dealerCommission;
+	// const dealerCommission = Math.floor(commission * RAID_TREASURY_PERCENT);
+	// dealer.gold = dealer.gold + dealerCommission;
 
 	const cost = total - commission;
 
@@ -72,7 +72,7 @@ async function processPurchase(
 		seller.selected_card_id = null;
 	}
 	const promises = [
-		updateRPGUser({ user_tag: dealer.user_tag }, { gold: dealer.gold }),
+		// updateRPGUser({ user_tag: dealer.user_tag }, { gold: dealer.gold }),
 		updateRPGUser({ user_tag: buyer.user_tag }, { gold: buyer.gold }),
 		updateRPGUser(
 			{ user_tag: seller.user_tag },
