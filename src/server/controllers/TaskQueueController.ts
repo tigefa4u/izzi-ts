@@ -30,7 +30,7 @@ export const handleLogTask = async (req: any, res: any) => {
 				obj.messages.push(data.message);
 				queue.set(data.channelId, obj);
 			}
-			debounce(logToOsChannel, 5000)();
+			debounce(logToOsChannel, 1000 * 30)();
 		}
 	} catch (err) {
 		console.error("[task-queue] Unable to process task: ", err);
