@@ -178,15 +178,20 @@ export const desolator = ({
 		let desc =
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
-	  let allowUptoLevel = (ranksMeta.ultimate.max_level || 0) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
-	  if (card.rank_id === ranksMeta.mythical.rank_id) {
+		let allowUptoLevel = (ranksMeta.ultimate.max_level || 0) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
+		let allowMinLevel = ranksMeta.ultimate.max_level || 0 + 1;
+		const allowedRans = [ ranksMeta.ultimate.rank_id, ranksMeta.mythical.rank_id ];
+		// Do not add souls to ultimate level 70 cards.
+		// allow souls to be added if the ult level is 70+
+		if (card.rank_id === ranksMeta.mythical.rank_id) {
 			allowUptoLevel = (ranksMeta.mythical.max_level || 0) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
-	  }
+			allowMinLevel = ranksMeta.mythical.max_level || 0;
+		}
 		if (
 			isRaid &&
-      (card.rank_id === ranksMeta.ultimate.rank_id ||
-        card.rank_id === ranksMeta.mythical.rank_id) &&
-      card.character_level < allowUptoLevel
+    	allowedRans.includes(card.rank_id) &&
+      card.character_level < allowUptoLevel &&
+      card.character_level >= allowMinLevel
 		) {
 			const chances = [ true, false ];
 			const canStealSouls = chances[probability([ 50, 50 ])];

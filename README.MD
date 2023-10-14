@@ -93,3 +93,6 @@ Forever creates logs that can increase disk size upto more than 21GB
 Use the above command to find file size of all dir
 
 - Optimize DB to remove millions of rows and update a count for fodders
+
+# Database listner to refresh cache
+https://medium.com/@simon.white/postgres-publish-subscribe-with-nodejs-996a7e45f88

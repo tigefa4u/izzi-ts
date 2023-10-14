@@ -75,8 +75,7 @@ async function verifyAndProcessEvolution(
 		return;
 	}
 	const cardToEvolve = collection[0];
-	// Change to myth
-	if (cardToEvolve.rank_id >= ranksMeta.ultimate.rank_id) {
+	if (cardToEvolve.rank_id >= ranksMeta.mythical.rank_id) {
 		embed.setDescription("This card has already reached its max Evolution!");
 		params.channel?.sendMessage(embed);
 		return;

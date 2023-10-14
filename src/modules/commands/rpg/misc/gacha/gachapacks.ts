@@ -101,16 +101,16 @@ const confirmAndPurchasePack = async (
 		return;
 	}
 	if (options?.isConfirm) {
-		const gachaKey = "gacha-count:" + params.author.id;
-		const packsPurchased = await Cache.get(gachaKey) || "0";
+		// const gachaKey = "gacha-count:" + params.author.id;
+		// const packsPurchased = await Cache.get(gachaKey) || "0";
 		/**
 		 * Control the myth card drop from packs
 		 */
-		if (pack.name !== packContains.silver.name && +packsPurchased >= 5) {
-			pack.ranks.push(ranksMeta.mythical.name);
-			pack.chances.push(.25);
-			await Cache.incr(gachaKey);
-		}
+		// if (pack.name !== packContains.silver.name && +packsPurchased >= 5) {
+		// 	pack.ranks.push(ranksMeta.mythical.name);
+		// 	pack.chances.push(.25);
+		// 	await Cache.incr(gachaKey);
+		// }
 		const result = (await Promise.all(
 			Array(5)
 				.fill("")
@@ -171,26 +171,26 @@ const confirmAndPurchasePack = async (
 		} catch (err) {
 			console.log(err);
 		}
-		const hasMythical = result.find(
-			(r) => r.rank_id === ranksMeta.mythical.rank_id
-		);
-		if (hasMythical) {
-			await Cache.del(gachaKey);
-		}
-		if (pack.name === packContains["legendary"].name) {
-			const key = `packpity-${params.author.id}`;
-			if (hasMythical) {
-				await Cache.del(key);
-			} else {
-				if (params.extras?.showPity) {
-					result[0].rank = ranksMeta.mythical.name;
-					result[0].rank_id = ranksMeta.mythical.rank_id;
-					await Cache.del(key);
-				} else {
-					await Cache.incr(key);
-				}
-			}
-		}
+		// const hasMythical = result.find(
+		// 	(r) => r.rank_id === ranksMeta.mythical.rank_id
+		// );
+		// if (hasMythical) {
+		// 	await Cache.del(gachaKey);
+		// }
+		// if (pack.name === packContains["legendary"].name) {
+		// 	const key = `packpity-${params.author.id}`;
+		// 	if (hasMythical) {
+		// 		await Cache.del(key);
+		// 	} else {
+		// 		if (params.extras?.showPity) {
+		// 			result[0].rank = ranksMeta.mythical.name;
+		// 			result[0].rank_id = ranksMeta.mythical.rank_id;
+		// 			await Cache.del(key);
+		// 		} else {
+		// 			await Cache.incr(key);
+		// 		}
+		// 	}
+		// }
 
 		const dataToInsert = result.map((r) => ({
 			user_id: user.id,
@@ -394,12 +394,12 @@ export const legendaryPacks = async ({
 		}
 		let embed = createEmbed(author, client).setDescription("No data available");
 		let sentMessage: Message;
-		const key = `packpity-${author.id}`;
-		const pityCount = await Cache.get(key);
-		let showPity = false;
-		if (pityCount && Number(pityCount) >= LEGENDARY_PACK_PITY_COUNT) {
-			showPity = true;
-		}
+		// const key = `packpity-${author.id}`;
+		// const pityCount = await Cache.get(key);
+		// let showPity = false;
+		// if (pityCount && Number(pityCount) >= LEGENDARY_PACK_PITY_COUNT) {
+		// 	showPity = true;
+		// }
 		const buttons = await confirmationInteraction(
 			context.channel,
 			author.id,
@@ -409,7 +409,7 @@ export const legendaryPacks = async ({
 				author,
 				extras: {
 					pack,
-					showPity,
+					// showPity,
 				},
 			},
 			confirmAndPurchasePack,

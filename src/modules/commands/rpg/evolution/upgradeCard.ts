@@ -78,9 +78,14 @@ const validateAndUpgradeCard = async (
 		return;
 	}
 	const maxUpgradableLevel = powerLevel.max_level + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
-	if (card.character_level < powerLevel.max_level) {
+	let allowMinLevel = ranksMeta.ultimate.max_level || 0 + 1;
+	if (card.rank_id === ranksMeta.mythical.rank_id) {
+		allowMinLevel = ranksMeta.mythical.max_level || 0;
+	}
+	if (card.character_level < allowMinLevel) {
 		embed.setDescription(
-			"This card must be max level before you can increase its level further."
+			`Your **${titleCase(card.rank)}** card must be level __${allowMinLevel}__ ` +
+			"before you can increase its level further."
 		);
 		channel?.sendMessage(embed);
 		return;

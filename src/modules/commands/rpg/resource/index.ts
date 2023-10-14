@@ -74,9 +74,9 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		const embed = createEmbed()
 			.setTitle(DEFAULT_ERROR_TITLE)
 			.setThumbnail(client.user?.displayAvatarURL() || "");
-		if (isNaN(transferAmount) || transferAmount > GOLD_LIMIT) {
+		if (isNaN(transferAmount) || transferAmount > GOLD_LIMIT || transferAmount < 0) {
 			embed.setDescription(
-				"Invalid Amount. You can transfer up to __" +
+				"Invalid Amount. Please enter a valid amount between __1__ and __" +
           numericWithComma(GOLD_LIMIT) +
           "__ Gold " +
           emoji.gold

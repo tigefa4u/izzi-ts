@@ -157,10 +157,10 @@ export const processRaidLoot = async ({
 
 		if (raid.loot.extraCards && raid.loot.extraCards.length > 0) {
 			/**
-       * Card drop which is divided among players.
-       * Added a pity system to atleast drop 1 card
-       * if they have not received any drops for 15 raids.
-       */
+		   * Card drop which is divided among players.
+		   * Added a pity system to atleast drop 1 card
+		   * if they have not received any drops for 15 raids.
+		   */
 			const premiumUsers = allUsers
 				.filter((u) => u.is_premium)
 				.map((p) => p.id);
@@ -175,8 +175,8 @@ export const processRaidLoot = async ({
 				});
 
 			/**
-       * Pre-fill the array with all the number of cards that are available to be dropped
-       */
+		   * Pre-fill the array with all the number of cards that are available to be dropped
+		   */
 			const extraLoot = clone(raid.loot.extraCards);
 			const extraLootArray: RaidLootDropProps[] = raid.raid_boss
 				.map((boss) =>
@@ -199,14 +199,14 @@ export const processRaidLoot = async ({
 				const user = usersMeta[uid];
 				if (
 					!user ||
-          (user.level < MIN_LEVEL_FOR_HIGH_RAIDS && !user.is_premium)
+		      (user.level < MIN_LEVEL_FOR_HIGH_RAIDS && !user.is_premium)
 				)
 					continue;
 
 				/**
-				 * This logic prevents the player from getting back to back
-				 * Mythical drops easily
-				 */
+					 * This logic prevents the player from getting back to back
+					 * Mythical drops easily
+					 */
 				const key = "myth-drops::" + user.user_tag;
 				const dropcd = await Cache.get(key);
 				if (dropcd) {
@@ -226,7 +226,7 @@ export const processRaidLoot = async ({
 					mvp ? lobby[mvp] : undefined
 				);
 				if (drops.length > 0) {
-					await Cache.set(key, user.is_premium ? "2" : "4");
+					await Cache.set(key, user.is_premium ? "1" : "4");
 					extraLoot.splice(0, drops.length);
 					const idx = allRewards.findIndex((r) => r.user_tag === user.user_tag);
 					if (idx >= 0) {
@@ -482,11 +482,12 @@ async function initDrops(
 		array = [
 			...rest,
 			...divineDrops,
+			...immortalDrops,
 			...mythicalDrops.slice(0, 1),
 		];
-		if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
-			array.push(...immortalDrops);
-		}
+		// if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
+		// 	array.push(...immortalDrops);
+		// }
 	} else {
 		// FODDERS
 		array = raid.raid_boss

@@ -74,7 +74,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: .35
+				rate: .05
 			}
 		}
 	},
@@ -92,7 +92,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: .65
+				rate: .1
 			}
 		}
 	},
@@ -111,7 +111,7 @@ export const computedCategoryData : ComputedCategoryProps = {
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 6,
-				rate: 1
+				rate: .25
 			}
 		}
 	}
@@ -162,8 +162,9 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: 1.75,
-						number: 1
+						rate: .75,
+						number: 1,
+						isStaticDropRate: true
 					}
 				]
 			}
@@ -218,8 +219,9 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: 2.25,
-						number: 1
+						rate: 1.45,
+						number: 1,
+						isStaticDropRate: true
 					}
 				]
 			}
@@ -278,8 +280,9 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: 2.75,
-						number: 1
+						rate: 2.15,
+						number: 1,
+						isStaticDropRate: true
 					}
 				],
 				worldBoss: {
@@ -374,8 +377,9 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: 3.25,
-						number: 1
+						rate: 2.85,
+						number: 1,
+						isStaticDropRate: true
 					}
 				],
 			}
