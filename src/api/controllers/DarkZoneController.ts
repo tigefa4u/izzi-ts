@@ -1,7 +1,7 @@
 import { CreateDarkZoneProfileProps, DarkZoneProfileProps } from "@customTypes/darkZone/profile";
 import { RawUpdateProps } from "@customTypes/utility";
 import Cache from "cache";
-import { CACHE_KEYS } from "helpers/cacheConstants";
+import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import loggers from "loggers";
 import { prepareRawUpdateObject } from "utility";
 import * as Model from "../models/DarkZoneProfile";

@@ -6,4 +6,5 @@ export const CACHE_KEYS = {
 	QUEST_BY_LEVEL: "quest-by-level:",
 	ENH_LOCK: "enhlock::",
 	DARK_ZONE_PROFILE: "dark-zone-profile:",
+	USER: "user::",
 };

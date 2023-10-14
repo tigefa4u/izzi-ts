@@ -5,7 +5,7 @@ import { startTransaction } from "api/models/Users";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE } from "helpers/constants";
+import { DEFAULT_ERROR_TITLE } from "helpers/constants/constants";
 import { MAX_FRAGMENT_TRANSFER, MIN_LEVEL_FOR_DZ_TRADE } from "helpers/constants/darkZone";
 import loggers from "loggers";
 
