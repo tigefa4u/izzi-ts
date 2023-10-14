@@ -226,7 +226,7 @@ export const processRaidLoot = async ({
 					mvp ? lobby[mvp] : undefined
 				);
 				if (drops.length > 0) {
-					await Cache.set(key, user.is_premium ? "1" : "4");
+					await Cache.set(key, user.is_premium ? "5" : "10");
 					extraLoot.splice(0, drops.length);
 					const idx = allRewards.findIndex((r) => r.user_tag === user.user_tag);
 					if (idx >= 0) {
