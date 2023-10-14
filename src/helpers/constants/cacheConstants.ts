@@ -5,4 +5,5 @@ export const CACHE_KEYS = {
 	RAID_CHALLENGE: "raid_challenge_",
 	QUEST_BY_LEVEL: "quest-by-level:",
 	ENH_LOCK: "enhlock::",
+	DARK_ZONE_PROFILE: "dark-zone-profile:",
 };

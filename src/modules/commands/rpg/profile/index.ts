@@ -206,7 +206,7 @@ function prepareProfileFields(user: UserProps & P) {
 			inline: true,
 		},
 		{
-			name: ":clock1: Started Playing from",
+			name: ":clock1: Started Playing From",
 			value: `${new Date(user.created_at).toLocaleDateString(
 				"en-us",
 				DATE_OPTIONS

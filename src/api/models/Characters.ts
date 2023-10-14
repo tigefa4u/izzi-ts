@@ -37,6 +37,10 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+	isDarkZone: {
+		type: "boolean",
+		columnName: "is_dark_zone"
+	},
 };
 
 export const getCharacterById: (params: {

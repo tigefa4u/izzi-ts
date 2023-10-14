@@ -70,6 +70,7 @@ import { shipCouple } from "modules/commands/rpg/marriage/ship";
 import { giftPartner } from "modules/commands/rpg/marriage/gifts";
 import { badge } from "modules/commands/rpg/badges";
 import { gachaPacks } from "modules/commands/rpg/misc/gacha";
+import { invokeDarkZone } from "modules/commands/rpg/darkZone";
 
 const commandMap: CommandMapProps = {
 	ping: ping,
@@ -175,7 +176,8 @@ const commandMap: CommandMapProps = {
 	ship: shipCouple,
 	gifts: giftPartner,
 	badge: badge,
-	gacha: gachaPacks
+	gacha: gachaPacks,
+	// darkzone: invokeDarkZone
 	// spbt: spbt, // removed
 	// sort: sort, // removed
 };
