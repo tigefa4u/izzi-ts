@@ -96,6 +96,7 @@ Use the above command to find file size of all dir
 
 # Database listner to refresh cache
 https://medium.com/@simon.white/postgres-publish-subscribe-with-nodejs-996a7e45f88
+- User data is always fetched from cache so make sure to start the listener
 # Listening to DB updates Pub/Sub
 - Create functions and triggers for the tables you want to listen to.
 - You must use query: listen <tablename>.
