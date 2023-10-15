@@ -33,6 +33,7 @@ export type CollectionProps = {
   reqSouls?: number;
   remainingHours?: number;
   remainingMinutes?: number;
+  rank_division?: number;
 };
 
 export type CollectionParams = {

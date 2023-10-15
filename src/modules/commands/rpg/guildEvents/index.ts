@@ -2,6 +2,7 @@ import { BaseProps } from "@customTypes/command";
 import { filterSubCommands } from "helpers/subcommands";
 import loggers from "loggers";
 import { addGuildEvent, setPrefix } from "./actions";
+import { masterCard } from "./actions/masterCard";
 import { updateServerName } from "./actions/server";
 import { showCustomDex } from "./customCards/dex";
 import { spawnCustomServerCardRaid } from "./customCards/spawn";
@@ -44,6 +45,8 @@ export const guildEvents = async ({ context, client, args, options }: BaseProps)
 			spawnCustomServerCardRaid(params);
 		} else if (subcommand === "update") {
 			updateServerName(params);
+		} else if (subcommand === "mastery") {
+			masterCard(params);
 		}
 		return;
 	} catch (err) {

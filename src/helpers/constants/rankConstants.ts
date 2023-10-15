@@ -1,4 +1,5 @@
 import { XPGainPerRankProps } from "@customTypes";
+import emoji from "emojis/emoji";
 import { RankProps, RanksMetaProps } from "../helperTypes";
 
 export const ranksMeta: RanksMetaProps = {
@@ -90,3 +91,17 @@ export const XP_GAIN_PER_RANK = {
 	[ranksMeta.ultimate.name]: 800,
 	[ranksMeta.mythical.name]: 1000,
 } as XPGainPerRankProps;
+
+export const MASTERY_TITLE: { [key: number]: {
+	name: string;
+	emoji: string;
+}; } = {
+	1: {
+		name: "None",
+		emoji: ""
+	},
+	2: {
+		name: "Grand Master",
+		emoji: emoji.grandmaster
+	},
+};

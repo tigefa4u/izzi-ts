@@ -19,7 +19,7 @@ import {
 	REQUIRED_TRADE_LEVEL,
 } from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
-import { ranksMeta } from "helpers/constants/rankConstants";
+import { MASTERY_TITLE, ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { customButtonInteraction } from "utility/ButtonInteractions";
@@ -40,7 +40,10 @@ function prepareInfoDescription(
 	overAllStatData: OverallStatsProps
 ) {
 	let reqSouls = 0;
-	if (infoData.rank_id === ranksMeta.ultimate.rank_id || infoData.rank_id === ranksMeta.mythical.rank_id) {
+	if (
+		infoData.rank_id === ranksMeta.ultimate.rank_id ||
+    infoData.rank_id === ranksMeta.mythical.rank_id
+	) {
 		const souls = getReqSouls(infoData.rank_id);
 		const levelDifference =
       infoData.character_level - (ranksMeta.ultimate.max_level || 70);
@@ -58,9 +61,15 @@ function prepareInfoDescription(
 		abilitydescription: infoData.abilitydescription,
 		is_passive: infoData.is_passive,
 	};
-	const desc = `**Level ${infoData.character_level}**\n**Exp [${
-		infoData.exp
-	} / ${infoData.r_exp}]**${prepareFodderDesc(infoData)}\n**Element:** ${infoData.type} ${emojiMap(
+	const desc = `${
+		infoData.rank_division
+			? `**Mastery Title:** ${MASTERY_TITLE[infoData.rank_division].name} ${
+				MASTERY_TITLE[infoData.rank_division].emoji
+			}\n`
+			: ""
+	}**Level ${infoData.character_level}**\n**Exp [${infoData.exp} / ${
+		infoData.r_exp
+	}]**${prepareFodderDesc(infoData)}\n**Element:** ${infoData.type} ${emojiMap(
 		infoData.type
 	)}\n**Rank:** ${titleCase(infoData.rank)}\n**Souls:** ${infoData.souls}${
 		reqSouls > 0
@@ -164,7 +173,7 @@ export const getCardInfo = async ({
 			.attachFiles([ attachment ])
 			.setFooter({
 				text: "The stats shown includes guild stats bonus",
-				iconURL: author.displayAvatarURL()
+				iconURL: author.displayAvatarURL(),
 			});
 
 		if (user.level < REQUIRED_TRADE_LEVEL) {
@@ -211,7 +220,7 @@ export const getCardInfo = async ({
 				false,
 				2
 			);
-	
+
 			if (buttons) {
 				embed.setButtons(buttons);
 			}

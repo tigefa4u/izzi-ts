@@ -104,7 +104,10 @@ async function verifyAndProcessEvolution(
 		return;
 	}
 	const reqSouls = getReqSouls(cardToEvolve.rank_id);
-	const cost = reqSouls * 100;
+	let cost = reqSouls * 100;
+	if (cardToEvolve.character_level === extendedLevel) {
+		cost = cost + 700000;
+	}
 	if (user.gold < cost) {
 		embed.setDescription(
 			"You do not have sufficient gold to evolve your card!"

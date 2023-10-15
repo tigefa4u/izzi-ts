@@ -31,4 +31,7 @@ export const subcommands = [ {
 }, {
 	name: "update",
 	alias: []
+}, {
+	name: "mastery",
+	alias: [ "master" ]
 } ];

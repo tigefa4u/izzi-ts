@@ -87,13 +87,14 @@ export const createSingleCanvas: (
     CharacterCanvasProps,
     "filepath" | "difficultyIcon" | "type" | "isSkin" | "rank" | "metadata"
   >,
-  isNotStar: boolean
-) => Promise<Canvas | undefined> = async function (card, isNotStar = false) {
+  isNotStar: boolean,
+  version?: "medium" | "small"
+) => Promise<Canvas | undefined> = async function (card, isNotStar = false, version = "medium") {
 	try {
 		// load precomputed images directly
 		let filepath = card.filepath;
 		if (card.metadata?.assets) {
-			filepath = card.metadata.assets.medium.filepath;
+			filepath = card.metadata.assets[version].filepath;
 		}
 
 		const canvas = createCanvas(
@@ -105,14 +106,14 @@ export const createSingleCanvas: (
 		ctx.fillStyle = "#2f3136";
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image", });
+		const cachedImage = await _loadFromCache(filepath, { prefix: "single-image-" + version, });
 		let image = cachedImage?.image;
 		if (!image) {
 			image = await _fetchAndSaveToCache(
 				filepath,
 				canvas.width,
 				canvas.height,
-				{ prefix: "single-image" }
+				{ prefix: "single-image-" + version }
 			);
 
 			// loggers.info(`[Path] loading filepath -> ${filepath}`);

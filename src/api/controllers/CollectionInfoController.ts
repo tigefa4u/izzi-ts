@@ -5,6 +5,7 @@ import {
 } from "@customTypes/collections";
 import { SkinProps } from "@customTypes/skins";
 import { SortProps } from "@customTypes/sorting";
+import { MASTERY_TITLE } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 import * as Collections from "../models/Collections";
@@ -82,6 +83,9 @@ export const getCardInfoByRowNumber = async (
 								itemdescription: item.description,
 							};
 						}
+					}
+					if (data.rank_division) {
+						characterInfo.name = characterInfo.name + " " + MASTERY_TITLE[data.rank_division].emoji;
 					}
 					const res: CollectionCardInfoProps = Object.assign(data, {
 						name: characterInfo.name,

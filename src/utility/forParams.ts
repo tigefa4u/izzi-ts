@@ -72,6 +72,10 @@ const argMap = [
 	{
 		name: "isExactMatch",
 		alias: [ "-exm" ]
+	},
+	{
+		name: "isDarkZone",
+		alias: [ "-dz" ]
 	}
 ];
 
@@ -79,9 +83,12 @@ const exceptionalFilters = [ "is_favorite", "is_on_market", "is_on_cooldown" ];
 
 export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 	const params = {} as ParamsFromArgsRT<T>;
-	let exactMatch = false;
+	let exactMatch = false, darkZone = false;
 	if (args.includes("-exm")) {
 		exactMatch = true;
+	}
+	if (args.includes("-dz")) {
+		darkZone = true;
 	}
 	for (let i = 0; i < args.length; i++) {
 		const temp = args.shift();
@@ -119,6 +126,9 @@ export const fetchParamsFromArgs = <T>(args: string[]): ParamsFromArgsRT<T> => {
 	}
 	if (exactMatch) {
 		Object.assign(params, { isExactMatch: exactMatch });
+	}
+	if (darkZone) {
+		Object.assign(params, { isDarkZone: darkZone });
 	}
 	return params;
 };

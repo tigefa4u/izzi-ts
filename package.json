@@ -45,7 +45,7 @@
     "@hoax7/memory_cache": "^1.0.20",
     "@top-gg/sdk": "^3.1.2",
     "axios": "^0.24.0",
-    "better-sqlite3": "^7.4.6",
+    "better-sqlite3": "^7.6.2",
     "canvas": "^2.8.0",
     "cls-hooked": "^4.2.2",
     "cors": "^2.8.5",

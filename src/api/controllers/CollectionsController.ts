@@ -19,7 +19,7 @@ import {
 } from "helpers/constants/constants";
 import { getReqSouls } from "helpers/evolution";
 import { paginationForResult, paginationParams } from "helpers/pagination";
-import { ranksMeta } from "helpers/constants/rankConstants";
+import { MASTERY_TITLE, ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";
@@ -256,6 +256,9 @@ export const getCollection: (
 		result.map(async (r, idx) => {
 			if (charactersMeta[r.character_id]) {
 				r.name = charactersMeta[r.character_id].name;
+				if (r.rank_division) {
+					r.name = r.name + " " + MASTERY_TITLE[r.rank_division].emoji;
+				}
 			} else {
 				cidsToFetch.push(r.character_id);
 			}
@@ -268,6 +271,9 @@ export const getCollection: (
 				result.map((r) => {
 					if (meta[r.character_id] && !r.name) {
 						r.name = meta[r.character_id].name;
+						if (r.rank_division) {
+							r.name = r.name + " " + MASTERY_TITLE[r.rank_division].emoji;
+						}
 					}
 				});
 			}
@@ -381,8 +387,12 @@ export const getAllCollections = async (
 			if (itemIdx >= 0) {
 				Object.assign(res, { itemname: items[itemIdx].name });
 			}
+			let cname = charactersData[index].name;
+			if (res.rank_division && res.rank_division > 1) {
+				cname = cname + " " + MASTERY_TITLE[res.rank_division].emoji;
+			}
 			return Object.assign(res, {
-				name: charactersData[index].name,
+				name: cname,
 				abilityname: charactersData[index].abilityname,
 				abilitydescription: charactersData[index].abilitydescription,
 				type: charactersData[index].type,

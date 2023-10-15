@@ -138,7 +138,8 @@ export const get = async (
 			"character_level",
 			"is_tradable",
 			"metadata",
-			"card_count"
+			"card_count",
+			"rank_division"
 		)
 		.from(tableName)
 		.where(queryParams)
@@ -275,6 +276,7 @@ export const getAll = async function (
 				${tableName}.character_level,
 				${tableName}.metadata,
 				${tableName}.card_count,
+				${tableName}.rank_division,
 				row_number() over(order by rank_id desc, id 
 					asc)`
 				// ${sort ? sort.sortOrder : "desc"}
