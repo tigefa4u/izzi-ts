@@ -48,12 +48,17 @@ const connection = knex({
 				done(null, conn);
 				return;
 			}
-			listening = true;
-			console.log("Listening to update triggers");
-			await Promise.all(Object.keys(TOPICS).map((k) => conn.query(`LISTEN ${TOPICS[k as T]}`)));
-			await conn.on("notification", (msg: any) => {
-				refreshCache(msg);
-			});
+			try {
+				loggers.info("[dblistener] listening to update triggers");
+				listening = true;
+				console.log("Listening to update triggers");
+				await Promise.all(Object.keys(TOPICS).map((k) => conn.query(`LISTEN ${TOPICS[k as T]}`)));
+				await conn.on("notification", (msg: any) => {
+					refreshCache(msg);
+				});
+			} catch (err) {
+				loggers.error("[dblistener] database error", err);
+			}
 			done(null, conn);
 		}
 	}
@@ -64,13 +69,13 @@ const connection = knex({
 		connection
 			.raw("SELECT 1")
 			.then(() => {
-				console.log("PostgreSQL listener connected");
-				loggers.info("PostgreSQL listener connected");
+				console.log("[dblistener] PostgreSQL listener connected");
+				loggers.info("[dblistener] PostgreSQL listener connected");
 				clearInterval(interval);
 			})
 			.catch((e) => {
-				console.log("PostgreSQL listener not connected");
-				loggers.error("PostgreSQL listener connection failed", e);
+				console.log("[dblistener] PostgreSQL listener not connected");
+				loggers.error("[dblistener] PostgreSQL listener connection failed", e);
 				console.error(e);
 			});
 	}, 1000 * 60 * 60);
