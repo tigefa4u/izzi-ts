@@ -179,7 +179,7 @@ export const desolator = ({
       "**Ability:** Your attacks reduce the enemy's **DEF** by __(-10)__ points)).";
 
 		let allowUptoLevel = (ranksMeta.ultimate.max_level || 70) + CHARACTER_LEVEL_EXTENDABLE_LIMIT;
-		let allowMinLevel = ranksMeta.ultimate.max_level || 70 + 1;
+		let allowMinLevel = (ranksMeta.ultimate.max_level || 70) + 1;
 		const allowedRans = [ ranksMeta.ultimate.rank_id, ranksMeta.mythical.rank_id ];
 		// Do not add souls to ultimate level 70 cards.
 		// allow souls to be added if the ult level is 70+
