@@ -26,7 +26,7 @@ RUN apk add build-base \
         python3
 
 # Install node modules
-COPY package-lock.json package.json ./
+COPY package.json ./
 RUN npm ci --include=dev
 
 # # Copy application code
