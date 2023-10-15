@@ -24,6 +24,7 @@ import {
 	DEFAULT_SUCCESS_TITLE,
 	SACRIFICE_GOLD_COST,
 } from "helpers/constants/constants";
+import { ranksMeta } from "helpers/constants/rankConstants";
 import { getReqSouls } from "helpers/evolution";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -71,13 +72,13 @@ async function verifyAndProcessSacrifice(
 	const embed = createEmbed(params.author, params.client).setTitle(
 		DEFAULT_ERROR_TITLE
 	);
-	if (card.rank_id >= 9) {
+	if (card.rank_id >= ranksMeta.mythical.rank_id) {
 		embed.setDescription(
 			"This card has already reached its max Evolution and cannot absorb souls!"
 		);
 		params.channel?.sendMessage(embed);
 		return;
-	} else if (card.rank_id < 4) {
+	} else if (card.rank_id < ranksMeta.diamond.rank_id) {
 		embed.setDescription("Your card must be of Diamond rank to absorb souls");
 		params.channel?.sendMessage(embed);
 		return;
