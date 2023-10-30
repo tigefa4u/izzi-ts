@@ -20,6 +20,8 @@ import {
 	directUpdateCreateFodder,
 } from "api/controllers/CollectionsController";
 import { ranksMeta } from "helpers/constants/rankConstants";
+import { taskQueue } from "handlers/taskQueue/gcp";
+import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {
@@ -31,6 +33,9 @@ export const processUpVote = async (req: Request, res: Response) => {
 		let desc = "";
 		if (summoner && !hasVoted) {
 			summoner.vote_count = (summoner.vote_count || 0) + 1;
+			if (!summoner.monthly_votes || summoner.monthly_votes <= 0) {
+				loggers.info("[vote-warning] Monthly Votes was 0: ", summoner.user_tag);
+			}
 			summoner.monthly_votes = (summoner.monthly_votes || 0) + 1;
 			let streak = (summoner.vote_streak || 0) + 1;
 			if (streak > 30) streak = 30;
@@ -135,7 +140,14 @@ export const processUpVote = async (req: Request, res: Response) => {
 				messageStr = `${messageStr}\n\n**__Monthly Bonus Reward__**\n${monthlyRewards.desc}`;
 			}
 
-			await updateRPGUser({ user_tag }, updateObj);
+			await Promise.all([
+				updateRPGUser({ user_tag }, updateObj),
+				taskQueue("log-vote", {
+					message: `Summoner ${summoner.username} (${summoner.user_tag}) has voted. ` +
+					`Monthly Votes: ${summoner.monthly_votes}`,
+					channelId: OS_LOG_CHANNELS.BOT_VOTE
+				})
+			]);
 			desc = messageStr;
 		} else {
 			desc =
