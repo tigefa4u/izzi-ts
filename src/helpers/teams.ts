@@ -19,7 +19,7 @@ import { prepareEnergyBar, prepareHPBar } from "./adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { getItemById } from "api/controllers/ItemsController";
 import { DEFAULT_DPR } from "./constants/constants";
-import { GuildMemberProps } from "@customTypes/guildMembers";
+import { getDzInvByIdForBattle } from "api/controllers/DarkZoneInventoryController";
 
 const prepareItemStats = ({
 	itemStats,
@@ -222,7 +222,8 @@ export const prepareTeamForBattle = async ({
 	id,
 	canAddGuildStats,
 	isDungeon = false,
-	capCharacterMaxLevel = false
+	capCharacterMaxLevel = false,
+	isDarkZone = false
 }: {
   team: TeamProps;
   user_id: number;
@@ -230,16 +231,21 @@ export const prepareTeamForBattle = async ({
   canAddGuildStats: boolean;
   isDungeon?: boolean;
   capCharacterMaxLevel?: boolean;
+  isDarkZone?: boolean;
 }) => {
 	const ids = team.metadata.filter(Boolean).map((m) => Number(m.collection_id));
 
-
-	const promises: any[] = [ getCollectionById({
-		ids,
-		user_id,
-		user_tag: id,
-		isDungeon
-	}) ];
+	const promises: any[] = [];
+	if (isDarkZone) {
+		promises.push(getDzInvByIdForBattle(ids, id));
+	} else {
+		promises.push(getCollectionById({
+			ids,
+			user_id,
+			user_tag: id,
+			isDungeon
+		}));
+	}
 
 	let guildMember: any = null;
 	if (canAddGuildStats) {

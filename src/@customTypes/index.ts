@@ -25,6 +25,7 @@ export type FilterProps = {
     exclude?: string[];
     year?: number;
     collection_ids?: number[];
+    isDarkZone?: boolean;
 }
 
 export type AuthorProps = Message["author"] | CommandInteraction["user"]

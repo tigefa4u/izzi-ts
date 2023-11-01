@@ -9,3 +9,12 @@ export const getDonation = async (user_tag: string) => {
 		return;
 	}
 };
+
+export const getTotalDonations = async (user_tag: string): Promise<{ sum: number; } | undefined> => {
+	try {
+		return Donations.getTotal(user_tag);
+	} catch (err) {
+		loggers.error("DonationsController.getTotalDonations: ERROR", err);
+		return;
+	}
+};

@@ -177,7 +177,7 @@ export const dungeon = async ({
 	}
 };
 
-export async function prepareDungeonBoss(userRank?: UserRankProps) {
+export async function prepareDungeonBoss(userRank?: UserRankProps, numberOfBosses = 3) {
 	const rankWithItem = computeLevel("grand master");
 	let itemsArray = [] as ItemProps[];
 	if ((userRank?.rank_id || 1) >= rankWithItem.rank_id) {
@@ -199,7 +199,7 @@ export async function prepareDungeonBoss(userRank?: UserRankProps) {
 			is_event: false,
 			is_logo: false,
 		},
-		3
+		numberOfBosses
 	);
 	if (!cards) {
 		throw new Error("Unable to spawn cards");

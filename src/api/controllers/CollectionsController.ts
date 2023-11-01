@@ -25,6 +25,7 @@ import { reorderObjectKey } from "utility";
 import * as Collections from "../models/Collections";
 import { getCharacters } from "./CharactersController";
 import { getItemById } from "./ItemsController";
+import { safeParseCharacterParams } from "helpers";
 
 type T = { user_id: number; };
 type C = {
@@ -222,19 +223,6 @@ export const createItem = async (data: ICollectionItemCreateProps) => {
 	}
 };
 
-const safeParseCharacterParams = (params = {} as CT) => {
-	const obj = {};
-	if (params.name) {
-		Object.assign(obj, { name: params.name });
-	}
-	if (params.type) {
-		Object.assign(obj, { type: params.type });
-	}
-	if (params.isExactMatch) {
-		Object.assign(obj, { isExactMatch: params.isExactMatch });
-	}
-	return obj;
-};
 export const getCollection: (
   params: CollectionParams & { limit?: number; isForTrade?: boolean; } & CT,
   cb?: (characters: CharactersReturnType, result: CollectionProps[]) => void
@@ -310,7 +298,7 @@ export const updateCollection = async (
 	}
 };
 
-async function fetchCharacterDetails(filter: FilterProps) {
+export async function fetchCharacterDetails(filter: FilterProps) {
 	const characters = await getCharacters(filter);
 	return characters.map((c) => ({
 		id: c.id,

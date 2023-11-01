@@ -20,7 +20,7 @@ export const showTaxInfo = async ({
 }: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
 	try {
 		const embed = createEmbed(author, client).setTitle(
-			"Global Market Tax Info Past 12 Months"
+			"Dark Zone/Global Market Tax Info Past 12 Months"
 		);
 		const [ result, user ] = await Promise.all([
 			getYearlyTaxPaid({ user_tag: author.id }),

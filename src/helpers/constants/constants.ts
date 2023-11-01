@@ -572,4 +572,8 @@ export const LEGENDARY_PACK_PITY_COUNT = 15;
 
 export const IZZI_OS_SERVER_ID = "784087004806774815";
 
-export const DARK_ZONE_MIN_LEVEL = 50;
+export const DARK_ZONE_MIN_LEVEL = 25;
+
+export const PAST_EVENTS_FILTER_DAYS = 550;
+
+export const ULTIMATE_1k_DONATION = 1000;

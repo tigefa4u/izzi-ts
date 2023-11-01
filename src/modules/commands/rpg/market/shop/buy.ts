@@ -8,6 +8,9 @@ import { BaseProps } from "@customTypes/command";
 import { IMarketProps } from "@customTypes/market";
 import { UserProps } from "@customTypes/users";
 import { updateCollection } from "api/controllers/CollectionsController";
+import { updateRawDzProfile } from "api/controllers/DarkZoneController";
+import { updateDzInv } from "api/controllers/DarkZoneInventoryController";
+import { delDzMarketCard } from "api/controllers/DarkZoneMarketsController";
 import { createMarketLog } from "api/controllers/MarketLogsController";
 import { delFromMarket } from "api/controllers/MarketsController";
 import {
@@ -32,11 +35,7 @@ import {
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import GA4 from "loggers/googleAnalytics";
-import {
-	clearCooldown,
-	getCooldown,
-	setCooldown,
-} from "modules/cooldowns";
+import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { titleCase } from "title-case";
 import { confirmationInteraction } from "utility/ButtonInteractions";
 import { validateMarketCard } from "..";
@@ -58,9 +57,9 @@ async function processPurchase(
 	const commission = Math.floor(total * MARKET_COMMISSION);
 
 	/**
-	 * Dealer takes 2% as raid treasury
-	 * Hoax acc
-	 */
+   * Dealer takes 2% as raid treasury
+   * Hoax acc
+   */
 	// const dealerCommission = Math.floor(commission * RAID_TREASURY_PERCENT);
 	// dealer.gold = dealer.gold + dealerCommission;
 
@@ -89,7 +88,7 @@ async function processPurchase(
 		// Player commission is given back to players
 		// allowing them to fill a guage to spawn any raid
 		// from their wishlist
-		commission 
+		commission,
 	};
 }
 
@@ -98,16 +97,11 @@ async function notifySeller(
 	dealer: UserProps,
 	seller: UserProps,
 	marketCard: IMarketProps,
-	client: Client
+	client: Client,
+	isDarkZone = false
 ) {
 	const [ { totalCost, commission } ] = await Promise.all([
-		processPurchase(
-			buyer,
-			dealer,
-			seller,
-			marketCard.price,
-			marketCard.id
-		),
+		processPurchase(buyer, dealer, seller, marketCard.price, marketCard.id),
 		validateAndCompleteQuest({
 			user_tag: seller.user_tag,
 			level: seller.level,
@@ -117,11 +111,11 @@ async function notifySeller(
 				author: {} as AuthorProps,
 				extras: {
 					rank: marketCard.rank,
-					price: marketCard.price
-				}
+					price: marketCard.price,
+				},
 			},
 			isDMUser: true,
-			type: QUEST_TYPES.MARKET
+			type: QUEST_TYPES.MARKET,
 		}),
 		validateAndCompleteQuest({
 			user_tag: buyer.user_tag,
@@ -130,11 +124,11 @@ async function notifySeller(
 				client,
 				channel: {} as ChannelProp,
 				author: {} as AuthorProps,
-				extras: { price: marketCard.price }
+				extras: { price: marketCard.price },
 			},
 			isDMUser: true,
-			type: QUEST_TYPES.MARKET_PURCHASE
-		})
+			type: QUEST_TYPES.MARKET_PURCHASE,
+		}),
 	]);
 
 	await createMarketLog({
@@ -146,71 +140,87 @@ async function notifySeller(
 		metadata: {
 			soldBy: {
 				userTag: seller.user_tag,
-				username: seller.username
+				username: seller.username,
 			},
 			boughtBy: {
 				userTag: buyer.user_tag,
-				username: buyer.username
-			}
-		}
+				username: buyer.username,
+			},
+		},
 	});
 	GA4.customEvent("market_purchase", {
 		category: "market",
 		label: buyer.user_tag,
-		items: [ {
-			item_id: marketCard.collection_id,
-			name: marketCard.name
-		} ],
+		items: [
+			{
+				item_id: marketCard.collection_id,
+				name: marketCard.name,
+			},
+		],
 		seller: seller.user_tag,
 		buyer: buyer.user_tag,
 		value: totalCost,
-		currency: "IG"
+		currency: "IG",
 	});
-	loggers.info(
-		"Notifying seller of Market Purchase: ", {
-      	seller: seller.user_tag,
-      	buyer: buyer.user_tag,
-      	totalCost,
-      	price: marketCard.price,
-      	marketId: marketCard.id,
-      	collectionId: marketCard.collection_id
-		}
-	);
+	loggers.info("Notifying seller of Market Purchase: ", {
+		seller: seller.user_tag,
+		buyer: buyer.user_tag,
+		totalCost,
+		price: marketCard.price,
+		marketId: marketCard.id,
+		collectionId: marketCard.collection_id,
+	});
 
 	const key = "anonymous-market-purchase::" + buyer.user_tag;
 	const anonymousMarketPurchase = await Cache.get(key);
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
-		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
+		.setThumbnail(
+			marketCard.metadata?.assets?.small.filepath || marketCard.filepath
+		)
 		.setDescription(
-			`Congratulations summoner! You have sold your __${
-				titleCase(marketCard.rank)
-			}__ **Level ${marketCard.character_level} ${titleCase(
+			`Congratulations summoner! You have sold your __${titleCase(
+				marketCard.rank
+			)}__ **Level ${marketCard.character_level} ${titleCase(
 				marketCard.name
-			)}** on the Global Market and received __${numericWithComma(totalCost)}__ Gold ${
+			)}** on the ${
+				isDarkZone ? "Dark Zone" : "Global"
+			} Market and received __${numericWithComma(totalCost)}__ Gold ${
 				emoji.gold
-			}!${anonymousMarketPurchase ? "" : `\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`}`
+			}!${
+				anonymousMarketPurchase
+					? ""
+					: `\nYour card was bought by: ${buyer.username} (${buyer.user_tag})`
+			}`
 		);
 	DMUser(client, embed, seller.user_tag);
 }
 
-function notifyBuyer(channel: ChannelProp, marketCard: IMarketProps) {
+function notifyBuyer(
+	channel: ChannelProp,
+	marketCard: IMarketProps,
+	isDarkZone = false
+) {
 	const embed = createEmbed()
 		.setTitle(DEFAULT_SUCCESS_TITLE)
-		.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
+		.setThumbnail(
+			marketCard.metadata?.assets?.small.filepath || marketCard.filepath
+		)
 		.setDescription(
-			`Congratulations summoner! You have spent __${numericWithComma(marketCard.price)}__ Gold ${
-				emoji.gold
-			} and received __${titleCase(marketCard.rank)}__ **Level ${
-				marketCard.character_level
-			} ${titleCase(marketCard.name)}** from the Global Market!`
+			`Congratulations summoner! You have spent __${numericWithComma(
+				marketCard.price
+			)}__ Gold ${emoji.gold} and received __${titleCase(
+				marketCard.rank
+			)}__ **Level ${marketCard.character_level} ${titleCase(
+				marketCard.name
+			)}** from the ${isDarkZone ? "Dark Zone" : "Global"} Market!`
 		);
 	channel?.sendMessage(embed);
 	return;
 }
 
 async function validateAndPurchaseCard(
-	params: ConfirmationInteractionParams<{ id: number }>,
+	params: ConfirmationInteractionParams<{ id: number; isDarkZone: boolean }>,
 	options?: ConfirmationInteractionOptions
 ) {
 	if (!params.extras?.id) return;
@@ -224,11 +234,14 @@ async function validateAndPurchaseCard(
 		{
 			notFoundError: true,
 			cardOwnerError: true,
+			isDarkZone: params.extras.isDarkZone,
+			user_tag: params.author.id,
 		}
 	);
 	if (!marketCard) return;
-	const embed = createEmbed(params.author, params.client)
-		.setTitle(DEFAULT_ERROR_TITLE);
+	const embed = createEmbed(params.author, params.client).setTitle(
+		DEFAULT_ERROR_TITLE
+	);
 	if (buyer.gold < marketCard.price) {
 		embed.setDescription(
 			"You do not have sufficient gold to purchase this card"
@@ -268,32 +281,87 @@ async function validateAndPurchaseCard(
 			is_banned: false,
 		});
 		if (!seller) {
-			await Promise.all([ updateCollection({ id: marketCard.collection_id }, { is_on_market: false }), 
-				delFromMarket({ id: marketCard.id }) ]);
+			if (params.extras.isDarkZone) {
+				await Promise.all([
+					updateDzInv(
+						{
+							id: marketCard.collection_id,
+							user_tag: params.author.id,
+						},
+						{ is_on_market: false }
+					),
+					delDzMarketCard(marketCard.id),
+				]);
+			} else {
+				await Promise.all([
+					updateCollection(
+						{ id: marketCard.collection_id },
+						{ is_on_market: false }
+					),
+					delFromMarket({ id: marketCard.id }),
+				]);
+			}
 			params.channel?.sendMessage(
 				"The seller has either been banned or deleted their account."
 			);
 			return;
 		}
-		notifySeller(buyer, dealer, seller, marketCard, params.client);
-		await updateCollection(
-			{ id: marketCard.collection_id },
-			{
-				user_id: buyer.id,
-				is_on_market: false,
-				item_id: null,
-				is_favorite: false,
-				// is_on_cooldown: true
-			}
+		notifySeller(
+			buyer,
+			dealer,
+			seller,
+			marketCard,
+			params.client,
+			params.extras.isDarkZone
 		);
-		await delFromMarket({ id: marketCard.id });
+		if (params.extras.isDarkZone) {
+			await Promise.all([
+				updateDzInv(
+					{
+						id: marketCard.collection_id,
+						user_tag: params.author.id,
+					},
+					{
+						is_on_market: false,
+						user_tag: buyer.user_tag,
+					}
+				),
+				delDzMarketCard(marketCard.id),
+				updateRawDzProfile({ user_tag: buyer.user_tag }, {
+					inventory_count: {
+						op: "+",
+						value: 1
+					}
+				}),
+				updateRawDzProfile({ user_tag: seller.user_tag }, {
+					inventory_count: {
+						op: "-",
+						value: 1
+					}
+				})
+			]);
+		} else {
+			await Promise.all([
+				updateCollection(
+					{ id: marketCard.collection_id },
+					{
+						user_id: buyer.id,
+						is_on_market: false,
+						item_id: null,
+						is_favorite: false,
+						// is_on_cooldown: true
+					}
+				),
+				delFromMarket({ id: marketCard.id }),
+			]);
+		}
 		// const dt = new Date();
 		// await Cache.set("card-cd::" + marketCard.collection_id, JSON.stringify({
 		// 	timestamp: dt,
 		// 	cooldownEndsAt: dt.setHours(dt.getHours() + 4)
 		// }));
 		// Cache.expire && Cache.expire("card-cd::" + marketCard.collection_id, 60 * 60 * 4);
-		notifyBuyer(params.channel, marketCard);
+		notifyBuyer(params.channel, marketCard, params.extras.isDarkZone);
 
 		//////////////////////////////////////////////
 		//											//
@@ -317,7 +385,11 @@ export const purchaseCard = async ({
 	client,
 	args,
 	author,
-}: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
+	isDarkZone = false,
+}: Omit<BaseProps, "options"> & {
+  author: AuthorProps;
+  isDarkZone?: boolean;
+}) => {
 	try {
 		// const purchaseCooldown = `${author.id}-market-purchase`;
 		// 	let purhchaseExceeded: any =
@@ -353,7 +425,10 @@ export const purchaseCard = async ({
 			client,
 			author,
 			channel: context.channel,
-			extras: { id },
+			extras: {
+				id,
+				isDarkZone,
+			},
 		};
 		let embed = createEmbed();
 		let sentMessage: Message;
@@ -364,12 +439,16 @@ export const purchaseCard = async ({
 			validateAndPurchaseCard,
 			async (data, opts) => {
 				if (data) {
-					const desc = `Are you sure you want to purchase __${titleCase(data.rank)}__ **${titleCase(
-						data.name
-					)}** for __${numericWithComma(data.price)}__ gold ${emoji.gold}`;
+					const desc = `Are you sure you want to purchase __${titleCase(
+						data.rank
+					)}__ **${titleCase(data.name)}** for __${numericWithComma(
+						data.price
+					)}__ gold ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)
 						.setDescription(desc)
-						.setThumbnail(data.metadata?.assets?.small.filepath || data.filepath);
+						.setThumbnail(
+							data.metadata?.assets?.small.filepath || data.filepath
+						);
 				}
 				if (opts?.isDelete) {
 					clearCooldown(author.id, cooldownCommand);

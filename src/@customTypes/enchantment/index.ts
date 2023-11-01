@@ -59,3 +59,15 @@ export type ComputedReturnType<T = EnchantmentAccumulatorProps> = {
     max_level?: number;
     has_reached_max_level?: boolean;
 }
+
+
+// Dark Zone
+export type ComputedDzReturnType = {
+    levelCounter: number;
+    totalXpGain: number;
+    reqExp: number;
+    has_reached_max_level?: boolean;
+    exp: number;
+    r_exp: number;
+    fragmentsToConsume: number;
+}

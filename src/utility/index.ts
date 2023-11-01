@@ -2,6 +2,8 @@ import isEmpty from "lodash/isEmpty";
 import cloneDeep from "lodash/cloneDeep";
 import { RawUpdateProps, RawUpdateReturnType } from "@customTypes/utility";
 import connection from "db";
+import { CardProps } from "@customTypes/cards";
+import { PAST_EVENTS_FILTER_DAYS } from "helpers/constants/constants";
 
 type G<T> = { [key: string | number]: T }
 
@@ -51,7 +53,22 @@ export const prepareRawUpdateObject = <T>(data: RawUpdateProps<T>): RawUpdateRet
 	const result = {} as RawUpdateReturnType<T>;
 	keys.forEach((key) => {
 		const obj = data[key as keyof T];
-		Object.assign(result, { [key]: connection.raw(`${key} ${obj.op} ??`, [ obj.value as any ]) });
+		if (obj.op === "=") {
+			Object.assign(result, { [key]: obj.value });
+		} else {
+			Object.assign(result, { [key]: connection.raw(`${key} ${obj.op} ??`, [ obj.value as any ]) });
+		}
 	});
 	return result;
+};
+
+export const checkEventCardAvailability = (item: CardProps) => {
+	if (!item.card_type_metadata?.isEvent) return true;
+	const dt = new Date(item.created_at).getTime();
+	const pastEventFilterDats =
+		PAST_EVENTS_FILTER_DAYS * 24 * 60 * 60 * 1000;
+	const timestamp =
+		new Date().getTime() - pastEventFilterDats;
+	const isEventCardAvailable = timestamp <= dt;
+	return isEventCardAvailable;
 };

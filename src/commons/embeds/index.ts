@@ -16,6 +16,9 @@ export const createEmbed: EmbedProps = (author?: AuthorProps, client?: Client) =
 		if (author.displayAvatarURL) {
 			params.iconURL = author.displayAvatarURL();
 		}
+		if (author.accentColor) {
+			embed.setColor(author.accentColor);
+		}
 		embed.setAuthor(params);
 	}
 	if (client) {

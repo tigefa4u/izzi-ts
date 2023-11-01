@@ -1,4 +1,5 @@
 import { XPGainPerRankProps } from "@customTypes";
+import { XP_PER_FRAGMENT } from "./constants/darkZone";
 import { XP_GAIN_PER_RANK } from "./constants/rankConstants";
 
 export const prepareXpGainObject = (reqExp: number) => {
@@ -23,4 +24,9 @@ export const prepareXpGainObject = (reqExp: number) => {
 		withSameName,
 		withDifferentName 
 	};
+};
+
+// Dark Zone
+export const getXpGainFromFragments = (reqExp: number) => {
+	return Math.ceil(reqExp / XP_PER_FRAGMENT);
 };

@@ -52,7 +52,7 @@ const prepCardTypeDesc = ({
 	isEvent,
 	isMonthlyCard,
 	isWorldBoss,
-	isReferralCard
+	isReferralCard,
 }: CardTypeMetadataProps) => {
 	let cardType = "";
 	if (isCustomCard) {
@@ -115,6 +115,22 @@ async function prepareCinfoDetails(
 		}
 	}
 
+	const prepareCardInfoDesc = () => {
+		return `\n**Zone:** ${
+			location?.zone
+				? location.zone
+				: characterInfo.series.includes("event")
+					? "Event"
+					: "None"
+		}\n**Floors:** ${
+			location?.floors && location.floors.length > 0
+				? location.floors.map((i) => i).join(", ")
+				: characterInfo.series.includes("event")
+					? "Event"
+					: "None"
+		}\n${prepareStatsDesc(statsPrep, characterInfo.rank)}`;
+	};
+
 	embed
 		.setTitle(titleCase(characterInfo.name))
 		.setDescription(
@@ -124,22 +140,11 @@ async function prepareCinfoDetails(
 				characterInfo.card_type_metadata || {}
 			)}\n**Element:** ${titleCase(characterInfo.type)} ${
 				elementTypeEmoji ? elementTypeEmoji : ""
-			}\n**Zone:** ${
-				location?.zone
-					? location.zone
-					: characterInfo.series.includes("event")
-						? "Event"
-						: "None"
-			}\n**Floors:** ${
-				location?.floors && location.floors.length > 0
-					? location.floors.map((i) => i).join(", ")
-					: characterInfo.series.includes("event")
-						? "Event"
-						: "None"
-			}\n**Rank:** ${titleCase(characterInfo.rank)}\n${prepareStatsDesc(
-				statsPrep,
-				characterInfo.rank
-			)}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
+			}\n**Rank:** ${titleCase(characterInfo.rank)}${
+				characterInfo.card_type_metadata?.isDarkZone
+					? ""
+					: prepareCardInfoDesc()
+			}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
 				characterInfo.averageMarketPrice
 					? `__${numericWithComma(characterInfo.averageMarketPrice)}__ Gold ${
 						emoji.gold

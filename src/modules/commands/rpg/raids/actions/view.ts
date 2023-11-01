@@ -4,11 +4,10 @@ import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { BaseProps } from "@customTypes/command";
 import { RaidActionProps, RaidProps } from "@customTypes/raids";
 import { getRPGUser } from "api/controllers/UsersController";
-import Cache from "cache";
 import { Canvas } from "canvas";
 import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
-import { Client, Message } from "discord.js";
+import { Client } from "discord.js";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { CONSOLE_BUTTONS } from "helpers/constants/constants";
 import loggers from "loggers";
@@ -105,7 +104,6 @@ export const viewRaid = async ({ context, client, options, isEvent }: RaidAction
 export const prepareRaidViewEmbed = async ({
 	isEvent,
 	currentRaid,
-	client,
 	author,
 	channel
 }: {

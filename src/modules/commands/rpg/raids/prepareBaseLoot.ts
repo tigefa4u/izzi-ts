@@ -19,8 +19,8 @@ import { crates } from "./crateLoot";
 // }
 
 export type LevelAndPLBonusDropRateProps = {
-	[key: string]: number;
-}
+  [key: string]: number;
+};
 export const levelBonusDropRate: LevelAndPLBonusDropRateProps = {
 	25: 5,
 	50: 8,
@@ -30,9 +30,18 @@ export const levelBonusDropRate: LevelAndPLBonusDropRateProps = {
 	150: 20,
 };
 
+export const levelBonusForFragments: LevelAndPLBonusDropRateProps = {
+	25: 10,
+	50: 15,
+	75: 20,
+	100: 25,
+	125: 30,
+	150: 40
+};
+
 export const PLBonusDropRate: LevelAndPLBonusDropRateProps = {
-	3000: .37,
-	5000: .82,
+	3000: 0.37,
+	5000: 0.82,
 	8000: 1.04,
 	12000: 1.39,
 	15000: 1.74,
@@ -44,77 +53,90 @@ export const PLBonusDropRate: LevelAndPLBonusDropRateProps = {
 	38000: 6,
 	55000: 10.35,
 	60000: 25,
-	100000: 50
+	100000: 50,
 };
 
 export type ComputedCategoryProps = {
-	[key in "d3" | "d2" | "d1"]: {
-		maxlevel: number;
-		ranks: RankProps[];
-		numberOfCards: {
-			[key in RankProps]?: {
-				cards: number;
-				rate: number;
-			};
-		}
-	}
-}
-export const computedCategoryData : ComputedCategoryProps = {
+  [key in "d3" | "d2" | "d1"]: {
+    maxlevel: number;
+    ranks: RankProps[];
+    numberOfCards: {
+      [key in RankProps]?: {
+        cards: number;
+        rate: number;
+      };
+    };
+  };
+};
+export const computedCategoryData: ComputedCategoryProps = {
 	d3: {
 		maxlevel: 1700,
-		ranks: [ ranksMeta.silver.name, ranksMeta.gold.name, ranksMeta.platinum.name ],
+		ranks: [
+			ranksMeta.silver.name,
+			ranksMeta.gold.name,
+			ranksMeta.platinum.name,
+		],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 3,
-				rate: 4
+				rate: 4,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 1.55
+				rate: 1.55,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: .05
-			}
-		}
+				rate: 0.05,
+			},
+		},
 	},
 	d2: {
 		maxlevel: 2000,
-		ranks: [ ranksMeta.diamond.name, ranksMeta.divine.name, ranksMeta.legend.name ],
+		ranks: [
+			ranksMeta.diamond.name,
+			ranksMeta.divine.name,
+			ranksMeta.legend.name,
+		],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 6,
-				rate: 7.35
+				rate: 7.35,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 2.15
+				rate: 2.15,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
-				rate: .1
-			}
-		}
+				rate: 0.1,
+			},
+		},
 	},
 	d1: {
 		maxlevel: 1800,
 		// spawning mythical boss in raids was too hard for players.
-		ranks: [ ranksMeta.immortal.name, ranksMeta.exclusive.name, ranksMeta.ultimate.name, ranksMeta.mythical.name ],
+		ranks: [
+			ranksMeta.immortal.name,
+			ranksMeta.exclusive.name,
+			ranksMeta.ultimate.name,
+			ranksMeta.mythical.name,
+		],
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 9,
-				rate: 12
+				rate: 12,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 3.65
+				rate: 3.65,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 6,
-				rate: .25
-			}
-		}
-	}
+				rate: 0.25,
+			},
+		},
+	},
 };
 
 const baseLoot = (): any => ({
@@ -150,24 +172,24 @@ const baseLoot = (): any => ({
 						rank: ranksMeta.immortal.name,
 						rank_id: ranksMeta.immortal.rank_id,
 						/**
-						 * Negative rate is used here as base rate
-						 * since the rate will gradually increase
-						 * when you add category and level rate
-						 */
+             * Negative rate is used here as base rate
+             * since the rate will gradually increase
+             * when you add category and level rate
+             */
 						rate: -8.75,
 						number: 1,
-					}
+					},
 				],
 				extraCards: [
 					{
 						rank: ranksMeta.mythical.name,
 						rank_id: ranksMeta.mythical.rank_id,
-						rate: .75,
+						rate: 0.75,
 						number: 1,
-						isStaticDropRate: true
-					}
-				]
-			}
+						isStaticDropRate: true,
+					},
+				],
+			},
 		},
 		event: {
 			level: [ 50, 100 ],
@@ -175,9 +197,18 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(17000, 19000),
 				extraGold: randomNumber(15000, 17000),
-				drop: { shard: randomNumber(10, 14), }
-			}
-		}
+				drop: { shard: randomNumber(10, 14) },
+			},
+		},
+		darkZone: {
+			level: [ 50, 100 ],
+			rank: [ "exclusive", "exclusive" ],
+			loot: {
+				gold: randomNumber(17000, 19000),
+				extraGold: randomNumber(15000, 17000),
+				drop: { fragments: randomNumber(30, 40) },
+			},
+		},
 	},
 	m: {
 		default: {
@@ -213,7 +244,7 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.immortal.rank_id,
 						rate: -4.5,
 						number: 1,
-					}
+					},
 				],
 				extraCards: [
 					{
@@ -221,10 +252,10 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.mythical.rank_id,
 						rate: 1.45,
 						number: 1,
-						isStaticDropRate: true
-					}
-				]
-			}
+						isStaticDropRate: true,
+					},
+				],
+			},
 		},
 		event: {
 			level: [ 100, 150 ],
@@ -235,9 +266,18 @@ const baseLoot = (): any => ({
 				drop: {
 					shard: randomNumber(15, 18),
 					orbs: randomNumber(2, 3),
-				}
-			}
-		}
+				},
+			},
+		},
+		darkZone: {
+			level: [ 100, 150 ],
+			rank: [ "exclusive", "exclusive" ],
+			loot: {
+				gold: randomNumber(20000, 23000),
+				extraGold: randomNumber(18000, 20000),
+				drop: { fragments: randomNumber(40, 50) },
+			},
+		},
 	},
 	h: {
 		default: {
@@ -259,7 +299,7 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.platinum.name,
 						rank_id: ranksMeta.platinum.rank_id,
-						number: 78
+						number: 78,
 					},
 				],
 				rare: [
@@ -267,14 +307,14 @@ const baseLoot = (): any => ({
 						rank: ranksMeta.divine.name,
 						rank_id: ranksMeta.divine.rank_id,
 						rate: 3,
-						number: 1 // depends on d3, d2, d1
+						number: 1, // depends on d3, d2, d1
 					},
 					{
 						rank: ranksMeta.immortal.name,
 						rank_id: ranksMeta.immortal.rank_id,
 						rate: -3.75,
 						number: 1,
-					}
+					},
 				],
 				extraCards: [
 					{
@@ -282,46 +322,50 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.mythical.rank_id,
 						rate: 2.15,
 						number: 1,
-						isStaticDropRate: true
-					}
+						isStaticDropRate: true,
+					},
 				],
 				worldBoss: {
 					// Per battle (50 mana) w 9x fodders
 					// you can get mythical cards from crates
 					gold: randomNumber(8000, 9000),
-					default: [ {
-						rank: ranksMeta.divine.name,
-						rank_id: ranksMeta.divine.rank_id,
-						number: 1,
-						rate: 15,
-						threshold: 2.5,
-						extraGold: randomNumber(8000, 9000),
-						souls: 5,
-						crates: crates.legendary,
-						crateDropRate: 5
-					}, {
-						rank: ranksMeta.immortal.name,
-						rank_id: ranksMeta.immortal.rank_id,
-						number: 1,
-						rate: 25,
-						threshold: 10,
-						extraGold: randomNumber(10000, 15000),
-						souls: 9,
-						crates: crates.legendary,
-						crateDropRate: 10
-					}, {
-						rank: ranksMeta.exclusive.name,
-						rank_id: ranksMeta.exclusive.rank_id,
-						number: 1,
-						rate: 25,
-						threshold: 18,
-						extraGold: randomNumber(15000, 20000),
-						souls: 15,
-						crates: crates.premium,
-						crateDropRate: 15
-					} ],
-				}
-			}
+					default: [
+						{
+							rank: ranksMeta.divine.name,
+							rank_id: ranksMeta.divine.rank_id,
+							number: 1,
+							rate: 15,
+							threshold: 2.5,
+							extraGold: randomNumber(8000, 9000),
+							souls: 5,
+							crates: crates.legendary,
+							crateDropRate: 5,
+						},
+						{
+							rank: ranksMeta.immortal.name,
+							rank_id: ranksMeta.immortal.rank_id,
+							number: 1,
+							rate: 25,
+							threshold: 10,
+							extraGold: randomNumber(10000, 15000),
+							souls: 9,
+							crates: crates.legendary,
+							crateDropRate: 10,
+						},
+						{
+							rank: ranksMeta.exclusive.name,
+							rank_id: ranksMeta.exclusive.rank_id,
+							number: 1,
+							rate: 25,
+							threshold: 18,
+							extraGold: randomNumber(15000, 20000),
+							souls: 15,
+							crates: crates.premium,
+							crateDropRate: 15,
+						},
+					],
+				},
+			},
 		},
 		event: {
 			level: [ 160, 200 ],
@@ -332,9 +376,18 @@ const baseLoot = (): any => ({
 				drop: {
 					shard: randomNumber(20, 32),
 					orbs: randomNumber(3, 4),
-				}
-			}
-		}
+				},
+			},
+		},
+		darkZone: {
+			level: [ 160, 200 ],
+			rank: [ "exclusive", "exclusive" ],
+			loot: {
+				gold: randomNumber(25000, 27000),
+				extraGold: randomNumber(23000, 25000),
+				drop: { fragments: randomNumber(50, 60) },
+			},
+		},
 	},
 	i: {
 		default: {
@@ -355,8 +408,8 @@ const baseLoot = (): any => ({
 					{
 						rank: ranksMeta.platinum.name,
 						rank_id: ranksMeta.platinum.rank_id,
-						number: 90
-					}
+						number: 90,
+					},
 				],
 				// number of cards depend on category
 				rare: [
@@ -371,7 +424,7 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.immortal.rank_id,
 						rate: -3.15,
 						number: 1,
-					}
+					},
 				],
 				extraCards: [
 					{
@@ -379,10 +432,10 @@ const baseLoot = (): any => ({
 						rank_id: ranksMeta.mythical.rank_id,
 						rate: 2.85,
 						number: 1,
-						isStaticDropRate: true
-					}
+						isStaticDropRate: true,
+					},
 				],
-			}
+			},
 		},
 		event: {
 			level: [ 200, 250 ],
@@ -393,9 +446,24 @@ const baseLoot = (): any => ({
 				drop: {
 					shard: randomNumber(27, 40),
 					orbs: randomNumber(3, 5),
-				}
-			}
-		}
+				},
+			},
+		},
+		darkZone: {
+			// the ranks is computed by categories in 'default' prop
+			level: [ 200, 250 ],
+			rank: [
+				ranksMeta.exclusive.name,
+				ranksMeta.ultimate.name,
+				ranksMeta.mythical.name,
+				ranksMeta.immortal.name,
+			],
+			loot: {
+				gold: randomNumber(29000, 31000),
+				extraGold: randomNumber(27000, 29000),
+				drop: { fragments: randomNumber(60, 70) },
+			},
+		},
 	},
 });
 

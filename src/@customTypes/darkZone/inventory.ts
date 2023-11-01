@@ -22,6 +22,8 @@ export type DarkZoneInventoryProps = {
     is_deleted: boolean;
     created_at: Date;
     updated_at: Date;
+    row_number?: number;
+    name?: string;
 };
 
 export type DarkZoneInvUpdateProps = Partial<DarkZoneInventoryProps>;
@@ -43,3 +45,10 @@ export type DzInventoryParams = {
     is_tradable?: boolean;
     is_on_market?: boolean;
   };
+
+export type DzInventoryReturnType = DarkZoneInventoryProps & {
+    abilityname: string;
+    abilitydescription: string;
+    name: string;
+    type: string;
+}

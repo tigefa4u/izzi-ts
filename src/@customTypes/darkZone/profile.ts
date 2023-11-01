@@ -1,9 +1,16 @@
-import { CardMetadataAssetProps } from "@customTypes/cards";
+import { CardMetadataProps } from "@customTypes/cards";
+import { RankProps } from "helpers/helperTypes";
 
 export type DarkZoneProfileMetadataProps = {
     username?: string;
     showcase?: {
         selected_card_id: number;
+        character_id: number;
+        name: string;
+        rank: RankProps;
+        filepath: string;
+        type: string;
+        metadata: CardMetadataProps;
     }
 }
 export type DarkZoneProfileProps = {
@@ -22,9 +29,10 @@ export type DarkZoneProfileProps = {
   created_at: string;
   updated_at: string;
   inventory_count: number; // Keeps track of inv, easy query access
+  user_id: number;
 };
 
-type PropsWOmit = Pick<DarkZoneProfileProps, "user_tag" | "inventory_count" | "metadata">;
+type PropsWOmit = Pick<DarkZoneProfileProps, "user_tag" | "inventory_count" | "metadata" | "user_id">;
 export type CreateDarkZoneProfileProps = PropsWOmit | PropsWOmit[];
 
 export type UpdateDarkZoneProfileProps = Partial<DarkZoneProfileProps>;

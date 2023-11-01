@@ -2,11 +2,15 @@ import { DzFuncProps } from "@customTypes/darkZone";
 import { DarkZoneProfileProps } from "@customTypes/darkZone/profile";
 import { getDarkZoneProfile } from "api/controllers/DarkZoneController";
 import { getRPGUser } from "api/controllers/UsersController";
+import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import { EmbedFieldData } from "discord.js";
 import emoji from "emojis/emoji";
 import { getIdFromMentionedString, numericWithComma } from "helpers";
+import { createSingleCanvas } from "helpers/canvas";
+import { DZ_INVENTORY_SLOTS_PER_LEVEL, DZ_STARTER_INVENTORY_SLOTS } from "helpers/constants/darkZone";
 import loggers from "loggers";
+import { titleCase } from "title-case";
 import { DATE_OPTIONS } from "utility";
 
 export const viewDzProfile = async ({
@@ -41,6 +45,9 @@ export const viewDzProfile = async ({
 			);
 			return;
 		}
+		const showcase = dzUser.metadata?.showcase;
+		const maxSlots = (dzUser.level * DZ_INVENTORY_SLOTS_PER_LEVEL) + 
+			(DZ_STARTER_INVENTORY_SLOTS - DZ_INVENTORY_SLOTS_PER_LEVEL);
 		const fields: EmbedFieldData[] = [
 			{
 				name: `${user.is_premium ? emoji.premium : ""} Profile`,
@@ -53,9 +60,14 @@ export const viewDzProfile = async ({
 				inline: true,
 			},
 			{
-				name: `${emoji.crossedswords} Level / Inventory Slots`,
+				name: `${emoji.crossedswords} Level`,
 				value: numericWithComma(dzUser.level),
 				inline: true,
+			},
+			{
+				name: `${emoji.crossedswords} Inventory Slots Available`,
+				value: `[${numericWithComma(dzUser.inventory_count)} / ${numericWithComma(maxSlots)}]`,
+				inline: true
 			},
 			{
 				name: `${emoji.manaic} Mana`,
@@ -92,7 +104,7 @@ export const viewDzProfile = async ({
 			},
 			{
 				name: `${emoji.dagger} Showcase Card`,
-				value: "None",
+				value: showcase?.name ? titleCase(showcase.name) : "None",
 				inline: true,
 			},
 		];
@@ -117,6 +129,22 @@ export const viewDzProfile = async ({
 				iconURL: discordUser.displayAvatarURL(),
 				text: `User ID: ${discordUser.id}`,
 			});
+
+		
+		if (showcase) {
+			const canvas = await createSingleCanvas({
+				type: showcase.type,
+				rank: showcase.rank,
+				filepath: showcase.filepath,
+				metadata: showcase.metadata
+			}, false, "medium");
+
+			if (canvas) {
+				const attachment = createAttachment(canvas.createJPEGStream(), "card.jpg");
+				embed.attachFiles([ attachment ])
+					.setImage("attachment://card.jpg");
+			}
+		}
 
 		context.channel?.sendMessage(embed);
 		return;

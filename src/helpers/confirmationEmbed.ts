@@ -4,7 +4,8 @@ import { Client } from "discord.js";
 
 export const createConfirmationEmbed = (author: AuthorProps, client: Client) => {
 	const embed = createEmbed(author, client)
-		.setTitle("Confirmation :exclamation:");
+		.setTitle("Confirmation :exclamation:")
+		.setHideConsoleButtons(true);
 
 	return embed;
 };

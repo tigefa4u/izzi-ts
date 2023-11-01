@@ -1,4 +1,8 @@
-import { CreateDarkZoneInvProps, DarkZoneInventoryProps, DzInventoryParams } from "@customTypes/darkZone/inventory";
+import {
+	CreateDarkZoneInvProps,
+	DarkZoneInventoryProps,
+	DzInventoryParams,
+} from "@customTypes/darkZone/inventory";
 import { PaginationProps } from "@customTypes/pagination";
 import { SortProps } from "@customTypes/sorting";
 import { RawUpdateReturnType } from "@customTypes/utility";
@@ -7,11 +11,12 @@ import { safeParseQueryParams } from "helpers/transformation";
 import { clone } from "utility";
 
 const tableName = "dark_zone_collections";
+const characters = "characters";
 const transformation = {
 	id: { type: "number" },
 	userTag: {
 		type: "string",
-		columnName: "user_tag"
+		columnName: "user_tag",
 	},
 	characterId: {
 		type: "number",
@@ -78,7 +83,7 @@ const collArr = [
 	"character_level",
 	"stats",
 	"is_on_market",
-	"created_at"
+	"created_at",
 ];
 
 export const getAll = async function (
@@ -127,6 +132,8 @@ export const getAll = async function (
 				${tableName}.is_tradable,
 				${tableName}.character_level,
 				${tableName}.metadata,
+				${tableName}.stats,
+				count(1) over() as total_count,
 				row_number() over(order by rank_id desc, id 
 					asc)`
 				// ${sort ? sort.sortOrder : "desc"}
@@ -136,9 +143,7 @@ export const getAll = async function (
 		.where(queryParams)
 		.as(alias);
 
-	query = db
-		.select(db.raw(`${alias}.*`))
-		.from(query);
+	query = db.select(db.raw(`${alias}.*`)).from(query);
 	// .orderBy(`${alias}.rank_id`, "desc");
 
 	if (character_ids) {
@@ -162,26 +167,31 @@ export const getAll = async function (
 	return query;
 };
 
-
 export const update = async (
-	user_tag: string,
+	params: { user_tag?: string; id?: number | number[]; },
 	data: Partial<DarkZoneInventoryProps>
-): Promise<DarkZoneInventoryProps[]> =>
-	connection(tableName)
-		.where({
-			user_tag,
-			is_deleted: false,
-		})
+): Promise<DarkZoneInventoryProps[]> => {
+	let query = connection(tableName)
+		.where({ is_deleted: false, })
 		.update(data)
 		.returning(collArr);
 
+	if (typeof params.id === "number") {
+		query = query.where("id", params.id);
+	} else if (typeof params.id === "object") {
+		query = query.whereIn("id", params.id);
+	}
+
+	return query;
+};
+
 export const rawUpdate = async (
-	user_tag: string,
+	params: { user_tag?: string; id?: number },
 	data: RawUpdateReturnType<Partial<DarkZoneInventoryProps>>
 ): Promise<DarkZoneInventoryProps[]> => {
 	return connection(tableName)
 		.where({
-			user_tag,
+			...params,
 			is_deleted: false,
 		})
 		.update(data)
@@ -192,17 +202,79 @@ export const create = async (data: CreateDarkZoneInvProps) => {
 	return connection(tableName).insert(data);
 };
 
-export const getById = async (id: number | number[], user_tag?: string): Promise<DarkZoneInventoryProps[]> => {
-	let query = connection.select(collArr).from(tableName);
+export const getById = async (params: {
+	id: number | number[];
+	user_tag?: string;
+	is_on_market?: boolean;
+}): Promise<DarkZoneInventoryProps[]> => {
+	let query = connection
+		.select(
+			connection.raw(`${characters}.name, ${tableName}.id,
+			${tableName}.character_id,
+			${tableName}.user_tag,
+			${tableName}.rank,
+			${tableName}.is_on_market,
+			${tableName}.exp,
+			${tableName}.r_exp,
+			${tableName}.rank_id,
+			${tableName}.is_favorite,
+			${tableName}.skin_id,
+			${tableName}.is_tradable,
+			${tableName}.character_level,
+			${tableName}.metadata,
+			${tableName}.stats`)
+		)
+		.leftJoin(characters, `${tableName}.character_id`, `${characters}.id`)
+		.from(tableName);
 
-	if (typeof id === "number") {
-		query = query.where("id", id);
-	} else if (typeof id === "object") {
-		query = query.whereIn("id", id);
+	if (typeof params.id === "number") {
+		query = query.where(`${tableName}.id`, params.id);
+	} else if (typeof params.id === "object") {
+		query = query.whereIn(`${tableName}.id`, params.id);
 	}
 
-	if (user_tag) {
-		query = query.where({ user_tag });
+	if (params.user_tag) {
+		query = query.where({ user_tag: params.user_tag });
+	}
+	if (typeof params.is_on_market === "boolean") {
+		query = query.where({ is_on_market: params.is_on_market });
+	}
+
+	return query;
+};
+
+export const getByRowNumber = async (params: {
+  row_number: number;
+  user_tag: string;
+  exclude_ids?: number[];
+  is_on_cooldown?: boolean;
+  sort?: SortProps;
+  is_on_market?: boolean;
+  is_tradable?: boolean;
+}): Promise<DarkZoneInventoryProps[]> => {
+	const sort = params.sort || {
+		sortBy: "id",
+		sortOrder: "desc",
+	};
+	const db = connection;
+	let query = db
+		.select(collArr)
+		.from(tableName)
+		.where(`${tableName}.user_tag`, params.user_tag)
+		.orderBy("rank_id", "desc")
+		.orderBy("id", "asc")
+		.offset(params.row_number - 1)
+		.limit(1);
+
+	if (params.exclude_ids) {
+		query = query.whereNotIn(`${tableName}.id`, params.exclude_ids);
+	}
+
+	if (typeof params.is_on_market === "boolean") {
+		query = query.where(`${tableName}.is_on_market`, params.is_on_market);
+	}
+	if (typeof params.is_tradable === "boolean") {
+		query = query.where(`${tableName}.is_tradable`, params.is_tradable);
 	}
 
 	return query;

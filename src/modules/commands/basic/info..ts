@@ -1,5 +1,5 @@
 import { BaseProps } from "@customTypes/command";
-import { getDonation } from "api/controllers/DonationsController";
+import { getTotalDonations } from "api/controllers/DonationsController";
 import { getMonthlyCard } from "api/controllers/MonthlyCardsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createAttachment } from "commons/attachments";
@@ -9,7 +9,6 @@ import {
 	BOT_VOTE_LINK,
 	IZZI_WEBSITE,
 	OFFICIAL_SERVER_LINK,
-	XENEX_VOTE_LINK,
 } from "environment";
 import { DONATOR_PERKS_MESSAGE } from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
@@ -136,17 +135,15 @@ export const donate = async ({
 			)
 			.setDescription(command.description);
 
-		const donation = (await getDonation(options.author.id)) || [];
-		if (donation?.length > 0) {
-			const total = donation.reduce((acc, r) => acc + r.amount, 0);
-			const [ str1, str2 ] = command.description.split("! [");
-			const newEmbed = createEmbed(options.author, client).setDescription(
-				`${str1}! You have spent a total of __$${total.toFixed(
-					2
-				)}__ so far.${DONATOR_PERKS_MESSAGE}`
-			);
-			DMUser(client, newEmbed, options.author.id);
-		}
+		const donation = await getTotalDonations(options.author.id);
+		const total = donation?.sum || 0;
+		const [ str1, str2 ] = command.description.split("! [");
+		const newEmbed = createEmbed(options.author, client).setDescription(
+			`${str1}! You have spent a total of __$${total.toFixed(
+				2
+			)}__ so far.${DONATOR_PERKS_MESSAGE}`
+		);
+		DMUser(client, newEmbed, options.author.id);
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

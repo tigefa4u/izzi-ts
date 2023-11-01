@@ -125,7 +125,7 @@ export function prepareRaidBossEmbedDesc(
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 
 	const desc = `**Level ${stats.battle_stats.boss_level} ${
-		isWorldBoss ? "World" : isEvent ? "Event" : "Raid"
+		raid.is_dark_zone ? "Dark Zone" : isWorldBoss ? "World" : isEvent ? "Event" : "Raid"
 	} Boss [${
 		isWorldBoss ? "Global" : raid.is_private ? "Private" : "Public"
 	}]**\n**${numericWithComma(stats.remaining_strength)} / ${numericWithComma(
@@ -154,7 +154,7 @@ export function prepareRaidBossEmbedDesc(
 		stats.battle_stats.stats.intelligence
 	)}\n\n**Power Level:** ${numericWithComma(
 		stats.battle_stats.power_level
-	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent)}`;
+	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent, raid.is_dark_zone)}`;
 
 	return desc;
 }
@@ -169,18 +169,22 @@ function prepareFakeHp(stats: RaidStatsProps) {
 function prepareLoot(
 	boss: CollectionCardInfoProps[],
 	loot: RaidLootProps,
-	isEvent = false
+	isEvent = false,
+	isDarkZone = false
 ) {
-	let eventDesc = "";
+	let extraDesc = "";
 
 	if (isEvent) {
-		eventDesc =
+		extraDesc =
       `__${loot.drop.event?.shard}__ Shards ${emoji.shard}` +
       `${
       	loot.drop.event?.orbs
       		? `\n__${loot.drop.event.orbs}__ Orbs ${emoji.blueorb}`
       		: ""
       }`;
+	}
+	if (isDarkZone) {
+		extraDesc = `__${loot.drop.darkZone?.fragments}x__ Fragments ${emoji.fragments}`;
 	}
 
 	const desc = `**__${
@@ -189,7 +193,7 @@ function prepareLoot(
 		emoji.gold
 	}${
 		loot.gamePoints ? `\n__${loot.gamePoints}x__ Game Points :game_die:` : ""
-	}\n${eventDesc}${
+	}\n${extraDesc}${
 		loot.drop && loot.drop.default && !isEmptyObject(loot.drop.default)
 			? loot.drop.default
 				.map(

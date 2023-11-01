@@ -123,14 +123,14 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 			),
 		]);
 		context.channel?.sendMessage(
-			`Successfully transfered __${numericWithComma(transferAmount)}__ Gold ${
+			`Successfully transferred __${numericWithComma(transferAmount)}__ Gold ${
 				emoji.gold
 			} to **${mentionedUser.username}**`
 		);
 
 		const msg = `Server: ${context.guild?.name || "Unknown"} (${
 			context.guild?.id || "Unknown"
-		}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
+		}) ${author.username} (${author.id}) transferred __${numericWithComma(transferAmount)}__ ` +
 					`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
 						"en-us",
 						DATE_OPTIONS
@@ -146,7 +146,7 @@ export const give = async ({ context, client, options, args }: BaseProps) => {
 		// 	logChannel.sendMessage(
 		// 		`Server: ${context.guild?.name || "Unknown"} (${
 		// 			context.guild?.id || "Unknown"
-		// 		}) ${author.username} (${author.id}) Transfered __${numericWithComma(transferAmount)}__ ` +
+		// 		}) ${author.username} (${author.id}) transferred __${numericWithComma(transferAmount)}__ ` +
 		// 		`Gold ${emoji.gold} to ${mentionedUser.username} (${mentionedId}). ${new Date().toLocaleDateString(
 		// 			"en-us",
 		// 			DATE_OPTIONS

@@ -90,7 +90,7 @@ export const giveFragments = async ({
 			}
 		});
 
-		context.channel?.sendMessage(`Successfully transfered ${numericWithComma(amount)} ` +
+		context.channel?.sendMessage(`Successfully transferred ${numericWithComma(amount)} ` +
         `Fragments ${emoji.fragments} to **${mentionedUser.metadata?.username}**`);
 		return;
 	} catch (err) {

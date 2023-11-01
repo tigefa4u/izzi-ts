@@ -177,7 +177,7 @@ const commandMap: CommandMapProps = {
 	gifts: giftPartner,
 	badge: badge,
 	gacha: gachaPacks,
-	// darkzone: invokeDarkZone
+	darkzone: invokeDarkZone
 	// spbt: spbt, // removed
 	// sort: sort, // removed
 };

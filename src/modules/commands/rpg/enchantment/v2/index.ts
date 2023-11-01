@@ -2,7 +2,6 @@ import { ConfirmationInteractionOptions, ConfirmationInteractionParams, FilterPr
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { BaseProps } from "@customTypes/command";
 import { ComputedReturnType, EnchantmentAccumulatorPropsV2 } from "@customTypes/enchantment";
-import { getCharacterInfo } from "api/controllers/CharactersController";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import { consumeFodders, updateCollection, verifyCollectionsById } from "api/controllers/CollectionsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";

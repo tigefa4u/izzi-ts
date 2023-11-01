@@ -1,6 +1,8 @@
 import { AuthorProps } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { updateCollection } from "api/controllers/CollectionsController";
+import { updateDzInv } from "api/controllers/DarkZoneInventoryController";
+import { delDzMarketCard } from "api/controllers/DarkZoneMarketsController";
 import { delFromMarket } from "api/controllers/MarketsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -14,7 +16,8 @@ export const removeCardFromMarket = async ({
 	client,
 	args,
 	author,
-}: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
+	isDarkZone
+}: Omit<BaseProps, "options"> & { author: AuthorProps; isDarkZone?: boolean; }) => {
 	try {
 		const id = Number(args.shift());
 		if (!id || isNaN(id)) return;
@@ -25,25 +28,45 @@ export const removeCardFromMarket = async ({
 			context.channel,
 			client,
 			user.id,
-			{ notFoundError: true }
+			{
+				notFoundError: true,
+				isDarkZone,
+				user_tag: author.id 
+			}
 		);
 		const embed = createEmbed(author).setTitle(DEFAULT_ERROR_TITLE);
-		if (marketCard?.user_id !== user.id) {
+		let condition = marketCard?.user_id !== user.id;
+		if (isDarkZone) {
+			condition = marketCard?.user_tag !== author.id;
+		}
+		if (condition) {
 			embed.setDescription("This card does not belong to you!");
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		await delFromMarket({ id: marketCard.id });
-		await updateCollection(
-			{ id: marketCard.collection_id },
-			{ is_on_market: false }
-		);
+		if (isDarkZone) {
+			await Promise.all([
+				delDzMarketCard(marketCard.id),
+				updateDzInv({
+					id: marketCard.collection_id,
+					user_tag: author.id 
+				}, { is_on_market: false })
+			]);
+		} else {
+			await Promise.all([
+				delFromMarket({ id: marketCard.id }),
+				updateCollection(
+					{ id: marketCard.collection_id },
+					{ is_on_market: false }
+				)
+			]);
+		}
 
 		const desc = `You have successfully removed __${titleCase(
 			marketCard.rank
 		)}__ **Level ${marketCard.character_level} ${titleCase(
 			marketCard.name
-		)}** from the Global Market`;
+		)}** from the ${isDarkZone ? "Dark Zone" : "Global"} Market`;
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setThumbnail(marketCard.metadata?.assets?.small.filepath || marketCard.filepath)
 			.setDescription(desc);

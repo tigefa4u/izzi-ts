@@ -1,4 +1,5 @@
 import { RaidActionProps } from "@customTypes/raids";
+import { getDarkZoneProfile } from "api/controllers/DarkZoneController";
 import {
 	getRaid,
 	getUserRaidLobby,
@@ -99,6 +100,17 @@ export const joinRaid = async ({
 			);
 			context.channel?.sendMessage(embed);
 			return;
+		}
+		if (raid.is_dark_zone) {
+			const dzUser = await getDarkZoneProfile({ user_tag: author.id });
+			if (!dzUser) {
+				embed.setDescription(
+					"You must have a Dark Zone profile to join a Dark Zone raid. " +
+					"Type `iz dz start`"
+				);
+				context.channel?.sendMessage(embed);
+				return;
+			}
 		}
 		Object.assign(lobby, {
 			...prepareInitialLobbyMember(

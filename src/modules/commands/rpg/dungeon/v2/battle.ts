@@ -1,25 +1,31 @@
-import { BattleStats } from "@customTypes/adventure";
 import { BaseProps } from "@customTypes/command";
 import { DungeonBanProps } from "@customTypes/dungeon";
 import { TeamProps } from "@customTypes/teams";
 import { UserRankProps } from "@customTypes/userRanks";
 import { getCollectionById } from "api/controllers/CollectionInfoController";
-import { getDGTeam, getRandomDGOpponent, updateDGTeam } from "api/controllers/DungeonsController";
-import { getGuildMember } from "api/controllers/GuildMembersController";
-import { getGuild } from "api/controllers/GuildsController";
+import { getDGTeam, updateDGTeam } from "api/controllers/DungeonsController";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
-import { createUserRank, getUserRank } from "api/controllers/UserRanksController";
+import {
+	createUserRank,
+	getUserRank,
+} from "api/controllers/UserRanksController";
 import { getRPGUser } from "api/controllers/UsersController";
 import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import transaction from "db/transaction";
 import { emojiMap } from "emojis";
 import { addTeamEffectiveness } from "helpers/adventure";
-import { refetchAndUpdateUserMana, validateFiveMinuteTimer } from "helpers/battle";
+import { validateFiveMinuteTimer } from "helpers/battle";
 import {
-	BATTLE_TYPES, DEFAULT_ERROR_TITLE, DUNGEON_DEFAULTS, DUNGEON_MANA_PER_BATTLE, DUNGEON_MIN_LEVEL 
+	DEFAULT_ERROR_TITLE,
+	DUNGEON_DEFAULTS,
+	DUNGEON_MANA_PER_BATTLE,
+	DUNGEON_MIN_LEVEL,
 } from "helpers/constants/constants";
-import { prepareSkewedCollectionsForBattle, prepareTeamForBattle } from "helpers/teams";
+import {
+	prepareSkewedCollectionsForBattle,
+	prepareTeamForBattle,
+} from "helpers/teams";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
 import { clone, groupByKey } from "utility";
@@ -30,12 +36,16 @@ import * as battlesInChannel from "../../adventure/battle/battlesPerChannelState
 import { processBattleOutcome } from "./rewards";
 
 // dungeon V2
-const spawnDGBoss = async (userRank?: UserRankProps) => {
-	const dungeonBoss = await prepareDungeonBoss(userRank);
+export const spawnDGBoss = async (
+	userRank?: UserRankProps,
+	name = "XeneX's Dungeon Boss [BOT]",
+	numberOfBosses = 3
+) => {
+	const dungeonBoss = await prepareDungeonBoss(userRank, numberOfBosses);
 	const enemyStats = await prepareSkewedCollectionsForBattle({
 		collections: dungeonBoss,
 		id: "Dungeon Boss",
-		name: "XeneX's Dungeon Boss [BOT]"
+		name,
 	});
 	enemyStats.isBot = true;
 	return enemyStats;
@@ -44,7 +54,7 @@ const spawnDGBoss = async (userRank?: UserRankProps) => {
 export const dungeonBattle = async (params: BaseProps) => {
 	return battleConfirmationInteraction({
 		...params,
-		invokeFunc: invokeDungeonBattle
+		invokeFunc: invokeDungeonBattle,
 	});
 };
 
@@ -52,12 +62,16 @@ const dedupItems = (playerStats: any) => {
 	const result = clone(playerStats);
 	const validCards = result.cards.filter((c: any) => typeof c === "object");
 	const itemsEquipped = groupByKey(validCards, "item_id");
-	const duplicateItems = Object.keys(itemsEquipped).filter((k) => itemsEquipped[k].length > 1);
-	
+	const duplicateItems = Object.keys(itemsEquipped).filter(
+		(k) => itemsEquipped[k].length > 1
+	);
+
 	// duplicateItems will always either be of length 1 or 0 because only 3 items can be equipped.
 	if (duplicateItems.length > 0) {
 		const duplicateItemId = Number(duplicateItems[0]);
-		const idx = result.cards.findIndex((c: any) => c?.item_id === duplicateItemId);
+		const idx = result.cards.findIndex(
+			(c: any) => c?.item_id === duplicateItemId
+		);
 		if (idx >= 0) {
 			delete result.cards[idx]?.itemname;
 			delete result.cards[idx].item_id;
@@ -66,12 +80,16 @@ const dedupItems = (playerStats: any) => {
 	return result;
 };
 
-export const invokeDungeonBattle = async ({ context, options, client }: BaseProps) => {
+export const invokeDungeonBattle = async ({
+	context,
+	options,
+	client,
+}: BaseProps) => {
 	try {
 		const author = options.author;
 		const [ seasonEnd, bans ] = await Promise.all([
 			Cache.get("dg-season-end"),
-			Cache.get("dg-bans")
+			Cache.get("dg-bans"),
 		]);
 
 		let dungeonBans: DungeonBanProps = {};
@@ -90,24 +108,30 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		// 	);
 		// 	return;
 		// }
-		const battles = battlesInChannel.validateBattlesInChannel(context.channel?.id || "");
+		const battles = battlesInChannel.validateBattlesInChannel(
+			context.channel?.id || ""
+		);
 		if (battles === undefined) return;
 		const cdKey = "dungeon-battle";
 		let inBattle = await getCooldown(author.id, cdKey);
 		if (inBattle) {
 			await validateFiveMinuteTimer({
 				timestamp: inBattle.timestamp,
-				key: `cooldown::${cdKey}-${author.id}` 
+				key: `cooldown::${cdKey}-${author.id}`,
 			});
-			context.channel?.sendMessage("Your battle is still in progress, try again later");
+			context.channel?.sendMessage(
+				"Your battle is still in progress, try again later"
+			);
 			return;
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (user.level < DUNGEON_MIN_LEVEL) {
-			embed.setDescription(`You must be atleast **level __${DUNGEON_MIN_LEVEL}__** ` +
-			"to be able to participate in Dungeon Battles.");
+			embed.setDescription(
+				`You must be atleast **level __${DUNGEON_MIN_LEVEL}__** ` +
+          "to be able to participate in Dungeon Battles."
+			);
 			context.channel?.sendMessage(embed);
 			return;
 		}
@@ -121,7 +145,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		const [ _userRank, blackList, dgTeam ] = await Promise.all([
 			getUserRank({ user_tag: author.id }),
 			getUserBlacklist({ user_tag: author.id }),
-			getDGTeam(author.id)
+			getDGTeam(author.id),
 		]);
 		if (dgTeam && blackList && blackList.length > 0) {
 			// dgTeam.metadata.isValid = false;
@@ -129,34 +153,41 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				await updateDGTeam(author.id, {
 					metadata: {
 						...dgTeam.metadata,
-						isValid: false
-					}
+						isValid: false,
+					},
 				});
 			}
 			const warningEmbed = createEmbed(author, client)
-				.setTitle("Warning :warning:").setDescription(
+				.setTitle("Warning :warning:")
+				.setDescription(
 					"You have been blacklisted and cannot participate in DG Ranked Challenge. Please contact support."
 				);
 			context.channel?.sendMessage(warningEmbed);
 			return;
 		}
 		if (!dgTeam?.team) {
-			embed.setDescription(`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
-            "using ``iz dg create <name>``");
+			embed.setDescription(
+				`Summoner **${author.username}**, You do not have a DG Team! Create a DG Team ` +
+          "using ``iz dg create <name>``"
+			);
 
 			context.channel?.sendMessage(embed);
 			return;
 		} else if (!dgTeam.metadata.isValid) {
-			embed.setDescription(`Summoner **${author.username}**, Your DG Team is not ready to battle! ` +
-            "Use ``iz dg ready`` to participate in DG Battles!");
+			embed.setDescription(
+				`Summoner **${author.username}**, Your DG Team is not ready to battle! ` +
+          "Use ``iz dg ready`` to participate in DG Battles!"
+			);
 
 			context.channel?.sendMessage(embed);
-			return; 
+			return;
 		}
 		if (dungeonBans.itemBans || dungeonBans.abilityBans) {
 			// const collections = await getCollectionById({ ids: [] });
 			const bannedItems = (dungeonBans.itemBans || []).map((i) => i.name);
-			const bannedAbilities = (dungeonBans.abilityBans || []).map((i) => i.name);
+			const bannedAbilities = (dungeonBans.abilityBans || []).map(
+				(i) => i.name
+			);
 			let hasBannedAbilities = false;
 			if (dungeonBans.abilityBans) {
 				const cids: number[] = [];
@@ -165,10 +196,12 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				});
 				const collections = await getCollectionById({
 					ids: cids,
-					user_id: user.id 
+					user_id: user.id,
 				});
 				if (collections) {
-					const itemFound = collections.find((c) => bannedAbilities.includes(c.abilityname));
+					const itemFound = collections.find((c) =>
+						bannedAbilities.includes(c.abilityname)
+					);
 					if (itemFound) hasBannedAbilities = true;
 				}
 			}
@@ -182,13 +215,16 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				await updateDGTeam(author.id, {
 					metadata: {
 						...dgTeam.metadata,
-						isValid: false
-					}
+						isValid: false,
+					},
 				});
-				embed.setTitle(DEFAULT_ERROR_TITLE)
-					.setDescription(`Summoner **${author.username}**, Your DG Team has Banned Items or Abilities.` +
-				" Set a valid Team to Battle!\n\nUse ``iz dg bans`` to view all banned abilities and items.");
-	
+				embed
+					.setTitle(DEFAULT_ERROR_TITLE)
+					.setDescription(
+						`Summoner **${author.username}**, Your DG Team has Banned Items or Abilities.` +
+              " Set a valid Team to Battle!\n\nUse ``iz dg bans`` to view all banned abilities and items."
+					);
+
 				context.channel?.sendMessage(embed);
 				return;
 			}
@@ -204,7 +240,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				loss: DUNGEON_DEFAULTS.loss,
 				user_tag: author.id,
 				division: DUNGEON_DEFAULTS.division,
-				match_making_rate: 0
+				match_making_rate: 0,
 			});
 		}
 
@@ -213,15 +249,17 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			user_id: user.id,
 			id: author.id,
 			canAddGuildStats: true,
-			isDungeon: true
+			isDungeon: true,
 		});
 		if (!playerStats) {
-			embed.setDescription("You do not have a valid DG Team, Please reset your team using ``iz dg reset``");
+			embed.setDescription(
+				"You do not have a valid DG Team, Please reset your team using ``iz dg reset``"
+			);
 			await updateDGTeam(author.id, {
 				metadata: {
 					...dgTeam.metadata,
-					isValid: false
-				}
+					isValid: false,
+				},
 			});
 			context.channel?.sendMessage(embed);
 			return;
@@ -248,20 +286,17 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		// });
 
 		/**
-		 * If opponent doesn't exist the bot will spawn a boss
-		 */
+     * If opponent doesn't exist the bot will spawn a boss
+     */
 		// if (!randomOpponent) {
 		// spawn boss
 
-
 		/**
-		 * DG PvP was a failure. There are too many restrictions
-		 * to match players effectively. So stick to PvE
-		 */
+     * DG PvP was a failure. There are too many restrictions
+     * to match players effectively. So stick to PvE
+     */
 		const opponent = await spawnDGBoss(userRank);
 		opponent.isBot = true;
-
-
 
 		// embed.setDescription("We could not find other players in your rank. Please try again later");
 		// context.channel?.sendMessage(embed);
@@ -269,7 +304,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		// } else {
 		// 	const opponentUser = await getRPGUser({ user_tag: randomOpponent.user_tag }, { cached: true });
 		// 	if (!opponentUser) {
-		// 		loggers.info("dungeon.v2.battle.dungeonBattle: opponent user not found: " + 
+		// 		loggers.info("dungeon.v2.battle.dungeonBattle: opponent user not found: " +
 		//         randomOpponent);
 		// 		context.channel?.sendMessage("We could not prepare your opponent. Please contact support.");
 		// 		return;
@@ -285,7 +320,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		// 	});
 
 		// 	if (!opponent) {
-		// 		loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " + 
+		// 		loggers.info("dungeon.v2.battle.dungeonBattle: failed to create opponent team: " +
 		//         randomOpponent);
 		// 		await updateDGTeam(opponentUser.user_tag, {
 		// 			team: {
@@ -307,16 +342,20 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		// }
 
 		if (!playerStats || !opponent) {
-			context.channel?.sendMessage("We could not prepare your battle. Please contact support.");
+			context.channel?.sendMessage(
+				"We could not prepare your battle. Please contact support."
+			);
 			return;
 		}
 		playerStats.name = `Team ${author.username}`;
-		const playerTeamName = `${playerStats.name} ${emojiMap(userRank?.rank || "duke")}`;
+		const playerTeamName = `${playerStats.name} ${emojiMap(
+			userRank?.rank || "duke"
+		)}`;
 		const _effectiveness = addTeamEffectiveness({
 			cards: playerStats.cards,
 			enemyCards: opponent.cards,
 			playerStats: playerStats.totalStats,
-			opponentStats: opponent.totalStats 
+			opponentStats: opponent.totalStats,
 		});
 		playerStats.totalStats = _effectiveness.playerStats;
 		opponent.totalStats = _effectiveness.opponentStats;
@@ -329,7 +368,7 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 			enemyStats: opponent,
 			title: `__Dungeon Battle ${playerTeamName} vs ${opponent.name}__`,
 			isRaid: false,
-			options: { hideVisualBattle: false }
+			options: { hideVisualBattle: false },
 		});
 		clearCooldown(author.id, cdKey);
 
@@ -353,23 +392,32 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 		}
 		// update user dg mana
 		// await refetchAndUpdateUserMana(author.id, DUNGEON_MANA_PER_BATTLE, BATTLE_TYPES.DUNGEON);
-        
+
 		await transaction(async (trx) => {
 			try {
 				loggers.info("dungeon.v2.battle.dungeonBattle: transaction started...");
-				const updatedObj = await trx.raw(
-					`update users set dungeon_mana = dungeon_mana - ${DUNGEON_MANA_PER_BATTLE}
+				const updatedObj = await trx
+					.raw(
+						`update users set dungeon_mana = dungeon_mana - ${DUNGEON_MANA_PER_BATTLE}
                     where user_tag = '${author.id}' and is_banned = false returning *`
-				).then((res) => res.rows[0]);
+					)
+					.then((res) => res.rows[0]);
 				if (!updatedObj) {
-					embed.setTitle(DEFAULT_ERROR_TITLE)
+					embed
+						.setTitle(DEFAULT_ERROR_TITLE)
 						.setDescription("You do not have enough mana to battle!");
 
 					context.channel?.sendMessage(embed);
 					return trx.rollback();
 				}
-				loggers.info("Dungeon mana update successful for uid: " + author.id, updatedObj);
-				loggers.info("dungeon.v2.battle.dungeonBattle: battle outcome processing started... uid " + author.id);
+				loggers.info(
+					"Dungeon mana update successful for uid: " + author.id,
+					updatedObj
+				);
+				loggers.info(
+					"dungeon.v2.battle.dungeonBattle: battle outcome processing started... uid " +
+            author.id
+				);
 				if (!opponent) {
 					result.isBot = true;
 				}
@@ -384,7 +432,10 @@ export const invokeDungeonBattle = async ({ context, options, client }: BaseProp
 				loggers.info("battle outcome proessed for user: " + author.id);
 				return trx.commit();
 			} catch (err) {
-				loggers.error("dungeon.v2.battle.dungeonBattle: transaction FAILED", err);
+				loggers.error(
+					"dungeon.v2.battle.dungeonBattle: transaction FAILED",
+					err
+				);
 				return trx.rollback();
 			}
 		});

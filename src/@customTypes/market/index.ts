@@ -1,5 +1,5 @@
 import { CardProps } from "@customTypes/cards";
-import { CharacterDetailsProps } from "@customTypes/characters";
+import { CharacterDetailsProps, CharacterStatProps } from "@customTypes/characters";
 import { CollectionProps } from "@customTypes/collections";
 
 export type MarketProps = {
@@ -12,7 +12,10 @@ export type MarketProps = {
 export type IMarketProps = MarketProps &
   Pick<CharacterDetailsProps, "name" | "abilityname" | "type"> &
   Pick<CollectionProps, "rank" | "souls" | "character_level" | "rank_id" | "character_id"> &
-  Pick<CardProps, "filepath" | "metadata">;
+  Pick<CardProps, "filepath" | "metadata"> & {
+    user_tag: string;
+    stats: CharacterStatProps;
+  };
 
 export type MarketCreateProps = Omit<MarketProps, "id"> | Omit<MarketProps, "id">[];
 

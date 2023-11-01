@@ -1,7 +1,9 @@
+import { FilterProps } from "@customTypes";
 import { CardMetadataProps } from "@customTypes/cards";
 import { BaseProps } from "@customTypes/command";
 import { getCardInfoByRowNumber } from "api/controllers/CollectionInfoController";
 import { resetAllNicknames, updateCollection } from "api/controllers/CollectionsController";
+import { updateDzInv } from "api/controllers/DarkZoneInventoryController";
 import { createUserBlacklist, getUserBlacklist, updateUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -9,6 +11,7 @@ import emoji from "emojis/emoji";
 import { BANNED_TERMS, DEFAULT_ERROR_TITLE, MAX_CARD_NICKNAME_LENGTH } from "helpers/constants/constants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
+import { fetchParamsFromArgs } from "utility/forParams";
 import { getSortCache } from "../sorting/sortCache";
 
 export const nickname = async ({ context, client, args, options }: BaseProps) => {
@@ -16,6 +19,7 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 		const author = options.author;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+
 		if (args[0] === "reset") {
 			await resetAllNicknames(user.id);
 			context.channel?.sendMessage("Successfully reset all character nicknames " + emoji.celebration);
@@ -23,11 +27,22 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 		}
 		const rowid = Number(args.shift());
 		if (!rowid || isNaN(rowid) || rowid <= 0) return;
+		// DARK ZONE FILTER
+		// UGLY CODE
+		// const params = fetchParamsFromArgs<FilterProps>(args);
+		let isDarkZone = false;
+		const idx = args.findIndex((a) => a === "-dz");
+		if (idx >= 0) {
+			args.splice(idx, 1);
+			isDarkZone = true;
+		}
+
 		const sort = await getSortCache(author.id);
 		const rowData = await getCardInfoByRowNumber({
 			row_number: rowid,
 			user_id: user.id,
-			user_tag: author.id
+			user_tag: author.id,
+			isDarkZone: isDarkZone
 		}, sort);
 		if (!rowData || !rowData[0]) return;
 		const characterinfo = rowData[0];
@@ -76,12 +91,23 @@ export const nickname = async ({ context, client, args, options }: BaseProps) =>
 				}
 				return;
 			}
-			await updateCollection({ id: characterinfo.id }, { metadata: { nickname } });
+			if (isDarkZone) {
+				await updateDzInv({
+					id: characterinfo.id,
+					user_tag: author.id 
+				}, { metadata: { nickname } });
+			} else {
+				await updateCollection({ id: characterinfo.id }, { metadata: { nickname } });
+			}
 			context.channel?.sendMessage(`#${rowid} **${titleCase(characterinfo.name)}** ` +
             `will now be called **${titleCase(nickname)}**`);
 		} else {
 			if (characterinfo.metadata?.nickname) {
-				await updateCollection({ id: characterinfo.id }, { metadata: {} });
+				if (isDarkZone) {
+					await updateCollection({ id: characterinfo.id }, { metadata: {} });
+				} else {
+					await updateCollection({ id: characterinfo.id }, { metadata: {} });
+				}
 			}
 			context.channel?.sendMessage(`#${rowid} **${titleCase(characterinfo.name)}** ` +
             `will now be called **${titleCase(characterinfo.name)}**`);

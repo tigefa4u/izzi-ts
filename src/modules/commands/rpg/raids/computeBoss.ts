@@ -1,6 +1,6 @@
 import { MapProps } from "@customTypes";
 import { PrepareLootProps } from "@customTypes/raids";
-import { probability, randomElementFromArray } from "helpers";
+import { probability } from "helpers";
 import loggers from "loggers";
 import prepareBaseLoot, { computedCategoryData, ComputedCategoryProps } from "./prepareBaseLoot";
 
@@ -37,9 +37,10 @@ export const computeRank = (
 	difficulty = "e",
 	isEvent = false,
 	isWorldBoss = false,
-	level = 25
+	level = 25,
+	extras = { isDarkZone: false }
 ) => {
-	return prepareLoot(difficulty, isEvent, isWorldBoss, level);
+	return prepareLoot(difficulty, isEvent, isWorldBoss, level, extras);
 };
 
 type C = {
@@ -127,7 +128,8 @@ function prepareLoot(
 	difficulty = "e",
 	isEvent = false,
 	isWorldBoss = false,
-	level = 25
+	level = 25,
+	extras = { isDarkZone: false }
 ): PrepareLootProps | undefined {
 	const result = {
 		loot: {
@@ -159,6 +161,17 @@ function prepareLoot(
 		result.loot.drop.worldBoss = baseLoot[difficulty].default.loot.worldBoss;
 		result.rank = baseLoot[difficulty].default.rank;
 		result.level = baseLoot[difficulty].default.level;
+	} else if (extras.isDarkZone) {
+		const resp = computeBossByPlayerLevel(
+			level,
+			baseLoot[difficulty].default.categories,
+		);
+		result.bosses = 1;
+		result.loot.drop.darkZone = baseLoot[difficulty].darkZone.loot.drop;
+		result.level = [ resp.lowerLevel, resp.higherLevel ];
+		result.rank = baseLoot[difficulty].darkZone.rank;
+		result.loot.gold = baseLoot[difficulty].darkZone.loot.gold;
+		result.loot.extraGold = baseLoot[difficulty].darkZone.loot.extraGold;
 	} else {
 		const resp = computeBossByPlayerLevel(
 			level,

@@ -1,4 +1,4 @@
-import { ChannelProp, OverallStatsProps } from "@customTypes";
+import { OverallStatsProps } from "@customTypes";
 import { SingleCanvasReturnType } from "@customTypes/canvas";
 import { CardParams } from "@customTypes/cards";
 import { CollectionCardInfoProps } from "@customTypes/collections";
@@ -21,7 +21,7 @@ import { createAttachment } from "commons/attachments";
 import { createEmbed } from "commons/embeds";
 import emoji from "emojis/emoji";
 import { taskQueue } from "handlers/taskQueue/gcp";
-import { randomElementFromArray, randomNumber } from "helpers";
+import { randomNumber } from "helpers";
 import { createSingleCanvas, createBattleCanvas } from "helpers/canvas";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import {
@@ -60,6 +60,7 @@ import {
 	levelBonusDropRate,
 	LevelAndPLBonusDropRateProps,
 	PLBonusDropRate,
+	levelBonusForFragments,
 } from "../prepareBaseLoot";
 
 const spawnImmunity = [ "266457718942990337", "476049957904711682" ];
@@ -99,18 +100,26 @@ const calculateDropRateByBossLevelAndPL = (
 		category = "d1";
 	}
 	let rate = 0;
+	let bonusFragments = 0;
 	const levelPercent = (level / computedCategoryData[category].maxlevel) * 100;
 	const percentToLoop = Object.keys(levelBonusDropRate);
 	for (const percent of percentToLoop) {
+		const key = percent as keyof LevelAndPLBonusDropRateProps;
 		if (levelPercent <= +percent) {
 			rate = Number(
-				levelBonusDropRate[
-          percent as keyof LevelAndPLBonusDropRateProps
-				].toFixed(2)
+				levelBonusDropRate[key].toFixed(2)
+			);
+			bonusFragments = Number(
+				levelBonusForFragments[key].toFixed(2)
 			);
 			break;
 		}
 	}
+
+	if (bonusFragments > 0 && loot.drop.darkZone) {
+		loot.drop.darkZone.fragments = loot.drop.darkZone.fragments + bonusFragments;
+	}
+
 	loggers.info("spawn.calculateDropRateByBossLevel: bonus drop rate", rate);
 	if (rate > 0) {
 		loot.rare?.map((drop) => {
@@ -234,8 +243,10 @@ export const createRaidBoss = async ({
 	isPrivate,
 	character_id,
 	customSpawnParams = {},
+	darkZoneSpawn = false,
 }: C & {
   customSpawnParams?: CardParams;
+  darkZoneSpawn?: boolean;
 }) => {
 	const computedLevel = randomNumber(
 		computedBoss.level[0],
@@ -328,44 +339,6 @@ export const createRaidBoss = async ({
 			series: c.series,
 		} as CollectionCardInfoProps & { series?: string };
 	});
-	// const raidBosses = (await Promise.all(
-	// 	Array(computedBoss.bosses)
-	// 		.fill(0)
-	// 		.map(async (_, i) => {
-	// 			// if (isEvent) {
-	// 			// 	if (i === 0) {
-	// 			// 		params.group_id = computedBoss.group_id;
-	// 			// 	} else if (i === 1) {
-	// 			// 		params.group_with = computedBoss.group_id;
-	// 			// 	}
-	// 			// }
-
-	// 			// Raid Pity system - spawn a raid from wishlist
-	// 			if (character_id && character_id.length > 0 && character_id[i]) {
-	// 				params.character_id = character_id[i];
-	// 			}
-	// 			const card = await getRandomCard(params, 1);
-	// 			if (!card || card.length <= 0) {
-	// 				return;
-	// 			}
-	// 			const raidBoss = card[0];
-	// 			raidBoss.character_level = Math.floor(computedLevel / computedBoss.bosses);
-	// 			return {
-	// 				...raidBoss,
-	// 				copies: 1,
-	// 				user_id: 0,
-	// 				is_on_market: false,
-	// 				is_item: false,
-	// 				item_id: 0,
-	// 				exp: 1,
-	// 				r_exp: 1,
-	// 				souls: 1,
-	// 				rank_id: 0,
-	// 				is_on_cooldown: false,
-	// 				is_tradable: true,
-	// 			};
-	// 		})
-	// )) as CollectionCardInfoProps[];
 
 	const { raidStats, computedLoot } = await computeRaidBossStats({
 		raidBosses,
@@ -382,6 +355,7 @@ export const createRaidBoss = async ({
 		filter_data: `${raidBosses.map(
 			(b) => `${b.name}, ${b.rank}, ${b.type}, ${b.series}, ${b.abilityname}`
 		)}, ${raidStats.difficulty.toLowerCase()}`,
+		is_dark_zone: darkZoneSpawn
 	});
 	loggers.info("Created Raid with data -> ", raid);
 	return {
@@ -441,6 +415,7 @@ export const spawnRaid = async ({
 	external_character_ids,
 	customSpawn,
 	customSpawnParams,
+	darkZoneSpawn = false,
 	cb,
 }: RaidActionProps & { cb?: () => void }) => {
 	try {
@@ -515,7 +490,7 @@ export const spawnRaid = async ({
 			);
 			return;
 		}
-		const computedBoss = computeRank(difficulty, isEvent, false, user.level);
+		const computedBoss = computeRank(difficulty, isEvent, false, user.level, { isDarkZone: darkZoneSpawn });
 		if (!computedBoss) {
 			context.channel?.sendMessage("Unable to spawn boss. Please try again");
 			return;
@@ -559,6 +534,7 @@ export const spawnRaid = async ({
 			isPrivate,
 			character_id: character_ids,
 			customSpawnParams,
+			darkZoneSpawn
 		});
 		if (!raid) return;
 
@@ -632,23 +608,10 @@ export const spawnRaid = async ({
 			message: `Server: ${context.guild?.name || "Unknown"} (${
 				context.guild?.id || "Unknown"
 			}) ${author.username} (${author.id}) has spawned a${
-				customSpawn ? " custom" : ""
+				customSpawn ? " custom" : darkZoneSpawn ? ` Dark Zone ${emoji.fragments}` : ""
 			} raid. ${new Date().toLocaleDateString("en-us", DATE_OPTIONS)}`,
 			channelId: OS_LOG_CHANNELS.RAID_SPAWN,
 		});
-		// const logChannel = (await client.channels.fetch(
-		// 	OS_LOG_CHANNELS.RAID_SPAWN
-		// )) as ChannelProp | null;
-		// if (logChannel) {
-		// 	logChannel.sendMessage(
-		// 		`Server: ${context.guild?.name || "Unknown"} (${
-		// 			context.guild?.id || "Unknown"
-		// 		}) ${author.username} (${author.id}) has spawned a raid. ${new Date().toLocaleDateString(
-		// 			"en-us",
-		// 			DATE_OPTIONS
-		// 		)}`
-		// 	);
-		// }
 		return;
 	} catch (err) {
 		loggers.error("modules.commands.rpg.raids.actions.spawnRaid: ERROR", err);

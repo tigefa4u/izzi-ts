@@ -14,7 +14,7 @@ import Cache from "cache";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
 import emoji from "emojis/emoji";
-import { probability, randomElementFromArray } from "helpers";
+import { numericWithComma, probability, randomElementFromArray } from "helpers";
 import {
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	QUEST_TYPES,
@@ -30,6 +30,7 @@ import { titleCase } from "title-case";
 import { clone, groupByKey, isEmptyObject } from "utility";
 import { validateAndCompleteQuest } from "../quests";
 import { prepareRaidParty } from "./actions/party";
+import { updateRawDzProfile } from "api/controllers/DarkZoneController";
 
 type R = {
   user_tag: string;
@@ -38,6 +39,7 @@ type R = {
   shards?: number;
   defaultDrops?: (CollectionCreateProps & { name?: string })[];
   rareDrops?: (CollectionCreateProps & { name?: string })[];
+  fragments?: number;
 };
 export const processRaidLoot = async ({
 	client,
@@ -101,8 +103,18 @@ export const processRaidLoot = async ({
 					user.game_points = user.game_points + raid.loot.gamePoints;
 					updateObj.game_points = user.game_points;
 				}
+				const updatePromises: any[] = [ updateRPGUser({ user_tag: user.user_tag }, updateObj) ];
+				if (raid.loot.drop.darkZone?.fragments) {
+					rewards.fragments = raid.loot.drop.darkZone.fragments;
+					updatePromises.push(updateRawDzProfile({ user_tag: user.user_tag }, {
+						fragments: {
+							op: "+",
+							value: raid.loot.drop.darkZone.fragments
+						} 
+					}));
+				}
 
-				await updateRPGUser({ user_tag: user.user_tag }, updateObj);
+				await Promise.all(updatePromises);
 				if (!raid.loot.drop.default || isEmptyObject(raid.loot.drop.default)) {
 					return rewards;
 				}
@@ -355,7 +367,7 @@ function prepareRewardEmbed({
   raid: RaidProps;
 }) {
 	const embed = createEmbed(author, client).setTitle(
-		`${isEvent ? "Event" : "Raid"} Boss Defeated!`
+		`${raid.is_dark_zone ? "Dark Zone" : isEvent ? "Event" : "Raid"} Boss Defeated!`
 	);
 
 	const desc = `Congratulations on defeating ${
@@ -366,9 +378,11 @@ function prepareRewardEmbed({
 		isEvent ? "Event" : "Raid"
 	} Boss!\n\nFinal Stats**\n\n${prepareRaidParty(raid.lobby)}\n\n**Rewards ${
 		emoji.moneybag
-	}**\n__${reward.gold}__ Gold ${emoji.gold}${
-		reward.orbs ? `\n__${reward.orbs}__ ${emoji.blueorb}` : ""
-	}${reward.shards ? `\n__${reward.shards}__ ${emoji.shard}` : ""}${
+	}**\n__${numericWithComma(reward.gold)}__ Gold ${emoji.gold}${
+		reward.orbs ? `\n__${numericWithComma(reward.orbs)}__ Orbs ${emoji.blueorb}` : ""
+	}${reward.shards ? `\n__${numericWithComma(reward.shards)}__ Shards ${emoji.shard}` : ""}${
+		reward.fragments ? `\n__${numericWithComma(reward.fragments)}__ Fragments ${emoji.fragments}` : ""
+	}${
 		raid.loot.gamePoints && raid.loot.gamePoints > 0
 			? `\n__${raid.loot.gamePoints}__ Game Point(s)`
 			: ""

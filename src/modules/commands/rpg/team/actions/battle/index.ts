@@ -128,7 +128,10 @@ async function confirmAndBattle(
 			);
 			return;
 		}
-		if (battleStatus?.isForfeit) return;
+		if (battleStatus?.isForfeit) {
+			params.channel?.sendMessage(`**${params.author.username}**, has Forfeit the battle.`);
+			return;
+		}
 		sendResultMessage({
 			channel: params.channel,
 			username: params.author.username,
@@ -231,7 +234,7 @@ export const teamBattle = async ({
 	}
 };
 
-function sendResultMessage({
+export function sendResultMessage({
 	channel,
 	username,
 	mentionUsername,

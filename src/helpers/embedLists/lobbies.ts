@@ -16,7 +16,7 @@ export const createLobbiesList = (
 		fields.push({
 			name: `#${i + 1 + (currentPage - 1) * perPage} | ${item.raid_boss
 				.map((i) => `${titleCase(i.name)} ${emojiMap(i.abilityname)}`)
-				.join(", ")} [${titleCase(item.stats.difficulty)}]`,
+				.join(", ")} [${titleCase(item.stats.difficulty)}]${item.is_dark_zone ? " **[Dark Zone]**" : ""}`,
 			value: `Level ${numericWithComma(item.stats.battle_stats.boss_level)} | ` +
             `Power Level: ${numericWithComma(item.stats.battle_stats.power_level)}` +
             `${item.loot.drop.event?.shard ? `| ${item.loot.drop.event?.shard} ${emoji.shard}` : ""} ` +

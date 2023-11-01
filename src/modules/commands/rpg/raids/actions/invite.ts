@@ -4,6 +4,7 @@ import {
 } from "@customTypes";
 import { RaidActionProps } from "@customTypes/raids";
 import { UserProps } from "@customTypes/users";
+import { getDarkZoneProfile } from "api/controllers/DarkZoneController";
 import { getUserRaidLobby, updateRaid } from "api/controllers/RaidsController";
 import { getRPGUser } from "api/controllers/UsersController";
 import { createEmbed } from "commons/embeds";
@@ -111,6 +112,17 @@ async function validateAndAcceptRaid(
         "to be able to spawn or join __Immortal__ Raids."
 		);
 		return;
+	}
+	if (currentRaid.is_dark_zone) {
+		const dzUser = await getDarkZoneProfile({ user_tag: mentionedUser.user_tag });
+		if (!dzUser) {
+			embed.setDescription(
+				`**${mentionedUser.username}** must have a Dark Zone profile to join a Dark Zone raid. ` +
+				"Type `iz dz start`"
+			);
+			params.channel?.sendMessage(embed);
+			return;
+		}
 	}
 	if (options?.isConfirm) {
 		const lobby = currentRaid.lobby;

@@ -34,7 +34,7 @@ import { confirmationInteraction } from "utility/ButtonInteractions";
 import { verifyMemberPermissions } from "..";
 import { upgradeGuildBeyond150 } from "./beyond150";
 
-const statMap: any = {
+export const statMap: any = {
 	atk: "vitality",
 	def: "defense",
 	hp: "strength",

@@ -12,7 +12,7 @@ import { emojiMap } from "emojis";
 import { titleCase } from "title-case";
 import { GuildStatProps } from "@customTypes/guilds";
 import { BattleStats } from "@customTypes/adventure";
-import { CollectionCardInfoProps } from "@customTypes/collections";
+import { CollectionCardInfoProps, CT } from "@customTypes/collections";
 import emoji from "emojis/emoji";
 import { nanoid } from "nanoid";
 import { ranksMeta } from "./constants/rankConstants";
@@ -520,4 +520,18 @@ export const debounce = <T, R = void>(func: (...args: T[]) => R, timeout = 300) 
 			func.apply(this, args); 
 		}, timeout);
 	};
+};
+
+export const safeParseCharacterParams = (params = {} as CT) => {
+	const obj = {};
+	if (params.name) {
+		Object.assign(obj, { name: params.name });
+	}
+	if (params.type) {
+		Object.assign(obj, { type: params.type });
+	}
+	if (params.isExactMatch) {
+		Object.assign(obj, { isExactMatch: params.isExactMatch });
+	}
+	return obj;
 };

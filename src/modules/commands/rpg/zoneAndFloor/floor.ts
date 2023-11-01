@@ -22,6 +22,7 @@ import { RankProps } from "helpers/helperTypes";
 import loggers from "loggers";
 import { titleCase } from "title-case";
 import { attachButtonToFloorEmbed } from ".";
+import { handleDarkZoneFloor } from "./handleDarkZoneFloor";
 
 async function prepareStageStats(params: {
   rank: RankProps;
@@ -183,6 +184,15 @@ export const floor = async ({ context, client, options, args }: BaseProps) => {
 			Cache.get(key)
 		]);
 		if (!user) return;
+		if (args.includes("-dz")) {
+			handleDarkZoneFloor({
+				context,
+				args,
+				client,
+				options 
+			});
+			return;
+		}
 		const fl = args.shift();
 		if (!fl) {
 			await handleZoneFloors({

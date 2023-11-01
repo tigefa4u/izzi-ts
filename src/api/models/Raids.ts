@@ -57,6 +57,11 @@ export const transformation = {
 		columnName: "is_world_boss",
 		default: false,
 	},
+	isDarkZone: {
+		type: "boolean",
+		columnName: "is_dark_zone",
+		default: false,
+	},
 	filterData: {
 		type: "string",
 		columnName: "filter_data",
@@ -218,6 +223,9 @@ export const getRaids = (
 		query = query.whereRaw(
 			`${tableName}.stats ->> 'difficulty' ilike '%${difficulty}%'`
 		);
+	}
+	if (filters.isDarkZone) {
+		query = query.where(`${tableName}.is_dark_zone`, filters.isDarkZone);
 	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);

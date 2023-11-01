@@ -16,7 +16,7 @@ import {
 	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 } from "helpers/constants/constants";
-import { DZ_STARTER_CARD_STATS } from "helpers/constants/darkZone";
+import { DZ_STARTER_CARD_STATS, DZ_STARTER_INVENTORY_SLOTS } from "helpers/constants/darkZone";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -76,7 +76,7 @@ export const startDz = async ({ context, client, options, dzUser }: BaseProps & 
 			createDzInventory({
 				user_tag: author.id,
 				character_id: card.character_id,
-				character_level: STARTER_CARD_LEVEL,
+				character_level: ranksMeta.immortal.max_level || 70,
 				rank: ranksMeta.immortal.name,
 				rank_id: ranksMeta.immortal.rank_id,
 				exp: STARTER_CARD_EXP,
@@ -88,8 +88,10 @@ export const startDz = async ({ context, client, options, dzUser }: BaseProps & 
 			}),
 			createDarkZoneProfile({
 				user_tag: author.id,
+				//Number of cards in your dz inventory. This is not the max slots
 				inventory_count: 1,
 				metadata: { username: author.username.replace(emoji.premium, "").trim() },
+				user_id: user.id
 			}),
 		]);
 

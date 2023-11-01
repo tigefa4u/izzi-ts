@@ -11,9 +11,10 @@ import { getSkinArr } from "modules/commands/rpg/skins/skinCache";
 import * as Collections from "../models/Collections";
 import { getCharacterInfo } from "./CharactersController";
 import { getItemById } from "./ItemsController";
+import { getByRowNumber as getDzInvByRowNumber } from "../models/DarkZoneInventory";
 
 export const getCardInfoByRowNumber = async (
-	params: CollectionCardInfoByRowNumberParams,
+	params: CollectionCardInfoByRowNumberParams & { isDarkZone?: boolean; },
 	sort?: SortProps
 ): Promise<CollectionCardInfoProps[] | undefined> => {
 	try {
@@ -33,15 +34,26 @@ export const getCardInfoByRowNumber = async (
 		if (typeof params.row_number === "number") {
 			params.row_number = [ params.row_number ];
 		}
-		const result = await Promise.all(params.row_number.map((num) => Collections.getByRowNumber({
-			...params,
-			row_number: num,
-			sort
-		}))).then((res) => res.flat());
+		const result = await Promise.all(params.row_number.map((num) => {
+			if (params.isDarkZone) {
+				return getDzInvByRowNumber({
+					...params,
+					row_number: num,
+					sort,
+					user_tag: params.user_tag || ""
+				});
+			} else {
+				return Collections.getByRowNumber({
+					...params,
+					row_number: num,
+					sort
+				});
+			}
+		})).then((res) => res.flat());
 
 		if (result.length > 0) {
 			const resp: CollectionCardInfoProps[] = await Promise.all(
-				result.map(async (data) => {
+				result.map(async (data: any) => {
 					const charainfo = await getCharacterInfo({
 						ids: [ data.character_id ],
 						rank: data.rank,
@@ -87,9 +99,9 @@ export const getCardInfoByRowNumber = async (
 					if (data.rank_division) {
 						characterInfo.name = characterInfo.name + " " + MASTERY_TITLE[data.rank_division].emoji;
 					}
-					const res: CollectionCardInfoProps = Object.assign(data, {
+					const res = Object.assign(data, {
 						name: characterInfo.name,
-						stats: characterInfo.stats,
+						stats: params.isDarkZone ? data.stats : characterInfo.stats,
 						type: characterInfo.type,
 						abilityname: characterInfo.abilityname,
 						abilitydescription: characterInfo.abilitydescription,
@@ -98,7 +110,7 @@ export const getCardInfoByRowNumber = async (
 						metadata: characterInfo.metadata,
 						...itemOptions,
 						characterInfo,
-					});
+					}) as CollectionCardInfoProps;
 					return res;
 				})
 			);

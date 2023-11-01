@@ -113,7 +113,7 @@ export const get: (
 };
 
 export const getCharactersForDex: (
-	filter: Pick<FilterProps, "ids" | "abilityname" | "type" | "year">,
+	filter: Pick<FilterProps, "ids" | "abilityname" | "type" | "year" | "name">,
 	pagination: PaginationProps
 ) => Promise<CharacterDetailsProps[]> = async function(filter, pagination = {
 	limit: 10,
@@ -136,6 +136,11 @@ export const getCharactersForDex: (
 		query = query.where(`${abilities}.name`, "ilike", `%${filter.abilityname}%`);
 	} else if (typeof filter.abilityname === "object") {
 		query = query.where(`${abilities}.name`, "~*", `(${filter.abilityname.join("|")}).*`);
+	}
+	if (typeof filter.name === "string") {
+		query = query.where(`${tableName}.name`, "ilike", `%${filter.name}%`);
+	} else if (typeof filter.name === "object") {
+		query = query.where(`${tableName}.name`, "~*", `(${filter.name.join("|")}).*`);
 	}
 	if (typeof filter.type === "string") {
 		query = query.where(`${tableName}.type`, "ilike", `%${filter.type}%`);

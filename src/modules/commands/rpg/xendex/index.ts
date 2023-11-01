@@ -3,7 +3,7 @@ import { CharacterDetailsProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
 import { getDex } from "api/controllers/CharactersController";
 import { createEmbed } from "commons/embeds";
-import { Message } from "discord.js";
+import { EmbedFieldData, Message } from "discord.js";
 import { PAGE_FILTER } from "helpers/constants/constants";
 import { createEmbedList } from "helpers/embedLists";
 import { createDexList } from "helpers/embedLists/xendex";
@@ -11,6 +11,7 @@ import loggers from "loggers";
 import { clone } from "utility";
 import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
+import { darkZoneDexEmbedList } from "../darkZone/information/dex";
 
 export const dex = async ({ context, client, options, args }: BaseProps) => {
 	try {
@@ -26,39 +27,49 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 		}
 		let embed = createEmbed();
 		let sentMessage: Message;
-		const buttons = 
-			await paginatorInteraction<Pick<FilterProps, "abilityname" | "series" | "type">, CharacterDetailsProps[]>(
-				context.channel,
-				author.id,
-				params,
-				filter,
-				getDex,
-				(data, options) => {
-					if (data) {
-						const list = createDexList(data.data, data.metadata.currentPage, data.metadata.perPage);
-						embed = createEmbedList({
-							author,
-							list,
-							currentPage: data.metadata.currentPage,
-							totalPages: data.metadata.totalPages,
-							totalCount: data.metadata.totalCount,
-							client,
-							pageCount: data.data.length,
-							title: "XenDex",
-							description: "All the cards on The XenDex that match your requirements are shown below.",
-							pageName: "Dex"
-						});
-					} else {
-						embed.setDescription("No data available");
-					}
-					if (options?.isDelete && sentMessage) {
-						sentMessage.deleteMessage();
-					}
-					if (options?.isEdit) {
-						sentMessage.editMessage(embed);
-					}
-				}
-			);
+		const buttons = await paginatorInteraction<
+      Pick<FilterProps, "abilityname" | "series" | "type" | "name">,
+      CharacterDetailsProps[]
+    >(context.channel, author.id, params, filter, getDex, (data, options) => {
+    	if (data) {
+    		let list: EmbedFieldData[] = [];
+    		if (params.isDarkZone) {
+    			list = darkZoneDexEmbedList(
+    				data.data,
+    				data.metadata.currentPage,
+    				data.metadata.perPage
+    			);
+    		} else {
+    			list = createDexList(
+    				data.data,
+    				data.metadata.currentPage,
+    				data.metadata.perPage
+    			);
+    		}
+    		embed = createEmbedList({
+    			author,
+    			list,
+    			currentPage: data.metadata.currentPage,
+    			totalPages: data.metadata.totalPages,
+    			totalCount: data.metadata.totalCount,
+    			client,
+    			pageCount: data.data.length,
+    			title: "XenDex",
+    			description:
+            `All the ${params.isDarkZone ? "Dark Zone" : ""} cards on The ` +
+			"XenDex that match your requirements are shown below.",
+    			pageName: "Dex",
+    		});
+    	} else {
+    		embed.setDescription("No data available");
+    	}
+    	if (options?.isDelete && sentMessage) {
+    		sentMessage.deleteMessage();
+    	}
+    	if (options?.isEdit) {
+    		sentMessage.editMessage(embed);
+    	}
+    });
 		if (!buttons) return;
 
 		embed.setButtons(buttons);
@@ -69,10 +80,7 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
 		}
 		return;
 	} catch (err) {
-		loggers.error(
-			"module.commands.rpg.xendex.dex: ERROR",
-			err
-		);
+		loggers.error("module.commands.rpg.xendex.dex: ERROR", err);
 		return;
 	}
 };

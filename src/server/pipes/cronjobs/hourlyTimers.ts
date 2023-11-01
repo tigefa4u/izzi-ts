@@ -39,18 +39,51 @@ const spawnRaids = async () => {
 		}
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
-		return Promise.all(Array(5).fill([ "e", "m", "h", "i" ]).flat().map(async (difficulty) => {
-			// spawning boss based on user level
-			const computedBoss = computeRank(difficulty, isEvent, false, randomNumber(30, 200));
-			if (!computedBoss) return;
-			loggers.info("cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " + difficulty);
-			await createRaidBoss({
-				isPrivate: false,
-				isEvent,
-				computedBoss,
-				lobby: {}
-			});
-		}));
+		return Promise.all(
+			Array(5)
+				.fill([ "e", "m", "h", "i" ])
+				.flat()
+				.map(async (difficulty) => {
+					// spawning boss based on user level
+					const computedBoss = computeRank(
+						difficulty,
+						isEvent,
+						false,
+						randomNumber(30, 200)
+					);
+					if (!computedBoss) return;
+					loggers.info(
+						"cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " +
+              difficulty
+					);
+					const promises = [ createRaidBoss({
+						isPrivate: false,
+						isEvent,
+						computedBoss,
+						lobby: {},
+					}) ];
+					if (!isEvent) {
+						const darkZoneBoss = computeRank(
+							difficulty,
+							isEvent,
+							false,
+							randomNumber(30, 200),
+							{ isDarkZone: true }
+						);
+						if (!darkZoneBoss) return;
+						loggers.info("cronjobs.hourleyTimers.spawnRaid: spawning dark zone raid: ", difficulty);
+						promises.push(createRaidBoss({
+							isPrivate: false,
+							isEvent,
+							computedBoss,
+							lobby: {},
+							darkZoneSpawn: true
+						}));
+					}
+
+					await Promise.all(promises);
+				})
+		);
 	} catch (err) {
 		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
 		return;
@@ -62,7 +95,7 @@ function boot() {
 		try {
 			setLoggerContext({
 				requestId: generateUUID(10),
-				userTag: "cronjob"
+				userTag: "cronjob",
 			});
 			await spawnRaids();
 			loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");

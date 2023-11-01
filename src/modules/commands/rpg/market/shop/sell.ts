@@ -3,13 +3,15 @@ import {
 	ConfirmationInteractionOptions,
 	ConfirmationInteractionParams,
 } from "@customTypes";
-import { CharacterCardProps } from "@customTypes/characters";
+import { CharacterCardProps, CharacterStatProps } from "@customTypes/characters";
 import { BaseProps } from "@customTypes/command";
 import { getCharacterInfo } from "api/controllers/CharactersController";
 import {
 	getCollection,
 	updateCollection,
 } from "api/controllers/CollectionsController";
+import { getDzInvById, updateDzInv } from "api/controllers/DarkZoneInventoryController";
+import { createDzMarket } from "api/controllers/DarkZoneMarketsController";
 import { createMarketCard } from "api/controllers/MarketsController";
 import { getUserBlacklist } from "api/controllers/UserBlacklistsController";
 import { getRPGUser } from "api/controllers/UsersController";
@@ -27,6 +29,7 @@ import {
 	MIN_MARKET_PRICE,
 	OS_GLOBAL_MARKET_CHANNEL,
 } from "helpers/constants/constants";
+import { statNames } from "helpers/constants/darkZone";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { clearCooldown, getCooldown, setCooldown } from "modules/cooldowns";
@@ -92,6 +95,7 @@ type P = {
   price: number;
   author: BaseProps["options"]["author"];
   cardId: number;
+  isDarkZone?: boolean;
 };
 const sendMessageInOs = async ({
 	client,
@@ -99,21 +103,35 @@ const sendMessageInOs = async ({
 	price,
 	author,
 	cardId,
+	isDarkZone
 }: P) => {
 	try {
+		let body = {
+			name: `${titleCase(characterInfo.name)} | Level ${
+				characterInfo.character_level
+			}`,
+			value: `${titleCase(characterInfo.rank)} | ID: ${cardId}`
+		};
+		let buyText = `Use \`\`iz mk buy ${cardId}\`\``;
+		if (isDarkZone) {
+			body = {
+				name: `${titleCase(characterInfo.rank)} | ${titleCase(characterInfo.name)} | Level ${
+					characterInfo.character_level
+				}`,
+				value: `${statNames
+					.map((s) => `**${s.name}:** ${characterInfo.stats[s.key as keyof CharacterStatProps]}`)
+					.join(", ")} | ID: ${cardId}`
+			};
+			buyText = `Use \`\`iz dz mk buy ${cardId}\`\``;
+		}
 		const embed = createEmbed(author, client)
-			.setTitle(`${numericWithComma(price)} Gold ${emoji.gold}`)
+			.setTitle(`${numericWithComma(price)} Gold ${emoji.gold}${isDarkZone ? " | Dark Zone Market" : ""}`)
 			.setThumbnail(
 				characterInfo.metadata?.assets?.small.filepath || characterInfo.filepath
 			)
-			.addField(
-				`${titleCase(characterInfo.name)} | Level ${
-					characterInfo.character_level
-				}`,
-				`${titleCase(characterInfo.rank)} | ID: ${cardId}`
-			)
+			.addFields(body)
 			.setFooter({
-				text: `To buy this card. Use \`\`iz mk buy ${cardId}\`\``,
+				text: `To buy this card. ${buyText}`,
 				iconURL: author.displayAvatarURL(),
 			})
 			.setHideConsoleButtons(true)
@@ -151,16 +169,21 @@ const sendMessageInOs = async ({
 };
 
 async function validateAndSellCard(
-	params: ConfirmationInteractionParams<{ id: number; price: number }>,
+	params: ConfirmationInteractionParams<{ id: number; price: number; isDarkZone: boolean; }>,
 	options?: ConfirmationInteractionOptions
 ) {
 	try {
+		const isDarkZone = params.extras?.isDarkZone || false;
 		const user = await getRPGUser(
 			{ user_tag: params.author.id },
 			{ cached: true }
 		);
 		if (!user || !params.extras?.id) return;
-		const collection = await getCollection({
+		const collection: any = isDarkZone ? await getDzInvById({
+			is_on_market: false,
+			id: params.extras.id,
+			user_tag: params.author.id
+		}) : await getCollection({
 			is_item: false,
 			is_on_market: false,
 			id: params.extras.id,
@@ -194,7 +217,11 @@ async function validateAndSellCard(
 			params.channel,
 			params.client,
 			user.id,
-			{ duplicateError: true }
+			{
+				duplicateError: true,
+				user_tag: params.author.id,
+				isDarkZone
+			}
 		);
 		if (marketCard) return;
 		const charaInfo = await getCharacterInfo({
@@ -206,19 +233,34 @@ async function validateAndSellCard(
 		}
 		const characterInfo = charaInfo[0];
 		if (options?.isConfirm) {
-			await Promise.all([
-				updateCollection({ id: cardToBeSold.id }, { is_on_market: true }),
-				createMarketCard({
-					user_id: cardToBeSold.user_id,
-					collection_id: cardToBeSold.id,
-					price: params.extras?.price || 1000,
-				}),
-			]);
+			if (isDarkZone) {
+				await Promise.all([
+					updateDzInv({
+						id: cardToBeSold.id,
+						user_tag: params.author.id 
+					}, { is_on_market: true }),
+					createDzMarket({
+						user_tag: params.author.id,
+						price: params.extras.price || 2000,
+						collection_id: cardToBeSold.id,
+						stats: cardToBeSold.stats
+					})
+				]);
+			} else {
+				await Promise.all([
+					updateCollection({ id: cardToBeSold.id }, { is_on_market: true }),
+					createMarketCard({
+						user_id: cardToBeSold.user_id,
+						collection_id: cardToBeSold.id,
+						price: params.extras?.price || 1000,
+					}),
+				]);
+			}
 			const desc = `You have successfully posted your __${titleCase(
 				cardToBeSold.rank
 			)}__ **Level ${cardToBeSold.character_level} ${titleCase(
 				characterInfo.name || ""
-			)}** for sale on the Global Market.`;
+			)}** for sale on the ${isDarkZone ? "Dark Zone" : "Global"} Market.`;
 			const embed = createEmbed()
 				.setThumbnail(
 					characterInfo.metadata?.assets?.small.filepath ||
@@ -236,6 +278,7 @@ async function validateAndSellCard(
 				price: params.extras.price || 1000,
 				author: params.author,
 				cardId: cardToBeSold.id,
+				isDarkZone
 			});
 			return;
 		}
@@ -260,7 +303,8 @@ export const sellCard = async ({
 	client,
 	author,
 	args,
-}: Omit<BaseProps, "options"> & { author: AuthorProps }) => {
+	isDarkZone = false
+}: Omit<BaseProps, "options"> & { author: AuthorProps; isDarkZone?: boolean; }) => {
 	try {
 		const cooldownCommand = "sell-card";
 		const _inProgress = await getCooldown(author.id, cooldownCommand);
@@ -303,6 +347,7 @@ export const sellCard = async ({
 			extras: {
 				id,
 				price: sellingPrice,
+				isDarkZone
 			},
 			channel: context.channel,
 			client,
@@ -323,7 +368,7 @@ export const sellCard = async ({
 						data.rank || ""
 					)}__ **Level ${data.character_level} ${titleCase(
 						data.name || ""
-					)}** on the Global Market? You will receive __${numericWithComma(
+					)}** on the ${isDarkZone ? "Dark Zone" : "Global"} Market? You will receive __${numericWithComma(
 						totalCost
 					)}__ ${emoji.gold}`;
 					embed = createConfirmationEmbed(author, client)

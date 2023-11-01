@@ -69,9 +69,9 @@ function prepareInfoDescription(
 			: ""
 	}**Level ${infoData.character_level}**\n**Exp [${infoData.exp} / ${
 		infoData.r_exp
-	}]**${prepareFodderDesc(infoData)}\n**Element:** ${infoData.type} ${emojiMap(
+	}]**${prepareFodderDesc(infoData)}\n**Element:** ${titleCase(infoData.type)} ${emojiMap(
 		infoData.type
-	)}\n**Rank:** ${titleCase(infoData.rank)}\n**Souls:** ${infoData.souls}${
+	)}\n**Rank:** ${titleCase(infoData.rank)}\n**Souls:** ${infoData.souls || 0}${
 		reqSouls > 0
 			? ` / ${reqSouls} ${infoData.souls >= reqSouls ? "(Upgradable)" : ""}`
 			: ""
@@ -129,18 +129,30 @@ export const getCardInfo = async ({
 		if (!id || id <= 0 || isNaN(id)) return;
 		const user = await getRPGUser({ user_tag: author.id }, { cached: true });
 		if (!user) return;
+
+		// DARK ZONE PARAM, UGLY CODE
+		let isDarkZone = false;
+		const idx = args.findIndex((a) => a === "-dz");
+		if (idx >= 0) {
+			args.splice(idx, 1);
+			isDarkZone = true;
+		}
+
 		const sort = await getSortCache(author.id);
 		const infoDataByRow = await getCardInfoByRowNumber(
 			{
 				row_number: id,
 				user_id: user.id,
 				user_tag: author.id,
+				isDarkZone
 			},
 			sort
 		);
-		if (!infoDataByRow) return;
-		const infoData = infoDataByRow[0];
-		if (!infoData || !infoData.characterInfo) return;
+		const infoData = (infoDataByRow || [])[0];
+		if (!infoData || !infoData.characterInfo) {
+			context.channel?.sendMessage("We could not find the card you were looking for in your inventory.");
+			return;
+		}
 		const powerLevel = await getPowerLevelByRank({ rank: infoData.rank });
 		if (!powerLevel) return;
 		let guild;
@@ -180,49 +192,51 @@ export const getCardInfo = async ({
 			embed.setHideConsoleButtons(true);
 		}
 
-		const buttonLabels = [
-			{
-				label: CONSOLE_BUTTONS.SELECT_CARD.label,
-				params: {
-					id: CONSOLE_BUTTONS.SELECT_CARD.id,
-					author,
-					cardId: infoData.id,
+		if (!isDarkZone) {
+			const buttonLabels = [
+				{
+					label: CONSOLE_BUTTONS.SELECT_CARD.label,
+					params: {
+						id: CONSOLE_BUTTONS.SELECT_CARD.id,
+						author,
+						cardId: infoData.id,
+					},
 				},
-			},
-			{
-				label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
-				params: {
-					id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
-					author,
-					cardId: infoData.id,
+				{
+					label: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.label,
+					params: {
+						id: CONSOLE_BUTTONS.UPGRADE_CARD_LEVEL.id,
+						author,
+						cardId: infoData.id,
+					},
 				},
-			},
-		];
-		if (user.level > REQUIRED_TRADE_LEVEL) {
-			buttonLabels.push({
-				label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
-				params: {
-					id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
-					author,
-					cardId: infoData.id,
-				},
-			});
-		}
-		if (!FODDER_RANKS.includes(infoData.rank)) {
-			const buttons = customButtonInteraction(
-				context.channel,
-				buttonLabels,
-				author.id,
-				handleCardUpgrade,
-				() => {
-					return;
-				},
-				false,
-				2
-			);
-
-			if (buttons) {
-				embed.setButtons(buttons);
+			];
+			if (user.level > REQUIRED_TRADE_LEVEL) {
+				buttonLabels.push({
+					label: CONSOLE_BUTTONS.EVOLVE_CARD.label,
+					params: {
+						id: CONSOLE_BUTTONS.EVOLVE_CARD.id,
+						author,
+						cardId: infoData.id,
+					},
+				});
+			}
+			if (!FODDER_RANKS.includes(infoData.rank)) {
+				const buttons = customButtonInteraction(
+					context.channel,
+					buttonLabels,
+					author.id,
+					handleCardUpgrade,
+					() => {
+						return;
+					},
+					false,
+					2
+				);
+	
+				if (buttons) {
+					embed.setButtons(buttons);
+				}
 			}
 		}
 		context.channel?.sendMessage(embed);

@@ -18,6 +18,7 @@ const colArr = [
 	"metadata",
 	"created_at",
 	"inventory_count",
+	"user_id"
 ];
 
 export const get = async (user_tag: string): Promise<DarkZoneProfileProps> => {

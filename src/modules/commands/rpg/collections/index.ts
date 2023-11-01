@@ -38,7 +38,7 @@ function parseRankId(rank_id: string | string[]) {
 	}
 }
 
-function safeParseParams(params: FilterProps & { user_id: number }) {
+export function safeParseInventoryParams<T>(params: FilterProps & T) {
 	if (params.rank) {
 		const ids = parseRankId(params.rank);
 		if (ids) {
@@ -104,7 +104,7 @@ export const cardCollection = async ({
 			return;
 		}
 		let params = <FilterProps & { user_id: number; }>fetchParamsFromArgs(args);
-		params = safeParseParams(params);
+		params = safeParseInventoryParams(params);
 		Object.assign(params, {
 			user_id: user.id,
 			isFetchSeries: true 

@@ -1,10 +1,8 @@
-import { AuthorProps } from "@customTypes";
 import {
 	CharacterDetailsProps,
 	CharacterStatProps,
 } from "@customTypes/characters";
-import { createEmbed } from "commons/embeds";
-import { Client, EmbedFieldData } from "discord.js";
+import { EmbedFieldData } from "discord.js";
 import { emojiMap } from "emojis";
 import { titleCase } from "title-case";
 

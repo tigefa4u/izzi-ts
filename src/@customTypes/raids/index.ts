@@ -10,6 +10,7 @@ export type RaidActionProps = BaseProps & {
     external_character_ids?: number[];
     customSpawn?: boolean;
     customSpawnParams?: CardParams;
+    darkZoneSpawn?: boolean;
 }
 
 type L = {
@@ -55,6 +56,7 @@ export type RaidLootProps = {
             shard: number;
             orbs: number;
         };
+        darkZone?: { fragments: number; };
         worldBoss?: {
             gold: number;
             default: {
@@ -106,6 +108,8 @@ export type RaidProps = {
     is_private: boolean;
     lobby_member?: L;
     created_at?: string;
+    is_dark_zone?: boolean;
+    is_world_boss?: boolean;
 }
 
 export type RaidCreateProps = {
@@ -118,6 +122,7 @@ export type RaidCreateProps = {
     is_private: boolean;
     is_world_boss?: boolean;
     filter_data: string;
+    is_dark_zone?: boolean;
 }
 
 export type RaidUpdateProps = Partial<Omit<RaidCreateProps, "lobby_member">>
