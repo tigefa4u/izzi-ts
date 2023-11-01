@@ -25,4 +25,7 @@ export const subcommands =  [ {
 }, {
 	name: "ultimate",
 	alias: [ "ult" ]
+}, {
+	name: "dark_zone",
+	alias: [ "dz" ]
 } ];

@@ -22,16 +22,32 @@ export const createLBEmbedList = (
 					guild_name: item.name || item.guild_name || "",
 					index: i,
 				};
-			} else {
+			} else if (lb === "darkZone") {
 				return {
-					username: item.username,
+					username: item.metadata?.username || "No Name",
 					id: item.user_tag,
 					index: i,
 				};
 			}
+			return {
+				username: item.username,
+				id: item.user_tag,
+				index: i,
+			};
 		})
 	).then((res) =>
 		res.map((obj) => {
+			if (lb === "darkZone") {
+				return Object.assign(
+					{},
+					{
+						name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
+						value: `Max Floor **${array[obj.index]["max_floor"]}** :map: Reached **[${new Date(
+							array[obj.index]["reached_max_floor_at"] || new Date()
+						).toLocaleDateString()}]**`,
+					}
+				);
+			}
 			if (lb === "guilds") {
 				return Object.assign(
 					{},

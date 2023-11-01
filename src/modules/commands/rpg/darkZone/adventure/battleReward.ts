@@ -87,6 +87,10 @@ export const processBattleRewards = async ({
 					op: "+",
 					value: 1
 				};
+				params.reached_max_floor_at = {
+					op: "=",
+					value: new Date() as any
+				};
 			}
 			await updateRawDzProfile({ user_tag: author.id }, params);
 			let desc = "Better luck next time.";
@@ -141,7 +145,17 @@ const calculateUserReward = ({
 	if (isVictory) {
 		rewardObject.exp = rewardObject.exp + 5;
 		rewardObject.fragments = rewardObject.fragments + 1;
-		rewardObject.gold = rewardObject.gold + randomNumber(250, 300);
+		let goldReward = randomNumber(80, 200);
+		if (battlingFloor >= 60 && battlingFloor < 100) {
+			goldReward = randomNumber(200, 400);
+		} else if (battlingFloor >= 100 && battlingFloor < 140) {
+			goldReward = randomNumber(400, 600);
+		} else if (battlingFloor >= 140 && battlingFloor < 200) {
+			goldReward = randomNumber(600, 700);
+		} else if (battlingFloor >= 200) {
+			goldReward = randomNumber(700, 800);
+		}
+		rewardObject.gold = rewardObject.gold + goldReward;
 		if (level >= 100) {
 			rewardObject.exp = rewardObject.exp - 1;
 		} else if (level >= 200) {

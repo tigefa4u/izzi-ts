@@ -76,6 +76,12 @@ export const leaderboard = async ({
 				orderName: "vote count",
 				order: "vote_count"
 			});
+		} else if (subcommand === "dark_zone") {
+			Object.assign(params, {
+				lb: "darkZone",
+				orderName: "dark zone max floor",
+				order: "max_floor"
+			});
 		}
 		getLB(context, author, client, params.order, params.orderName, params.lb);
 		return;
@@ -89,8 +95,8 @@ export const leaderboard = async ({
 };
 
 function prepareUrl(lb: string, order: string) {
-	// const base = "http://localhost:5011/api/v1/ums";
-	const base = `${API_DOMAIN}/api/v1/ums`;
+	const base = "http://localhost:5011/api/v1/ums";
+	// const base = `${API_DOMAIN}/api/v1/ums`;
 	const url = `/leaderboards/${lb}?per_page=10&order=${order}`;
 	return base + url;
 }

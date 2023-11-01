@@ -4,6 +4,7 @@ import emoji from "emojis/emoji";
 import loggers from "loggers";
 import { DMUserViaApi } from "server/pipes/directMessage";
 import {
+	DOT,
 	DUNGEON_MAX_MANA,
 	MAX_MANA_GAIN,
 	STARTER_CARD_EXP,
@@ -22,11 +23,15 @@ import {
 import { ranksMeta } from "helpers/constants/rankConstants";
 import { taskQueue } from "handlers/taskQueue/gcp";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
+import { getDarkZoneProfile, updateRawDzProfile } from "api/controllers/DarkZoneController";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {
 		const user_tag: string = req.body.user;
-		const summoner = await getRPGUser({ user_tag: user_tag });
+		const [ summoner, dzUser ] = await Promise.all([
+			getRPGUser({ user_tag: user_tag }),
+			getDarkZoneProfile({ user_tag })
+		]);
 		const key = `voted::${user_tag}`;
 		const hasVoted = await Cache.get(key);
 		if (summoner?.is_banned) return;
@@ -139,15 +144,31 @@ export const processUpVote = async (req: Request, res: Response) => {
 
 				messageStr = `${messageStr}\n\n**__Monthly Bonus Reward__**\n${monthlyRewards.desc}`;
 			}
-
-			await Promise.all([
+			const promises: any[] = [
 				updateRPGUser({ user_tag }, updateObj),
 				taskQueue("log-vote", {
 					message: `Summoner ${summoner.username} (${summoner.user_tag}) has voted. ` +
-					`Monthly Votes: ${summoner.monthly_votes}`,
+		`Monthly Votes: ${summoner.monthly_votes}`,
 					channelId: OS_LOG_CHANNELS.BOT_VOTE
 				})
-			]);
+			];
+
+			if (dzUser) {
+				let fragmentReward = 25;
+				if (summoner.is_premium) {
+					fragmentReward = 35;
+				}
+				promises.push(updateRawDzProfile({ user_tag }, {
+					fragments: {
+						op: "+",
+						value: fragmentReward
+					}
+				}));
+				messageStr = `${messageStr}\n\n**__Dark Zone Bonus__**\n` +
+				`${DOT} ${fragmentReward} Fragments ${emoji.fragments}`;
+			}
+
+			await Promise.all(promises);
 			desc = messageStr;
 		} else {
 			desc =
