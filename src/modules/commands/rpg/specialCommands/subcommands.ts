@@ -37,4 +37,7 @@ export const subcommands = [ {
 }, {
 	name: "clearimagecache",
 	alias: [ "cc" ]
+}, {
+	name: "donation",
+	alias: [ "dono", "donations" ]
 } ];

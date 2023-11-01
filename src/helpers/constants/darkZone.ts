@@ -1,11 +1,11 @@
 import { CharacterStatProps } from "@customTypes/characters";
 
 export const DZ_STARTER_CARD_STATS: CharacterStatProps = {
-	vitality: 60,
-	defense: 60,
-	dexterity: 60,
-	intelligence: 60,
-	strength: 60,
+	vitality: 70,
+	defense: 70,
+	dexterity: 70,
+	intelligence: 70,
+	strength: 70,
 	critical: 1,
 	evasion: 1,
 	accuracy: 1,

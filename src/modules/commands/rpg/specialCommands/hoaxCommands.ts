@@ -4,12 +4,13 @@ import { getRaid, updateRaid } from "api/controllers/RaidsController";
 import { getWorldBossRaid } from "api/controllers/WorldBossController";
 import emoji from "emojis/emoji";
 import { OWNER_DISCORDID } from "environment";
-import { numericWithComma } from "helpers";
+import { getIdFromMentionedString, numericWithComma } from "helpers";
 import { DMUser } from "helpers/directMessages";
 import { RankProps, RanksMetaProps } from "helpers/helperTypes";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { start } from "modules/commands/rpg/profile/startJourney";
+import { getTotalDonations } from "api/controllers/DonationsController";
 
 export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
 	try {
@@ -162,6 +163,25 @@ export const forceStartJourney = async (params: BaseProps) => {
 		return;
 	} catch (err) {
 		loggers.error("hoaxCommands.forceStartJourney: ERROR", err);
+		return;
+	}
+};
+
+export const showTotalUserDonations = async ({ context, client, args, options }: BaseProps) => {
+	try {
+		const { author } = options;
+		if (author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("You are not allowed to execute this command.");
+			return;
+		}
+		let mentionId = getIdFromMentionedString(args.shift());
+		if (mentionId === "") mentionId = author.id;
+		const totalDonations = await getTotalDonations(mentionId);
+		context.channel?.sendMessage(`(${mentionId}) has donated ` +
+		`__${numericWithComma(totalDonations?.sum || 0)}$__ in Total`);
+		return;
+	} catch (err) {
+		loggers.error("hoaxCommands.showTotalUserDonations: ERROR", err);
 		return;
 	}
 };

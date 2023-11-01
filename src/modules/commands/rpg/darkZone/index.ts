@@ -22,9 +22,17 @@ import { evoDzCard } from "./enchantmentAndEvolution/evolution";
 import { upgradeDzStatPoint } from "./enchantmentAndEvolution/upgradeStatPoints";
 import { giveDzCard } from "./actions/cardGive";
 import { dzMarketCommands } from "./market";
+import { getTotalDonations } from "api/controllers/DonationsController";
 
 export const invokeDarkZone = async (params: BaseProps) => {
 	try {
+		const totalDonations = await getTotalDonations(params.options.author.id);
+		if (!totalDonations || totalDonations.sum < 15) {
+			params.context.channel?.sendMessage("Dark Zone is currently only available to " +
+			"donators as Early Access. Once the full development is complete it will be made " +
+			"available to everyone (In a few days). Thank you for your patience.");
+			return;
+		}
 		const cmd = filterSubCommands(params.args.shift() || "commands", subcommands) || "commands";
 		if (cmd === "commands") {
 			listDzCommands(params);
