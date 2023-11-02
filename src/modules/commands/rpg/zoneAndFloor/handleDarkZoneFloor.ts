@@ -58,6 +58,8 @@ export const handleDarkZoneFloor = async ({ context, client, options, args }: Ba
 				if (!newDzUser) return;
 				if (id === CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id) {
 					paramArgs.push("all");
+				} else {
+					paramArgs.push("hidebt");
 				}
 				battleDzFloor({
 					context,
