@@ -52,7 +52,7 @@ export const sendOnAdventure = async ({
 				const dzReward = {
 					fragments: {
 						op: "+",
-						value: randomNumber(25, 36)
+						value: randomNumber(50, 80)
 					},
 					exp: {
 						op: "+",

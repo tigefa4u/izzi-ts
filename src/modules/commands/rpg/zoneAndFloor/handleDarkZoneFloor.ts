@@ -40,20 +40,31 @@ export const handleDarkZoneFloor = async ({ context, client, options, args }: Ba
 			.setDescription(`Summoner **${author.username}**, You have successfully moved to ` +
         `floor __${numericWithComma(moveToFloor)}__. Type \`\`iz dz bt\`\` to battle the floor boss.`);
 
+		const menu = [ {
+			label: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.label,
+			params: { id: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id }
+		} ];
+		if (moveToFloor >= dzUser.max_floor) {
+			menu[0].label = CONSOLE_BUTTONS.DARK_ZONE_FLOOR_HIDEBT.label;
+			menu[0].params = { id: CONSOLE_BUTTONS.DARK_ZONE_FLOOR_HIDEBT.id };
+		}
 		const buttons = customButtonInteraction(
 			context.channel,
-			[ {
-				label: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.label,
-				params: { id: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id }
-			} ],
+			menu,
 			author.id,
-			() => {
+			async ({ id }) => {
+				const paramArgs: string[] = [];
+				const newDzUser = await getDarkZoneProfile({ user_tag: author.id });
+				if (!newDzUser) return;
+				if (id === CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id) {
+					paramArgs.push("all");
+				}
 				battleDzFloor({
 					context,
 					client,
 					options,
-					dzUser,
-					args: [ "all" ]
+					dzUser: newDzUser,
+					args: paramArgs
 				});
 			},
 			() => {

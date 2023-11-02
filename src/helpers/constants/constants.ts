@@ -422,6 +422,10 @@ export const CONSOLE_BUTTONS = {
 	DARK_ZONE_NEXT_FLOOR: {
 		id: "dark_zone_next_floor",
 		label: "Fl n -dz"
+	},
+	DARK_ZONE_FLOOR_HIDEBT: {
+		id: "dark_zone_floor_hidebt",
+		label: "Dz bt hidebt"
 	}
 };
 
