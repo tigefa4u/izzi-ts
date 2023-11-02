@@ -415,6 +415,14 @@ export const CONSOLE_BUTTONS = {
 		id: "view_inventory",
 		label: "View Inventory",
 	},
+	DARK_ZONE_BT_ALL: {
+		label: "Dz bt all",
+		id: "dark_zone_bt_all"
+	},
+	DARK_ZONE_NEXT_FLOOR: {
+		id: "dark_zone_next_floor",
+		label: "Fl n -dz"
+	}
 };
 
 export const ELEMENTAL_ADVANTAGES = {

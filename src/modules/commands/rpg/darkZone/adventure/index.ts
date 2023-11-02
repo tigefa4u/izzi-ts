@@ -102,7 +102,7 @@ export const sendOnAdventure = async ({
 		if (isComplete) {
 			embed.setTitle(`Adventure Failed ${emoji.cry}`)
 				.setDescription("Your team was abandoned and has failed to complete the adventure. " +
-                "You will receive no rewards.");
+                "You will receive no rewards.\n\nTo start a new Adventure type `iz dz adv`.");
 			context.channel?.sendMessage(embed);
 			return;
 		}

@@ -183,7 +183,7 @@ function prepareLoot(
       		: ""
       }`;
 	}
-	if (isDarkZone) {
+	if (isDarkZone && loot.drop.darkZone?.fragments) {
 		extraDesc = `__${loot.drop.darkZone?.fragments}x__ Fragments ${emoji.fragments}`;
 	}
 

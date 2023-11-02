@@ -75,7 +75,7 @@ const spawnRaids = async () => {
 						promises.push(createRaidBoss({
 							isPrivate: false,
 							isEvent,
-							computedBoss,
+							computedBoss: darkZoneBoss,
 							lobby: {},
 							darkZoneSpawn: true
 						}));

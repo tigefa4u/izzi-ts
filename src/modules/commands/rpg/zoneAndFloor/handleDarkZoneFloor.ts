@@ -2,8 +2,10 @@ import { BaseProps } from "@customTypes/command";
 import { getDarkZoneProfile, updateDzProfile } from "api/controllers/DarkZoneController";
 import { createEmbed } from "commons/embeds";
 import { numericWithComma } from "helpers";
-import { DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
+import { CONSOLE_BUTTONS, DEFAULT_ERROR_TITLE, DEFAULT_SUCCESS_TITLE } from "helpers/constants/constants";
 import loggers from "loggers";
+import { customButtonInteraction } from "utility/ButtonInteractions";
+import { battleDzFloor } from "../darkZone/adventure/battle";
 
 export const handleDarkZoneFloor = async ({ context, client, options, args }: BaseProps) => {
 	try {
@@ -37,6 +39,33 @@ export const handleDarkZoneFloor = async ({ context, client, options, args }: Ba
 		embed.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(`Summoner **${author.username}**, You have successfully moved to ` +
         `floor __${numericWithComma(moveToFloor)}__. Type \`\`iz dz bt\`\` to battle the floor boss.`);
+
+		const buttons = customButtonInteraction(
+			context.channel,
+			[ {
+				label: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.label,
+				params: { id: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id }
+			} ],
+			author.id,
+			() => {
+				battleDzFloor({
+					context,
+					client,
+					options,
+					dzUser,
+					args: [ "all" ]
+				});
+			},
+			() => {
+				return;
+			},
+			false,
+			1
+		);
+		if (buttons) {
+			embed.setButtons(buttons);
+		}
+
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {
