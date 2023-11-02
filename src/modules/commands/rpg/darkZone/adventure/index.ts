@@ -116,7 +116,7 @@ export const sendOnAdventure = async ({
 			embed.setTitle(DEFAULT_ERROR_TITLE)
 				.setDescription(`Summoner **${author.username}**, You are already ` + 
                 "in a raid. Complete or leave your raid to start an adventure.");
-
+			context.channel?.sendMessage(embed);
 			return;
 		}
 		if (user.raid_pass < PERMIT_PER_ADVENTURE) {
