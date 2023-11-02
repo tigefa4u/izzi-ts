@@ -23,6 +23,7 @@ import { upgradeDzStatPoint } from "./enchantmentAndEvolution/upgradeStatPoints"
 import { giveDzCard } from "./actions/cardGive";
 import { dzMarketCommands } from "./market";
 import { getTotalDonations } from "api/controllers/DonationsController";
+import { giveFragments } from "./actions/give";
 
 export const invokeDarkZone = async (params: BaseProps) => {
 	try {
@@ -85,6 +86,8 @@ export const invokeDarkZone = async (params: BaseProps) => {
 			evoDzCard(paramObject);
 		} else if (cmd === "stat-point") {
 			upgradeDzStatPoint(paramObject);
+		} else if (cmd === "give") {
+			giveFragments(paramObject);
 		} else if (cmd === "cgive") {
 			giveDzCard(paramObject);
 		} else if (cmd === "market") {
