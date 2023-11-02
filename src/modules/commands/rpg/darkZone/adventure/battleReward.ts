@@ -43,7 +43,7 @@ export const processBattleRewards = async ({
 			maxFloor: clonedDzUser.max_floor,
 			multiplier
 		});
-		const showBonus = battlingFloor >= clonedDzUser.max_floor;
+		const showBonus = battlingFloor >= clonedDzUser.max_floor && isVictory;
 		let rewardDesc = `${DOT} __${numericWithComma(reward.gold)}__ Gold ${emoji.gold}\n` +
         `${DOT} ${reward.fragments} Fragments ${emoji.fragments}${showBonus ? " (+2 Fragments Bonus)" : ""}\n` +
         `${DOT} __${numericWithComma(reward.expGain)}__ Exp${showBonus ? " (+2 Exp Bonus)" : ""}`;
@@ -82,7 +82,7 @@ export const processBattleRewards = async ({
 				rewardDesc = rewardDesc + `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` + 
                 `\n${DOT} +1 Level up`;
 			}
-			if (clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
+			if (isVictory && clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
 				params.max_floor = {
 					op: "+",
 					value: 1
