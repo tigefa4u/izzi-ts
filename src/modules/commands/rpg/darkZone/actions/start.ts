@@ -99,7 +99,7 @@ export const startDz = async ({ context, client, options, dzUser }: BaseProps & 
 			.setTitle(DEFAULT_SUCCESS_TITLE)
 			.setDescription(
 				`Congratulations summoner **${author.username}**, Welcome to the Dark Zone. ` +
-          `\nYou have received __1x__ **Level ${STARTER_CARD_LEVEL}** __${titleCase(
+          `\nYou have received __1x__ **Level 70** __${titleCase(
           	ranksMeta.immortal.name
           )}__ ` +
           `**${titleCase(
