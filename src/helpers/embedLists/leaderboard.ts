@@ -41,7 +41,7 @@ export const createLBEmbedList = (
 				return Object.assign(
 					{},
 					{
-						name: `#${obj.index + 1}| ${obj.username} (${obj.id})`,
+						name: `#${obj.index + 1}| ${obj.username} (${obj.id}) | Level ${array[obj.index].level}`,
 						value: `Max Floor **${array[obj.index]["max_floor"]}** :map: Reached **[${new Date(
 							array[obj.index]["reached_max_floor_at"] || new Date()
 						).toLocaleDateString()}]**`,
