@@ -20,6 +20,10 @@ export const equipDzItem = async ({ context, client, args, options }: DzFuncProp
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		if (position > 3) {
+			context.channel?.sendMessage("Please enter a valid position between 1 and 3.");
+			return;
+		}
 		const [ dzTeam, user ] = await Promise.all([
 			getDzTeam(author.id),
 			getRPGUser({ user_tag: author.id }, { cached: true })

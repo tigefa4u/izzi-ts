@@ -20,6 +20,10 @@ export const setDzTeam = async ({ context, args, options }: DzFuncProps) => {
 			);
 			return;
 		}
+		if (position > 3) {
+			context.channel?.sendMessage("Please enter a valid position between 1 and 3.");
+			return;
+		}
 		const cards = await getCardInfoByRowNumber({
 			row_number: rowNum,
 			isDarkZone: true,
