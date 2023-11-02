@@ -226,6 +226,8 @@ export const getRaids = (
 	}
 	if (filters.isDarkZone) {
 		query = query.where(`${tableName}.is_dark_zone`, filters.isDarkZone);
+	} else {
+		query = query.where(`${tableName}.is_dark_zone`, false);
 	}
 
 	query = query.limit(pagination.limit).offset(pagination.offset);
