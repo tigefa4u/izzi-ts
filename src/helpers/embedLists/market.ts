@@ -30,13 +30,16 @@ export const createDzMarketList = (array: IDzMarketProps[]) => {
 	array.map((item) => {
 		fields.push({
 			name: `${numericWithComma(item.price)} ${emoji.gold} | ${titleCase(
-				item.rank
-			)} | ${titleCase(item.name)} Level ${item.character_level} ${emojiMap(
-				item.type
-			)} ${emojiMap(item.abilityname)}`,
-			value: `${statNames
-				.map((s) => `**${s.name}:** ${item.stats[s.key as keyof CharacterStatProps]}`)
-				.join(", ")} | ID: ${item.collection_id}`,
+				item.name
+			)} Level ${item.character_level} ${emojiMap(item.type)} ${emojiMap(
+				item.abilityname
+			)} | ID: ${item.collection_id}`,
+			value: `${titleCase(item.rank)} | ${statNames
+				.map(
+					(s) =>
+						`**${s.name}:** ${item.stats[s.key as keyof CharacterStatProps]}`
+				)
+				.join(", ")}`,
 		});
 	});
 	return fields;

@@ -6,7 +6,7 @@ import {
 } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { IMarketProps } from "@customTypes/market";
-import { UserProps } from "@customTypes/users";
+import { UserParams, UserProps } from "@customTypes/users";
 import { updateCollection } from "api/controllers/CollectionsController";
 import { updateRawDzProfile } from "api/controllers/DarkZoneController";
 import { updateDzInv } from "api/controllers/DarkZoneInventoryController";
@@ -276,10 +276,17 @@ async function validateAndPurchaseCard(
 			params.channel?.sendMessage("ERROR!");
 			return;
 		}
-		const seller = await getUser({
+		let userParams = {
 			id: marketCard.user_id,
 			is_banned: false,
-		});
+		} as UserParams;
+		if (params.extras.isDarkZone) {
+			userParams = {
+				user_tag: marketCard.user_tag,
+				is_banned: false
+			};
+		}
+		const seller = await getUser(userParams);
 		if (!seller) {
 			if (params.extras.isDarkZone) {
 				await Promise.all([
