@@ -27,69 +27,69 @@ import { DARK_ZONE_MIN_LEVEL } from "helpers/constants/constants";
 
 export const invokeDarkZone = async (params: BaseProps) => {
 	try {
-		params.context.channel?.sendMessage("Dark Zone is currently disabled");
+		// params.context.channel?.sendMessage("Dark Zone is currently disabled");
+		// return
+		const cmd = filterSubCommands(params.args.shift() || "commands", subcommands) || "commands";
+		if (cmd === "commands") {
+			listDzCommands(params);
+			return;
+		}
+		const dzUser = await getDarkZoneProfile({ user_tag: params.options.author.id });
+		if (cmd === "start") {
+			startDz({
+				...params,
+				dzUser
+			});
+			return;
+		}
+		if (!dzUser) {
+			params.context.channel?.sendMessage(
+				`Summoner **${params.options.author.username}**, You have not started your ` +
+                "journey in the Dark Zone. Type `iz dz start`, " +
+				`you must be at least level ${DARK_ZONE_MIN_LEVEL}.`
+			);
+			return;
+		}
+		const paramObject: DzFuncProps = {
+			...params,
+			dzUser
+		};
+		if (cmd === "profile") {
+			viewDzProfile(paramObject);
+		} else if (cmd === "dex") {
+			darkZoneDex(paramObject);
+		} else if (cmd === "buy") {
+			buyDzCard(paramObject);
+		} else if (cmd === "inventory") {
+			viewDzInventory(paramObject);
+		} else if (cmd === "showcase") {
+			showcaseDzCard(paramObject);
+		} else if (cmd === "adventure") {
+			sendOnAdventure(paramObject);
+		} else if (cmd === "battle") {
+			battleDzFloor(paramObject);
+		} else if (cmd === "team") {
+			dzTeamCommands(paramObject);
+		} else if (cmd === "console") {
+			dzConsole(paramObject);
+		} else if (cmd === "pvp") {
+			dzPvpBattle(paramObject);
+		} else if (cmd === "enchantment") {
+			enchantDzCard(paramObject);
+		} else if (cmd === "spawn") {
+			spawnDzRaid(paramObject);
+		} else if (cmd === "evolution") {
+			evoDzCard(paramObject);
+		} else if (cmd === "stat-point") {
+			upgradeDzStatPoint(paramObject);
+		} else if (cmd === "give") {
+			giveFragments(paramObject);
+		} else if (cmd === "cgive") {
+			giveDzCard(paramObject);
+		} else if (cmd === "market") {
+			dzMarketCommands(paramObject);
+		}
 		return;
-		// const cmd = filterSubCommands(params.args.shift() || "commands", subcommands) || "commands";
-		// if (cmd === "commands") {
-		// 	listDzCommands(params);
-		// 	return;
-		// }
-		// const dzUser = await getDarkZoneProfile({ user_tag: params.options.author.id });
-		// if (cmd === "start") {
-		// 	startDz({
-		// 		...params,
-		// 		dzUser
-		// 	});
-		// 	return;
-		// }
-		// if (!dzUser) {
-		// 	params.context.channel?.sendMessage(
-		// 		`Summoner **${params.options.author.username}**, You have not started your ` +
-		//         "journey in the Dark Zone. Type `iz dz start`, " +
-		// 		`you must be at least level ${DARK_ZONE_MIN_LEVEL}.`
-		// 	);
-		// 	return;
-		// }
-		// const paramObject: DzFuncProps = {
-		// 	...params,
-		// 	dzUser
-		// };
-		// if (cmd === "profile") {
-		// 	viewDzProfile(paramObject);
-		// } else if (cmd === "dex") {
-		// 	darkZoneDex(paramObject);
-		// } else if (cmd === "buy") {
-		// 	buyDzCard(paramObject);
-		// } else if (cmd === "inventory") {
-		// 	viewDzInventory(paramObject);
-		// } else if (cmd === "showcase") {
-		// 	showcaseDzCard(paramObject);
-		// } else if (cmd === "adventure") {
-		// 	sendOnAdventure(paramObject);
-		// } else if (cmd === "battle") {
-		// 	battleDzFloor(paramObject);
-		// } else if (cmd === "team") {
-		// 	dzTeamCommands(paramObject);
-		// } else if (cmd === "console") {
-		// 	dzConsole(paramObject);
-		// } else if (cmd === "pvp") {
-		// 	dzPvpBattle(paramObject);
-		// } else if (cmd === "enchantment") {
-		// 	enchantDzCard(paramObject);
-		// } else if (cmd === "spawn") {
-		// 	spawnDzRaid(paramObject);
-		// } else if (cmd === "evolution") {
-		// 	evoDzCard(paramObject);
-		// } else if (cmd === "stat-point") {
-		// 	upgradeDzStatPoint(paramObject);
-		// } else if (cmd === "give") {
-		// 	giveFragments(paramObject);
-		// } else if (cmd === "cgive") {
-		// 	giveDzCard(paramObject);
-		// } else if (cmd === "market") {
-		// 	dzMarketCommands(paramObject);
-		// }
-		// return;
 	} catch (err) {
 		loggers.error("invokeDarkZone: ERROR", err);
 		return;

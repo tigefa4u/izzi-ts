@@ -1,12 +1,13 @@
 import { AuthorProps, ChannelProp } from "@customTypes";
 import { BaseProps } from "@customTypes/command";
 import { DarkZoneProfileProps } from "@customTypes/darkZone/profile";
+import { UserProps } from "@customTypes/users";
 import { RawUpdateProps } from "@customTypes/utility";
 import {
 	getDarkZoneProfile,
 	updateRawDzProfile,
 } from "api/controllers/DarkZoneController";
-import { updateUserRaw } from "api/controllers/UsersController";
+import { getRPGUser, updateUserRaw } from "api/controllers/UsersController";
 import { startTransaction } from "api/models/Users";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
@@ -33,7 +34,7 @@ type P = {
   battlingFloor: number;
   channel: ChannelProp;
   client: Client;
-  maxMana: number;
+  user?: UserProps;
 };
 export const processBattleRewards = async ({
 	isVictory,
@@ -43,7 +44,7 @@ export const processBattleRewards = async ({
 	battlingFloor,
 	channel,
 	client,
-	maxMana
+	user,
 }: P) => {
 	try {
 		let clonedDzUser: DarkZoneProfileProps | undefined = undefined;
@@ -72,141 +73,136 @@ export const processBattleRewards = async ({
       `${DOT} __${numericWithComma(reward.expGain)}__ Exp${
       	showBonus ? ` (+${multiplier * 12} Exp Bonus)` : ""
       }`;
-		await startTransaction(async (trx) => {
-			const updateObj = await trx("users")
-				.where({ user_tag: author.id })
-				.where("mana", ">=", manaToConsume)
-				.update({
-					mana: trx.raw("mana - ??", manaToConsume),
-					gold: trx.raw("gold + ??", reward.gold),
-				})
-				.returning("id");
 
-			if (!updateObj || updateObj.length <= 0) {
-				const errorEmbed = createEmbed(author, client)
-					.setTitle(DEFAULT_ERROR_TITLE)
-					.setDescription(
-						"You did not have enough mana to process your battle."
-					)
-					.setHideConsoleButtons(true);
-				channel?.sendMessage(errorEmbed);
+		let clonedUser: UserProps | undefined;
+		if (user) {
+			clonedUser = clone(user);
+		} else {
+			clonedUser = await getRPGUser({ user_tag: author.id }, { forceFetchFromDB: true });
+		}
+		if (!clonedUser) return;
+		if (clonedUser.mana < manaToConsume) {
+			channel?.sendMessage("You did not have sufficient mana to process your battle :x:");
+			return;
+		}
 
-				return trx.rollback();
-			}
+		const params = {
+			fragments: {
+				op: "+",
+				value: reward.fragments,
+			},
+			exp: {
+				op: "=",
+				value: reward.exp,
+			},
+		} as RawUpdateProps<DarkZoneProfileProps>;
+		if (reward.level > 0) {
+			params.level = {
+				op: "+",
+				value: reward.level,
+			};
+			rewardDesc =
+        rewardDesc +
+        `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` +
+        `\n${DOT} +1 Level up\n${DOT} We have also refilled __${clonedUser.max_mana}__ Mana`;
+		}
+		if (isVictory && clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
+			params.max_floor = {
+				op: "+",
+				value: 1,
+			};
+			params.reached_max_floor_at = {
+				op: "=",
+				value: new Date() as any,
+			};
+		}
 
-			const params = {
-				fragments: {
-					op: "+",
-					value: reward.fragments,
-				},
-				exp: {
-					op: "=",
-					value: reward.exp,
-				},
-			} as RawUpdateProps<DarkZoneProfileProps>;
-			if (reward.level > 0) {
-				params.level = {
-					op: "+",
-					value: reward.level,
-				};
+		const updateObj = {
+			mana: {
+				op: "-",
+				value: manaToConsume,
+			},
+			gold: {
+				op: "+",
+				value: reward.gold,
+			},
+		} as RawUpdateProps<UserProps>;
+		if (reward.level > 0) {
+			updateObj.level = {
+				op: "+",
+				value: 1,
+			};
+		}
+
+		await Promise.all([
+			updateRawDzProfile({ user_tag: author.id }, params),
+			updateUserRaw({ user_tag: author.id }, updateObj),
+		]);
+		let desc = "Better luck next time.";
+		if (isVictory) {
+			desc = `Congratulations summoner **${author.username}**, you have defeated the floor boss and received`;
+			if (clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
 				rewardDesc =
           rewardDesc +
-          `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` +
-          `\n${DOT} +1 Level up\n${DOT} We have also refilled __${maxMana}__ Mana`;
+          "\n\n**You have defeated this floor boss and " +
+          "can move to the next one using `iz fl n -dz`**";
 			}
-			if (
-				isVictory &&
-        clonedDzUser &&
-        battlingFloor >= clonedDzUser.max_floor
-			) {
-				params.max_floor = {
-					op: "+",
-					value: 1,
-				};
-				params.reached_max_floor_at = {
-					op: "=",
-					value: new Date() as any,
-				};
-			}
+		}
+		const embed = createEmbed(author, client)
+			.setTitle(
+				isVictory ? `Victory ${emoji.celebration}` : `Defeated ${emoji.cry}`
+			)
+			.setDescription(`${desc}\n\n**__Rewards__**\n${rewardDesc}`)
+			.setHideConsoleButtons(true);
 
-			const promises: any[] = [ updateRawDzProfile({ user_tag: author.id }, params) ];
-
-			if (reward.level > 0) {
-				promises.push(updateUserRaw({ user_tag: author.id }, {
-					mana: {
-						op: "=",
-						value: maxMana
-					} 
-				}));
-			}
-			await Promise.all(promises);
-			let desc = "Better luck next time.";
-			if (isVictory) {
-				desc = `Congratulations summoner **${author.username}**, you have defeated the floor boss and received`;
-				if (clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
-					rewardDesc =
-            rewardDesc +
-            "\n\n**You have defeated this floor boss and " +
-            "can move to the next one using `iz fl n -dz`**";
-				}
-			}
-			const embed = createEmbed(author, client)
-				.setTitle(
-					isVictory ? `Victory ${emoji.celebration}` : `Defeated ${emoji.cry}`
-				)
-				.setDescription(`${desc}\n\n**__Rewards__**\n${rewardDesc}`)
-				.setHideConsoleButtons(true);
-
-			if (isVictory) {
-				const buttons = customButtonInteraction(
-					channel,
-					[
-						{
-							label: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.label,
-							params: { id: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id },
-						},
-						{
-							label: CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.label,
-							params: { id: CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.id },
-						},
-					],
-					author.id,
-					(params) => {
-						switch (params.id) {
-							case CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id: {
-								invokeDarkZone({
-									context: { channel } as BaseProps["context"],
-									client,
-									options: { author },
-									args: [ "all" ],
-								});
-								return;
-							}
-							case CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.id: {
-								floor({
-									client,
-									options: { author },
-									context: { channel } as BaseProps["context"],
-									args: [ "n", "-dz" ],
-								});
-								return;
-							}
+		if (isVictory) {
+			const buttons = customButtonInteraction(
+				channel,
+				[
+					{
+						label: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.label,
+						params: { id: CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id },
+					},
+					{
+						label: CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.label,
+						params: { id: CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.id },
+					},
+				],
+				author.id,
+				(params) => {
+					switch (params.id) {
+						case CONSOLE_BUTTONS.DARK_ZONE_BT_ALL.id: {
+							invokeDarkZone({
+								context: { channel } as BaseProps["context"],
+								client,
+								options: { author },
+								args: [ "all" ],
+							});
+							return;
 						}
-					},
-					() => {
-						return;
-					},
-					false,
-					1
-				);
-				if (buttons) {
-					embed.setButtons(buttons);
-				}
+						case CONSOLE_BUTTONS.DARK_ZONE_NEXT_FLOOR.id: {
+							floor({
+								client,
+								options: { author },
+								context: { channel } as BaseProps["context"],
+								args: [ "n", "-dz" ],
+							});
+							return;
+						}
+					}
+				},
+				() => {
+					return;
+				},
+				false,
+				1
+			);
+			if (buttons) {
+				embed.setButtons(buttons);
 			}
+		}
 
-			channel?.sendMessage(embed);
-			return;
-		});
+		channel?.sendMessage(embed);
 		return;
 	} catch (err) {
 		loggers.error("darkZone.battleReward: ERROR", err);

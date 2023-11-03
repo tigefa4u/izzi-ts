@@ -59,7 +59,7 @@ export const battleDzFloor = async ({
 			context.channel?.sendMessage(embed);
 			return;
 		}
-		const user = await getRPGUser({ user_tag: author.id });
+		const user = await getRPGUser({ user_tag: author.id }, { forceFetchFromDB: true });
 		if (!user) return;
 		if (user.mana < MANA_PER_BATTLE) {
 			embed.setDescription("You do not have enough mana to proceed! " +
@@ -87,7 +87,7 @@ export const battleDzFloor = async ({
 				battlingFloor: dzUser.floor,
 				channel: context.channel,
 				client,
-				maxMana: user.max_mana
+				user
 			});
 			await clearCooldown(author.id, cdKey);
 			return;
@@ -166,7 +166,6 @@ export const battleDzFloor = async ({
 			battlingFloor: dzUser.floor,
 			channel: context.channel,
 			client,
-			maxMana: user.max_mana
 		});
 		return;
 	} catch (err) {

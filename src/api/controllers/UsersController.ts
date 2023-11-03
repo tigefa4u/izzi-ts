@@ -97,8 +97,9 @@ export const updateUser: (
 export const getRPGUser: (
   params: Pick<UserProps, "user_tag">,
   options?: {
-    cached: boolean;
+    cached?: boolean;
 	ignoreBannedUser?: boolean;
+	forceFetchFromDB?: boolean;
   }
 ) => Promise<UserProps | undefined> = async (params, options) => {
 	try {
@@ -115,6 +116,9 @@ export const getRPGUser: (
 		/**
 		 * Cache will always be populated by db listener
 		 */
+		if (options?.forceFetchFromDB) {
+			await Cache.del(key);
+		}
 		const user = await Cache.fetch(key, () => getUser(params), 60 * 60 * 23);
 		if (!user) {
 			loggers.info(
