@@ -6,6 +6,7 @@ import {
 	getDarkZoneProfile,
 	updateRawDzProfile,
 } from "api/controllers/DarkZoneController";
+import { updateUserRaw } from "api/controllers/UsersController";
 import { startTransaction } from "api/models/Users";
 import { createEmbed } from "commons/embeds";
 import { Client } from "discord.js";
@@ -32,6 +33,7 @@ type P = {
   battlingFloor: number;
   channel: ChannelProp;
   client: Client;
+  maxMana: number;
 };
 export const processBattleRewards = async ({
 	isVictory,
@@ -41,6 +43,7 @@ export const processBattleRewards = async ({
 	battlingFloor,
 	channel,
 	client,
+	maxMana
 }: P) => {
 	try {
 		let clonedDzUser: DarkZoneProfileProps | undefined = undefined;
@@ -64,10 +67,10 @@ export const processBattleRewards = async ({
 		let rewardDesc =
       `${DOT} __${numericWithComma(reward.gold)}__ Gold ${emoji.gold}\n` +
       `${DOT} ${reward.fragments} Fragments ${emoji.fragments}${
-      	showBonus ? ` (+${multiplier * 2} Fragments Bonus)` : ""
+      	showBonus ? ` (+${multiplier * 3} Fragments Bonus)` : ""
       }\n` +
       `${DOT} __${numericWithComma(reward.expGain)}__ Exp${
-      	showBonus ? ` (+${multiplier * 15} Exp Bonus)` : ""
+      	showBonus ? ` (+${multiplier * 12} Exp Bonus)` : ""
       }`;
 		await startTransaction(async (trx) => {
 			const updateObj = await trx("users")
@@ -109,7 +112,7 @@ export const processBattleRewards = async ({
 				rewardDesc =
           rewardDesc +
           `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` +
-          `\n${DOT} +1 Level up`;
+          `\n${DOT} +1 Level up\n${DOT} We have also refilled __${maxMana}__ Mana`;
 			}
 			if (
 				isVictory &&
@@ -125,7 +128,18 @@ export const processBattleRewards = async ({
 					value: new Date() as any,
 				};
 			}
-			await updateRawDzProfile({ user_tag: author.id }, params);
+
+			const promises: any[] = [ updateRawDzProfile({ user_tag: author.id }, params) ];
+
+			if (reward.level > 0) {
+				promises.push(updateUserRaw({ user_tag: author.id }, {
+					mana: {
+						op: "=",
+						value: maxMana
+					} 
+				}));
+			}
+			await Promise.all(promises);
 			let desc = "Better luck next time.";
 			if (isVictory) {
 				desc = `Congratulations summoner **${author.username}**, you have defeated the floor boss and received`;
@@ -226,12 +240,12 @@ const calculateUserReward = ({
 		expGain: 0,
 	};
 	if (isVictory) {
-		let expGain = 32 - (level - 1);
+		let expGain = 30 - (level - 1);
 		if (expGain < 7) {
 			expGain = 7;
 		}
 		rewardObject.exp = rewardObject.exp + randomNumber(expGain - 5, expGain);
-		rewardObject.fragments = rewardObject.fragments + 1;
+		rewardObject.fragments = rewardObject.fragments + 4;
 		let goldReward = randomNumber(80, 200);
 		if (battlingFloor >= 60 && battlingFloor < 100) {
 			goldReward = randomNumber(200, 400);
@@ -251,8 +265,8 @@ const calculateUserReward = ({
 			rewardObject.exp = rewardObject.exp - 3;
 		}
 		if (battlingFloor >= maxFloor) {
-			rewardObject.fragments = rewardObject.fragments + 2;
-			rewardObject.exp = rewardObject.exp + 15;
+			rewardObject.fragments = rewardObject.fragments + 3;
+			rewardObject.exp = rewardObject.exp + 12;
 		}
 	}
 	rewardObject.fragments = rewardObject.fragments * multiplier;

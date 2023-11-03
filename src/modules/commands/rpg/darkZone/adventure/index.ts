@@ -1,5 +1,6 @@
 import { DzFuncProps } from "@customTypes/darkZone";
 import { DarkZoneProfileProps } from "@customTypes/darkZone/profile";
+import { UserUpdateProps } from "@customTypes/users";
 import { RawUpdateProps } from "@customTypes/utility";
 import { updateRawDzProfile } from "api/controllers/DarkZoneController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
@@ -52,7 +53,7 @@ export const sendOnAdventure = async ({
 				const dzReward = {
 					fragments: {
 						op: "+",
-						value: randomNumber(50, 80)
+						value: randomNumber(80, 160)
 					},
 					exp: {
 						op: "+",
@@ -66,6 +67,7 @@ export const sendOnAdventure = async ({
                 `${DOT} ${dzReward.exp?.value || 0} Exp :card_index:` +
                 `\n${DOT} ${numericWithComma(goldReward)} Gold ${emoji.gold}`;
 				const totalExp = dzUser.exp + (dzReward.exp?.value || 0);
+				const userUpdateParams = { gold: user.gold } as UserUpdateProps;
 				if (totalExp >= dzUser.r_exp) {
 					dzReward.exp = {
 						op: "=",
@@ -76,12 +78,14 @@ export const sendOnAdventure = async ({
 						value: 1
 					};
 
+					userUpdateParams.mana = user.max_mana;
+
 					rewardDesc = rewardDesc + `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots\n` +
-                    `${DOT} +1 Level up`;
+                    `${DOT} +1 Level up\n${DOT} We have also refilled __${user.max_mana}__ Mana`;
 				}
 				await Promise.all([
 					updateRawDzProfile({ user_tag: author.id }, dzReward),
-					updateRPGUser({ user_tag: author.id }, { gold: user.gold })
+					updateRPGUser({ user_tag: author.id }, userUpdateParams)
 				]);
 				embed.setTitle(`Adventure Completed ${emoji.dance}`)
 					.setDescription(
@@ -100,9 +104,9 @@ export const sendOnAdventure = async ({
 			return;
 		}
 		if (isComplete) {
-			embed.setTitle(`Adventure Failed ${emoji.cry}`)
-				.setDescription("Your team was abandoned and has failed to complete the adventure. " +
-                "You will receive no rewards.\n\nTo start a new Adventure type `iz dz adv`.");
+			embed.setTitle(`Idle Adventure ${emoji.crossedswords}`)
+				.setDescription(`Summoner **${author.username}**, You have not started ` +
+				"your Adventure. Type `iz dz adv` and claim your loot in an hour.");
 			context.channel?.sendMessage(embed);
 			return;
 		}

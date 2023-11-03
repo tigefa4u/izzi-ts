@@ -4,6 +4,7 @@ import {
 	UserProps,
 	UserUpdateProps,
 } from "@customTypes/users";
+import { RawUpdateReturnType } from "@customTypes/utility";
 import connection from "db";
 import emoji from "emojis/emoji";
 import { MAX_GOLD_THRESHOLD } from "helpers/constants/constants";
@@ -188,3 +189,17 @@ export const getLevel = async (id: number): Promise<{ level: number }> =>
 		.from(tableName)
 		.where({ id })
 		.then((res) => res[0]);
+
+export const rawUpdate = async (
+	user_tag: string,
+	data: RawUpdateReturnType<Partial<UserProps>>
+): Promise<UserProps[]> => {
+	return connection(tableName)
+		.where({
+			user_tag,
+			is_deleted: false,
+			is_banned: false
+		})
+		.update(data)
+		.returning("*");
+};

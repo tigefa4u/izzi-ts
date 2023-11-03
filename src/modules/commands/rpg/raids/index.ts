@@ -125,7 +125,13 @@ export function prepareRaidBossEmbedDesc(
 	const fakeHp = processHpBar(overAllStats, damageDiff).health;
 
 	const desc = `**Level ${stats.battle_stats.boss_level} ${
-		raid.is_dark_zone ? "Dark Zone" : isWorldBoss ? "World" : isEvent ? "Event" : "Raid"
+		raid.is_dark_zone
+			? "Dark Zone"
+			: isWorldBoss
+				? "World"
+				: isEvent
+					? "Event"
+					: "Raid"
 	} Boss [${
 		isWorldBoss ? "Global" : raid.is_private ? "Private" : "Public"
 	}]**\n**${numericWithComma(stats.remaining_strength)} / ${numericWithComma(
@@ -154,7 +160,11 @@ export function prepareRaidBossEmbedDesc(
 		stats.battle_stats.stats.intelligence
 	)}\n\n**Power Level:** ${numericWithComma(
 		stats.battle_stats.power_level
-	)}\n\n${prepareLootCb ? prepareLootCb() : prepareLoot(boss, loot, isEvent, raid.is_dark_zone)}`;
+	)}\n\n${
+		prepareLootCb
+			? prepareLootCb()
+			: prepareLoot(boss, loot, isEvent, raid.is_dark_zone)
+	}`;
 
 	return desc;
 }
@@ -184,7 +194,8 @@ function prepareLoot(
       }`;
 	}
 	if (isDarkZone && loot.drop.darkZone?.fragments) {
-		extraDesc = `__${loot.drop.darkZone?.fragments}x__ Fragments ${emoji.fragments}`;
+		extraDesc = `__${loot.drop.darkZone?.fragments}x__ Fragments ${emoji.fragments}\n` +
+		`__${loot.drop.darkZone.exp}__ Izzi Exp`;
 	}
 
 	const desc = `**__${

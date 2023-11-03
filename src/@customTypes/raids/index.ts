@@ -56,7 +56,8 @@ export type RaidLootProps = {
             shard: number;
             orbs: number;
         };
-        darkZone?: { fragments: number; };
+        // Normal izzi exp
+        darkZone?: { fragments: number; exp: number; };
         worldBoss?: {
             gold: number;
             default: {

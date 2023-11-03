@@ -12,14 +12,14 @@ export const createDarkZoneEmbedList = (array: DzInventoryReturnType[]) => {
 		fields.push({
 			name: `#${c.row_number} | ${
 				c.is_favorite ? emoji.favorite : ""
-			} ${titleCase(c.rank)} | ${titleCase(
+			} ${titleCase(
 				c.metadata?.nickname || c.name
 			)} | Level ${c.character_level} ${emojiMap(c.type)} ${emojiMap(
 				c.abilityname
-			)} ${c.is_on_market ? ":shopping_cart:" : ""}`,
-			value: `${statNames
+			)}${c.is_on_market ? " :shopping_cart:" : ""} | ID: ${c.id}`,
+			value: `${titleCase(c.rank)} | ${statNames
 				.map((s) => `**${s.name}:** ${c.stats[s.key as keyof CharacterStatProps]}`)
-				.join(", ")} | ID: ${c.id}`,
+				.join(", ")}`,
 		});
 	});
 	return fields;

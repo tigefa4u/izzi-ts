@@ -13,10 +13,9 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DEFAULT_SUCCESS_TITLE,
 	STARTER_CARD_EXP,
-	STARTER_CARD_LEVEL,
 	STARTER_CARD_R_EXP,
 } from "helpers/constants/constants";
-import { DZ_STARTER_CARD_STATS, DZ_STARTER_INVENTORY_SLOTS } from "helpers/constants/darkZone";
+import { DZ_STARTER_CARD_STATS } from "helpers/constants/darkZone";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -24,7 +23,6 @@ import { titleCase } from "title-case";
 export const startDz = async ({ context, client, options, dzUser }: BaseProps & { dzUser?: DarkZoneProfileProps; }) => {
 	try {
 		const { author } = options;
-		const user = await getRPGUser({ user_tag: author.id });
 		const embed = createEmbed(author, client)
 			.setTitle(DEFAULT_ERROR_TITLE)
 			.setHideConsoleButtons(true);
@@ -36,6 +34,7 @@ export const startDz = async ({ context, client, options, dzUser }: BaseProps & 
 			context.channel?.sendMessage(embed);
 			return;
 		}
+		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) {
 			embed.setDescription(
 				`Summoner **${author.username}**, You have not started your journey ` +

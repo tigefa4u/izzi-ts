@@ -381,7 +381,9 @@ async function upgradeUser(
 		if (user.max_mana < MAX_MANA_GAIN) {
 			user.max_mana = user.max_mana + 2;
 		}
-		user.mana = user.max_mana;
+		if (user.mana < user.max_mana) {
+			user.mana = user.max_mana;
+		}
 		Object.assign(upgradeObject, {
 			mana: user.mana,
 			max_mana: user.max_mana,

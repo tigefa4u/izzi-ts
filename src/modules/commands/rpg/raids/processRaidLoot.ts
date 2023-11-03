@@ -16,6 +16,7 @@ import { Client } from "discord.js";
 import emoji from "emojis/emoji";
 import { numericWithComma, probability, randomElementFromArray } from "helpers";
 import {
+	MAX_MANA_GAIN,
 	MIN_LEVEL_FOR_HIGH_RAIDS,
 	QUEST_TYPES,
 	STARTER_CARD_EXP,
@@ -40,6 +41,8 @@ type R = {
   defaultDrops?: (CollectionCreateProps & { name?: string })[];
   rareDrops?: (CollectionCreateProps & { name?: string })[];
   fragments?: number;
+  exp?: number;
+  levelUpDesc?: string;
 };
 export const processRaidLoot = async ({
 	client,
@@ -103,8 +106,34 @@ export const processRaidLoot = async ({
 					user.game_points = user.game_points + raid.loot.gamePoints;
 					updateObj.game_points = user.game_points;
 				}
+				if (raid.loot.drop.darkZone?.exp) {
+					rewards.exp = raid.loot.drop.darkZone.exp;
+					const currentExp = rewards.exp + user.exp;
+					if (currentExp >= user.r_exp) {
+						user.level = user.level + 1;
+						user.exp = currentExp - user.r_exp;
+						rewards.levelUpDesc = "You have gained +1 level!";
+						user.r_exp = user.level * 47;
+						if (user.max_mana < MAX_MANA_GAIN) {
+							user.max_mana = user.max_mana + 2;
+							updateObj.max_mana = user.max_mana;
+							rewards.levelUpDesc = rewards.levelUpDesc + " Your max mana has " +
+							`increase __${user.max_mana - 2}__ -> __${user.max_mana}__.`;
+						}
+						if (user.mana < user.max_mana) {
+							user.mana = user.max_mana;
+							updateObj.mana = user.mana;
+							rewards.levelUpDesc = rewards.levelUpDesc + " We have also refilled your mana.";
+						}
+						updateObj.level = user.level;
+						updateObj.r_exp = user.r_exp;
+					} else {
+						user.exp = currentExp;
+					}
+					updateObj.exp = user.exp;
+				}
 				const updatePromises: any[] = [ updateRPGUser({ user_tag: user.user_tag }, updateObj) ];
-				if (raid.loot.drop.darkZone?.fragments) {
+				if (raid.loot.drop.darkZone) {
 					rewards.fragments = raid.loot.drop.darkZone.fragments;
 					updatePromises.push(updateRawDzProfile({ user_tag: user.user_tag }, {
 						fragments: {
@@ -381,6 +410,8 @@ function prepareRewardEmbed({
 	}**\n__${numericWithComma(reward.gold)}__ Gold ${emoji.gold}${
 		reward.orbs ? `\n__${numericWithComma(reward.orbs)}__ Orbs ${emoji.blueorb}` : ""
 	}${reward.shards ? `\n__${numericWithComma(reward.shards)}__ Shards ${emoji.shard}` : ""}${
+		reward.exp ? `\n__${reward.exp}__ Izzi Exp` : ""
+	}${reward.levelUpDesc ? `\n${reward.levelUpDesc}` : ""}${
 		reward.fragments ? `\n__${numericWithComma(reward.fragments)}__ Fragments ${emoji.fragments}` : ""
 	}${
 		raid.loot.gamePoints && raid.loot.gamePoints > 0

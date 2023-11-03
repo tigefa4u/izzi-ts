@@ -154,9 +154,9 @@ export const processUpVote = async (req: Request, res: Response) => {
 			];
 
 			if (dzUser) {
-				let fragmentReward = 25;
+				let fragmentReward = 80;
 				if (summoner.is_premium) {
-					fragmentReward = 35;
+					fragmentReward = 100;
 				}
 				promises.push(updateRawDzProfile({ user_tag }, {
 					fragments: {

@@ -57,7 +57,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
           "Use daily to gain __2,000__ and 150xStreaks (up to 30)" +
           " " +
           `Gold ${emoji.gold}, 3 Shards ${emoji.shard} (6 if premium), ` +
-		  `25 Fragments ${emoji.fragments} (35 if premium)` +
+		  `80 Fragments ${emoji.fragments} (100 if premium)` +
 		  " 1 Raid Permit(s) (2 if married)" +
           " " +
           "as you vote! You get bonus __2,000__ gold if you're married!" +

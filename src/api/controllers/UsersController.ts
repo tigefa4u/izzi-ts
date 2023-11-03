@@ -4,12 +4,12 @@ import {
 	UserProps,
 	UserUpdateProps,
 } from "@customTypes/users";
+import { RawUpdateProps } from "@customTypes/utility";
 import Cache from "cache";
-import { parsePremiumUsername } from "helpers";
 import { CACHE_KEYS } from "helpers/constants/cacheConstants";
 import { LEVEL_UP_EXP_MULTIPLIER, MAX_MANA_GAIN } from "helpers/constants/constants";
 import loggers from "loggers";
-import { clone } from "utility";
+import { clone, prepareRawUpdateObject } from "utility";
 import * as Users from "../models/Users";
 
 async function hydrateUserCache(data: UserProps) {
@@ -265,5 +265,15 @@ export const getUserLevel = async (id: number) => {
 	} catch (err) {
 		loggers.error("UsersController.getUserLevel: ERROR", err);
 		return;	
+	}
+};
+
+export const updateUserRaw = async (params: { user_tag: string; }, data: RawUpdateProps<UserUpdateProps>) => {
+	try {
+		loggers.info("Updating raw user profile: ", params, data);
+		return Users.rawUpdate(params.user_tag, prepareRawUpdateObject(data));
+	} catch (err) {
+		loggers.error("UsersController.updateUserRaw: ERROR", err);
+		return;
 	}
 };

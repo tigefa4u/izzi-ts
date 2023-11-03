@@ -134,7 +134,7 @@ export const buyDzCard = async ({
 		const isCardAvailable = checkEventCardAvailability(card);
 		if (!isCardAvailable) {
 			embed.setDescription(
-				`**${titleCase(character.name)}** is not available.`
+				`**${titleCase(character.name)}** is not available. (Expired event cards are not available)`
 			);
 			context.channel?.sendMessage(embed);
 			return;

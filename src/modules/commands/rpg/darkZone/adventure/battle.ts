@@ -85,7 +85,8 @@ export const battleDzFloor = async ({
 				dzUser,
 				battlingFloor: dzUser.floor,
 				channel: context.channel,
-				client
+				client,
+				maxMana: user.max_mana
 			});
 			await clearCooldown(author.id, cdKey);
 			return;
@@ -163,7 +164,8 @@ export const battleDzFloor = async ({
 			dzUser,
 			battlingFloor: dzUser.floor,
 			channel: context.channel,
-			client
+			client,
+			maxMana: user.max_mana
 		});
 		return;
 	} catch (err) {
