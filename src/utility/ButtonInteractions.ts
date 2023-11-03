@@ -394,7 +394,9 @@ export const customButtonInteraction = <P>(
 		collector?.on("dispose", (interaction) => {
 			const message = interaction.message as Message;
 			message.components.map((c) => c.components.map((component) => component.setDisabled(true)));
-			message.editButton([ ...message.components ][0]);
+			if (message.editable) {
+				message.editButton([ ...message.components ][0]);
+			}
 			return;
 		});
 
@@ -404,7 +406,9 @@ export const customButtonInteraction = <P>(
 				message.components.map((c) => c.components.map((component) => {
 					component.setDisabled(true);
 				}));
-				message.editButton([ ...message.components ][0]);
+				if (message.editable) {
+					message.editButton([ ...message.components ][0]);
+				}
 			});
 			return;
 		});
