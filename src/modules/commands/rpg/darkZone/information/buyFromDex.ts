@@ -131,14 +131,14 @@ export const buyDzCard = async ({
 				return;
 			}
 		}
-		const isCardAvailable = checkEventCardAvailability(card);
-		if (!isCardAvailable) {
-			embed.setDescription(
-				`**${titleCase(character.name)}** is not available. (Expired event cards are not available)`
-			);
-			context.channel?.sendMessage(embed);
-			return;
-		}
+		// const isCardAvailable = checkEventCardAvailability(card);
+		// if (!isCardAvailable) {
+		// 	embed.setDescription(
+		// 		`**${titleCase(character.name)}** is not available. (Expired event cards are not available)`
+		// 	);
+		// 	context.channel?.sendMessage(embed);
+		// 	return;
+		// }
 		user.gold = user.gold - cost;
 		await Promise.all([
 			updateRPGUser({ user_tag: author.id }, { gold: user.gold }),
