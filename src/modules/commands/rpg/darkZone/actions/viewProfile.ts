@@ -108,14 +108,14 @@ export const viewDzProfile = async ({
 				inline: true,
 			},
 		];
-		if (user.metadata.badges) {
+		if (user.metadata?.badges) {
 			fields.splice(0, 0, {
 				name: "Badges",
 				value: user.metadata.badges.map((b: { emoji: string; }) => b.emoji).join(" "),
 				inline: false,
 			});
 		}
-		if (user.metadata.status) {
+		if (user.metadata?.status) {
 			fields.splice(0, 0, {
 				name: `User Status ${emoji.chat}`,
 				value: user.metadata.status,
