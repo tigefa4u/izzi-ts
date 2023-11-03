@@ -23,6 +23,7 @@ import { upgradeDzStatPoint } from "./enchantmentAndEvolution/upgradeStatPoints"
 import { giveDzCard } from "./actions/cardGive";
 import { dzMarketCommands } from "./market";
 import { giveFragments } from "./actions/give";
+import { DARK_ZONE_MIN_LEVEL } from "helpers/constants/constants";
 
 export const invokeDarkZone = async (params: BaseProps) => {
 	try {
@@ -42,7 +43,8 @@ export const invokeDarkZone = async (params: BaseProps) => {
 		if (!dzUser) {
 			params.context.channel?.sendMessage(
 				`Summoner **${params.options.author.username}**, You have not started your ` +
-                "journey in the Dark Zone. Type `iz dz start`, you must be at least level 50."
+                "journey in the Dark Zone. Type `iz dz start`, " +
+				`you must be at least level ${DARK_ZONE_MIN_LEVEL}.`
 			);
 			return;
 		}
