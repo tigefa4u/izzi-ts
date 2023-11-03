@@ -40,7 +40,8 @@ export const battleDzFloor = async ({
 		}
 		const embed = createEmbed(author, client).setTitle(DEFAULT_ERROR_TITLE);
 		if (!dzUser.selected_team_id) {
-			embed.setDescription("Please select a valid team to participate in floor battles.");
+			embed.setDescription("Please select a valid team to participate in floor battles. " +
+			"Type `iz dz tm set 1 1` and `iz dz tm select` to set and select your team.");
 			context.channel?.sendMessage(embed);
 			return;
 		}

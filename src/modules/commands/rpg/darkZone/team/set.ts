@@ -60,7 +60,7 @@ export const setDzTeam = async ({ context, args, options }: DzFuncProps) => {
 			`Successfully assigned **Level ${card.character_level}** ` +
         `__${titleCase(card.rank)}__ **${titleCase(
         	card.metadata?.nickname || card.name
-        )}** to position __${position}__`
+        )}** to position __${position}__. Type \`\`iz dz tm select\`\` to select your team.`
 		);
 		return;
 	} catch (err) {
