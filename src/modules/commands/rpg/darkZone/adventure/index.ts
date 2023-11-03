@@ -78,7 +78,9 @@ export const sendOnAdventure = async ({
 						value: 1
 					};
 
-					userUpdateParams.mana = user.max_mana;
+					if (user.mana < user.max_mana) {
+						userUpdateParams.mana = user.max_mana;
+					}
 
 					rewardDesc = rewardDesc + `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots\n` +
                     `${DOT} +1 Level up\n${DOT} We have also refilled __${user.max_mana}__ Mana`;
