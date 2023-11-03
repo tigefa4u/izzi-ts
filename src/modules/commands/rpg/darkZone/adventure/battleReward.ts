@@ -132,6 +132,10 @@ export const processBattleRewards = async ({
 				op: "+",
 				value: 1,
 			};
+			updateObj.mana = {
+				op: "=",
+				value: clonedUser.max_mana
+			};
 		}
 
 		await Promise.all([
