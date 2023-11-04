@@ -44,7 +44,9 @@ export const dzConsole = async ({
 			.setTitle("Dark Zone Console " + emoji.crossedswords)
 			.setHideConsoleButtons(true)
 			.setDescription(
-				`**${emoji.fragments} Fragments:** ${numericWithComma(
+				`**${emoji.crossedswords} Level**: ${dzUser.level}\n**${
+					emoji.fragments
+				} Fragments:** ${numericWithComma(
 					dzUser.fragments
 				)}\n**:card_index: Exp:** [${numericWithComma(
 					dzUser.exp
