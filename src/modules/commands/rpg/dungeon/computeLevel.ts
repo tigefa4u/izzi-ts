@@ -40,7 +40,7 @@ function getComputedLevels(): DungeonLevelProps {
 				ranksMeta.divine.name,
 				ranksMeta.exclusive.name
 			]),
-			level: randomNumber(210, 275),
+			level: randomNumber(210, 230),
 			rank_id: 4,
 			name: "hero",
 		},
@@ -48,9 +48,9 @@ function getComputedLevels(): DungeonLevelProps {
 			rank: randomElementFromArray([
 				ranksMeta.exclusive.name,
 				ranksMeta.ultimate.name,
-				ranksMeta.mythical.name,
+				// ranksMeta.mythical.name,
 			]),
-			level: randomNumber(275, 325),
+			level: randomNumber(240, 290),
 			rank_id: 5,
 			name: "grand master",
 			equipItem: true,
