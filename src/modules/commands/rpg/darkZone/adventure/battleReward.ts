@@ -128,10 +128,13 @@ export const processBattleRewards = async ({
 			},
 		} as RawUpdateProps<UserProps>;
 		if (reward.level > 0) {
-			updateObj.mana = {
-				op: "+",
-				value: clonedUser.max_mana
-			};
+			clonedUser.mana = clonedUser.mana - manaToConsume;
+			if (clonedUser.mana < clonedUser.max_mana) {
+				updateObj.mana = {
+					op: "=",
+					value: clonedUser.max_mana
+				};
+			}
 		}
 
 		await Promise.all([
