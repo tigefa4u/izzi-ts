@@ -218,15 +218,15 @@ const difficultyMap: {[key: number]: { division: number; difficulty: number; nam
 
 const getFloorDifficulty = (floor: number) => {
 	const dataToLoop = Object.keys(difficultyMap);
-	let difficulty = difficultyMap["160"];
+	let difficulty = difficultyMap["150"];
 	for (const fl of dataToLoop) {
 		if (floor <= +fl) {
 			difficulty = difficultyMap[+fl];
 			break;
 		}
 	}
-	if (floor > 160) {
-		difficulty = difficultyMap["160"];
+	if (floor >= 150) {
+		difficulty = difficultyMap["150"];
 	}
 	return difficulty;
 };
