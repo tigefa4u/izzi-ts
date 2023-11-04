@@ -18,6 +18,8 @@ import {
 	DEFAULT_ERROR_TITLE,
 	DOT,
 	MANA_PER_BATTLE,
+	MAX_MANA_GAIN,
+	USER_XP_GAIN_PER_BATTLE,
 } from "helpers/constants/constants";
 import { DZ_INVENTORY_SLOTS_PER_LEVEL } from "helpers/constants/darkZone";
 import loggers from "loggers";
@@ -54,8 +56,25 @@ export const processBattleRewards = async ({
 			clonedDzUser = await getDarkZoneProfile({ user_tag: author.id });
 		}
 		if (!clonedDzUser) return;
+		let clonedUser: UserProps | undefined;
+		if (user) {
+			clonedUser = clone(user);
+		} else {
+			clonedUser = await getRPGUser(
+				{ user_tag: author.id },
+				{ forceFetchFromDB: true }
+			);
+		}
+		if (!clonedUser) return;
 		const manaToConsume = multiplier * MANA_PER_BATTLE;
-		const reward = calculateUserReward({
+		if (clonedUser.mana < manaToConsume) {
+			channel?.sendMessage(
+				"You did not have sufficient mana to process your battle :x:"
+			);
+			return;
+		}
+
+		const reward = calculateUserDzReward({
 			isVictory,
 			level: clonedDzUser.level,
 			currentExp: clonedDzUser.exp,
@@ -64,27 +83,22 @@ export const processBattleRewards = async ({
 			maxFloor: clonedDzUser.max_floor,
 			multiplier,
 		});
+		const userReward = calculateUserReward({
+			isVictory,
+			user: clone(clonedUser),
+			multiplier,
+		});
 		const showBonus = battlingFloor >= clonedDzUser.max_floor && isVictory;
 		let rewardDesc =
       `${DOT} __${numericWithComma(reward.gold)}__ Gold ${emoji.gold}\n` +
-      `${DOT} ${reward.fragments} Fragments ${emoji.fragments}${
+      `${DOT} __${numericWithComma(reward.fragments)}__ Fragments ${emoji.fragments}${
       	showBonus ? ` (+${multiplier * 3} Fragments Bonus)` : ""
       }\n` +
       `${DOT} __${numericWithComma(reward.expGain)}__ Exp${
       	showBonus ? ` (+${multiplier * 12} Exp Bonus)` : ""
+      }${
+      	userReward?.xpGain ? `\n${DOT} __${userReward.xpGain}xp__ Izzi Exp` : ""
       }`;
-
-		let clonedUser: UserProps | undefined;
-		if (user) {
-			clonedUser = clone(user);
-		} else {
-			clonedUser = await getRPGUser({ user_tag: author.id }, { forceFetchFromDB: true });
-		}
-		if (!clonedUser) return;
-		if (clonedUser.mana < manaToConsume) {
-			channel?.sendMessage("You did not have sufficient mana to process your battle :x:");
-			return;
-		}
 
 		const params = {
 			fragments: {
@@ -96,16 +110,6 @@ export const processBattleRewards = async ({
 				value: reward.exp,
 			},
 		} as RawUpdateProps<DarkZoneProfileProps>;
-		if (reward.level > 0) {
-			params.level = {
-				op: "+",
-				value: reward.level,
-			};
-			rewardDesc =
-        rewardDesc +
-        `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` +
-        `\n${DOT} +1 Level up\n${DOT} We have also refilled __${clonedUser.max_mana}__ Mana`;
-		}
 		if (isVictory && clonedDzUser && battlingFloor >= clonedDzUser.max_floor) {
 			params.max_floor = {
 				op: "+",
@@ -127,12 +131,65 @@ export const processBattleRewards = async ({
 				value: reward.gold,
 			},
 		} as RawUpdateProps<UserProps>;
+		if (isVictory && userReward) {
+			Object.assign(updateObj, {
+				exp: {
+					op: "=",
+					value: userReward.exp,
+				},
+				r_exp: {
+					op: "=",
+					value: userReward.r_exp,
+				},
+			});
+			if (clonedUser.level < userReward.level) {
+				channel?.sendMessage(
+					`Yay **${author.username}**! You have leveled up! ` +
+            `You are now level ${clonedUser.level + 1} ${emoji.celebration}. ` +
+            "We've refilled your mana." +
+            `${
+            	clonedUser.max_mana < MAX_MANA_GAIN
+            		? ` Your Max Mana is now __${clonedUser.max_mana}__ -> __${
+            			clonedUser.max_mana + 2
+            		}__`
+            		: ""
+            }`
+				);
+				clonedUser.mana = clonedUser.mana - manaToConsume;
+				updateObj.level = {
+					op: "+",
+					value: 1,
+				};
+				if (clonedUser.max_mana < MAX_MANA_GAIN) {
+					clonedUser.max_mana = clonedUser.max_mana + 2;
+					updateObj.max_mana = {
+						op: "+",
+						value: 2,
+					};
+				}
+				if (clonedUser.mana < clonedUser.max_mana) {
+					updateObj.mana = {
+						op: "=",
+						value: clonedUser.max_mana,
+					};
+				}
+			}
+		}
 		if (reward.level > 0) {
+			params.level = {
+				op: "+",
+				value: reward.level,
+			};
+			rewardDesc =
+        rewardDesc +
+        `\n${DOT} +${DZ_INVENTORY_SLOTS_PER_LEVEL} Inventory Max Slots` +
+        `\n${DOT} +1 Level up\n${DOT} We have also refilled __${clonedUser.max_mana}__ Mana`;
+
 			clonedUser.mana = clonedUser.mana - manaToConsume;
 			if (clonedUser.mana < clonedUser.max_mana) {
 				updateObj.mana = {
 					op: "=",
-					value: clonedUser.max_mana
+					value: clonedUser.max_mana,
 				};
 			}
 		}
@@ -179,7 +236,7 @@ export const processBattleRewards = async ({
 								context: { channel } as BaseProps["context"],
 								client,
 								options: { author },
-								args: [ "all" ],
+								args: [ "bt", "all" ],
 							});
 							return;
 						}
@@ -213,6 +270,29 @@ export const processBattleRewards = async ({
 	}
 };
 
+type C = {
+  isVictory: boolean;
+  user: UserProps;
+  multiplier: number;
+};
+const calculateUserReward = ({ isVictory, user, multiplier = 1 }: C) => {
+	if (!isVictory) return;
+	const xpGain = (USER_XP_GAIN_PER_BATTLE - 2) * multiplier;
+	let currentExp = user.exp + xpGain;
+	if (currentExp >= user.r_exp) {
+		currentExp = currentExp - user.r_exp;
+		user.level = user.level + 1;
+		user.r_exp = user.level * 47;
+	}
+	user.exp = currentExp;
+	return {
+		level: user.level,
+		exp: user.exp,
+		r_exp: user.r_exp,
+		xpGain,
+	};
+};
+
 type T = {
   isVictory: boolean;
   level: number;
@@ -222,7 +302,7 @@ type T = {
   battlingFloor: number;
   maxFloor: number;
 };
-const calculateUserReward = ({
+const calculateUserDzReward = ({
 	isVictory,
 	level,
 	currentExp,
@@ -239,20 +319,20 @@ const calculateUserReward = ({
 		expGain: 0,
 	};
 	if (isVictory) {
-		let expGain = 30 - (level - 1);
+		let expGain = 22 - (level - 1);
 		if (expGain < 7) {
 			expGain = 7;
 		}
 		rewardObject.exp = rewardObject.exp + randomNumber(expGain - 5, expGain);
 		rewardObject.fragments = rewardObject.fragments + 4;
 		let goldReward = randomNumber(80, 200);
-		if (battlingFloor >= 60 && battlingFloor < 100) {
+		if (battlingFloor >= 50 && battlingFloor < 100) {
 			goldReward = randomNumber(200, 400);
-		} else if (battlingFloor >= 100 && battlingFloor < 140) {
+		} else if (battlingFloor >= 100 && battlingFloor < 150) {
 			goldReward = randomNumber(400, 600);
-		} else if (battlingFloor >= 140 && battlingFloor < 200) {
+		} else if (battlingFloor >= 150 && battlingFloor < 250) {
 			goldReward = randomNumber(600, 700);
-		} else if (battlingFloor >= 200) {
+		} else if (battlingFloor >= 250) {
 			goldReward = randomNumber(700, 800);
 		}
 		rewardObject.gold = rewardObject.gold + goldReward;
@@ -272,13 +352,12 @@ const calculateUserReward = ({
 	rewardObject.exp = rewardObject.exp * multiplier;
 	rewardObject.gold = rewardObject.gold * multiplier;
 	rewardObject.expGain = rewardObject.exp;
-	const totalExp = currentExp + rewardObject.exp;
+	let totalExp = currentExp + rewardObject.exp;
 	if (totalExp >= r_exp) {
 		rewardObject.level = 1;
-		rewardObject.exp = totalExp - r_exp;
-	} else {
-		rewardObject.exp = totalExp;
+		totalExp = totalExp - r_exp;
 	}
+	rewardObject.exp = totalExp;
 
 	return rewardObject;
 };

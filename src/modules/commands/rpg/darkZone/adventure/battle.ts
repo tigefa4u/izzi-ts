@@ -1,6 +1,6 @@
 import { DzFuncProps } from "@customTypes/darkZone";
 import { getDzTeam } from "api/controllers/DarkZoneTeamsController";
-import { getRPGUser } from "api/controllers/UsersController";
+import { getRPGUser, updateUserRaw } from "api/controllers/UsersController";
 import { startTransaction } from "api/models/Users";
 import { createEmbed } from "commons/embeds";
 import { addTeamEffectiveness } from "helpers/adventure";
@@ -123,8 +123,8 @@ export const battleDzFloor = async ({
 			loss: 0,
 			r_exp: 0,
 			exp: 0,
-			match_making_rate: 0
-		}, "Dark Zone Boss", floorDifficulty.division);
+			match_making_rate: 0,
+		}, "Dark Zone Boss", floorDifficulty.division, dzUser.floor);
 
 		const _effectiveness = addTeamEffectiveness({
 			cards: playerStats.cards,
@@ -174,45 +174,43 @@ export const battleDzFloor = async ({
 	}
 };
 
-const consumeMana = async (userTag: string, manaToConsume = MANA_PER_BATTLE) => {
-	await startTransaction(async (trx) => {
-		try {
-			await trx("users").where({ user_tag: userTag })
-				.update({ mana: trx.raw("mana - ??", manaToConsume) });
-		} catch (err) {
-			loggers.error("Unable to consume mana:", err);
-		}
+const consumeMana = async (user_tag: string, manaToConsume = MANA_PER_BATTLE) => {
+	await updateUserRaw({ user_tag }, {
+		mana: {
+			op: "-",
+			value: manaToConsume
+		} 
 	});
 };
 
 const difficultyMap: {[key: number]: { division: number; difficulty: number; name: string; }} = {
-	20: {
+	25: {
 		division: 1,
 		difficulty: 1,
 		name: "duke"
 	},
-	30: {
+	50: {
 		division: 2, // 2 bosses
 		difficulty: 1,
 		name: "duke"
 	},
-	50: {
+	75: {
 		division: 3,
 		difficulty: 2,
 		name: "ranger"
 	},
-	80: {
+	100: {
 		division: 3,
 		difficulty: 3,
 		name: "zeke"
 	},
-	120: {
+	125: {
 		division: 3,
 		difficulty: 4,
 		name: "hero"
 	},
-	160: {
-		division: 2,
+	150: {
+		division: 3,
 		difficulty: 5,
 		name: "grand master"
 	}

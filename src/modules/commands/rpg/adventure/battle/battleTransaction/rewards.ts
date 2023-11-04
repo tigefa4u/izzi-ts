@@ -97,7 +97,7 @@ export const calculateUserProgress = (
         } if married).` +
         `\nWe've restored your mana. ${
         	clonedUser.max_mana < MAX_MANA_GAIN
-        		? `Your Mana is now __${clonedUser.max_mana}__ -> __${
+        		? `Your Max Mana is now __${clonedUser.max_mana}__ -> __${
         			clonedUser.max_mana + 2
         		}__.`
         		: "You have already gained the maximum obtainable mana"

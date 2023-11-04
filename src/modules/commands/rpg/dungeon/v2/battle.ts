@@ -39,9 +39,13 @@ import { processBattleOutcome } from "./rewards";
 export const spawnDGBoss = async (
 	userRank?: UserRankProps,
 	name = "XeneX's Dungeon Boss [BOT]",
-	numberOfBosses = 3
+	numberOfBosses = 3,
+	floor = 0
 ) => {
 	const dungeonBoss = await prepareDungeonBoss(userRank, numberOfBosses);
+	if (floor >= 400) {
+		dungeonBoss.map((d) => d.character_level = d.character_level + (floor * .25));
+	}
 	const enemyStats = await prepareSkewedCollectionsForBattle({
 		collections: dungeonBoss,
 		id: "Dungeon Boss",
