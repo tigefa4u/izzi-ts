@@ -127,7 +127,7 @@ export const processBattleRewards = async ({
 				value: reward.gold,
 			},
 		} as RawUpdateProps<UserProps>;
-		if (reward.level > 0 && clonedUser.mana < clonedUser.max_mana) {
+		if (reward.level > 0) {
 			updateObj.mana = {
 				op: "+",
 				value: clonedUser.max_mana
