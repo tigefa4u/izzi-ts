@@ -498,8 +498,7 @@ async function initDrops(
 				rate = rate + 10;
 			}
 			rate = Number(rate.toFixed(2));
-			const num2 = user.is_premium ? 150 : 200;
-			const dropChance = [ rate, num2 ];
+			const dropChance = [ rate, 100 ];
 			const ratebool = [ true, false ];
 			return ratebool[probability(dropChance)];
 		});
@@ -527,7 +526,7 @@ async function initDrops(
 		array = [
 			...rest,
 			...divineDrops,
-			...immortalDrops.slice(0, 1),
+			...immortalDrops,
 			...mythicalDrops.slice(0, 1),
 		];
 		// if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
