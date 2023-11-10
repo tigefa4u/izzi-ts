@@ -492,7 +492,7 @@ async function initDrops(
 		array = array.filter((item) => {
 			let rate = item.rate || 10;
 			if (mvp && user.id === mvp.user_id && !item.isStaticDropRate) {
-				rate = rate + 3; // used to be 5
+				rate = rate + 5; 
 			}
 			if ((user.is_premium || user.is_mini_premium) && !item.isStaticDropRate) {
 				rate = rate + 10;
@@ -503,9 +503,6 @@ async function initDrops(
 			return ratebool[probability(dropChance)];
 		});
 
-		/**
-     * Hack - Do not drop more than 1 immo and 2 divs
-     */
 		const immortalDrops = array.filter(
 			(a) => a.rank_id === ranksMeta.immortal.rank_id
 		);
@@ -527,7 +524,7 @@ async function initDrops(
 			...rest,
 			...divineDrops,
 			...immortalDrops,
-			...mythicalDrops.slice(0, 1),
+			...mythicalDrops,
 		];
 		// if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
 		// 	array.push(...immortalDrops);
