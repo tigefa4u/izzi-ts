@@ -20,6 +20,10 @@ export const upgradeDzStatPoint = async ({
 		const statArg = args.shift();
 		let statPoint = parseInt(args.shift() || "1");
 		if (!rowNum || !statArg || !statPoint || isNaN(rowNum) || isNaN(statPoint) || rowNum <= 0) return;
+		if (![ "atk", "def", "arm", "spd", "hp" ].includes(statArg || "")) {
+			context.channel?.sendMessage("Please provide a valid stat. One of (atk/def/spd/arm/hp)");
+			return;
+		}
 		const collection = await getCardInfoByRowNumber({
 			row_number: rowNum,
 			user_id: dzUser.user_id,
