@@ -207,7 +207,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(17000, 19000),
 				extraGold: randomNumber(15000, 17000),
 				drop: {
-					fragments: randomNumber(80, 100),
+					fragments: randomNumber(130, 150),
 					exp: randomNumber(20, 30) 
 				},
 			},
@@ -279,7 +279,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(20000, 23000),
 				extraGold: randomNumber(18000, 20000),
 				drop: {
-					fragments: randomNumber(100, 120),
+					fragments: randomNumber(150, 170),
 					exp: randomNumber(30, 40) 
 				},
 			},
@@ -392,7 +392,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(25000, 27000),
 				extraGold: randomNumber(23000, 25000),
 				drop: {
-					fragments: randomNumber(120, 140),
+					fragments: randomNumber(170, 190),
 					exp: randomNumber(40, 50) 
 				},
 			},
@@ -471,7 +471,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(29000, 31000),
 				extraGold: randomNumber(27000, 29000),
 				drop: {
-					fragments: randomNumber(140, 160),
+					fragments: randomNumber(190, 210),
 					exp: randomNumber(50, 60) 
 				},
 			},
