@@ -524,7 +524,7 @@ async function initDrops(
 			...rest,
 			...divineDrops,
 			...immortalDrops,
-			...mythicalDrops,
+			...mythicalDrops.slice(0, 1),
 		];
 		// if (user.level >= MIN_LEVEL_FOR_HIGH_RAIDS || user.is_premium || user.is_mini_premium) {
 		// 	array.push(...immortalDrops);
