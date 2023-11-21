@@ -10,7 +10,7 @@ import { RankProps, RanksMetaProps } from "helpers/helperTypes";
 import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { start } from "modules/commands/rpg/profile/startJourney";
-import { getTotalDonations } from "api/controllers/DonationsController";
+import { getTotalDonations, updateDonationByTransactionId } from "api/controllers/DonationsController";
 
 export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
 	try {
@@ -184,4 +184,26 @@ export const showTotalUserDonations = async ({ context, client, args, options }:
 		loggers.error("hoaxCommands.showTotalUserDonations: ERROR", err);
 		return;
 	}
+};
+
+export const updateDono = async ({ context, client, args, options }: BaseProps) => {
+	try {
+		const { author } = options;
+		if (author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("You are not allowed to execute this command.");
+			return;
+		}
+		let mentionId = getIdFromMentionedString(args.shift());
+		if (mentionId === "") mentionId = author.id;
+		const transactionId = args.shift();
+		if (!transactionId) return;
+		await updateDonationByTransactionId(transactionId, mentionId);
+		const msg = `Transaction ID: ${transactionId}, updated donator to: ${mentionId}`;
+		context.channel?.sendMessage(msg);
+		DMUser(client, msg, OWNER_DISCORDID);	
+		return;
+	} catch (err) {
+		loggers.error("hoaxCommands.updateDonation: ERROR", err);
+		return;
+	}	
 };

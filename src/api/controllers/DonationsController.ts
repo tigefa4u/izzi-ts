@@ -18,3 +18,12 @@ export const getTotalDonations = async (user_tag: string): Promise<{ sum: number
 		return;
 	}
 };
+
+export const updateDonationByTransactionId = async (transaction_id: string, user_tag: string) => {
+	try {
+		return Donations.updateByTransactionId(transaction_id, user_tag);
+	} catch (err) {
+		loggers.error("DonationsController.updateDonation: ERROR", err);
+		return;
+	}
+};
