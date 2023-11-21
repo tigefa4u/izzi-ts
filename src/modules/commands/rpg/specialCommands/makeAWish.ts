@@ -4,7 +4,7 @@ import loggers from "loggers";
 import { sort } from "../sorting";
 import { makeAWishHelp } from "./help";
 import {
-	addRaidDamage, addWorldBossDamage, forceStartJourney, setCharacterLevel, setCharacterRank, showTotalUserDonations 
+	addRaidDamage, addWorldBossDamage, forceStartJourney, setCharacterLevel, setCharacterRank, showTotalUserDonations, updateDono 
 } from "./hoaxCommands";
 import { spawnWorldBoss } from "./worldboss/spawn";
 import { specialWish } from "./specialWish";
@@ -66,6 +66,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "donation") {
 				showTotalUserDonations(params);
+				return;
+			} else if (subcommand === "donated") {
+				updateDono(params);
 				return;
 			} else if (subcommand === "clearimagecache") {
 				if (author.id !== OWNER_DISCORDID) {
