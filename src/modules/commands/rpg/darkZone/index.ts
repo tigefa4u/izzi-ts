@@ -24,6 +24,7 @@ import { giveDzCard } from "./actions/cardGive";
 import { dzMarketCommands } from "./market";
 import { giveFragments } from "./actions/give";
 import { DARK_ZONE_MIN_LEVEL } from "helpers/constants/constants";
+import { raidBattleWithDarkZoneTeam } from "./raids/battle";
 
 export const invokeDarkZone = async (params: BaseProps) => {
 	try {
@@ -88,6 +89,8 @@ export const invokeDarkZone = async (params: BaseProps) => {
 			giveDzCard(paramObject);
 		} else if (cmd === "market") {
 			dzMarketCommands(paramObject);
+		} else if (cmd === "raid") {
+			raidBattleWithDarkZoneTeam(paramObject);
 		}
 		return;
 	} catch (err) {

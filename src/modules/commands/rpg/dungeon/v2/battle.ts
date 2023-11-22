@@ -43,9 +43,9 @@ export const spawnDGBoss = async (
 	floor = 0
 ) => {
 	const dungeonBoss = await prepareDungeonBoss(userRank, numberOfBosses);
-	// if (floor >= 400) {
-	// 	dungeonBoss.map((d) => d.character_level = d.character_level + (floor * .25));
-	// }
+	if (floor >= 1500) {
+		dungeonBoss.map((d) => d.character_level = d.character_level + (floor * .02));
+	}
 	const enemyStats = await prepareSkewedCollectionsForBattle({
 		collections: dungeonBoss,
 		id: "Dungeon Boss",

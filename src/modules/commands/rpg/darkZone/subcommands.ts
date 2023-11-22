@@ -48,6 +48,11 @@ export const subcommands = [ {
 	description: "Spawn Dark Zone raid. You must have a Dark Zone profile.",
 }, 
 {
+	name: "raid",
+	alias: [ "rd" ],
+	description: "Use your Dark Zone team in a raid battle."
+},
+{
 	name: "battle",
 	alias: [ "bt" ],
 	description: "Initiate a floor boss battle. Defeat the boss to receive " +

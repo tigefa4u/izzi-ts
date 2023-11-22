@@ -79,11 +79,11 @@ export const computedCategoryData: ComputedCategoryProps = {
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 3,
-				rate: 4,
+				rate: 6,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 1.55,
+				rate: 2.55,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
@@ -101,11 +101,11 @@ export const computedCategoryData: ComputedCategoryProps = {
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 6,
-				rate: 7.35,
+				rate: 9.35,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 2.15,
+				rate: 4.15,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 3,
@@ -125,11 +125,11 @@ export const computedCategoryData: ComputedCategoryProps = {
 		numberOfCards: {
 			[ranksMeta.divine.name]: {
 				cards: 9,
-				rate: 12,
+				rate: 14,
 			},
 			[ranksMeta.immortal.name]: {
 				cards: 3,
-				rate: 3.65,
+				rate: 5.65,
 			},
 			[ranksMeta.mythical.name]: {
 				cards: 6,
@@ -207,7 +207,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(17000, 19000),
 				extraGold: randomNumber(15000, 17000),
 				drop: {
-					fragments: randomNumber(130, 150),
+					fragments: randomNumber(180, 200),
 					exp: randomNumber(20, 30) 
 				},
 			},
@@ -279,7 +279,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(20000, 23000),
 				extraGold: randomNumber(18000, 20000),
 				drop: {
-					fragments: randomNumber(150, 170),
+					fragments: randomNumber(200, 220),
 					exp: randomNumber(30, 40) 
 				},
 			},
@@ -392,7 +392,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(25000, 27000),
 				extraGold: randomNumber(23000, 25000),
 				drop: {
-					fragments: randomNumber(170, 190),
+					fragments: randomNumber(220, 240),
 					exp: randomNumber(40, 50) 
 				},
 			},
@@ -471,7 +471,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(29000, 31000),
 				extraGold: randomNumber(27000, 29000),
 				drop: {
-					fragments: randomNumber(190, 210),
+					fragments: randomNumber(240, 260),
 					exp: randomNumber(50, 60) 
 				},
 			},

@@ -4,7 +4,13 @@ import loggers from "loggers";
 import { sort } from "../sorting";
 import { makeAWishHelp } from "./help";
 import {
-	addRaidDamage, addWorldBossDamage, forceStartJourney, setCharacterLevel, setCharacterRank, showTotalUserDonations, updateDono 
+	addRaidDamage,
+	addWorldBossDamage,
+	forceStartJourney,
+	setCharacterLevel,
+	setCharacterRank,
+	showTotalUserDonations,
+	updateDono,
 } from "./hoaxCommands";
 import { spawnWorldBoss } from "./worldboss/spawn";
 import { specialWish } from "./specialWish";
@@ -72,7 +78,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "clearimagecache") {
 				if (author.id !== OWNER_DISCORDID) {
-					context.channel?.sendMessage("You are not allowed to use this command");
+					context.channel?.sendMessage(
+						"You are not allowed to use this command"
+					);
 					return;
 				}
 				clearImageCache();

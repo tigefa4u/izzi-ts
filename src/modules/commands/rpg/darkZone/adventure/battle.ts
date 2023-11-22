@@ -104,7 +104,6 @@ export const battleDzFloor = async ({
 			id: author.id,
 			canAddGuildStats: true,
 			capCharacterMaxLevel: false,
-            
 		});
 		if (!playerStats) {
 			context.channel?.sendMessage("You do not have a valid Dark Zone team, Please reset your team " +

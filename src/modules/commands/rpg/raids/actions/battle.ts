@@ -47,6 +47,12 @@ import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
 export const battleRaidBoss = async (
 	params: BaseProps & {
     callback?: (raidId: number) => void;
+    isDarkZone?: boolean;
+    user_id?: number;
+    dzPlayerStats?: {
+      stats: BattleStats;
+      name: string;
+    };
   }
 ) => {
 	return battleBoss(params);
@@ -63,6 +69,9 @@ export const battleBoss = async ({
 	isEvent,
 	args,
 	callback,
+	isDarkZone = false,
+	user_id,
+	dzPlayerStats,
 }: any) => {
 	// has to be type RaidActionProps
 	try {
@@ -83,14 +92,20 @@ export const battleBoss = async ({
 			context.channel?.id || ""
 		);
 		if (battles === undefined) return;
-		const user = await getRPGUser({ user_tag: author.id });
-		if (!user) return;
-		if (!user.selected_team_id) {
-			context.channel?.sendMessage("Please select a valid Team!");
-			return;
+		let userId: number = user_id;
+		let selected_team_id: number | null = null;
+		if (!userId) {
+			const user = await getRPGUser({ user_tag: author.id });
+			if (!user) return;
+			if (!user.selected_team_id) {
+				context.channel?.sendMessage("Please select a valid Team!");
+				return;
+			}
+			userId = user.id;
+			selected_team_id = user.selected_team_id;
 		}
 		const currentRaid = await validateCurrentRaid(
-			user.id,
+			userId,
 			author,
 			client,
 			context.channel
@@ -102,10 +117,10 @@ export const battleBoss = async ({
 			);
 			return;
 		}
-		const attacker = currentRaid.lobby[user.id];
+		const attacker = currentRaid.lobby[userId];
 		if (!attacker) {
 			context.channel?.sendMessage("Unable to attack, please report");
-			throw new Error("Unable to find attacker in lobby: user ID: " + user.id);
+			throw new Error("Unable to find attacker in lobby: user ID: " + userId);
 		}
 
 		if (attacker.energy < ENERGY_PER_ATTACK) {
@@ -116,15 +131,26 @@ export const battleBoss = async ({
 			return;
 		}
 
-		const playerStats = await validateAndPrepareTeam(
-			user.id,
-			user.user_tag,
-			user.selected_team_id,
-			context.channel,
-			true,
-			false
-		);
-		if (!playerStats) return;
+		let playerStats;
+		if (isDarkZone) {
+			playerStats = clone(dzPlayerStats);
+		} else {
+			if (!selected_team_id) {
+				context.channel.sendMessage?.(
+					"Please select a valid team. If the issue persists please contact support."
+				);
+				return;
+			}
+			playerStats = await validateAndPrepareTeam(
+				userId,
+				author.id,
+				selected_team_id,
+				context.channel,
+				true,
+				false
+			);
+			if (!playerStats) return;
+		}
 
 		const enemyStats = prepareRaidBossBase(currentRaid, isEvent);
 		// enemyStats.totalStats.strength = currentRaid.stats.remaining_strength;
@@ -205,7 +231,7 @@ export const battleBoss = async ({
 			return;
 		}
 
-		if (refetchRaid.lobby[user.id].energy < ENERGY_PER_ATTACK) {
+		if (refetchRaid.lobby[userId].energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${author.username}**, You do not have sufficient energy to proceed with this battle.`
 			);
@@ -213,7 +239,7 @@ export const battleBoss = async ({
 		}
 		const updateObj = clone(refetchRaid);
 		if (result.isForfeit) {
-			await consumeEnergy(updateObj.id, user.id, multiplier, 0, 0);
+			await consumeEnergy(updateObj.id, userId, multiplier, 0, 0);
 			result.totalDamage = 0;
 		} else {
 			if (result.totalDamage === undefined || isNaN(result.totalDamage)) {
@@ -226,7 +252,8 @@ export const battleBoss = async ({
 			// Enemy stats will always be raid boss
 			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0) {
 				result.totalDamage = damageCap;
-				if (result.totalTeamDamage > damageCap) result.totalTeamDamage = damageCap;
+				if (result.totalTeamDamage > damageCap)
+					result.totalTeamDamage = damageCap;
 			} else {
 				let percentDamageDealt =
           (result.totalDamage || 0) /
@@ -246,7 +273,7 @@ export const battleBoss = async ({
 			}
 			const updatedLobby = await consumeEnergy(
 				updateObj.id,
-				user.id,
+				userId,
 				multiplier,
 				result.totalDamage,
 				result.totalTeamDamage
