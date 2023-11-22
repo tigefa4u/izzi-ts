@@ -164,7 +164,7 @@ export const getDzInvByIdForBattle = async (
 					}
 					const res = Object.assign(data, {
 						name: characterInfo.name,
-						stats: characterInfo.stats,
+						stats: data.stats,
 						type: characterInfo.type,
 						abilityname: characterInfo.abilityname,
 						abilitydescription: characterInfo.abilitydescription,
