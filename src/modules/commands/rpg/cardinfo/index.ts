@@ -6,7 +6,7 @@ import { createEmbed } from "commons/embeds";
 import { emojiMap } from "emojis";
 import { createSingleCanvas } from "helpers/canvas";
 import loggers from "loggers";
-import { numericWithComma, overallStats, prepareStatsDesc } from "helpers";
+import { numericWithComma, overallStats, prepareAbilityDesc, prepareStatsDesc } from "helpers";
 import { getFloorsByCharacterId } from "api/controllers/StagesController";
 import { Client, Message, MessageEmbed } from "discord.js";
 import { NormalizeFloorProps } from "@customTypes/stages";
@@ -142,7 +142,7 @@ async function prepareCinfoDetails(
 				elementTypeEmoji ? elementTypeEmoji : ""
 			}\n**Rank:** ${titleCase(characterInfo.rank)}${
 				characterInfo.card_type_metadata?.isDarkZone
-					? ""
+					? prepareAbilityDesc(statsPrep, characterInfo.rank)
 					: prepareCardInfoDesc()
 			}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
 				characterInfo.averageMarketPrice

@@ -291,6 +291,21 @@ type G = {
   is_passive?: boolean;
 };
 
+export const prepareAbilityDesc = <T extends OverallStatsProps>(stats: T & G, rank: RankProps) => {
+	return `\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
+		stats.abilityname || ""
+	)}${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
+		stats.abilitydescription,
+		rank
+	)}${
+		stats.itemname
+			? `\n${emojiMap(stats.itemname)} **${titleCase(stats.itemname)}:** ${
+				stats.itemdescription
+			}`
+			: ""
+	}`;
+};
+
 export const prepareStatsDesc = <T extends OverallStatsProps>(
 	stats: T & G,
 	rank = ranksMeta.silver.name
@@ -305,18 +320,7 @@ export const prepareStatsDesc = <T extends OverallStatsProps>(
 		stats.dexterityBonus ? ` (+${stats.dexterityBonus})` : ""
 	}\n**ARM:** ${stats.intelligence - (stats.intelligenceBonus || 0)}${
 		stats.intelligenceBonus ? ` (+${stats.intelligenceBonus})` : ""
-	}\n\n**Ability**\n${emojiMap(stats.abilityname)} **${titleCase(
-		stats.abilityname || ""
-	)}${stats.is_passive ? "[PSV]" : ""}:** ${prepareAbilityDescription(
-		stats.abilitydescription,
-		rank
-	)}${
-		stats.itemname
-			? `\n${emojiMap(stats.itemname)} **${titleCase(stats.itemname)}:** ${
-				stats.itemdescription
-			}`
-			: ""
-	}`;
+	}${prepareAbilityDesc(stats, rank)}`;
 
 	return desc;
 };
