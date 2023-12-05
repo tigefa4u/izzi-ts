@@ -44,7 +44,7 @@ export const delDzMarketCard = async (id: number) => {
 };
 
 export const getAllDzMarketCards = async (
-	params: Pick<FilterProps, "rank" | "name" | "abilityname" | "type" | "collection_ids" | "isExactMatch">,
+	params: Pick<FilterProps, "rank" | "name" | "abilityname" | "type" | "collection_ids" | "isExactMatch" | "series">,
 	filter: PageProps
 ): Promise<undefined | ResponseWithPagination<IDzMarketProps[]>> => {
 	try {

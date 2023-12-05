@@ -38,7 +38,7 @@ export const create = async (data: DzMarketCreateProps) => connection(tableName)
 export const del = async (id: number) => connection(tableName).where({ id }).del();
 
 export const getAll = async (
-	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type" | "collection_ids" | "isExactMatch">,
+	params: Pick<FilterProps, "name" | "rank" | "abilityname" | "type" | "collection_ids" | "isExactMatch" | "series">,
 	pagination: PaginationProps = {
 		limit: 10,
 		offset: 0,
@@ -56,8 +56,19 @@ export const getAll = async (
 		.innerJoin(collections, `${tableName}.collection_id`, `${collections}.id`)
 		.innerJoin(characters, `${collections}.character_id`, `${characters}.id`)
 		.innerJoin(abilities, `${characters}.passive_id`, `${abilities}.id`)
+		.innerJoin(cards, `${cards}.character_id`, `${characters}.id`)
+		.where(`${cards}.rank`, "silver")
 		.as(alias);
 
+	if (typeof params.series === "string") {
+		query = query.where(`${cards}.series`, "ilike", `%${params.series}%`);
+	} else if (typeof params.series === "object") {
+		query = query.where(
+			`${cards}.series`,
+			"~*",
+			`(${params.series.join("|")}).*`
+		);
+	}
 	if (typeof params.name === "string") {
 		query = query.where(`${characters}.name`, "ilike", `%${params.name}%`);
 	} else if (typeof params.name === "object") {
