@@ -10,7 +10,7 @@ export type FilterProps = {
     rank?: RankProps | RankProps[];
     type?: string | string[];
     abilityname?: string | string[];
-    series?: string;
+    series?: string | string[];
     ids?: number[];
     category?: string;
     rank_ids?: number | number[];

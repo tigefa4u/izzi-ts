@@ -6,7 +6,7 @@ import loggers from "loggers";
 import * as Markets from "../models/Markets";
 
 export const getMarket = async (
-	params: Pick<FilterProps, "rank" | "name" | "abilityname" | "type" | "collection_ids" | "isExactMatch">,
+	params: Pick<FilterProps, "rank" | "name" | "abilityname" | "type" | "collection_ids" | "isExactMatch" | "series">,
 	filter: PageProps
 ): Promise<ResponseWithPagination<IMarketProps[]> | undefined> => {
 	try {

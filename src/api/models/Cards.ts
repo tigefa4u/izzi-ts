@@ -148,13 +148,22 @@ export const getRandomCard: (
 	return query;
 };
 
-export const getBySeries: (params: { series: string }) => Promise<CardProps[]> =
+export const getBySeries: (params: { series: string | string[]; }) => Promise<CardProps[]> =
   async function (params) {
   	const db = connection;
-  	const query = db
+  	let query = db
   		.select(db.raw(`distinct ${tableName}.character_id`))
-  		.from(tableName)
-  		.where(`${tableName}.series`, "ilike", `%${params.series}%`);
+  		.from(tableName);
+
+  	if (typeof params.series === "string") {
+  		query = query.where(`${tableName}.series`, "ilike", `%${params.series}%`);
+  	} else if (typeof params.series === "object") {
+  		query = query.where(
+  			`${tableName}.series`,
+  			"~*",
+  			`(${params.series.join("|")}).*`
+  		);
+  	}
 
   	return query;
   };
