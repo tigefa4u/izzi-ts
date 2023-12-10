@@ -104,6 +104,7 @@ async function handleNextFloor(params: {
 	if (!cardCanvas) return;
 	const attachment = createAttachment(cardCanvas.createJPEGStream(), "img.jpg");
 	const atts = [ attachment ];
+	stage.zone_filepath = stage.zone_filepath.replace("http://66.135.0.56:5013/", "https://assets.izzi-xenex.xyz/");
 	try {
 		await loadImage(stage.zone_filepath);
 		const zoneAttachment = createAttachment(stage.zone_filepath, "zone.jpg");
@@ -165,7 +166,7 @@ async function handleZoneFloors(params: {
 	)}** you have unlocked are listed below.`;
 	const pageName = "Stage";
 	if (zone?.filepath) {
-		zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets/izzi-xenex.xyz/");
+		zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets.izzi-xenex.xyz/");
 	}
 	await pageFunc(stages, params.channel, params.author, {
 		client: params.client,

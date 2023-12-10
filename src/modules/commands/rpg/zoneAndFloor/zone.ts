@@ -62,7 +62,7 @@ async function handleNextZone(params: {
 			.setDescription(zone.description);
 
 		try {
-			zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets/izzi-xenex.xyz/");
+			zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets.izzi-xenex.xyz/");
 			await loadImage(zone.filepath);
 			const attachment = createAttachment(zone.filepath, "zone.jpg");
 			embed.attachFiles([ attachment ])
