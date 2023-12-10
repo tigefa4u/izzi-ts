@@ -62,12 +62,13 @@ async function handleNextZone(params: {
 			.setDescription(zone.description);
 
 		try {
+			zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets/izzi-xenex.xyz/");
 			await loadImage(zone.filepath);
 			const attachment = createAttachment(zone.filepath, "zone.jpg");
 			embed.attachFiles([ attachment ])
 				.setImage("attachment://zone.jpg");
 		} catch (err) {
-			// loggers.error("Failed to load image for zone: ", err);
+			loggers.error("Failed to load image for zone: ", err);
 		}
 
 		if (user.level < REQUIRED_TRADE_LEVEL) {

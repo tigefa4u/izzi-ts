@@ -164,6 +164,9 @@ async function handleZoneFloors(params: {
 		zone?.name || ""
 	)}** you have unlocked are listed below.`;
 	const pageName = "Stage";
+	if (zone?.filepath) {
+		zone.filepath = zone.filepath.replace("http://66.135.0.56:5013/", "https://assets/izzi-xenex.xyz/");
+	}
 	await pageFunc(stages, params.channel, params.author, {
 		client: params.client,
 		title,
