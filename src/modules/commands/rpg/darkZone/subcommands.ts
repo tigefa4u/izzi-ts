@@ -78,7 +78,8 @@ export const subcommands = [ {
 	name: "dex",
 	alias: [],
 	description: "Display all cards available on Dark Zone to purchase from. " +
-	"Past event cards are only available to premium users."
+	"Past event cards are only available to premium users. The card cost increases by 100,000 Gold every 25 levels " +
+	"up to level 100."
 }, {
 	name: "buy",
 	alias: [],

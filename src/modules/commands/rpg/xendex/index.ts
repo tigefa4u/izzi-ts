@@ -13,7 +13,9 @@ import { paginatorInteraction } from "utility/ButtonInteractions";
 import { fetchParamsFromArgs } from "utility/forParams";
 import { darkZoneDexEmbedList } from "../darkZone/information/dex";
 
-export const dex = async ({ context, client, options, args }: BaseProps) => {
+export const dex = async ({
+	context, client, options, args, level 
+}: BaseProps & { level?: number; }) => {
 	try {
 		const author = options.author;
 		const filter = clone(PAGE_FILTER);
@@ -37,7 +39,8 @@ export const dex = async ({ context, client, options, args }: BaseProps) => {
     			list = darkZoneDexEmbedList(
     				data.data,
     				data.metadata.currentPage,
-    				data.metadata.perPage
+    				data.metadata.perPage,
+    				level || 1
     			);
     		} else {
     			list = createDexList(
