@@ -49,7 +49,7 @@ const prepareConsoleDescription = async (
 	const customSpawn = "raid-customspawn";
 	const [ raidCD, customSpawnCD ] = await Promise.all([
 		getCooldown(user.user_tag, cdKey),
-		getCooldown(user.user_tag, customSpawn)
+		getCooldown(user.user_tag, customSpawn),
 	]);
 	let remainingMins = 0,
 		remainingHours = 0,
@@ -70,7 +70,11 @@ const prepareConsoleDescription = async (
 		cremainingSec = 0;
 	let isCustomSpawnReady = false;
 	if (customSpawnCD) {
-		const customSpawnCDTimer = getCDRemainingTime(customSpawnCD, user.user_tag, customSpawn);
+		const customSpawnCDTimer = getCDRemainingTime(
+			customSpawnCD,
+			user.user_tag,
+			customSpawn
+		);
 		cremainingMins = customSpawnCDTimer.remainingMinutes;
 		cremainingHours = customSpawnCDTimer.remainingHours;
 		cremainingSec = customSpawnCDTimer.remainingSec;
@@ -125,10 +129,12 @@ const prepareConsoleDescription = async (
     }\n**:crossed_swords: Selected Skins** ${
     	selectedSkins?.length || 0
     } / ${MAX_CHOSEN_SKINS_ALLOWED}\n**:ninja: Username on Market Purchase: ${
-    	anonymousMarketPurchase ? "Anonymous (use iz cons showmk)" : user.username
-    } \`(use iz cons hidemk)\`**\n\n**:ticket: Raid Permits:** ${
-    	user.raid_pass
-    } / ${user.max_raid_pass}\n**:ticket: Raid Spawn:** ${
+    	anonymousMarketPurchase
+    		? "Anonymous `(use iz cons showmk)`"
+    		: `${user.username} (use iz cons hidemk)`
+    }**\n\n**:ticket: Raid Permits:** ${user.raid_pass} / ${
+    	user.max_raid_pass
+    }\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
     		? "Ready"
     		: `${remainingHours} hours ${remainingMins} mins ${remainingSec} secs`
