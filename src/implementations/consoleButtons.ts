@@ -125,8 +125,8 @@ const prepareConsoleDescription = async (
     }\n**:crossed_swords: Selected Skins** ${
     	selectedSkins?.length || 0
     } / ${MAX_CHOSEN_SKINS_ALLOWED}\n**:ninja: Username on Market Purchase: ${
-    	anonymousMarketPurchase ? "Anonymous" : user.username
-    } \`(use iz cons toggle)\`**\n\n**:ticket: Raid Permits:** ${
+    	anonymousMarketPurchase ? "Anonymous (use iz cons showmk)" : user.username
+    } \`(use iz cons hidemk)\`**\n\n**:ticket: Raid Permits:** ${
     	user.raid_pass
     } / ${user.max_raid_pass}\n**:ticket: Raid Spawn:** ${
     	isRaidSpawnReady
