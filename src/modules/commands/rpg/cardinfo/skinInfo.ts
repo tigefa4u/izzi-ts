@@ -6,6 +6,7 @@ import {
 	SelectMenuOptions,
 } from "@customTypes/selectMenu";
 import { SkinProps } from "@customTypes/skins";
+import { getTotalDonations } from "api/controllers/DonationsController";
 import { createSkinCollection } from "api/controllers/SkinCollectionController";
 import { getSkinByCharacterId } from "api/controllers/SkinsController";
 import { getRPGUser, updateRPGUser } from "api/controllers/UsersController";
@@ -306,11 +307,23 @@ const handlePurchaseSkin = async (params: {
 			)
 			.setTitle(DEFAULT_ERROR_TITLE);
 		if (data.metadata.isSpecial && (data.metadata.isSpecial as any) == "true") {
-			embed.setDescription(
-				`This skin is not available at the moment, visit ${IZZI_WEBSITE}/skins for more info`
-			);
-			channel?.sendMessage(embed);
-			return;
+			const totalDonations = await getTotalDonations(author.id);
+			let allowPurchase = false;
+			let desc = "";
+			if (!totalDonations) {
+				desc = "This skin is only available to donators.";
+			} else if (totalDonations.sum < 500) {
+				desc = "This skin is only available to **Exclusive** donators who have donated __$500+__";
+			} else if (totalDonations.sum >= 500) {
+				allowPurchase = true;
+			}
+			if (!allowPurchase) {
+				embed.setDescription(
+					`${desc} visit ${IZZI_WEBSITE}/skins for more info`
+				);
+				channel?.sendMessage(embed);
+				return;
+			}
 		}
 		const user = await getRPGUser({ user_tag: author.id });
 		if (!user) return;
