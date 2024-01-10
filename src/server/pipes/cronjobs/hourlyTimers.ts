@@ -37,19 +37,28 @@ const spawnRaids = async () => {
 		if (eventsDisabled && raidsDisabled) {
 			return;
 		}
+		const spawnLevels: {
+			[key: number]: number;
+		} = {
+			0: 60,
+			1: 90,
+			2: 120,
+			3: 150,
+			4: 200
+		};
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
 		return Promise.all(
-			Array(10)
+			Array(5)
 				.fill([ "e", "m", "h", "i" ])
 				.flat()
-				.map(async (difficulty) => {
+				.map(async (difficulty, i) => {
 					// spawning boss based on user level
 					const computedBoss = computeRank(
 						difficulty,
 						isEvent,
 						false,
-						randomNumber(30, 200)
+						randomNumber(30, spawnLevels[i])
 					);
 					if (!computedBoss) return;
 					loggers.info(
