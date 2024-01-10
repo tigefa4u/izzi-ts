@@ -40,7 +40,7 @@ const spawnRaids = async () => {
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
 		return Promise.all(
-			Array(5)
+			Array(10)
 				.fill([ "e", "m", "h", "i" ])
 				.flat()
 				.map(async (difficulty) => {
