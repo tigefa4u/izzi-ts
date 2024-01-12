@@ -58,7 +58,7 @@ const spawnRaids = async () => {
 						difficulty,
 						isEvent,
 						false,
-						randomNumber(30, spawnLevels[i])
+						randomNumber(i === 0 ? 30 : spawnLevels[i - 1], spawnLevels[i])
 					);
 					if (!computedBoss) return;
 					loggers.info(
