@@ -4,7 +4,7 @@ import { emojiMap } from "emojis";
 import emoji from "emojis/emoji";
 import { probability, randomElementFromArray, round2Decimal } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { addTeamEffectiveness, effectiveness } from "helpers/adventure";
 import {
 	getPercentOfTwoNumbers,
@@ -65,7 +65,8 @@ export const elementalStrike = ({
 			};
 		}
 	}
-	if (round % 2 === 0) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0) {
 		const percent = calcPercentRatio(30, card.rank);
 
 		const incPercent = calcPercentRatio(25, card.rank);
@@ -345,7 +346,8 @@ export const tornado = ({
 		return;
 
 	let abilityDamage, damageDiff;
-	if (round % 2 === 0 && !playerStats.totalStats.isTornado) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isTornado) {
 		playerStats.totalStats.isTornado = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const playerDamage = getPlayerDamageDealt(
@@ -422,7 +424,8 @@ export const eclipse = ({
 	// Harness the power of Eclipse and gain knowledge beyond your enemies
 	// increasing your **INT** by __30%__ as well as **Buffing** the **DEF** of all allies by __20%__.
 	// gain 80% chance to resist misdirection.
-	if (round % 3 === 0 && !playerStats.totalStats.isEclipse) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isEclipse) {
 		playerStats.totalStats.isEclipse = true;
 		playerStats.totalStats.previousRound = round;
 

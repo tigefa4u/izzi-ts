@@ -91,6 +91,9 @@ export type AbilityProcMapProps = {
     "lightning shield": (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     leer: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
     cleanse: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    undead: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    vortex: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
+    transfigure: (params: BattleProcessProps) => AbilityProcReturnType | undefined;
 }
 
 export type ItemProcMapProps = {
@@ -112,4 +115,5 @@ export type ItemProcMapProps = {
     "skull basher":(params: BattleProcessProps) => ItemProcReturnType | undefined;
     "agnus scepter":(params: BattleProcessProps) => ItemProcReturnType | undefined;
     "vampire's blade":(params: BattleProcessProps) => ItemProcReturnType | undefined;
+    "crystal wand":(params: BattleProcessProps) => ItemProcReturnType | undefined;
 }

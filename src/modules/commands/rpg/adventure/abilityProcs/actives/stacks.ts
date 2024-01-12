@@ -2,7 +2,7 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability, randomNumber } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
@@ -32,7 +32,8 @@ export const toxicScreen = ({
 	let desc;
 	let damageDiff;
 	let abilityDamage;
-	if (round % 3 === 0 && !playerStats.totalStats.isToxic) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isToxic) {
 		playerStats.totalStats.isToxic = true;
 		opponentStats.totalStats.isPoisoned = true;
 		const percent = calcPercentRatio(20, card.rank);
@@ -84,7 +85,7 @@ export const toxicScreen = ({
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
-		if (round % 3 != 0) {
+		if (round % (procRound - 1) != 0) {
 			const damagePercent = calcPercentRatio(15, card.rank);
 			abilityDamage = getRelationalDiff(
 				playerStats.totalStats.vitality,
@@ -124,7 +125,7 @@ export const toxicScreen = ({
 			});
 		}
 	}
-	if (round % 5 === 0) {
+	if (round % (procRound - 1) === 0) {
 		playerStats.totalStats.isToxic = false;
 		opponentStats.totalStats.isPoisoned = false;
 	}
@@ -150,9 +151,10 @@ export const timeBomb = ({
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	let abilityDamage, damageDiff;
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	// inflict a stack of time bomb which explodes dealing __20%__ bonus damage based on previous damage dealt.
 	if (
-		round % 2 === 0 &&
+		round % procRound === 0 &&
     !opponentStats.totalStats.isStackTB &&
     !playerStats.totalStats.isTB
 	) {
@@ -267,7 +269,8 @@ export const blizzard = ({
 	) {
 		playerStats.totalStats.isUseBlizzardPassive = true;
 	}
-	if (round % 2 === 0 && !playerStats.totalStats.isBlizzard) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isBlizzard) {
 		playerStats.totalStats.isBlizzard = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const dexDiff = getRelationalDiff(
@@ -380,8 +383,8 @@ export const frost = ({
 			opponentStats.totalStats.isStunned = false;
 		}
 	}
-
-	if (round % 2 === 0 && !playerStats.totalStats.isFrost) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isFrost) {
 		playerStats.totalStats.isUseFrostPassive = true;
 		playerStats.totalStats.isFrost = true;
 		const decPercent = calcPercentRatio(8, card.rank);
@@ -501,8 +504,10 @@ export const cleanse = ({
 	simulation,
 	basePlayerStats,
 }: BattleProcessProps) => {
+	if (!card) return;
+	const procRound = calculateSkillProcRound(HARBINGER_OF_DEATH_PROC_ROUND, card.reduceSkillCooldownBy);
 	if (
-		round % HARBINGER_OF_DEATH_PROC_ROUND === 0 &&
+		round % procRound === 0 &&
     !playerStats.totalStats.isCleanse &&
     !playerStats.totalStats.isStunned &&
     !playerStats.totalStats.isParanoid

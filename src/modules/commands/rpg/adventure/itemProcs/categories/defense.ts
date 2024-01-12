@@ -200,3 +200,47 @@ export const guardianAngel = ({
 		basePlayerStats,
 	};
 };
+
+export const crystalWand = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	basePlayerStats,
+	simulation,
+	baseEnemyStats,
+}: BattleProcessProps) => {
+	// At the start of the battle, reduce skill cooldown by 1 for up to 6 rounds. Only works on active abilities.
+	if (!card || !card.itemStats) return;
+	else if (round === 1) {
+		card.reduceSkillCooldownBy = 1;
+		const desc = "Decreasing its skill cooldown by __1__ up to **6 rounds**.";
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: true,
+			simulation,
+			baseEnemyStats,
+			basePlayerStats,
+		});
+	}
+	if (round >= 7) {
+		card.reduceSkillCooldownBy = 0;
+	}
+	return {
+		playerStats,
+		opponentStats,
+		basePlayerStats,
+	};
+};

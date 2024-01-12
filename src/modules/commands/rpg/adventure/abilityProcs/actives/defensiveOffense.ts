@@ -1,6 +1,6 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff, processHpBar, relativeDiff } from "helpers/battle";
 
 export const defensiveStrike = ({
@@ -20,7 +20,8 @@ export const defensiveStrike = ({
 	// Will stack
 	let damageDiff;
 	let abilityDamage;
-	if (round % 3 === 0) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0) {
 		let num = 20;
 		const hasMoreSpeed = compare(
 			playerStats.totalStats.dexterity,
@@ -92,7 +93,8 @@ export const lightningShield = ({
 	let abilityDamage;
 	// gain 30% DEF buff and reflect 10% damage based on enemy atk
 	// decrease acc and crit damage by 15%
-	if (round % 3 === 0 && !playerStats.totalStats.isLightningShield) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isLightningShield) {
 		playerStats.totalStats.isLightningShield = true;
 		const percent = calcPercentRatio(30, card.rank);
 		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
@@ -145,4 +147,66 @@ export const lightningShield = ({
 		damageDiff,
 		abilityDamage
 	}; 
+};
+
+export const transfigure = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	simulation,
+	basePlayerStats,
+	baseEnemyStats	
+}: BattleProcessProps) => {
+	// Decrease SPD of all allies by 10% simultaneously increasing their max HP and max DEF by 15%.
+	if (!card || !playerStats.totalStats.originalHp) return;	
+	const prodRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % prodRound === 0) {
+		const spdPercent = calcPercentRatio(10, card.rank);
+		const spdRatio = getRelationalDiff(
+			basePlayerStats.totalStats.dexterity,
+			spdPercent
+		);
+		playerStats.totalStats.dexterity = playerStats.totalStats.dexterity - spdRatio;
+
+		const incPercent = calcPercentRatio(15, card.rank);
+		const hpRatio = getRelationalDiff(basePlayerStats.totalStats.strength, incPercent);
+		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, incPercent);
+		basePlayerStats.totalStats.defense = basePlayerStats.totalStats.defense + defRatio;
+		basePlayerStats.totalStats.strength = basePlayerStats.totalStats.strength + hpRatio;
+		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpRatio;
+
+		const diff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
+		const processedHpBar = processHpBar(
+			playerStats.totalStats,
+			diff	
+		);
+		playerStats.totalStats.health = processedHpBar.health;
+		playerStats.totalStats.strength = processedHpBar.strength;
+		const desc = `Decreasing **SPD** of all allies by __${spdPercent}%__, simultaneously increase their ` +
+		`**Max HP** and **Base DEF** by __${incPercent}%__.`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+			baseEnemyStats,
+			basePlayerStats
+		});
+	}
+	return {
+		playerStats,
+		opponentStats
+	};
 };

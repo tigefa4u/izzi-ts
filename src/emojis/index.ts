@@ -109,7 +109,11 @@ const emojis: MapProps = {
 	skull2: emoji.skull2,
 	criticalDamage: emoji.criticalDamage,
 	cleanse: emoji.cleanse,
-	soul: emoji.soul
+	soul: emoji.soul,
+	"crystal wand": emoji.crystalWand,
+	undead: emoji.undead,
+	vortex: emoji.vortex,
+	transfigure: emoji.transfigure,
 };
 
 export const emojiMap: (key?: string) => string = (key) => {

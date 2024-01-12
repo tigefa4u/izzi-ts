@@ -77,7 +77,7 @@ const emoji: EmojiProps = {
 	exhaust: "<:exhaust:803506515507675176>",
 	boneplatting: "<:boneplatting:792833551547891772>",
 	djs: "<:djs:821053321107996755>",
-	restriction: "<:restriction:792839715283009548>",
+	restriction: "<:restriction:1195294209591226418>",
 	sleep: "<:sleep:792969366185574430>",
 	wrecker: "<:wrecker:792839715597582356>",
 	timebomb: "<:timebomb:793457647562915880>",
@@ -201,6 +201,10 @@ const emoji: EmojiProps = {
 	topg: "<:topg:1154805766461603871>",
 	og: "<:og:1154805761747189791>",
 	fragments: "<:fragments:1161632795920171109>",
+	crystalWand: "<:crystalwand:1195294017433383003>",
+	undead: "<:undead:1195306604770365510>",
+	transfigure: "<:transfigure:1195306602362834944>",
+	vortex: "<:vortex:1195306609182769242>",
 };
 
 export default emoji;

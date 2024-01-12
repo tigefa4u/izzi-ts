@@ -1,8 +1,9 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
+import { numericWithComma } from "helpers";
 import { calcPercentRatio, statRelationMap } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getRelationalDiff,
@@ -202,7 +203,8 @@ export const chronobreak = ({
 	)
 		return;
 	let abilityDamage, opponentDamageDiff;
-	if (round % 3 === 0) {
+	const procOnRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procOnRound === 0) {
 		let restoredHp =
       (playerStats.totalStats.previousHp || 0) -
       playerStats.totalStats.strength;
@@ -280,7 +282,7 @@ export const chronobreak = ({
 			basePlayerStats,
 		});
 	}
-	if (round % 2 === 0) {
+	if (round % (procOnRound - 1) === 0) {
 		playerStats.totalStats.previousHp = playerStats.totalStats.strength;
 	}
 	return {
@@ -288,5 +290,104 @@ export const chronobreak = ({
 		opponentStats,
 		abilityDamage,
 		damageDiff: opponentDamageDiff,
+	};
+};
+
+export const undead = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	simulation,
+	basePlayerStats,
+	baseEnemyStats,
+}: BattleProcessProps) => {
+	// Apply a stack of zombie aura on all allies. When your hp reaches 0 regenerate 1hp for 2 additional rounds.
+	if (round === 1) {
+		playerStats.surviveRoundsAfterDeath = 2;
+		const desc = `Applying a stack of **Zombie Aura ${emoji.undead}** on all allies.`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+			baseEnemyStats,
+			basePlayerStats,
+		});
+	}
+	return {
+		playerStats,
+		opponentStats
+	};
+};
+
+export const vortex = ({
+	playerStats,
+	opponentStats,
+	message,
+	embed,
+	round,
+	isPlayerFirst,
+	card,
+	simulation,
+	basePlayerStats,
+	baseEnemyStats,	
+}: BattleProcessProps) => {
+	if (!card || !playerStats.totalStats.originalHp) return;
+	// At the start of the battle, steal 20% of enemy ATK up to 100% of 
+	// your base ATK and heal for half the amount of the difference between 
+	// ally current ATK and base ATK
+	if (round === 1) {
+		const percent = calcPercentRatio(20, card.rank);
+		const maxSteal = getRelationalDiff(
+			basePlayerStats.totalStats.vitality,
+			100
+		);
+		let steal = getRelationalDiff(
+			baseEnemyStats.totalStats.vitality,
+			percent
+		);
+		if (steal > maxSteal) steal = maxSteal;
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + steal;
+		const heal = Math.floor((playerStats.totalStats.vitality - basePlayerStats.totalStats.vitality) / 2);
+		playerStats.totalStats.strength = playerStats.totalStats.strength + heal;
+		const diff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
+		const processedHpBar = processHpBar(playerStats.totalStats, diff);
+		playerStats.totalStats.health = processedHpBar.health;
+		playerStats.totalStats.strength = processedHpBar.strength;
+
+		const desc = `Stealing __${percent}%__ enemy **ATK**, ` +
+		`simultaneously healing for __${numericWithComma(heal)}__ HP.`;
+		prepSendAbilityOrItemProcDescription({
+			playerStats,
+			enemyStats: opponentStats,
+			card,
+			message,
+			embed,
+			round,
+			isDescriptionOnly: false,
+			description: desc,
+			totalDamage: 0,
+			isPlayerFirst,
+			isItem: false,
+			simulation,
+			baseEnemyStats,
+			basePlayerStats,
+		});
+	}
+	return {
+		playerStats,
+		opponentStats
 	};
 };

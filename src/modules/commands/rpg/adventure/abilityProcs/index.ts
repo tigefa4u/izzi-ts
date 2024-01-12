@@ -43,7 +43,10 @@ const AbilityProcMap: AbilityProcMapProps = {
 	"last stand": passiveAbilities.lastStand,
 	leer: activeAbilities.leer,
 	"lightning shield": activeAbilities.lightningShield,
-	cleanse: activeAbilities.cleanse
+	cleanse: activeAbilities.cleanse,
+	transfigure: activeAbilities.transfigure,
+	undead: passiveAbilities.undead,
+	vortex: passiveAbilities.vortex,
 };
 
 export default AbilityProcMap;

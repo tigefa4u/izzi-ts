@@ -2,7 +2,7 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { numericWithComma, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers, getRelationalDiff, processEnergyBar, processHpBar, relativeDiff 
 } from "helpers/battle";
@@ -21,7 +21,8 @@ export const lifesteal = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase life steal by __25%__ and buff ATK by 10%.
-	if (round % 3 === 0 && !playerStats.totalStats.isLifestealProc) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isLifestealProc) {
 		playerStats.totalStats.isLifesteal = true;
 		playerStats.totalStats.isLifestealProc = true;
 		const percent = calcPercentRatio(28, card.rank);
@@ -72,7 +73,8 @@ export const revitalize = ({
 	// Restore 18% of missing health of all allies
 	// as well as increase their speed by __8%__
 	// atk buff is too much
-	if (round % 3 === 0 && !playerStats.totalStats.isRevit) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isRevit) {
 		playerStats.totalStats.isRevit = true;
 		let missingHp = playerStats.totalStats.originalHp - playerStats.totalStats.strength;
 		if (missingHp < 0) missingHp = 0;
@@ -135,8 +137,9 @@ export const guardian = ({
 }: BattleProcessProps) => {
 	let damageDiff;
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// restore (25% - 30%) health based on your DEF and also increase the __DEF__ of all allies for the same %
-	if (round % 2 === 0 && !playerStats.totalStats.isGuardian) {
+	// restore (25% - 30%) health based on your DEF and also increase the __DEF__ & __ARM__ of all allies for the same %
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isGuardian) {
 		playerStats.totalStats.isGuardian = true;
 		const perRatio = randomElementFromArray([
 			calcPercentRatio(25, card.rank),
@@ -147,6 +150,12 @@ export const guardian = ({
 			perRatio
 		);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defInc;
+
+		const intInc = getRelationalDiff(
+			basePlayerStats.totalStats.intelligence,
+			perRatio
+		);
+		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + intInc;
 
 		const ratio = getRelationalDiff(
 			playerStats.totalStats.defense,
@@ -182,7 +191,7 @@ export const guardian = ({
 			`also gained __${numericWithComma(diff)}__ **ARMOR**.`;
 		}
 		const desc = `restores __${ratio}__ ${emoji.heal} **HP**, and also increases ` +
-        `the **DEF** of all allies by __${perRatio}%__.${removeBleed}`;
+        `the **DEF** and **ARMOR** of all allies by __${perRatio}%__.${removeBleed}`;
 		damageDiff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
 
 		const processedHpBar = processHpBar(playerStats.totalStats, damageDiff);

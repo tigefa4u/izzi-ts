@@ -27,7 +27,8 @@ const ItemProcMap: ItemProcMapProps = {
 	"farsight orb": intelligenceItems.farsightOrb,
 	"skull basher": damageItems.skullBasher,
 	"agnus scepter": intelligenceItems.agnusScepter,
-	"vampire's blade": lifestealItems.vampiresBlade
+	"vampire's blade": lifestealItems.vampiresBlade,
+	"crystal wand": defenseItems.crystalWand,
 };
 
 export default ItemProcMap;

@@ -2,7 +2,7 @@ import { BattleProcessProps, BattleStats } from "@customTypes/adventure";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { emojiMap } from "emojis";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { addTeamEffectiveness } from "helpers/adventure";
 import {
 	compare,
@@ -38,7 +38,8 @@ export const balancingStrike = ({
 	let damageDiff;
 	let abilityDamage;
 	let playerDamageDiff;
-	if (round % 2 === 0 && !playerStats.totalStats.isBstrike) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isBstrike) {
 		playerStats.totalStats.isBstrike = true;
 		let num = 25;
 		const hasMoreSpeed = compare(

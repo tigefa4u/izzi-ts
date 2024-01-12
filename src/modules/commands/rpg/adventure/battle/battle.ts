@@ -643,6 +643,7 @@ async function simulatePlayerTurns({
 			isEvadeHit: updatedStats.isOpponentEvadeHit,
 			isParanoid: updatedStats.isPlayerParanoid,
 			isDamageAbsorbed: updatedStats.isDamageAbsorbed,
+			hasZombieAura: updatedStats.hasZombieAura,
 		});
 		const desc = await simulateBattleDescription({
 			playerStats,
@@ -720,6 +721,7 @@ function updateBattleDesc({
 	isEvadeHit,
 	isParanoid,
 	isDamageAbsorbed,
+	hasZombieAura
 }: {
   turn: number;
   isPlayerFirst: boolean;
@@ -736,6 +738,7 @@ function updateBattleDesc({
   isAsleep?: boolean;
   isParanoid?: boolean;
   isDamageAbsorbed?: boolean;
+  hasZombieAura?: boolean;
 }) {
 	let desc = `${
 		turn === 0 ? `${description}\n` : `${emoji.up} **[ROUND ${round}**]\n`
@@ -768,7 +771,7 @@ function updateBattleDesc({
 					: opponentStats.totalStats.effective > 1
 						? "but it was not very effective..."
 						: ""
-		}\n${
+		}${hasZombieAura ? `${opponentStats.name} has survived due to **Zombie Aura**` : ""}\n${
 			damageDiff !== 0 && turn === 0
 				? `${enemyDesc} strikes back fiercely! ${emoji.angry}`
 				: ""

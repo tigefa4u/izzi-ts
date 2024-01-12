@@ -5,6 +5,7 @@ import {
 	ItemProcMapProps,
 } from "@customTypes/battle";
 import { calcPercentRatio } from "helpers/ability";
+import { calculateSkillProcRound } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
@@ -112,6 +113,15 @@ const capDPRBuff = (num: number) => {
 	return num;
 };
 
+const checkZombieAura = (opponent: BattleStats) => {
+	const stats = clone(opponent);
+	if (stats.surviveRoundsAfterDeath && stats.surviveRoundsAfterDeath > 0 && stats.totalStats.strength <= 0) {
+		stats.surviveRoundsAfterDeath = stats.surviveRoundsAfterDeath - 1;
+		stats.totalStats.strength = 1;
+	}
+	return stats;
+};
+
 export const BattleProcess = async ({
 	baseEnemyStats: baseEnemy,
 	basePlayerStats: basePlayer,
@@ -133,7 +143,8 @@ export const BattleProcess = async ({
 		damageDealt = 0,
 		isDamageAbsorbed = false,
 		isAbilityDefeat = false,
-		isAbilitySelfDefeat = false;
+		isAbilitySelfDefeat = false,
+		hasZombieAura = false;
 	// "duskblade of draktharr"
 	const { abilityProc, abilityDamage, isDefeated, ...rest } =
     await processAbililtyOrItemProc({
@@ -288,6 +299,13 @@ export const BattleProcess = async ({
       isNaN(opponentStats.totalStats.originalHp)
 		)
 			throw new Error("Unprocessable OriginalHP");
+		
+		const survive = checkZombieAura(opponentStats);
+		if (survive.totalStats.strength === 1) {
+			opponentStats.totalStats.strength = survive.totalStats.strength;
+			opponentStats.surviveRoundsAfterDeath = survive.surviveRoundsAfterDeath;
+			hasZombieAura = true;
+		}
 		damageDiff = relativeDiff(
 			opponentStats.totalStats.strength,
 			opponentStats.totalStats.originalHp
@@ -303,6 +321,18 @@ export const BattleProcess = async ({
 			isAbilityDefeat = true;
 		} else if ((abilityProc?.playerDamageDiff ?? 1) <= 0) {
 			isAbilitySelfDefeat = true;
+		}
+		const survive = checkZombieAura(opponentStats);
+		if (survive.totalStats.strength === 1) {
+			opponentStats.totalStats.strength = survive.totalStats.strength;
+			opponentStats.surviveRoundsAfterDeath = survive.surviveRoundsAfterDeath;
+			isAbilityDefeat = false;
+			isAbilitySelfDefeat = false;
+			damageDiff = 1;
+			hasZombieAura = true;
+			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+			opponentStats.totalStats.strength = processedHpBar.strength;
+			opponentStats.totalStats.health = processedHpBar.health;
 		}
 	}
 	// Directly add ability damage to total damage
@@ -328,7 +358,8 @@ export const BattleProcess = async ({
 		isAbilitySelfDefeat,
 		abilityDamage,
 		isPlayerParanoid,
-		isDamageAbsorbed
+		isDamageAbsorbed,
+		hasZombieAura
 	};
 };
 
@@ -348,7 +379,7 @@ async function processAbililtyOrItemProc({
 		isDefeated = false;
 
 	for (let i = 0; i < 3; i++) {
-		const card = playerStats.cards[i];
+		const card = playerStats.cards[i] as any;
 		if (!card) continue;
 
 		const params = {
@@ -392,12 +423,13 @@ async function processAbililtyOrItemProc({
 			}
 		}
 		const hasHarbingerOrCleanse = card.abilityname === "harbinger of death" || card.abilityname === "cleanse";
+		const procRound = calculateSkillProcRound(HARBINGER_OF_DEATH_PROC_ROUND, card.reduceSkillCooldownBy);
 		if (
 			(processUnableToAttack(playerStats, opponentStats, true) ||
         playerStats.totalStats.isRestrictResisted) &&
       !(
       	hasHarbingerOrCleanse &&
-        round % HARBINGER_OF_DEATH_PROC_ROUND === 0
+        round % procRound === 0
       )
       //   !(
       //   	playerStats.cards.find(

@@ -1,6 +1,6 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import { compare, getRelationalDiff, processEnergyBar } from "helpers/battle";
 
 export const pointBlank = ({
@@ -20,7 +20,8 @@ export const pointBlank = ({
 	/**
 	 * Increase acc & atk (20%)
 	 */
-	if (round % 3 === 0 && !playerStats.totalStats.isPB) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isPB) {
 		playerStats.totalStats.isPB = true;
 		if (!basePlayerStats.totalStats.tempPB)
 			basePlayerStats.totalStats.tempPB = 1;
@@ -61,7 +62,7 @@ export const pointBlank = ({
 			basePlayerStats
 		}); 
 	}
-	if (round % 3 === 1 && playerStats.totalStats.isPB)
+	if (round % (procRound - 1) === 1 && playerStats.totalStats.isPB)
 		playerStats.totalStats.isPB = false;
 	return {
 		playerStats,
@@ -85,8 +86,9 @@ export const precision = ({
 	// Increase the crit chances of all allies by 40% as well as increasing crit damage of allies by __18%__.
 	// need to change prec to be 18%
 	if (!playerStats.totalStats.critNum) playerStats.totalStats.critNum = 2;
+	const procRound = calculateSkillProcRound(playerStats.totalStats.critNum, card.reduceSkillCooldownBy);
 	if (
-		round % playerStats.totalStats.critNum === 0 &&
+		round % procRound === 0 &&
     !playerStats.totalStats.isPrecision
 	) {
 		playerStats.totalStats.isPrecision = true;
@@ -159,7 +161,8 @@ export const presenceOfMind = ({
 	// rework - buff dpr by 18%
 	let desc;
 	if (!playerStats.totalStats.pomNum) playerStats.totalStats.pomNum = 2;
-	if (round % playerStats.totalStats.pomNum === 0 && !playerStats.totalStats.isPOM) {
+	const procRound = calculateSkillProcRound(playerStats.totalStats.pomNum, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isPOM) {
 		playerStats.totalStats.isPOM = true;
 		const temp = compare(playerStats.totalStats.dexterity, opponentStats.totalStats.dexterity);
 		const num = temp ? 2 : 3;

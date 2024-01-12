@@ -3,7 +3,7 @@ import { CharacterStatProps } from "@customTypes/characters";
 import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getRelationalDiff,
@@ -37,8 +37,9 @@ export const harbingerOfDeath = ({
 		const resistChances = [ false, true ];
 		proc = resistChances[probability(chances)];
 	}
+	const procRound = calculateSkillProcRound(HARBINGER_OF_DEATH_PROC_ROUND, card.reduceSkillCooldownBy);
 	if (
-		round % HARBINGER_OF_DEATH_PROC_ROUND === 0 &&
+		round % procRound === 0 &&
     !playerStats.totalStats.isHarbingerOfDeath &&
     proc && !playerStats.totalStats.isStunned && !playerStats.totalStats.isAsleep
 	) {

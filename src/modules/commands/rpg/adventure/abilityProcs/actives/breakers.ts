@@ -2,7 +2,7 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import { CharacterStatProps } from "@customTypes/characters";
 import { probability, randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	compare,
 	getPercentOfTwoNumbers,
@@ -56,10 +56,11 @@ export const exhaust = ({
 			basePlayerStats,
 		});
 	}
+	const procRound = calculateSkillProcRound(playerStats.totalStats.exhNum, card.reduceSkillCooldownBy);
 	// Permanently decrease the __SPD/INT__ of all enemies by __25%__
 	// as well as buffing all allies for the same stat
 	if (
-		round % playerStats.totalStats.exhNum === 0 &&
+		round % procRound === 0 &&
     !playerStats.totalStats.isExhaust
 	) {
 		playerStats.totalStats.isExhaust = true;
@@ -260,8 +261,9 @@ export const dominator = ({
 	if (!card) return;
 	if (!playerStats.totalStats.domNum) playerStats.totalStats.domNum = 3;
 	// Parmanently decrease the **AFK** of all enemies by __14%__ as well as decreasing their **INT** by __3%__
+	const procRound = calculateSkillProcRound(playerStats.totalStats.domNum, card.reduceSkillCooldownBy);
 	if (
-		round % playerStats.totalStats.domNum === 0 &&
+		round % procRound === 0 &&
     !playerStats.totalStats.isDominator
 	) {
 		playerStats.totalStats.isDominator = true;
@@ -340,7 +342,8 @@ export const crusher = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
-	if (round % 2 === 0 && !playerStats.totalStats.isUseCrusher) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
 		playerStats.totalStats.crusherResetOnRound = round + 3;
 		// calculate ratio based on rank

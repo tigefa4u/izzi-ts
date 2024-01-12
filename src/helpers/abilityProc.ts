@@ -59,3 +59,10 @@ export const prepSendAbilityOrItemProcDescription = async ({
 	// 	throw new Error("Match Forfeit");
 	// }
 };
+
+export const calculateSkillProcRound = (procRound: number, reduceSkillCooldownBy?: number) => {
+	let proc = procRound;
+	if (reduceSkillCooldownBy && reduceSkillCooldownBy > 0) proc = proc - reduceSkillCooldownBy;
+	if (proc <= 0) proc = procRound;
+	return proc;
+};

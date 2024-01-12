@@ -1,7 +1,7 @@
 import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getRelationalDiff,
@@ -26,7 +26,8 @@ export const leer = ({
 	}
 	// Reduce DEF/INT of enemy by 25%, apply stack of paranoia for 1 round
 	// inc own int by 25%
-	if (round % 3 === 0 && !playerStats.totalStats.isLeer) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isLeer) {
 		playerStats.totalStats.isLeer = true;
 		opponentStats.totalStats.isParanoid = true;
 		const percent = calcPercentRatio(25, card.rank);

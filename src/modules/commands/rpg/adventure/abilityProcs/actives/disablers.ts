@@ -2,7 +2,7 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getRelationalDiff,
@@ -72,7 +72,8 @@ export const electrocute = ({
 		}
 	}
 	// Deal __20%__ electric damage based on **INT** also gain a chance of inflicting paralysis
-	if (round % 3 === 0) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0) {
 		playerStats.totalStats.previousRound = round;
 		opponentStats.totalStats.isStunned = procStun[probability([ 55, 45 ])];
 		const percent = calcPercentRatio(50, card.rank);
@@ -354,7 +355,8 @@ export const restriction = ({
 		]);
 		isResist = [ true, false ][resistProb];
 	}
-	if (round % 2 === 0 && !opponentStats.totalStats.isRestrictResisted) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !opponentStats.totalStats.isRestrictResisted) {
 		let rapidFireReset = false;
 		if (!isResist) {
 			const cardHasRapidFire = opponentStats.cards.find(

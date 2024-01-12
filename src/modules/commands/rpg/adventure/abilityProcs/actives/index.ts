@@ -2,7 +2,7 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { randomElementFromArray } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getRelationalDiff,
@@ -36,7 +36,8 @@ export const dragonRage = ({
 	// "While your health is below 35% lower your **INT** by __10%__ and increase your **ATK** by __35__% (OLD)
 	// Increase **ATK** of all allies by __25%__ as well as decreasing their **DEF** by __6%__
 	// const hpRatio = Math.floor((playerStats.originalHp * 35) / 100);
-	if (round % 2 === 0 && !playerStats.totalStats.isRage) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isRage) {
 		playerStats.totalStats.isRage = true;
 		let desc = "";
 		const operations: any = {
@@ -249,7 +250,8 @@ export const killerInstincts = ({
 	// increasing your **SPD** by __30%__, also gain __5%__ evasion chances.
 
 	// rework - buff dpr by 22%
-	if (round % 3 === 0 && !playerStats.totalStats.isKiller) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isKiller) {
 		playerStats.totalStats.isKiller = true;
 		const incPercent = calcPercentRatio(30, card.rank);
 		const ratio = basePlayerStats.totalStats.dexterity * (incPercent / 100);
@@ -371,7 +373,8 @@ export const futureSight = ({
 
 	// Transcend beyond time getting a glimpse of the future increasing **INT** of all allies by __30%__
 	// as well as increasing **EVA** by __15%__.
-	if (round % 3 === 0 && !playerStats.totalStats.isFuture) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !playerStats.totalStats.isFuture) {
 		playerStats.totalStats.isFuture = true;
 		const percent = calcPercentRatio(30, card.rank);
 		const relDiff = getRelationalDiff(
