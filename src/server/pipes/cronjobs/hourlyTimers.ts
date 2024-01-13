@@ -40,30 +40,36 @@ const spawnRaids = async () => {
 		const spawnLevels: {
 			[key: number]: number;
 		} = {
-			0: 60,
-			1: 90,
-			2: 120,
-			3: 150,
-			4: 200
+			1: 60,
+			2: 90,
+			3: 120,
+			4: 150,
+			5: 200
 		};
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
+		let count = 0;
 		return Promise.all(
 			Array(5)
 				.fill([ "e", "m", "h", "i" ])
 				.flat()
 				.map(async (difficulty, i) => {
+					const rem = i % 4;
+					if (rem === 0) count += 1;
+					const lowlevel = count === 1 ? 30 : spawnLevels[count - 1];
+					const highlevel = spawnLevels[count];
+					const randomLevel = randomNumber(lowlevel, highlevel);
 					// spawning boss based on user level
 					const computedBoss = computeRank(
 						difficulty,
 						isEvent,
 						false,
-						randomNumber(i === 0 ? 30 : spawnLevels[i - 1], spawnLevels[i])
+						randomLevel
 					);
 					if (!computedBoss) return;
 					loggers.info(
 						"cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " +
-              difficulty
+					  difficulty
 					);
 					const promises = [ createRaidBoss({
 						isPrivate: false,
@@ -76,7 +82,7 @@ const spawnRaids = async () => {
 							difficulty,
 							isEvent,
 							false,
-							randomNumber(30, 200),
+							randomLevel,
 							{ isDarkZone: true }
 						);
 						if (!darkZoneBoss) return;
