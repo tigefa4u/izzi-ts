@@ -150,6 +150,7 @@ export const sleep = ({
 	simulation,
 	baseEnemyStats,
 }: BattleProcessProps) => {
+	if (!card) return;
 	let desc,
 		isResist = false;
 	if (opponentStats.totalStats.isAsleep) {
@@ -183,7 +184,8 @@ export const sleep = ({
 		]);
 		isResist = [ true, false ][resistProb];
 	}
-	if (round % 3 === 0 && !opponentStats.totalStats.isAsleep) {
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	if (round % procRound === 0 && !opponentStats.totalStats.isAsleep) {
 		opponentStats.totalStats.isAsleep = !isResist;
 		// put your enemies to sleep causing them to miss their turns until they are awake.
 		desc = `**__${opponentStats.name}__** felt **Drowsy** ${
@@ -260,7 +262,8 @@ export const misdirection = ({
 	let abilityDamage, damageDiff;
 	// inflict a stack of confusion on your enemies and gain a chance to cause them to inflict damage
 	// upon itself based on their attack as well as increasing **INT** of all allies by __20%__.
-	if (round % 2 === 0) {
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	if (round % procRound === 0) {
 		const isConfused = [ true, false ];
 		let desc;
 		const tempPercent = calcPercentRatio(20, card.rank);
