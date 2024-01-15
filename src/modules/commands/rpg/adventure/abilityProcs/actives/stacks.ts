@@ -85,7 +85,7 @@ export const toxicScreen = ({
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
-		if (round % (procRound - 1) != 0) {
+		if ((round % (procRound - 1)) != 0) {
 			const damagePercent = calcPercentRatio(15, card.rank);
 			abilityDamage = getRelationalDiff(
 				playerStats.totalStats.vitality,
@@ -125,7 +125,7 @@ export const toxicScreen = ({
 			});
 		}
 	}
-	if (round % (procRound - 1) === 0) {
+	if ((round % (procRound - 1)) === 0) {
 		playerStats.totalStats.isToxic = false;
 		opponentStats.totalStats.isPoisoned = false;
 	}

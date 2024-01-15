@@ -62,7 +62,7 @@ export const pointBlank = ({
 			basePlayerStats
 		}); 
 	}
-	if (round % (procRound - 1) === 1 && playerStats.totalStats.isPB)
+	if ((round % (procRound - 1)) === 1 && playerStats.totalStats.isPB)
 		playerStats.totalStats.isPB = false;
 	return {
 		playerStats,

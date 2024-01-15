@@ -282,7 +282,7 @@ export const chronobreak = ({
 			basePlayerStats,
 		});
 	}
-	if (round % (procOnRound - 1) === 0) {
+	if ((round % (procOnRound - 1)) === 0) {
 		playerStats.totalStats.previousHp = playerStats.totalStats.strength;
 	}
 	return {
