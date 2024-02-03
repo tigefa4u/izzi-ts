@@ -19,19 +19,19 @@ process.on("uncaughtException", (error) => {
 
 process.setMaxListeners(100);
 
-const shardParams = {
-	execArgv: [ "-r", "ts-node/register" ],
-	totalShards: TOTAL_SHARDS || "auto",
-	respawn: true,
-	token: DISCORD_TEST_BOT,
-};
+// const shardParams = {
+// 	execArgv: [ "-r", "ts-node/register" ],
+// 	totalShards: TOTAL_SHARDS || "auto",
+// 	respawn: true,
+// 	token: DISCORD_TEST_BOT,
+// };
 
-if (SHARD_LIST) {
-	Object.assign(shardParams, { shardList: SHARD_LIST });
-}
+// if (SHARD_LIST) {
+// 	Object.assign(shardParams, { shardList: SHARD_LIST });
+// }
 
 const manager = new ShardingManager(path.join(__dirname, "client.js"), {
-	// execArgv: [ "-r", "ts-node/register" ], // This is needed to run dev
+	execArgv: [ "-r", "ts-node/register" ], // This is needed to run dev
 	totalShards: "auto",
 	// token: DISCORD_TEST_BOT,
 	token: DISCORD_BOT_TOKEN,
