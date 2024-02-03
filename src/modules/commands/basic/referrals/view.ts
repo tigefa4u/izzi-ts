@@ -105,7 +105,7 @@ export const viewReferrals = async ({
 						: "Use ``refer use <referral code>`` to refer a friend"
 				}${
 					card
-						? `\n\nFor every 5 referral points up to 20, you receive 1x **Level 20** __${titleCase(
+						? `\n\nFor every 5 referral points up to 40, you receive 1x **Level 20** __${titleCase(
 							card.rank
 						)}__ **${titleCase(card.name)}**`
 						: ""
