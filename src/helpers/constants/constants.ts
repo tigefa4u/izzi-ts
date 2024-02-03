@@ -458,7 +458,7 @@ export const SHARDS_PER_CARD: { [key: string]: number } = {
 	divine: 2,
 };
 
-export const MAX_REFERRAL_REWARD_POINTS = 20;
+export const MAX_REFERRAL_REWARD_POINTS = 40;
 
 export const MAX_MANA_GAIN = 420;
 // max level for this mana is 187
