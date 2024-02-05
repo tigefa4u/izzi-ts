@@ -4,6 +4,15 @@ import * as Guilds from "../models/Guilds";
 import { delGuildItems } from "./GuildItemsController";
 import { delAllGuildMembers } from "./GuildMembersController";
 
+export const incrGuildTraffic = async (guild_id: string) => {
+	try {
+		return Guilds.incrTraffic(guild_id);
+	} catch (err) {
+		loggers.error("api.controllers.GuildsController.incrGuildTraffic: ERROR", err);
+		return;
+	}
+};
+
 export const getGuild = async (params: GuildParams) => {
 	try {
 		const result = await Guilds.get(params);

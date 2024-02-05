@@ -53,6 +53,10 @@ export const transformation = {
 	},
 };
 
+export const incrTraffic = async (guild_id: string) => {
+	return connection(tableName).where({ guild_id }).update({ traffic: connection.raw("traffic + 1") });
+};
+
 export const get = async (params: GuildParams): Promise<GuildProps[]> => {
 	return connection(tableName).where(params);
 };

@@ -21,7 +21,7 @@ import {
 } from "modules/cooldowns/channels";
 import { logCommand } from "./logCommand";
 import Cache from "cache";
-import { getGuild } from "api/controllers/GuildsController";
+import { getGuild, incrGuildTraffic } from "api/controllers/GuildsController";
 
 const ratelimitMap = new Map();
 
@@ -98,8 +98,9 @@ const handleMessage = async (client: Client, context: Message, { hasPermissions 
 		}
 		const command = await getCommand(args[1]);
 		if (!command) return;
-		logCommand(context.author, command, args);
 		setCooldown(context.author.id, "command-cd", 1);
+		incrGuildTraffic(context.guild.id);
+		logCommand(context.author, command, args);
 		args.shift();
 		if (
 			typeof commandCategory[command?.type as keyof CommandCategoryProps] !==
