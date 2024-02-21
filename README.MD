@@ -101,3 +101,7 @@ https://medium.com/@simon.white/postgres-publish-subscribe-with-nodejs-996a7e45f
 - Create functions and triggers for the tables you want to listen to.
 - You must use query: listen <tablename>.
 - Since we only need to trigger the event once, we will write a separate app for it.
+
+
+# To reset raid spawn ids
+- alter sequence raids_id_seq restart with 1

@@ -61,7 +61,7 @@ const battle = async ({ context, args, options, client }: BaseProps) => {
 		if (!user) return;
 		if (!user.selected_card_id) {
 			context.channel?.sendMessage(
-				"Please select a card to fight alongside you!"
+				"Please select a card to fight alongside you! Type `iz select 1`."
 			);
 			return;
 		}

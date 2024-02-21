@@ -99,7 +99,7 @@ const handleMessage = async (client: Client, context: Message, { hasPermissions 
 		const command = await getCommand(args[1]);
 		if (!command) return;
 		setCooldown(context.author.id, "command-cd", 1);
-		incrGuildTraffic(context.guild.id);
+		// incrGuildTraffic(context.guild.id);
 		logCommand(context.author, command, args);
 		args.shift();
 		if (

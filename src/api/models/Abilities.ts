@@ -21,6 +21,8 @@ export const transformation = {
 		type: "timestamp",
 		columnName: "updated_at",
 	},
+	// to monitor what abilities are being used the most.
+	usage: { type: "number" },
 };
 
 export const get = async (
@@ -44,4 +46,8 @@ export const get = async (
 	query = query.limit(pagination.limit).offset(pagination.offset);
 
 	return query;
+};
+
+export const logUsage = async (names: string[]) => {
+	return connection(tableName).whereIn("name", names).update({ usage: connection.raw("usage + 1") });
 };

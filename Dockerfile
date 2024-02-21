@@ -1,4 +1,6 @@
 # syntax = docker/dockerfile:1
+# To analyze docker images use the command: dive <image>
+# this will help you reduce docker image size
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=16.9.0

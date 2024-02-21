@@ -43,6 +43,7 @@ import { raidActions } from "..";
 import { BaseProps } from "@customTypes/command";
 import { CollectionCardInfoProps } from "@customTypes/collections";
 import { viewBattleLogs } from "../../adventure/battle/viewBattleLogs";
+import { logAbilityUsage } from "api/controllers/AbilityController";
 
 export const battleRaidBoss = async (
 	params: BaseProps & {
@@ -98,7 +99,8 @@ export const battleBoss = async ({
 			const user = await getRPGUser({ user_tag: author.id });
 			if (!user) return;
 			if (!user.selected_team_id) {
-				context.channel?.sendMessage("Please select a valid Team!");
+				context.channel?.sendMessage("Please select a valid Team! " + 
+				"Type `iz tm select <name>`.");
 				return;
 			}
 			userId = user.id;
@@ -113,7 +115,8 @@ export const battleBoss = async ({
 		if (!currentRaid) return;
 		if (!currentRaid.is_start) {
 			context.channel?.sendMessage(
-				`The ${isEvent ? "Event" : "Raid"} Challenge has not started yet!`
+				`The ${isEvent ? "Event" : "Raid"} Challenge has not started yet! ` +
+				"You can ask the raid leader to start the raid by typing `iz rd start`."
 			);
 			return;
 		}
@@ -126,7 +129,8 @@ export const battleBoss = async ({
 		if (attacker.energy < ENERGY_PER_ATTACK) {
 			context.channel?.sendMessage(
 				`Summoner **${attacker.username}**, ` +
-          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**`
+          `You do not have sufficient energy to attack! **__[${attacker.energy} / ${ENERGY_PER_ATTACK}]__**. ` +
+		  `To check your energy type \`iz ${isEvent ? "ev" : "rd"} e\`.`
 			);
 			return;
 		}
@@ -182,6 +186,11 @@ export const battleBoss = async ({
 			args.shift();
 			multiplier = Math.floor(attacker.energy / ENERGY_PER_ATTACK);
 		}
+
+		const abilityNames = playerStats.stats.cards.map((c: any) => c?.characterInfo?.abilityname)
+			.filter(Boolean);
+
+		logAbilityUsage(abilityNames);
 
 		// wasn't viable - players dont want to spend 30mins - 1 hour raiding
 		const lobbySize = Object.keys(currentRaid.lobby).length;

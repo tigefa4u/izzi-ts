@@ -27,3 +27,17 @@ export const getAbilities = async (
 		return;
 	}
 };
+
+/**
+ * Currently only logging abilities that are used in raids.
+ * @param id 
+ * @returns 
+ */
+export const logAbilityUsage = async (names: string[]) => {
+	try {
+		return Ability.logUsage(names);
+	} catch (err) {
+		loggers.error("api.controllers.AbilityController.logAbilityUsage: ERROR", err);
+		return;
+	}
+};

@@ -50,7 +50,8 @@ export const selectCard = async ({
 		context.channel?.sendMessage(
 			`You have now selected __${titleCase(infoData.rank)}__ **Level ${
 				infoData.character_level
-			} ${titleCase(infoData.metadata?.nickname || infoData.name)}** to fight alongside you on your journey.`
+			} ${titleCase(infoData.metadata?.nickname || infoData.name)}** to fight alongside you on your journey. ` +
+			"To view your inventory type `iz inv`."
 		);
 		
 		if (starterGuide) {
