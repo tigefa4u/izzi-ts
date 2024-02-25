@@ -17,20 +17,27 @@ export const defensiveStrike = ({
 }: BattleProcessProps) => {
 	if (!card || !opponentStats.totalStats.originalHp) return;
 	// Deal 10% (12% if less speed) damage based on your defense
-	// Will stack
+	// Will stack, inc def of all allies by 10%
 	let damageDiff;
 	let abilityDamage;
 	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0) {
-		let num = 20;
+		let num = 25;
 		const hasMoreSpeed = compare(
 			playerStats.totalStats.dexterity,
 			opponentStats.totalStats.dexterity
 		);
 		if (!hasMoreSpeed) {
-			num = 23;
+			num = 30;
 		}
 		const percent = calcPercentRatio(num, card.rank);
+		const incPercent = calcPercentRatio(10, card.rank);
+		const inc = getRelationalDiff(
+			basePlayerStats.totalStats.defense,
+			incPercent
+		);
+		playerStats.totalStats.defense = playerStats.totalStats.defense + inc;
+
 		const damageDealt = getRelationalDiff(
 			playerStats.totalStats.defense,
 			percent
@@ -50,7 +57,8 @@ export const defensiveStrike = ({
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 
-		const desc = `Dealing __${abilityDamage}__ damage to **__${opponentStats.name}__**`;
+		const desc = `Increasing **DEF** of all allies by __${incPercent}%__ ` +
+		`as well as dealing __${abilityDamage}__ damage to **__${opponentStats.name}__**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -93,7 +101,7 @@ export const lightningShield = ({
 	let abilityDamage;
 	// gain 30% DEF buff and reflect 10% damage based on enemy atk
 	// decrease acc and crit damage by 15%
-	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isLightningShield) {
 		playerStats.totalStats.isLightningShield = true;
 		const percent = calcPercentRatio(30, card.rank);

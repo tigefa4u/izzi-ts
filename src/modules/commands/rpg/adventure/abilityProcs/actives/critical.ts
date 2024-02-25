@@ -97,7 +97,7 @@ export const precision = ({
 			opponentStats.totalStats.intelligence
 		);
 		const num = hasMoreInt ? 2 : 3;
-		playerStats.totalStats.critNum = playerStats.totalStats.critNum + num;
+		playerStats.totalStats.critNum = num;
 		
 		const percent = calcPercentRatio(40, card.rank);
 		const crit = basePlayerStats.totalStats.critical * (percent / 100);
@@ -134,8 +134,6 @@ export const precision = ({
 			basePlayerStats
 		});
 	}
-	if (round % 2 === 1 && playerStats.totalStats.isPrecision)
-		playerStats.totalStats.isPrecision = false;
 	return {
 		playerStats,
 		opponentStats,

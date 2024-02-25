@@ -6,10 +6,11 @@ import { paginatorFunc } from "api/controllers/PagingController";
 import { createEmbed } from "commons/embeds";
 import { Message } from "discord.js";
 import emoji from "emojis/emoji";
+import { IZZI_WEBSITE } from "environment";
 import { DOT } from "helpers/constants/constants";
 import loggers from "loggers";
 import { clone, toLocaleDate } from "utility";
-import { paginatorInteraction, } from "utility/ButtonInteractions";
+import { customButtonInteraction, paginatorInteraction, } from "utility/ButtonInteractions";
 
 export const viewChangeLogs = async ({
 	context,
@@ -81,7 +82,30 @@ export const viewChangeLogs = async ({
     );
 
 		if (!buttons) return;
-		embed.setButtons(buttons);
+		const customButton = customButtonInteraction(
+			context.channel,
+			[ {
+				label: "Change Logs",
+				params: { id: "change-log" },
+				url: `${IZZI_WEBSITE}/changelogs`,
+				style: "LINK"
+			} ],
+			author.id,
+			() => {
+				//
+			},
+			() => {
+				//
+			},
+			true
+		);
+		if (customButton) {
+			embed.setButtons(customButton);
+		}
+		embed.buttons.setComponents(
+			...embed.buttons.components,
+			...buttons.components
+		);
 		const msg = await context.channel?.sendMessage(embed);
 		if (msg) {
 			sentMessage = msg;

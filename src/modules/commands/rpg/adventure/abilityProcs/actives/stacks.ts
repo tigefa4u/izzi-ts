@@ -2,7 +2,10 @@ import { BattleProcessProps } from "@customTypes/adventure";
 import emoji from "emojis/emoji";
 import { probability, randomNumber } from "helpers";
 import { calcPercentRatio } from "helpers/ability";
-import { calculateSkillProcRound, prepSendAbilityOrItemProcDescription } from "helpers/abilityProc";
+import {
+	calculateSkillProcRound,
+	prepSendAbilityOrItemProcDescription,
+} from "helpers/abilityProc";
 import {
 	getPercentOfTwoNumbers,
 	getPlayerDamageDealt,
@@ -85,7 +88,7 @@ export const toxicScreen = ({
 		});
 	}
 	if (playerStats.totalStats.isToxic) {
-		if ((round % (procRound - 1)) != 0) {
+		if (round % (procRound - 1) != 0) {
 			const damagePercent = calcPercentRatio(15, card.rank);
 			abilityDamage = getRelationalDiff(
 				playerStats.totalStats.vitality,
@@ -125,7 +128,7 @@ export const toxicScreen = ({
 			});
 		}
 	}
-	if ((round % (procRound - 1)) === 0) {
+	if (round % (procRound - 1) === 0) {
 		playerStats.totalStats.isToxic = false;
 		opponentStats.totalStats.isPoisoned = false;
 	}
@@ -257,8 +260,14 @@ export const blizzard = ({
 	baseEnemyStats,
 	basePlayerStats,
 }: BattleProcessProps) => {
-	if (!card || !opponentStats.totalStats.originalHp) return;
-	// Deal __(13 - 25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
+	if (
+		!card ||
+    !opponentStats.totalStats.originalHp ||
+    !baseEnemyStats.totalStats.originalHp
+	)
+		return;
+	// Deal __(25)%__ additional damage to all enemies each round and decrease their **SPD** by __20%__
+	// inc accuracy by 20% and decrease max hp by 2% up to 50%
 	playerStats.totalStats.previousRound
 		? playerStats.totalStats.previousRound++
 		: null;
@@ -269,7 +278,7 @@ export const blizzard = ({
 	) {
 		playerStats.totalStats.isUseBlizzardPassive = true;
 	}
-	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isBlizzard) {
 		playerStats.totalStats.isBlizzard = true;
 		const percent = calcPercentRatio(20, card.rank);
@@ -280,12 +289,44 @@ export const blizzard = ({
 		opponentStats.totalStats.dexterity =
       opponentStats.totalStats.dexterity - dexDiff;
 
+		const accDiff = getRelationalDiff(
+			basePlayerStats.totalStats.accuracy,
+			percent
+		);
+		playerStats.totalStats.accuracy = playerStats.totalStats.accuracy - accDiff;
+
+		// dec max hp by 2%
+		let hpDesc = ".";
+		const cap = Math.ceil(baseEnemyStats.totalStats.originalHp / 2);
+		if (opponentStats.totalStats.originalHp > cap) {
+			const decPercent = calcPercentRatio(2, card.rank);
+			const diff = getRelationalDiff(
+				opponentStats.totalStats.originalHp,
+				decPercent
+			);
+			opponentStats.totalStats.originalHp =
+        opponentStats.totalStats.originalHp - diff;
+			if (opponentStats.totalStats.originalHp < cap) {
+				opponentStats.totalStats.originalHp = cap;
+			}
+			let damageDiff = relativeDiff(
+				opponentStats.totalStats.strength,
+				opponentStats.totalStats.originalHp
+			);
+			if (damageDiff < 0) damageDiff = 0;
+			const processedHpBar = processHpBar(opponentStats.totalStats, damageDiff);
+			opponentStats.totalStats.strength = processedHpBar.strength;
+			opponentStats.totalStats.health = processedHpBar.health;
+			hpDesc = `, and their **Max HP** by __${decPercent}%__.`;
+		}
+
 		playerStats.totalStats.previousRound = round;
 
 		const desc =
-      `Decreasing the **SPD** of all enemies by __${percent}%__ ` +
-      "as well as Inflicting a stack of **Snow Shards**.\n" +
-      "The shards will deal __(13% - 25%)__ true damage for 3 rounds.";
+      `Increasing **ACC** of all allies by __${percent}%__ and simultaneously` +
+      `decreasing the **SPD** of all enemies for the same %${hpDesc}` +
+      "It also inflicts a stack of **Snow Shards**\n" +
+      "that will deal __25%__ true damage over time.";
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -308,10 +349,11 @@ export const blizzard = ({
 		playerStats.totalStats.isUseBlizzardPassive &&
     playerStats.totalStats.isBlizzard
 	) {
-		if (round % 2 === 1 && playerStats.totalStats.isBlizzard)
+		if (round % procRound === 1 && playerStats.totalStats.isBlizzard)
 			playerStats.totalStats.isBlizzard = false;
-		if (round === 5) playerStats.totalStats.isUseBlizzardPassive = false;
-		const incPercent = calcPercentRatio(randomNumber(14, 25), card.rank);
+		if (round === procRound + 2)
+			playerStats.totalStats.isUseBlizzardPassive = false;
+		const incPercent = calcPercentRatio(25, card.rank);
 		abilityDamage = getRelationalDiff(
 			playerStats.totalStats.vitality,
 			incPercent
@@ -505,7 +547,10 @@ export const cleanse = ({
 	basePlayerStats,
 }: BattleProcessProps) => {
 	if (!card) return;
-	const procRound = calculateSkillProcRound(HARBINGER_OF_DEATH_PROC_ROUND, card.reduceSkillCooldownBy);
+	const procRound = calculateSkillProcRound(
+		HARBINGER_OF_DEATH_PROC_ROUND,
+		card.reduceSkillCooldownBy
+	);
 	if (
 		round % procRound === 0 &&
     !playerStats.totalStats.isCleanse &&
