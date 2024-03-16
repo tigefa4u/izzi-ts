@@ -43,6 +43,7 @@ type Stack = Pick<
   | "isCleanse"
   | "isUseBleed"
   | "isDominator"
+  | "isPrecision"
 >;
 function processStack(stats: Stack) {
 	[
@@ -67,6 +68,7 @@ function processStack(stats: Stack) {
 		"isCleanse",
 		"isUseBleed",
 		"isDominator",
+		"isPrecision"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;

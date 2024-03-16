@@ -4,6 +4,7 @@ import {
 	CONSOLE_BUTTONS,
 	ENERGY_PER_ATTACK,
 	HIDE_VISUAL_BATTLE_ARG,
+	HIGH_LEVEL_RAIDS,
 	RAID_CAP_PERCENT,
 } from "helpers/constants/constants";
 import loggers from "loggers";
@@ -209,6 +210,7 @@ export const battleBoss = async ({
         ((multiplier * damageCapPercent) / 100)
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
+		const canEnterRageMode = HIGH_LEVEL_RAIDS.includes(currentRaid.stats.rawDifficulty);
 		const result = await simulateBattle({
 			context,
 			playerStats: playerStats.stats,
@@ -217,6 +219,7 @@ export const battleBoss = async ({
 			isRaid: true,
 			options: { hideVisualBattle: hideBt === HIDE_VISUAL_BATTLE_ARG ? true : false, },
 			multiplier,
+			canEnterRageMode,
 		});
 		clearCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`);
 		if (!result) {

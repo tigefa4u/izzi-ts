@@ -48,10 +48,10 @@ export const dragonRage = ({
 		[
 			{
 				name: "vitality",
-				num: 30,
+				num: 25,
 				op: "+",
-				desc: `Increasing the **ATK** of all allies by __${calcPercentRatio(
-					30,
+				desc: `Increasing the **True ATK** of all allies by __${calcPercentRatio(
+					25,
 					card.rank
 				)}%__`,
 			},
@@ -59,7 +59,7 @@ export const dragonRage = ({
 				name: "defense",
 				num: 7,
 				op: "-",
-				desc: ` as well as decreasing their **DEF** by __${calcPercentRatio(
+				desc: ` as well as decreasing their **True DEF** by __${calcPercentRatio(
 					7,
 					card.rank
 				)}%__`,
@@ -67,7 +67,7 @@ export const dragonRage = ({
 		].map((temp) => {
 			const percent = calcPercentRatio(temp.num, card.rank);
 			const relDiff = getRelationalDiff(
-				basePlayerStats.totalStats[temp.name],
+				playerStats.totalStats[temp.name],
 				percent
 			);
 			playerStats.totalStats[temp.name] = operations[temp.op](

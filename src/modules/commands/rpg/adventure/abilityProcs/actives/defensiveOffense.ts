@@ -31,12 +31,17 @@ export const defensiveStrike = ({
 			num = 30;
 		}
 		const percent = calcPercentRatio(num, card.rank);
-		const incPercent = calcPercentRatio(10, card.rank);
+		const incPercent = calcPercentRatio(20, card.rank);
 		const inc = getRelationalDiff(
 			basePlayerStats.totalStats.defense,
 			incPercent
 		);
-		playerStats.totalStats.defense = playerStats.totalStats.defense + inc;
+		basePlayerStats.totalStats.defense = basePlayerStats.totalStats.defense + inc;
+		const defInc = getRelationalDiff(
+			basePlayerStats.totalStats.defense,
+			incPercent
+		);
+		playerStats.totalStats.defense = playerStats.totalStats.defense + defInc;
 
 		const damageDealt = getRelationalDiff(
 			playerStats.totalStats.defense,
@@ -57,7 +62,7 @@ export const defensiveStrike = ({
 		opponentStats.totalStats.health = processedOpponentHpBar.health;
 		opponentStats.totalStats.strength = processedOpponentHpBar.strength;
 
-		const desc = `Increasing **DEF** of all allies by __${incPercent}%__ ` +
+		const desc = `Increasing **Base DEF and DEF** of all allies by __${incPercent}%__ ` +
 		`as well as dealing __${abilityDamage}__ damage to **__${opponentStats.name}__**`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
@@ -105,7 +110,7 @@ export const lightningShield = ({
 	if (round % procRound === 0 && !playerStats.totalStats.isLightningShield) {
 		playerStats.totalStats.isLightningShield = true;
 		const percent = calcPercentRatio(30, card.rank);
-		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
+		const defRatio = getRelationalDiff(playerStats.totalStats.defense, percent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defRatio;
 
 		const atkPercent = calcPercentRatio(25, card.rank);
@@ -129,7 +134,7 @@ export const lightningShield = ({
 		opponentStats.totalStats.criticalDamage = opponentStats.totalStats.criticalDamage - .15;
 		if (opponentStats.totalStats.criticalDamage < 0) opponentStats.totalStats.criticalDamage = 0;
 
-		const desc = `Increasing its **DEF** by __${percent}%__ ` +
+		const desc = `Increasing its **True DEF** by __${percent}%__ ` +
         `as well as dealing __${abilityDamage}__ damage to **__${opponentStats.name}__**, simultaneously ` +
         "decreasing its **Accuracy** and **Crit Damage** by __15%__";
 		prepSendAbilityOrItemProcDescription({

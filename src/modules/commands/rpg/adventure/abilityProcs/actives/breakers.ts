@@ -259,45 +259,39 @@ export const dominator = ({
 	basePlayerStats,
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Parmanently decrease the **AFK** of all enemies by __14%__ as well as decreasing their **INT** by __3%__
+	// permanently decrease true atk of all enemies by 16% simultaneously
+	// increasing true and base atk of all allies by 15%.
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (
 		round % procRound === 0 &&
     !playerStats.totalStats.isDominator
 	) {
 		playerStats.totalStats.isDominator = true;
-		const percent = calcPercentRatio(14, card.rank);
+		const percent = calcPercentRatio(16, card.rank);
 		const ratio = getRelationalDiff(
 			baseEnemyStats.totalStats.vitality,
 			percent
 		);
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
-		const decPercent = calcPercentRatio(3, card.rank);
-		const decRatio = getRelationalDiff(
-			baseEnemyStats.totalStats.intelligence,
-			decPercent
-		);
-		opponentStats.totalStats.intelligence =
-      opponentStats.totalStats.intelligence - decRatio;
-	  if (opponentStats.totalStats.intelligence < 0) {
-			opponentStats.totalStats.intelligence = 0;
-		}
+		
+	  const percentInc = calcPercentRatio(15, card.rank);
 
-		const diff = getPercentOfTwoNumbers(
-			opponentStats.totalStats.intelligence,
-			baseEnemyStats.totalStats.intelligence
-		);
-		const opponentEnergy = processEnergyBar({
-			dpr: diff,
-			energy: opponentStats.totalStats.energy,
-		});
-		opponentStats.totalStats.energy = opponentEnergy.energy;
-		opponentStats.totalStats.dpr = opponentEnergy.dpr;
+	  const baseAtkRatio = getRelationalDiff(
+			basePlayerStats.totalStats.vitality,
+			percentInc
+	  );
+	  const atkRatio = getRelationalDiff(
+			playerStats.totalStats.vitality,
+			percentInc
+	  );
+	  playerStats.totalStats.vitality = playerStats.totalStats.vitality + atkRatio;
+	  basePlayerStats.totalStats.vitality = basePlayerStats.totalStats.vitality + baseAtkRatio;
 
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
-      `it's **ATK** by __${percent}%__ as well as decreasing its **ARMOR** by __${decPercent}%__`;
+      `it's **True ATK** by __${percent}%__ simultaneously increasing **True ATK** and **Base ATK** of all allies` +
+	  `by __${percentInc}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

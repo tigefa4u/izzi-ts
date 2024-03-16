@@ -139,10 +139,10 @@ export const berserk = ({
 
 		const percent = calcPercentRatio(20, card.rank);
 
-		const ratio = basePlayerStats.totalStats[temp] * (percent / 100);
+		const ratio = playerStats.totalStats[temp] * (percent / 100);
 		playerStats.totalStats[temp] =
       playerStats.totalStats[temp] + Number(ratio.toFixed(2));
-		const desc = `increasing it's **${
+		const desc = `increasing it's **True ${
 			temp === "vitality" ? "ATK" : temp === "defense" ? "DEF" : "CRIT Chance"
 		}** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
@@ -190,19 +190,28 @@ export const fightingSpirit = ({
     !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		const percent = calcPercentRatio(35, card.rank);
+		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
-			basePlayerStats.totalStats.vitality,
+			playerStats.totalStats.vitality,
 			percent
 		);
 		const defIncRation = getRelationalDiff(
-			basePlayerStats.totalStats.defense,
+			playerStats.totalStats.defense,
 			percent
 		);
-		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
+		// cap inc at 200%
+		const cap = getRelationalDiff(
+			basePlayerStats.totalStats.vitality,
+			200
+		);
+		let desc = `**True DEF** of all allies by __${percent}%__`;
+		if (playerStats.totalStats.vitality < cap) {
+			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
+			desc = `**True ATK** and ${desc}`;
+		}
 		playerStats.totalStats.defense =
       playerStats.totalStats.defense + defIncRation;
-		const desc = `increasing **ATK** and **DEF** of all allies by __${percent}%__`;
+		desc = `increasing ${desc}`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -254,17 +263,17 @@ export const dreamEater = ({
 		const percent = calcPercentRatio(80, card.rank);
 		abilityDamage = getRelationalDiff(atkDifference, percent);
 
-		const elementalEffectiveness = addTeamEffectiveness({
-			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
-			enemyCards: opponentStats.cards,
-			playerStats: { effective: 1 } as BattleStats["totalStats"],
-			opponentStats: { effective: 1 } as BattleStats["totalStats"],
-		});
-		const effective = elementalEffectiveness.playerStats.effective;
+		// const elementalEffectiveness = addTeamEffectiveness({
+		// 	cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
+		// 	enemyCards: opponentStats.cards,
+		// 	playerStats: { effective: 1 } as BattleStats["totalStats"],
+		// 	opponentStats: { effective: 1 } as BattleStats["totalStats"],
+		// });
+		// const effective = elementalEffectiveness.playerStats.effective;
 
 		if (abilityDamage > 5000) abilityDamage = 5000;
-		abilityDamage = Math.floor(abilityDamage * effective);
-		if (abilityDamage > 5000) abilityDamage = 5000;
+		// abilityDamage = Math.floor(abilityDamage * effective);
+		// if (abilityDamage > 5000) abilityDamage = 5000;
 
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;

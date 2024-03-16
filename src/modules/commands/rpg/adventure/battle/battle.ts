@@ -16,7 +16,9 @@ import {
 	compare,
 	getPercentOfTwoNumbers,
 	processEnergyBar,
+	processHpBar,
 	recreateBattleEmbed,
+	relativeDiff,
 	simulateBattleDescription,
 } from "helpers/battle";
 import {
@@ -44,7 +46,8 @@ export const simulateBattle = async ({
 	isRaid,
 	options,
 	multiplier,
-}: SimulateBattleProps & { isRaid?: boolean }) => {
+	canEnterRageMode = false
+}: SimulateBattleProps & { isRaid?: boolean; canEnterRageMode?: boolean; }) => {
 	if (!context.channel?.id) return;
 	let battlesInChannel = battlesPerChannel.validateBattlesInChannel(
 		context.channel.id
@@ -158,6 +161,7 @@ export const simulateBattle = async ({
 				isRaid,
 				simulation,
 				multiplier,
+				canEnterRageMode
 			});
 			playerStats = checkIsDefeated.playerStats;
 			enemyStats = checkIsDefeated.enemyStats;
@@ -495,8 +499,17 @@ function boostRaidBoss({
       enemyStats.totalStats.vitality + baseEnemyStats.totalStats.vitality * 0.1;
 	}
 
-	if (baseEnemyStats && round === RAGE_MODE_ROUND && turn === 1) {
+	if (baseEnemyStats && enemyStats.isRageMode && turn === 1) {
 		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
+		enemyStats.totalStats.strength = enemyStats.totalStats.originalHp || 0;
+		const diffHp = relativeDiff(
+			enemyStats.totalStats.strength,
+			enemyStats.totalStats.originalHp || 0
+		);
+		const hpBar = processHpBar(enemyStats.totalStats, diffHp);
+		enemyStats.totalStats.strength = hpBar.strength;
+		enemyStats.totalStats.health = hpBar.health;
+
 		const diff = getPercentOfTwoNumbers(
 			enemyStats.totalStats.intelligence,
 			baseEnemyStats.totalStats.intelligence
@@ -529,14 +542,21 @@ async function simulatePlayerTurns({
 	isRaid,
 	simulation,
 	multiplier,
+	canEnterRageMode
 }: PrepareBattleDescriptionProps &
   Omit<BattleProcessProps, "opponentStats"> & {
     isRaid?: boolean;
     multiplier?: number;
+	canEnterRageMode?: boolean;
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
-		if (isRaid && round >= RAGE_MODE_ROUND) {
+		let showRageModeDesc = false;
+		if (isRaid && round === RAGE_MODE_ROUND && i === 1 && canEnterRageMode) {
+			enemyStats.isRageMode = true;
+			showRageModeDesc = true;
+		}
+		if (enemyStats.isRageMode) {
 			const boost = boostRaidBoss({
 				enemyStats,
 				round,
@@ -544,8 +564,7 @@ async function simulatePlayerTurns({
 				turn: i,
 			});
 			enemyStats = boost.enemyStats;
-			if (round === RAGE_MODE_ROUND && i === 1) {
-				enemyStats.isRageMode = true;
+			if (showRageModeDesc) {
 				const desc = await simulateBattleDescription({
 					playerStats,
 					enemyStats,
