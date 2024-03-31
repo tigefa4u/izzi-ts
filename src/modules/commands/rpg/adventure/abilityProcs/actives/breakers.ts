@@ -264,11 +264,9 @@ export const dominator = ({
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (
 		round % procRound === 0 &&
-    !playerStats.totalStats.isDominator &&
-	!playerStats.totalStats.isTrueAtk
+    !playerStats.totalStats.isDominator
 	) {
 		playerStats.totalStats.isDominator = true;
-		playerStats.totalStats.isTrueAtk = true;
 		const percent = calcPercentRatio(16, card.rank);
 		const ratio = getRelationalDiff(
 			baseEnemyStats.totalStats.vitality,

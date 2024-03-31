@@ -11,6 +11,7 @@ import {
 	getPlayerDamageDealt,
 	processEnergyBar,
 	processHpBar,
+	processStatBuffCap,
 	processStatDeBuffCap,
 	relativeDiff,
 } from "helpers/battle";
@@ -44,7 +45,6 @@ type Stack = Pick<
   | "isUseBleed"
   | "isDominator"
   | "isPrecision"
-  | "isTrueAtk"
 >;
 function processStack(stats: Stack) {
 	[
@@ -70,7 +70,6 @@ function processStack(stats: Stack) {
 		"isUseBleed",
 		"isDominator",
 		"isPrecision",
-		"isTrueAtk"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;
@@ -171,10 +170,10 @@ export const BattleProcess = async ({
 		opponentStats.totalStats.isEvadeHit = false;
 	}
 	playerStats.totalStats = processStack(playerStats.totalStats);
-	// playerStats.totalStats = processStatBuffCap(
-	// 	playerStats.totalStats,
-	// 	isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
-	// );
+	playerStats.totalStats = processStatBuffCap(
+		playerStats.totalStats,
+		isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
+	);
 
 	// // This logic makes sure that stats do not drop below 10% of base stats
 	playerStats.totalStats = processStatDeBuffCap(

@@ -187,11 +187,9 @@ export const fightingSpirit = ({
 	const hpRatio = Math.floor(playerStats.totalStats.originalHp * (35 / 100));
 	if (
 		playerStats.totalStats.strength <= hpRatio &&
-    !playerStats.totalStats.isSpirit &&
-	!playerStats.totalStats.isTrueAtk
+    !playerStats.totalStats.isSpirit
 	) {
 		playerStats.totalStats.isSpirit = true;
-		playerStats.totalStats.isTrueAtk = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
 			playerStats.totalStats.vitality,

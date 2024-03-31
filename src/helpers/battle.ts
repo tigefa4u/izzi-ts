@@ -41,12 +41,12 @@ function capStatDeBuff(x1: number, x2: number) {
 type B = BattleStats["totalStats"];
 export function processStatBuffCap(stats: B, baseStats: B) {
 	stats.vitality = capStatBuff(stats.vitality, baseStats.vitality);
-	stats.defense = capStatBuff(stats.defense, baseStats.defense);
+	// stats.defense = capStatBuff(stats.defense, baseStats.defense);
 	// stats.intelligence = capStatBuff(
 	// 	stats.intelligence,
 	// 	baseStats.intelligence
 	// );
-	stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
+	// stats.dexterity = capStatBuff(stats.dexterity, baseStats.dexterity);
 	return stats;
 }
 

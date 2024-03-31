@@ -37,9 +37,8 @@ export const dragonRage = ({
 	// Increase **ATK** of all allies by __25%__ as well as decreasing their **DEF** by __6%__
 	// const hpRatio = Math.floor((playerStats.originalHp * 35) / 100);
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
-	if (round % procRound === 0 && !playerStats.totalStats.isRage && !playerStats.totalStats.isTrueStat) {
+	if (round % procRound === 0 && !playerStats.totalStats.isRage) {
 		playerStats.totalStats.isRage = true;
-		playerStats.totalStats.isTrueStat = true;
 		let desc = "";
 		const operations: any = {
 			"+": (x: any, y: any) => x + y,
