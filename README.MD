@@ -9,6 +9,9 @@ forever start -c "node -r dotenv/config --max-old-space-size=7024" -o out.log -e
 
 pkill -9 -f client.js
 
+--- to list all node process
+ps -aef | grep node
+
 REMEMBER TO CLEAR REDIS FROM BOTH SERVERS TO STOP EVENT
 - USE OLD PROJECT TO CREATE NEW MIGRATIONS
 - While installing canvas on ubuntu run the command "sudo npm config set user 0"

@@ -264,9 +264,11 @@ export const dominator = ({
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (
 		round % procRound === 0 &&
-    !playerStats.totalStats.isDominator
+    !playerStats.totalStats.isDominator &&
+	!playerStats.totalStats.isTrueAtk
 	) {
 		playerStats.totalStats.isDominator = true;
+		playerStats.totalStats.isTrueAtk = true;
 		const percent = calcPercentRatio(16, card.rank);
 		const ratio = getRelationalDiff(
 			baseEnemyStats.totalStats.vitality,
@@ -275,7 +277,7 @@ export const dominator = ({
 		opponentStats.totalStats.vitality =
       opponentStats.totalStats.vitality - ratio;
 		
-	  const percentInc = calcPercentRatio(15, card.rank);
+	  const percentInc = calcPercentRatio(12, card.rank);
 
 	  const baseAtkRatio = getRelationalDiff(
 			basePlayerStats.totalStats.vitality,
@@ -290,7 +292,7 @@ export const dominator = ({
 
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
-      `it's **True ATK** by __${percent}%__ simultaneously increasing **True ATK** and **Base ATK** of all allies` +
+      `it's **ATK** by __${percent}%__ simultaneously increasing **True ATK** and **Base ATK** of all allies` +
 	  `by __${percentInc}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
