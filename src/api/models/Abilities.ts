@@ -31,7 +31,7 @@ export const get = async (
 ): Promise<AbilityProps[]> => {
 	const db = connection;
 	const alias = "abilityalias";
-	let query = db.select("*").from(tableName).as(alias);
+	let query = db.select("*").from(tableName).where({ is_deleted: false }).as(alias);
 
 	if (typeof filter?.name === "string") {
 		query = query.where(`${tableName}.name`, "ilike", `%${filter.name}%`);

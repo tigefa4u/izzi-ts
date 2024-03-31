@@ -170,10 +170,10 @@ export const BattleProcess = async ({
 		opponentStats.totalStats.isEvadeHit = false;
 	}
 	playerStats.totalStats = processStack(playerStats.totalStats);
-	playerStats.totalStats = processStatBuffCap(
-		playerStats.totalStats,
-		isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
-	);
+	// playerStats.totalStats = processStatBuffCap(
+	// 	playerStats.totalStats,
+	// 	isPlayerFirst ? basePlayerStats.totalStats : baseEnemyStats.totalStats
+	// );
 
 	// // This logic makes sure that stats do not drop below 10% of base stats
 	playerStats.totalStats = processStatDeBuffCap(
