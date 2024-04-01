@@ -281,16 +281,16 @@ export const dominator = ({
 			basePlayerStats.totalStats.vitality,
 			percentInc
 	  );
+	  basePlayerStats.totalStats.vitality = basePlayerStats.totalStats.vitality + baseAtkRatio;
 	  const atkRatio = getRelationalDiff(
-			playerStats.totalStats.vitality,
+			basePlayerStats.totalStats.vitality,
 			percentInc
 	  );
 	  playerStats.totalStats.vitality = playerStats.totalStats.vitality + atkRatio;
-	  basePlayerStats.totalStats.vitality = basePlayerStats.totalStats.vitality + baseAtkRatio;
 
 		const desc =
       `crippling **__${opponentStats.name}__** decreasing ` +
-      `it's **ATK** by __${percent}%__ simultaneously increasing **True ATK** and **Base ATK** of all allies` +
+      `it's **ATK** by __${percent}%__ simultaneously increasing **ATK** and **Base ATK** of all allies` +
 	  `by __${percentInc}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,

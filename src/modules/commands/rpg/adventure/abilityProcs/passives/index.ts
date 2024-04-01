@@ -139,10 +139,10 @@ export const berserk = ({
 
 		const percent = calcPercentRatio(20, card.rank);
 
-		const ratio = playerStats.totalStats[temp] * (percent / 100);
+		const ratio = basePlayerStats.totalStats[temp] * (percent / 100);
 		playerStats.totalStats[temp] =
       playerStats.totalStats[temp] + Number(ratio.toFixed(2));
-		const desc = `increasing it's **True ${
+		const desc = `increasing it's **${
 			temp === "vitality" ? "ATK" : temp === "defense" ? "DEF" : "CRIT Chance"
 		}** by __${percent}%__`;
 		prepSendAbilityOrItemProcDescription({
@@ -192,23 +192,15 @@ export const fightingSpirit = ({
 		playerStats.totalStats.isSpirit = true;
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
-			playerStats.totalStats.vitality,
+			basePlayerStats.totalStats.vitality,
 			percent
 		);
 		const defIncRation = getRelationalDiff(
-			playerStats.totalStats.defense,
+			basePlayerStats.totalStats.defense,
 			percent
 		);
-		// cap inc at 200%
-		const cap = getRelationalDiff(
-			basePlayerStats.totalStats.vitality,
-			200
-		);
-		let desc = `**True DEF** of all allies by __${percent}%__`;
-		if (playerStats.totalStats.vitality < cap) {
-			playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
-			desc = `**True ATK** and ${desc}`;
-		}
+		let desc = `**ATK** and **DEF** of all allies by __${percent}%__`;
+		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		playerStats.totalStats.defense =
       playerStats.totalStats.defense + defIncRation;
 		desc = `increasing ${desc}`;

@@ -110,7 +110,9 @@ export const lightningShield = ({
 	if (round % procRound === 0 && !playerStats.totalStats.isLightningShield) {
 		playerStats.totalStats.isLightningShield = true;
 		const percent = calcPercentRatio(30, card.rank);
-		const defRatio = getRelationalDiff(playerStats.totalStats.defense, percent);
+		const baseRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
+		basePlayerStats.totalStats.defense = basePlayerStats.totalStats.defense + baseRatio;
+		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, percent);
 		playerStats.totalStats.defense = playerStats.totalStats.defense + defRatio;
 
 		const atkPercent = calcPercentRatio(25, card.rank);
@@ -134,7 +136,7 @@ export const lightningShield = ({
 		opponentStats.totalStats.criticalDamage = opponentStats.totalStats.criticalDamage - .15;
 		if (opponentStats.totalStats.criticalDamage < 0) opponentStats.totalStats.criticalDamage = 0;
 
-		const desc = `Increasing its **True DEF** by __${percent}%__ ` +
+		const desc = `Increasing its **Base DEF** and **DEF** by __${percent}%__ ` +
         `as well as dealing __${abilityDamage}__ damage to **__${opponentStats.name}__**, simultaneously ` +
         "decreasing its **Accuracy** and **Crit Damage** by __15%__";
 		prepSendAbilityOrItemProcDescription({
