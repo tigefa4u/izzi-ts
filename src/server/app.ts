@@ -10,6 +10,10 @@ app.use(express.json());
 const webhookAuth = "wKm(.DT#*XL,S#9F";
 const botID = "784851074472345633";
 function isWebhookAuth(req: Request, res: Response, next: () => void) {
+	console.log("[webhook-logs] new vote request received", {
+		auth: req.headers.authorization,
+		body: req.body
+	});
 	if (req.headers["authorization"] === webhookAuth && req.body.type === "upvote") {
 		if (req.body.bot && req.body.bot !== botID) {
 			return res.status(401).send({
