@@ -142,7 +142,7 @@ async function prepareCinfoDetails(
 				elementTypeEmoji ? elementTypeEmoji : ""
 			}\n**Rank:** ${titleCase(characterInfo.rank)}${
 				characterInfo.card_type_metadata?.isDarkZone
-					? prepareAbilityDesc(statsPrep, characterInfo.rank)
+					? `\n${prepareStatsDesc(statsPrep, characterInfo.rank)}`
 					: prepareCardInfoDesc()
 			}\n\n**Global Market Price ${emoji.shoppingcart}**\n${
 				characterInfo.averageMarketPrice
