@@ -131,9 +131,12 @@ export const getRandomCard: (
 	}
 	if (typeof isDarkZone === "boolean") {
 		query = query.where(`${tableName}.is_dark_zone`, isDarkZone);
-	} else {
-		query = query.where(`${tableName}.is_dark_zone`, false);
 	}
+	// Enable the else case if you do not want to spwan dark zone cards
+	// in normal raids.
+	// else {
+	// 	query = query.where(`${tableName}.is_dark_zone`, false);
+	// }
 	if (!queryParams.series) {
 		query = query.whereNot(`${tableName}.series`, "=", "xenex");
 	}
