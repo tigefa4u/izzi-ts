@@ -197,7 +197,7 @@ const baseLoot = (): any => ({
 			loot: {
 				gold: randomNumber(17000, 19000),
 				extraGold: randomNumber(15000, 17000),
-				drop: { shard: randomNumber(10, 14) },
+				drop: { shard: randomNumber(20, 24) },
 			},
 		},
 		darkZone: {
@@ -267,7 +267,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(20000, 23000),
 				extraGold: randomNumber(18000, 20000),
 				drop: {
-					shard: randomNumber(15, 18),
+					shard: randomNumber(25, 28),
 					orbs: randomNumber(2, 3),
 				},
 			},
@@ -380,7 +380,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(25000, 27000),
 				extraGold: randomNumber(23000, 25000),
 				drop: {
-					shard: randomNumber(20, 32),
+					shard: randomNumber(30, 42),
 					orbs: randomNumber(3, 4),
 				},
 			},
@@ -453,7 +453,7 @@ const baseLoot = (): any => ({
 				gold: randomNumber(29000, 31000),
 				extraGold: randomNumber(27000, 29000),
 				drop: {
-					shard: randomNumber(27, 40),
+					shard: randomNumber(37, 50),
 					orbs: randomNumber(3, 5),
 				},
 			},

@@ -32,28 +32,40 @@ export const balancingStrike = ({
 	)
 		return;
 
-	// dark type damage
-	// Deal elemental damage equal to __25%__ of your ATK as true damage, and take 1/3 of
-	// the damage dealt to yourself. If your spd is more than you deal __25%__ more damage.
+	// Balancing Strike (every 2 rounds) - User will unleash 
+	// a strike of adaptive elemental damage which will deal 30% 
+	// of all allies ATK. if the enemy has dealt more damage than 
+	// their previous damage from normal attacks or ability damage, 
+	// the next Balancing Strike damage will deal 1.5x more damage. 
+	// Each balancing strike will
+	// inflict 1/4th of the damage dealt to the user 
+	// and reduce def by 5%
+
 	let damageDiff;
 	let abilityDamage;
 	let playerDamageDiff;
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isBstrike) {
 		playerStats.totalStats.isBstrike = true;
-		let num = 25;
-		const hasMoreSpeed = compare(
-			playerStats.totalStats.dexterity,
-			opponentStats.totalStats.dexterity
+
+		const e_defPercent = calcPercentRatio(5, card.rank);
+		const e_defRatio = getRelationalDiff(
+			baseEnemyStats.totalStats.defense,
+			e_defPercent
 		);
-		if (hasMoreSpeed) {
-			num = 50;
-		}
+		opponentStats.totalStats.defense = opponentStats.totalStats.defense - e_defRatio;
+
+		const num = 30;
 		const percent = calcPercentRatio(num, card.rank);
 		let damageDealt = getRelationalDiff(
 			playerStats.totalStats.vitality,
 			percent
 		);
+		const enemyPrevDamage = opponentStats.totalStats.previousDamage || 0;
+		const playerPrevDamage = playerStats.totalStats.previousDamage || 0;
+		if (enemyPrevDamage > playerPrevDamage) {
+			damageDealt = damageDealt * 1.5;
+		}
 
 		const elementalEffectiveness = addTeamEffectiveness({
 			cards: [ { type: card.type } ] as (CollectionCardInfoProps | undefined)[],
@@ -82,7 +94,7 @@ export const balancingStrike = ({
       opponentStats.totalStats.strength - damageDealt;
 		if (opponentStats.totalStats.strength <= 0)
 			opponentStats.totalStats.strength = 0;
-		const reflect = Math.round(damageDealt * (1 / 3));
+		const reflect = Math.round(damageDealt * (1 / 4));
 		playerStats.totalStats.strength = playerStats.totalStats.strength - reflect;
 		if (playerStats.totalStats.strength <= 0)
 			playerStats.totalStats.strength = 0;
@@ -116,7 +128,7 @@ export const balancingStrike = ({
       `Dealing __${damageDealt}__ **${titleCase(card.type)} ${emojiMap(
       	card.type
       )}** damage to ` +
-      `**__${opponentStats.name}__**${
+      `**__${opponentStats.name}__** decreasing its **DEF** by __${e_defPercent}%__${
       	effective > 1
       		? ` it was ${getElementalEffectiveStatus(
       			elementalEffectiveness.opponentStats.effective
