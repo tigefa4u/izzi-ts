@@ -404,17 +404,6 @@ async function processRaidResult({
 			version: "small",
 		});
 	}
-	if (!bossCanvas) {
-		channel?.sendMessage(
-			"Your battle has been processed, but we were not able to show the result."
-		);
-		return;
-	}
-
-	const attachment = createAttachment(
-		bossCanvas.createJPEGStream(),
-		"boss.jpg"
-	);
 	const embed = createEmbed(author)
 		.setTitle(
 			`${
@@ -435,9 +424,16 @@ async function processRaidResult({
 			)} / ${numericWithComma(updateObj.stats.original_strength)} ${
 				emoji.hp
 			}**\n${fakeHp.join("")}`
-		)
-		.setThumbnail("attachment://boss.jpg")
-		.attachFiles([ attachment ]);
+		);
+	if (bossCanvas) {
+		const attachment = createAttachment(
+			bossCanvas.createJPEGStream(),
+			"boss.jpg"
+		);
+
+		embed.setThumbnail("attachment://boss.jpg")
+			.attachFiles([ attachment ]);
+	}
 
 	const buttons = customButtonInteraction(
 		channel,
