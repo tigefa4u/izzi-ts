@@ -108,3 +108,18 @@ https://medium.com/@simon.white/postgres-publish-subscribe-with-nodejs-996a7e45f
 
 # To reset raid spawn ids
 - alter sequence raids_id_seq restart with 1
+
+## Migrating Redis Data
+- Go into `redis-cli` and type `SAVE` to create a `dump.rdb`.
+- This will create a dump in `/var/lib/redis/` path
+- Once you move the file to target server follow these steps:
+- 1. `sudo service redis-server stop`
+- 2. `cp dump.rdb /var/lib/redis/dump.rdb`
+- 3. `sudo chown redis: /var/lib/redis/dump.rdb`
+- 4. `sudo service redis-server start`
+
+## Migrating PostgreSQL Data
+- Create a pg_dump file. `pg_dump -U postgres -W -d <dbname> > name.sql` or `pg_dump -F c -U postgres -W -d izzi > izzi.dump`. (-W parameter prompts a password)
+- To import data use `psql -U postgres -W -d izzi -f izzi.sql ` or `pg_restore -U postgres -W -d izzi izzi.dump --clean`.
+- ref link: https://www.tecmint.com/backup-and-restore-postgresql-database/
+- Note: if you run into `FATAL:  Peer authentication failed for user "postgres"` error simply change the line `local postgres peer` to `local postgres md5` in `pg_hba.conf`. This will prevent pgadmin from being able to connect so after running psql command switch it back to peer.

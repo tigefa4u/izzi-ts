@@ -491,15 +491,14 @@ function boostRaidBoss({
 	if (!enemyStats.totalStats.criticalDamage)
 		enemyStats.totalStats.criticalDamage = 1;
 	enemyStats.totalStats.criticalDamage =
-    enemyStats.totalStats.criticalDamage + 0.2;
+    enemyStats.totalStats.criticalDamage + 0.3;
 
 	// boost raid boss ATK by 15%
-	if (baseEnemyStats) {
-		enemyStats.totalStats.vitality =
-      enemyStats.totalStats.vitality + baseEnemyStats.totalStats.vitality * 0.1;
-	}
+	enemyStats.totalStats.vitality =
+		Math.floor(enemyStats.totalStats.vitality + (enemyStats.totalStats.vitality * 0.15));
+	enemyStats.totalStats.defense = Math.floor(enemyStats.totalStats.defense + (enemyStats.totalStats.defense * .15));
 
-	if (baseEnemyStats && enemyStats.isRageMode && turn === 1) {
+	if (baseEnemyStats && enemyStats.isRageMode && enemyStats.enterRageMode) {
 		enemyStats.totalStats.intelligence = baseEnemyStats.totalStats.intelligence;
 		enemyStats.totalStats.strength = enemyStats.totalStats.originalHp || 0;
 		const diffHp = relativeDiff(
@@ -525,8 +524,9 @@ function boostRaidBoss({
 		enemyStats,
 		desc:
       `**[ROUND ${round}]**\n**${enemyStats.name}** has entered **Rage Mode** ${emoji.angry}, ` +
-      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__20%__**. " +
-      `Its **ATK** also increases over time by __10%__ and has regenerated its **ARMOR**! ${emoji.criticalDamage}`,
+      "its **Critical Hit** chance and **Critical Hit Damage** will increase over time by **__30%__**. " +
+      "Its **ATK** and **DEF** will also increase by __15%__ and has regenerated " +
+	  `its **ARMOR** and **HP**! ${emoji.criticalDamage}`,
 	};
 }
 
@@ -551,11 +551,6 @@ async function simulatePlayerTurns({
   }) {
 	let defeated;
 	for (let i = 0; i < 2; i++) {
-		let showRageModeDesc = false;
-		if (isRaid && round === RAGE_MODE_ROUND && i === 1 && canEnterRageMode) {
-			enemyStats.isRageMode = true;
-			showRageModeDesc = true;
-		}
 		if (enemyStats.isRageMode) {
 			const boost = boostRaidBoss({
 				enemyStats,
@@ -564,7 +559,7 @@ async function simulatePlayerTurns({
 				turn: i,
 			});
 			enemyStats = boost.enemyStats;
-			if (showRageModeDesc) {
+			if (enemyStats.enterRageMode) {
 				const desc = await simulateBattleDescription({
 					playerStats,
 					enemyStats,
@@ -577,6 +572,7 @@ async function simulatePlayerTurns({
 					rawDescription: boost.desc,
 					id: generateUUID(4),
 				});
+				enemyStats.enterRageMode = false;
 			}
 		}
 		const criticalHitChances = prepareCriticalHitChance({
@@ -689,6 +685,16 @@ async function simulatePlayerTurns({
 				isPlayerFirst,
 				simulation,
 			});
+			/**
+			 * rework - the boss enters rage mode only after
+			 * its first hp is depleted
+			 */
+			if (isRaid && defeated.isBot && !defeated.isRageMode && canEnterRageMode) {
+				enemyStats.enterRageMode = true;
+				enemyStats.isRageMode = true;
+				defeated = undefined;
+				continue;
+			}
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
 			defeated = getDefeated({

@@ -178,6 +178,7 @@ export type BattleStats = {
   isRageMode?: boolean;
   surviveRoundsAfterDeath?: number;
   resetRound?: boolean;
+  enterRageMode?: boolean;
 };
 
 export type PrepareBattleDescriptionProps = {
