@@ -1,0 +1,15 @@
+0 */6 * * * /var/lib/postgresql/backup.sh
+##0 */12 * * * rm /var/log/postgresql/*
+0 0 * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job premium >> /home/izzi-ts/cronjob.log 2>&1
+0 0 * * * export NODE_PATH=src/ && npx ts-node -r dotenv/config /home/izzi-ts/src/server/pipes/cronjobs/dailyTimer.ts
+
+# copied from dashboard
+*/4 * * * * export NODE_PATH=src/ && /home/izzi-cronjobs/cronjob.sh -job 4minute >> /home/izzi-cronjobs/cronjob.log 2>&1
+*/5 * * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job hour >> /home/izzi-ts/cronjob.log 2>&1
+## do not uncomment 0 0 * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job premium >> /home/izzi-ts/cronjob.log 2>&1
+0 */2 * * * export NODE_PATH=src/ && /home/izzi-cronjobs/cronjob.sh -job rp >> /home/izzi-cronjobs/cronjob.log 2>&1
+0 0-21/3 * * * export NODE_PATH=src/ && /home/izzi-cronjobs/cronjob.sh -job rpp >> /home/izzi-cronjobs/cronjob.log 2>&1
+30 1-22/3 * * * export NODE_PATH=src/ && /home/izzi-cronjobs/cronjob.sh -job rpp >> /home/izzi-cronjobs/cronjob.log 2>&1
+*/5 * * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job minute >> /home/izzi-ts/cronjob.log 2>&1
+*/4 * * * * export NODE_PATH=src/ && /home/izzi-ts/cronjob.sh -job 4minute >> /home/izzi-ts/cronjob.log 2>&1
+

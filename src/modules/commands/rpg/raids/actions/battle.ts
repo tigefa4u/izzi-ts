@@ -205,7 +205,7 @@ export const battleBoss = async ({
 		const hideBt = (args.shift() || "").toLowerCase();
 
 		const damageCapPercent = 10;
-		let damageCap = Math.floor(
+		const damageCap = Math.floor(
 			currentRaid.stats.original_strength *
         ((multiplier * damageCapPercent) / 100)
 		);
@@ -272,19 +272,16 @@ export const battleBoss = async ({
 					result.totalTeamDamage = damageCap;
 			} else {
 				let percentDamageDealt =
+				/**
+				 * We are multiplying the hp by 2
+				 * since the boss has 2 lives.
+				 */
           (result.totalDamage || 0) /
-          (result.enemyStats?.totalStats.originalHp ||
+          ((result.enemyStats?.totalStats.originalHp ||
             result.enemyStats?.totalStats.strength ||
-            1);
+            1) * 2);
 
 				if (percentDamageDealt > 1) percentDamageDealt = 1;
-				if (!result.enemyStats?.isRageMode) {
-					/**
-					 * If the boss not defeated in rage mode
-					 * they can only deal half of damage cap.
-					 */
-					damageCap = damageCap / 2;
-				}
 				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
 			}
 
