@@ -5,12 +5,12 @@ import "../../../module";
 import autoKick from "../autoKick";
 import { delay, generateUUID, getRemainingHoursAndMinutes } from "helpers";
 import { initLoggerContext, setLoggerContext } from "loggers/context";
+import { RaidProps } from "@customTypes/raids";
 
+// raidTimers to expire raids is written in `izzi-cronjobs`
 // connect to process - chrome dev tool - remote connection
-async function raidTimers() {
+async function raidTimers(raids: RaidProps[]) {
 	try {
-		const raids = await getAllRaids();
-		if (!raids) return;
 		loggers.info("cronjobs.oneMinuteTimers.raidTimers: cronjob invoked..");
 		const raidIdsToDelete: number[] = [];
 		raids.map((raid) => {
@@ -51,7 +51,9 @@ function boot() {
 				requestId: generateUUID(10),
 				userTag: "cronjob"
 			});
-			await Promise.all([ autoKick(), raidTimers() ]);
+			const raids = await getAllRaids({ is_start: true });
+			if (!raids) return;
+			await autoKick(raids);
 		} catch (err) {
 			loggers.error("cronjobs.oneMinuteTimers.boot: ERROR", err);
 		} finally {

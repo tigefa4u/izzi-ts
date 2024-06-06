@@ -1,12 +1,9 @@
+import { RaidProps } from "@customTypes/raids";
 import { getAllRaids, updateRaid } from "api/controllers/RaidsController";
-import { delay } from "helpers";
 import loggers from "loggers";
-import { DMUserViaApi } from "./directMessage";
 
-export default async function () {
+export default async function (raids: RaidProps[]) {
 	try {
-		const raids = await getAllRaids();
-		if (!raids) return;
 		const hour = 1000 * 60 * 60;
 		await Promise.all(
 			raids.map(async (r) => {

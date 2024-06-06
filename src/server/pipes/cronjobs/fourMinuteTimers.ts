@@ -55,7 +55,7 @@ function boot() {
 				requestId: generateUUID(10),
 				userTag: "cronjob"
 			});
-			await refillRaidEnergy();
+			// await refillRaidEnergy();
 			// await Promise.all([ refillMana(), refillRaidEnergy() ]);
 		} catch (err) {
 			loggers.error("cronjobs.fourMinuteTimers: ERROR", err);
