@@ -530,6 +530,28 @@ function boostRaidBoss({
 	};
 }
 
+const toggleRageMode = ({
+	isRaid,
+	defeated,
+	enemyStats,
+	canEnterRageMode,
+}: {
+	isRaid?: boolean;
+	defeated: BattleStats | undefined;
+	enemyStats: BattleStats;
+	canEnterRageMode?: boolean;
+}) => {
+	if (isRaid && defeated?.isBot && !defeated?.isRageMode && canEnterRageMode) {
+		enemyStats.enterRageMode = true;
+		enemyStats.isRageMode = true;
+		defeated = undefined;
+	}
+	return {
+		enemyStats,
+		defeated 
+	};
+};
+
 async function simulatePlayerTurns({
 	playerStats,
 	enemyStats,
@@ -636,10 +658,26 @@ async function simulatePlayerTurns({
 			totalDamage += abilityDamage;
 		}
 		if (updatedStats.isAbilityDefeat) {
-			defeated = updatedStats.opponentStats;
+			const computed = toggleRageMode({
+				isRaid,
+				defeated: updatedStats.opponentStats,
+				enemyStats,
+				canEnterRageMode,
+			});
+			defeated = computed.defeated;
+			enemyStats = computed.enemyStats;
+			if (defeated === undefined) continue;
 			break;
 		} else if (updatedStats.isAbilitySelfDefeat) {
-			defeated = updatedStats.playerStats;
+			const computed = toggleRageMode({
+				isRaid,
+				defeated: updatedStats.playerStats,
+				enemyStats,
+				canEnterRageMode,
+			});
+			defeated = computed.defeated;
+			enemyStats = computed.enemyStats;
+			if (defeated === undefined) continue;
 			break;
 		}
 		const battleDescription = updateBattleDesc({
@@ -689,12 +727,15 @@ async function simulatePlayerTurns({
 			 * rework - the boss enters rage mode only after
 			 * its first hp is depleted
 			 */
-			if (isRaid && defeated.isBot && !defeated.isRageMode && canEnterRageMode) {
-				enemyStats.enterRageMode = true;
-				enemyStats.isRageMode = true;
-				defeated = undefined;
-				continue;
-			}
+			const computed = toggleRageMode({
+				isRaid,
+				defeated,
+				enemyStats,
+				canEnterRageMode,
+			});
+			defeated = computed.defeated;
+			enemyStats = computed.enemyStats;
+			if (defeated === undefined) continue;
 			break;
 		} else if (round === BATTLE_ROUNDS_COUNT && i === 1) {
 			defeated = getDefeated({

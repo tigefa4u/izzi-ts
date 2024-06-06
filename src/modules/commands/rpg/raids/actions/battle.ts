@@ -276,10 +276,7 @@ export const battleBoss = async ({
 				 * We are multiplying the hp by 2
 				 * since the boss has 2 lives.
 				 */
-          (result.totalDamage || 0) /
-          ((result.enemyStats?.totalStats.originalHp ||
-            result.enemyStats?.totalStats.strength ||
-            1) * 2);
+          (result.totalDamage || 0) / ((enemyStats.totalStats.originalHp || enemyStats.totalStats.strength) * 2);
 
 				if (percentDamageDealt > 1) percentDamageDealt = 1;
 				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
