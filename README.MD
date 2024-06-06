@@ -108,3 +108,6 @@ https://medium.com/@simon.white/postgres-publish-subscribe-with-nodejs-996a7e45f
 
 # To reset raid spawn ids
 - alter sequence raids_id_seq restart with 1
+
+# Issues when running cronjob
+- ref: https://superuser.com/questions/552016/bash-script-not-found
