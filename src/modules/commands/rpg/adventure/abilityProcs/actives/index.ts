@@ -394,12 +394,16 @@ export const futureSight = ({
 		playerStats.totalStats.energy = playerEnergy.energy;
 		playerStats.totalStats.dpr = playerEnergy.dpr;
 
-		const evaPercent = calcPercentRatio(15, card.rank);
-		const evaRatio = basePlayerStats.totalStats.evasion * (evaPercent / 100);
-		playerStats.totalStats.evasion = playerStats.totalStats.evasion + evaRatio;
+		const defPercent = calcPercentRatio(15, card.rank);
+		const defRatio = getRelationalDiff(
+			basePlayerStats.totalStats.defense,
+			defPercent
+		);
+
+		playerStats.totalStats.defense = playerStats.totalStats.defense + defRatio;
 		const desc =
-      `increasing **ARMOR** of all allies by __${percent}%__ as well as increasing ` +
-      `**Evasion Chances** by __${evaPercent}%__`;
+      `increasing **ARMOR** of all allies by __${percent}%__ as well as increasing its ` +
+      `**DEF** by __${defPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,

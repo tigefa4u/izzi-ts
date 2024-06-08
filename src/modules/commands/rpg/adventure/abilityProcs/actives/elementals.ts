@@ -422,7 +422,7 @@ export const eclipse = ({
 		playerStats.totalStats.isEclipse = false;
 	}
 	// Harness the power of Eclipse and gain knowledge beyond your enemies
-	// increasing your **INT** by __30%__ as well as **Buffing** the **DEF** of all allies by __20%__.
+	// increasing your **INT** and base **INT** by _25%__ as well as **Buffing** the **DEF** of all allies by __20%__.
 	// gain 80% chance to resist misdirection.
 	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isEclipse) {
@@ -430,8 +430,16 @@ export const eclipse = ({
 		playerStats.totalStats.previousRound = round;
 
 		// inc atk of the card instead of the whole team
-		const percent = calcPercentRatio(30, card.rank);
-		const relDiff = getRelationalDiff(
+		const percent = calcPercentRatio(25, card.rank);
+		let relDiff = getRelationalDiff(
+			basePlayerStats.totalStats.intelligence,
+			percent
+		);
+
+		basePlayerStats.totalStats.intelligence = basePlayerStats.totalStats.intelligence + relDiff;
+			
+		// recalculate after buffing base armor
+		relDiff = getRelationalDiff(
 			basePlayerStats.totalStats.intelligence,
 			percent
 		);

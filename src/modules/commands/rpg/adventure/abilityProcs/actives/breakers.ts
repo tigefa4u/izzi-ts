@@ -329,12 +329,12 @@ export const crusher = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
-	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
 		playerStats.totalStats.crusherResetOnRound = round + 3;
 		// calculate ratio based on rank
-		const percent = calcPercentRatio(25, card.rank);
+		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
 			baseEnemyStats.totalStats.vitality,
 			percent
@@ -348,17 +348,16 @@ export const crusher = ({
 		opponentStats.totalStats.defense =
       opponentStats.totalStats.defense - defDecratio;
 
-		let inc = 5;
-		if (
-			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
-				card.rank
-			)
-		) {
-			inc = 6;
-		}
+		// let inc = 5;
+		// if (
+		// 	[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
+		// 		card.rank
+		// 	)
+		// ) {
+		// 	inc = 6;
+		// }
 		const desc =
-      `Decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. ` +
-      `**__${opponentStats.name}'s__** **ATK** will increase by __${inc}%__ each round.`;
+      `Permanently decreasing **__${opponentStats.name}'s__** **ATK** and **DEF** by __${percent}%__. `;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
 			enemyStats: opponentStats,
@@ -379,19 +378,19 @@ export const crusher = ({
 	if (!playerStats.totalStats.crusherResetOnRound) playerStats.totalStats.crusherResetOnRound = round;
 	if (round >= playerStats.totalStats.crusherResetOnRound && playerStats.totalStats.isUseCrusher)
 		playerStats.totalStats.isUseCrusher = false;
-	if (playerStats.totalStats.isUseCrusher) {
-		// let inc = calcPercentRatio(6, card.rank);
-		let inc = 5;
-		if (
-			[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
-				card.rank
-			)
-		) {
-			inc = 6;
-		}
-		const rel = getRelationalDiff(baseEnemyStats.totalStats.vitality, inc);
-		opponentStats.totalStats.vitality = opponentStats.totalStats.vitality + rel;
-	}
+	// if (playerStats.totalStats.isUseCrusher) {
+	// 	// let inc = calcPercentRatio(6, card.rank);
+	// 	let inc = 5;
+	// 	if (
+	// 		[ "legend", "divine", "immortal", "exclusive", "ultimate" ].includes(
+	// 			card.rank
+	// 		)
+	// 	) {
+	// 		inc = 6;
+	// 	}
+	// 	const rel = getRelationalDiff(baseEnemyStats.totalStats.vitality, inc);
+	// 	opponentStats.totalStats.vitality = opponentStats.totalStats.vitality + rel;
+	// }
 	return {
 		playerStats,
 		opponentStats,
