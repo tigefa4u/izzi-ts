@@ -211,6 +211,9 @@ export const battleBoss = async ({
 		);
 		setCooldown(author.id, `${isEvent ? "event" : "raid"}-battle`, 60 * 5);
 		const canEnterRageMode = HIGH_LEVEL_RAIDS.includes(currentRaid.stats.rawDifficulty);
+		
+		const clonedEnemytotalStats = clone(enemyStats.totalStats);
+
 		const result = await simulateBattle({
 			context,
 			playerStats: playerStats.stats,
@@ -276,7 +279,7 @@ export const battleBoss = async ({
 				 * We are multiplying the hp by 2
 				 * since the boss has 2 lives.
 				 */
-          (result.totalDamage || 0) / ((enemyStats.totalStats.originalHp || enemyStats.totalStats.strength) * 2);
+          (result.totalDamage || 0) / ((clonedEnemytotalStats.originalHp || clonedEnemytotalStats.strength) * 2);
 
 				if (percentDamageDealt > 1) percentDamageDealt = 1;
 				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
