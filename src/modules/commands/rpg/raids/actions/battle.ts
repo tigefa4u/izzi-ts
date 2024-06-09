@@ -269,21 +269,21 @@ export const battleBoss = async ({
 			 * If the boss was defeated in rage mode - the total damage
 			 * can reach cap.
 			 */
-			if (result.enemyStats && result.enemyStats.totalStats.strength <= 0 && result.enemyStats.isRageMode) {
-				result.totalDamage = damageCap;
-				if (result.totalTeamDamage > damageCap)
-					result.totalTeamDamage = damageCap;
-			} else {
-				let percentDamageDealt =
-				/**
+			// if (result.enemyStats && result.enemyStats.totalStats.strength <= 0 && result.enemyStats.isRageMode) {
+			// 	result.totalDamage = damageCap;
+			// 	if (result.totalTeamDamage > damageCap)
+			// 		result.totalTeamDamage = damageCap;
+			// } else {
+			let percentDamageDealt =
+			/**
 				 * We are multiplying the hp by 2
 				 * since the boss has 2 lives.
 				 */
-          (result.totalDamage || 0) / ((clonedEnemytotalStats.originalHp || clonedEnemytotalStats.strength) * 2);
+          (result.totalDamage || 0) / ((enemyStats.totalStats.originalHp || clonedEnemytotalStats.originalHp || 1) * 2);
 
-				if (percentDamageDealt > 1) percentDamageDealt = 1;
-				result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
-			}
+			if (percentDamageDealt > 1) percentDamageDealt = 1;
+			result.totalDamage = Math.ceil(percentDamageDealt * damageCap);
+			// }
 
 			if (result.totalDamage > updateObj.stats.remaining_strength)
 				result.totalDamage = updateObj.stats.remaining_strength;
