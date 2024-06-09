@@ -49,11 +49,12 @@ const spawnRaids = async () => {
 		// const raids = await getAllRaids({ is_start: false });
 		// if (raids && raids.length > 40) return;
 		let count = 0;
-		return Promise.all(
+		const raidsToSpawn = await Promise.all(
 			Array(5)
 				.fill([ "e", "m", "h", "i" ])
 				.flat()
 				.map(async (difficulty, i) => {
+					const res: any[] = [];
 					const rem = i % 4;
 					if (rem === 0) count += 1;
 					const lowlevel = count === 1 ? 30 : spawnLevels[count - 1];
@@ -66,17 +67,17 @@ const spawnRaids = async () => {
 						false,
 						randomLevel
 					);
-					if (!computedBoss) return;
+					if (!computedBoss) return res;
 					loggers.info(
 						"cronjobs.hourlyTimers.spawnRaids: spawning raid with difficulty " +
 					  difficulty
 					);
-					const promises = [ createRaidBoss({
+					res.push({
 						isPrivate: false,
 						isEvent,
 						computedBoss,
 						lobby: {},
-					}) ];
+					});
 					if (!isEvent) {
 						const darkZoneBoss = computeRank(
 							difficulty,
@@ -85,20 +86,21 @@ const spawnRaids = async () => {
 							randomLevel,
 							{ isDarkZone: true }
 						);
-						if (!darkZoneBoss) return;
+						if (!darkZoneBoss) return res;
 						loggers.info("cronjobs.hourleyTimers.spawnRaid: spawning dark zone raid: ", difficulty);
-						promises.push(createRaidBoss({
+						res.push({
 							isPrivate: false,
 							isEvent,
 							computedBoss: darkZoneBoss,
 							lobby: {},
 							darkZoneSpawn: true
-						}));
+						});
 					}
 
-					await Promise.all(promises);
+					return res;
 				})
 		);
+		await Promise.all(raidsToSpawn.flat().map((item) => createRaidBoss(item)));
 	} catch (err) {
 		loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
 		return;
