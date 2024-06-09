@@ -45,6 +45,7 @@ type Stack = Pick<
   | "isUseBleed"
   | "isDominator"
   | "isPrecision"
+  | "isUseCrusher"
 >;
 function processStack(stats: Stack) {
 	[

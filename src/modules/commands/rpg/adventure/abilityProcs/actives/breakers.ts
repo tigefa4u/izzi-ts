@@ -332,7 +332,7 @@ export const crusher = ({
 	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
-		playerStats.totalStats.crusherResetOnRound = round + 3;
+		// playerStats.totalStats.crusherResetOnRound = round + 3;
 		// calculate ratio based on rank
 		const percent = calcPercentRatio(20, card.rank);
 		const ratio = getRelationalDiff(
@@ -375,9 +375,9 @@ export const crusher = ({
 			baseEnemyStats,
 		});
 	}
-	if (!playerStats.totalStats.crusherResetOnRound) playerStats.totalStats.crusherResetOnRound = round;
-	if (round >= playerStats.totalStats.crusherResetOnRound && playerStats.totalStats.isUseCrusher)
-		playerStats.totalStats.isUseCrusher = false;
+	// if (!playerStats.totalStats.crusherResetOnRound) playerStats.totalStats.crusherResetOnRound = round;
+	// if (round >= playerStats.totalStats.crusherResetOnRound && playerStats.totalStats.isUseCrusher)
+	// 	playerStats.totalStats.isUseCrusher = false;
 	// if (playerStats.totalStats.isUseCrusher) {
 	// 	// let inc = calcPercentRatio(6, card.rank);
 	// 	let inc = 5;
