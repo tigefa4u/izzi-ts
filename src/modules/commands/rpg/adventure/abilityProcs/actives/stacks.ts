@@ -426,7 +426,7 @@ export const frost = ({
 		}
 	}
 	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
-	if (round % procRound === 0 && !playerStats.totalStats.isFrost) {
+	if ((round % procRound) === 0 && !playerStats.totalStats.isFrost) {
 		playerStats.totalStats.isUseFrostPassive = true;
 		playerStats.totalStats.isFrost = true;
 		const decPercent = calcPercentRatio(8, card.rank);
@@ -475,13 +475,8 @@ export const frost = ({
 		playerStats.totalStats.isFrost = false;
 	if (playerStats.totalStats.isUseFrostPassive && round % 2 !== 0) {
 		playerStats.totalStats.isUseFrostPassive = false;
-		const damageDealt = getPlayerDamageDealt(
-			playerStats.totalStats,
-			opponentStats.totalStats,
-			round
-		);
 		const percent = calcPercentRatio(15, card.rank);
-		abilityDamage = getRelationalDiff(damageDealt, percent);
+		abilityDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
 
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;

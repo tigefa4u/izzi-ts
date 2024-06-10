@@ -330,7 +330,7 @@ export const crusher = ({
 	if (!card) return;
 	// Decrease the **ATTACK** of enemies by __25%__. Their ATK increases by __10%__ each turn
 	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
-	if (round % procRound === 0 && !playerStats.totalStats.isUseCrusher) {
+	if ((round % procRound) === 0 && !playerStats.totalStats.isUseCrusher) {
 		playerStats.totalStats.isUseCrusher = true;
 		// playerStats.totalStats.crusherResetOnRound = round + 3;
 		// calculate ratio based on rank

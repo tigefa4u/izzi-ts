@@ -71,6 +71,7 @@ function processStack(stats: Stack) {
 		"isUseBleed",
 		"isDominator",
 		"isPrecision",
+		"isUseCrusher"
 	].map((stat) => {
 		if (stats[stat as keyof Stack]) {
 			stats[stat as keyof Stack] = false;

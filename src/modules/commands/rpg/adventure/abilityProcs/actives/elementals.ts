@@ -478,7 +478,7 @@ export const eclipse = ({
 			};
 		}
 		const desc =
-      `harnessing its power increasing **ARMOR** by __${percent}%__ as well as ` +
+      `harnessing its power increasing **BASE ARMOR** and **ARMOR** by __${percent}%__ as well as ` +
       `**Buffing DEF** of allies by __${ddPercent}%__`;
 		prepSendAbilityOrItemProcDescription({
 			playerStats,
