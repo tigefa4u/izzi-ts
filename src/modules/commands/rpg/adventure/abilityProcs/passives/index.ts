@@ -129,12 +129,8 @@ export const berserk = ({
 	// When your **health %** is lower than that of the enemy increase your **ATK/DEF/CRIT CHANCE** by __20%__
 	const playerHpRatio = playerStats.totalStats.strength / 100;
 	const enemyHpRatio = opponentStats.totalStats.strength / 100;
-	playerStats.totalStats.previousRound
-		? playerStats.totalStats.previousRound++
-		: null;
 	if (playerHpRatio <= enemyHpRatio && !playerStats.totalStats.isBerserk) {
 		playerStats.totalStats.isBerserk = true;
-		playerStats.totalStats.previousRound = round;
 		const temp = randomElementFromArray([ "vitality", "defense", "critical" ]);
 
 		const percent = calcPercentRatio(20, card.rank);
