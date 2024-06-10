@@ -476,7 +476,14 @@ export const frost = ({
 	if (playerStats.totalStats.isUseFrostPassive && round % 2 !== 0) {
 		playerStats.totalStats.isUseFrostPassive = false;
 		const percent = calcPercentRatio(15, card.rank);
-		abilityDamage = getRelationalDiff(playerStats.totalStats.intelligence, percent);
+		/**
+		 * If your armor is 0, the damage dealt is based on defense.
+		 */
+		let basedOnAttr = playerStats.totalStats.intelligence;
+		if (basedOnAttr <= 0) {
+			basedOnAttr = playerStats.totalStats.defense;
+		}
+		abilityDamage = getRelationalDiff(basedOnAttr, percent);
 
 		opponentStats.totalStats.strength =
       opponentStats.totalStats.strength - abilityDamage;
