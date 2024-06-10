@@ -23,7 +23,7 @@ import "../../../module";
 // }
 
 // This is triggered every 5mins
-const spawnRaids = async () => {
+export const spawnRaids = async () => {
 	try {
 		const raidsDisabled = await Cache.get("disable-raids");
 		let isEvent = false;
@@ -107,22 +107,22 @@ const spawnRaids = async () => {
 	}
 };
 
-function boot() {
-	initLoggerContext(async () => {
-		try {
-			setLoggerContext({
-				requestId: generateUUID(10),
-				userTag: "cronjob",
-			});
-			await spawnRaids();
-			loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");
-		} catch (err) {
-			loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
-		} finally {
-			await delay(1000);
-			process.exit(1);
-		}
-	});
-}
+// function boot() {
+// 	initLoggerContext(async () => {
+// 		try {
+// 			setLoggerContext({
+// 				requestId: generateUUID(10),
+// 				userTag: "cronjob",
+// 			});
+// 			await spawnRaids();
+// 			loggers.info("cronjobs.hourlyTimers.spawnRaids: job completed...");
+// 		} catch (err) {
+// 			loggers.error("cronjobs.hourlyTimers.spawnRaids: ERROR", err);
+// 		} finally {
+// 			await delay(1000);
+// 			process.exit(1);
+// 		}
+// 	});
+// }
 
-boot();
+// boot();
