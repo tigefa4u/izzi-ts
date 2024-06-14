@@ -479,10 +479,7 @@ export const frost = ({
 		/**
 		 * If your armor is 0, the damage dealt is based on defense.
 		 */
-		let basedOnAttr = playerStats.totalStats.intelligence;
-		if (basedOnAttr <= 0) {
-			basedOnAttr = playerStats.totalStats.defense;
-		}
+		const basedOnAttr = playerStats.totalStats.defense;
 		abilityDamage = getRelationalDiff(basedOnAttr, percent);
 
 		opponentStats.totalStats.strength =

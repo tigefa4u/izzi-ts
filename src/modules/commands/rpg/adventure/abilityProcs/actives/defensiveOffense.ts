@@ -177,7 +177,7 @@ export const transfigure = ({
 	baseEnemyStats	
 }: BattleProcessProps) => {
 	// Decrease SPD of all allies by 10% simultaneously increasing their max HP and max DEF by 15%.
-	if (!card || !playerStats.totalStats.originalHp) return;	
+	if (!card || !playerStats.totalStats.originalHp || !basePlayerStats.totalStats.originalHp) return;	
 	const prodRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % prodRound === 0) {
 		const spdPercent = calcPercentRatio(10, card.rank);
@@ -188,11 +188,16 @@ export const transfigure = ({
 		playerStats.totalStats.dexterity = playerStats.totalStats.dexterity - spdRatio;
 
 		const incPercent = calcPercentRatio(15, card.rank);
-		const hpRatio = getRelationalDiff(basePlayerStats.totalStats.strength, incPercent);
+		const hpRatio = getRelationalDiff(playerStats.totalStats.originalHp, incPercent);
 		const defRatio = getRelationalDiff(basePlayerStats.totalStats.defense, incPercent);
 		basePlayerStats.totalStats.defense = basePlayerStats.totalStats.defense + defRatio;
 		basePlayerStats.totalStats.strength = basePlayerStats.totalStats.strength + hpRatio;
-		playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpRatio;
+
+		const cap = basePlayerStats.totalStats.originalHp + Math.ceil(basePlayerStats.totalStats.originalHp / 2);
+
+		if (playerStats.totalStats.originalHp < cap) {
+			playerStats.totalStats.originalHp = playerStats.totalStats.originalHp + hpRatio;
+		}
 
 		const diff = relativeDiff(playerStats.totalStats.strength, playerStats.totalStats.originalHp);
 		const processedHpBar = processHpBar(
