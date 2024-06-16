@@ -203,4 +203,5 @@ export type EmojiProps = {
 	undead: "<:undead:1195306604770365510>",
 	transfigure: "<:transfigure:1195306602362834944>",
 	vortex: "<:vortex:1195306609182769242>",
+	raidpass: ":ticket:",
 }

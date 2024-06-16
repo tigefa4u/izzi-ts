@@ -10,7 +10,7 @@ import {
 	IZZI_WEBSITE,
 	OFFICIAL_SERVER_LINK,
 } from "environment";
-import { DONATOR_PERKS_MESSAGE } from "helpers/constants/constants";
+import { DONATOR_PERKS_MESSAGE, DOT } from "helpers/constants/constants";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
 import { titleCase } from "title-case";
@@ -53,25 +53,13 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 			)
 			.setDescription(
 				`Vote for **__Izzi__** here:-\n${BOT_VOTE_LINK}\n\n` +
-          " " +
-          "Use daily to gain __2,000__ and 150xStreaks (up to 30)" +
-          " " +
-          `Gold ${emoji.gold}, 3 Shards ${emoji.shard} (6 if premium), ` +
-		  `80 Fragments ${emoji.fragments} (100 if premium)` +
-		  " 1 Raid Permit(s) (2 if married)" +
-          " " +
-          "as you vote! You get bonus __2,000__ gold if you're married!" +
-          " " +
-          `You get also 4IP ${emoji.izzipoints} if premium and ` +
-          "Your mana as well as dungeon mana also gets refilled as you vote."
-
-				// removed in favor of monthly votes
-				//   `Vote for **__Xenex Server__** here:-\n${XENEX_VOTE_LINK}\n\n` +
-				//   "Use daily to gain __2000__ and 200xStreaks (up to 30) " +
-				//   `Gold ${emoji.gold} and 1 Raid Permit(s) (2 if premium) and 5 ${emoji.shard} ` +
-				//   "Shards (10 if premium) as you vote! You get bonus __1000__ gold if you're married!"
-				//   +
-				//   `You get (3 or 4) ${emoji.izzipoints} IP if premium as you vote.`
+				`**__Your Daily Rewards__**\n${DOT} __2,000__ and 150xStreaks(up to 30) Gold ${emoji.gold}\n` +
+				`${DOT} ${user.is_premium ? "6" : "3"}x Shards ${emoji.shard}\n` +
+				`${DOT} ${user.is_premium ? "100" : "80"}x Fragments ${emoji.fragments}\n` +
+				`${DOT} ${user.is_married ? "2" : "1"}x Raid Permit(s) ${emoji.raidpass}\n` +
+				(user.is_married ? `__2,000__ Gold ${emoji.gold} marriage bonus.` : "") +
+				(user.is_premium ? `${DOT} 4IP ${emoji.izzipoints}\n` : "") +
+				`${DOT} Your Mana and Dungeon Mana gets refilled.`
 			);
 
 		try {
