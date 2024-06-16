@@ -16,7 +16,8 @@
     "build:pipe": "forever stop lib/server/shard.js && rm -rf lib/ && export NODE_PATH=lib/ && npm run build",
     "profiler": "node -r ts-node/register --prof -r dotenv/config src/server/shard.ts",
     "db:listen": "ts-node -r dotenv/config src/server/dbListener.ts",
-    "bot:raidspawn": "ts-node -r dotenv/config src/server/pipes/botRaidSpawns.ts"
+    "bot:raidspawn": "ts-node -r dotenv/config src/server/pipes/botRaidSpawns.ts",
+    "bot:premcron": "ts-node -r dotenv/config src/server/pipes/premiumCron"
   },
   "keywords": [
     "izzi",

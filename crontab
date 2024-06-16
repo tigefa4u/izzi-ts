@@ -1,6 +1,6 @@
 0 */6 * * * /var/lib/postgresql/backup.sh
 ## 0 */12 * * * rm /var/log/postgresql/*
-0 0 * * * export NODE_PATH=src/ && bash /home/izzi-ts/cronjob.sh -job premium >> /home/izzi-ts/cronjob.log 2>&1
+#0 0 * * * export NODE_PATH=src/ && bash /home/izzi-ts/cronjob.sh -job premium >> /home/izzi-ts/cronjob.log 2>&1
 0 0 * * * export NODE_PATH=src/ && npx ts-node -r dotenv/config /home/izzi-ts/src/server/pipes/cronjobs/dailyTimer.ts
 
 # copied from dashboard
