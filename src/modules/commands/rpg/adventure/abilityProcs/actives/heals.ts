@@ -20,13 +20,13 @@ export const lifesteal = ({
 	baseEnemyStats
 }: BattleProcessProps) => {
 	if (!card) return;
-	// Increase life steal by __25%__ and buff ATK by 10%.
-	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
+	// Increase life steal by __25%__ and buff ATK by 15%.
+	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isLifestealProc) {
 		playerStats.totalStats.isLifesteal = true;
 		playerStats.totalStats.isLifestealProc = true;
-		const percent = calcPercentRatio(28, card.rank);
-		const atkPercent = calcPercentRatio(10, card.rank);
+		const percent = calcPercentRatio(23, card.rank);
+		const atkPercent = calcPercentRatio(13, card.rank);
 		const ratio = getRelationalDiff(basePlayerStats.totalStats.vitality, atkPercent);
 		playerStats.totalStats.vitality = playerStats.totalStats.vitality + ratio;
 		playerStats.totalStats.lifestealPercent = playerStats.totalStats.lifestealPercent
@@ -137,8 +137,8 @@ export const guardian = ({
 }: BattleProcessProps) => {
 	let damageDiff;
 	if (!card || !playerStats.totalStats.originalHp) return;
-	// restore (25% - 30%) health based on your DEF and also increase the __DEF__ & __ARM__ of all allies for the same %
-	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	// restore (25% - 30%) health  and also increase the __DEF__ & __ARM__ of all allies for the same %
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isGuardian) {
 		playerStats.totalStats.isGuardian = true;
 		const perRatio = randomElementFromArray([
@@ -158,7 +158,7 @@ export const guardian = ({
 		playerStats.totalStats.intelligence = playerStats.totalStats.intelligence + intInc;
 
 		const ratio = getRelationalDiff(
-			playerStats.totalStats.defense,
+			playerStats.totalStats.originalHp,
 			perRatio
 		);
 

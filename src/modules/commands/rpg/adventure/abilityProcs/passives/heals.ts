@@ -47,19 +47,19 @@ export const surge = ({
 			opponentStats.totalStats.isBleeding = true;
 		}
 		playerStats.totalStats.bleedResetOnRound = round + 2;
-		const percent = calcPercentRatio(65, card.rank);
+		const percent = calcPercentRatio(60, card.rank);
 		playerStats.totalStats.surgePercent = percent;
 
-		const defBuffPercent = calcPercentRatio(8, card.rank);
-		const defIncreaseRatio = getRelationalDiff(
-			basePlayerStats.totalStats.defense,
-			defBuffPercent
-		);
-		playerStats.totalStats.defense =
-      playerStats.totalStats.defense + defIncreaseRatio;
+		// 	const defBuffPercent = calcPercentRatio(8, card.rank);
+		// 	const defIncreaseRatio = getRelationalDiff(
+		// 		basePlayerStats.totalStats.defense,
+		// 		defBuffPercent
+		// 	);
+		// 	playerStats.totalStats.defense =
+		//   playerStats.totalStats.defense + defIncreaseRatio;
 		desc =
-      `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__ as well as ` +
-      `buffing its **DEF** by __${defBuffPercent}%__ applying a **Stack** of **BLEED** ${
+      `Increasing **lifesteal** ${emoji.bloodsurge} of all allies by __${percent}%__ ` +
+      `applying a **Stack** of **BLEED** ${
       	emoji.bleed
       }${
       	opponentStats.totalStats.isGuardianAngel
@@ -106,7 +106,7 @@ export const surge = ({
 		let defenseDiff =
       baseEnemyStats.totalStats.defense - opponentStats.totalStats.defense;
 		if (defenseDiff < 0) defenseDiff = 0;
-		const percent = calcPercentRatio(100, card.rank);
+		const percent = calcPercentRatio(95, card.rank);
 		const bleedDamage = getRelationalDiff(
 			playerStats.totalStats.strength,
 			percent
