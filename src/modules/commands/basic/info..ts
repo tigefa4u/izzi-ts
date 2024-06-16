@@ -54,11 +54,11 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 			.setDescription(
 				`Vote for **__Izzi__** here:-\n${BOT_VOTE_LINK}\n\n` +
 				`**__Your Daily Rewards__**\n${DOT} __2,000__ and 150xStreaks(up to 30) Gold ${emoji.gold}\n` +
-				`${DOT} ${user.is_premium ? "6" : "3"}x Shards ${emoji.shard}\n` +
-				`${DOT} ${user.is_premium ? "100" : "80"}x Fragments ${emoji.fragments}\n` +
-				`${DOT} ${user.is_married ? "2" : "1"}x Raid Permit(s) ${emoji.raidpass}\n` +
+				`${DOT} __${user.is_premium ? "6" : "3"}x__ Shards ${emoji.shard}\n` +
+				`${DOT} __${user.is_premium ? "100" : "80"}x__ Fragments ${emoji.fragments}\n` +
+				`${DOT} __${user.is_married ? "2" : "1"}x__ Raid Permit(s) ${emoji.raidpass}\n` +
 				(user.is_married ? `__2,000__ Gold ${emoji.gold} marriage bonus.` : "") +
-				(user.is_premium ? `${DOT} 4IP ${emoji.izzipoints}\n` : "") +
+				(user.is_premium ? `${DOT} __4IP__ ${emoji.izzipoints}\n` : "") +
 				`${DOT} Your Mana and Dungeon Mana gets refilled.`
 			);
 
