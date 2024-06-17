@@ -151,7 +151,7 @@ export const battleBoss = async ({
 				author.id,
 				selected_team_id,
 				context.channel,
-				true,
+				false, // TODO - set to true after testing
 				false
 			);
 			if (!playerStats) return;
