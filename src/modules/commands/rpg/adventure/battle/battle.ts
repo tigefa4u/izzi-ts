@@ -649,12 +649,12 @@ async function simulatePlayerTurns({
 		const damageDealt = updatedStats.damageDealt || 0;
 		const abilityDamage = updatedStats.abilityDamage || 0;
 		if (isPlayerFirst) {
-			// totalDamage += Math.floor(damageDealt);
+			totalDamage += Math.floor(damageDealt);
 
 			// play with this and see if its too easy to deal damage
-			if (!updatedStats.isDamageAbsorbed) {
-				totalDamage += Math.floor(damageDealt);
-			}
+			// if (!updatedStats.isDamageAbsorbed) {
+			// 	totalDamage += Math.floor(damageDealt);
+			// }
 			totalDamage += abilityDamage;
 		}
 		if (updatedStats.isAbilityDefeat) {
