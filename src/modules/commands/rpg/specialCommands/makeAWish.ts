@@ -10,6 +10,7 @@ import {
 	setCharacterLevel,
 	setCharacterRank,
 	showTotalUserDonations,
+	updateCharacterName,
 	updateDono,
 } from "./hoaxCommands";
 import { spawnWorldBoss } from "./worldboss/spawn";
@@ -47,6 +48,9 @@ export const makeAWish = async (params: BaseProps) => {
 				return;
 			} else if (subcommand === "chr") {
 				setCharacterRank(params);
+				return;
+			} else if (subcommand === "chn") {
+				updateCharacterName(params);
 				return;
 			} else if (subcommand === "re") {
 				params.args = [ "raid-energy" ];
