@@ -20,12 +20,12 @@ export const lastStand = ({
 }: BattleProcessProps) => {
 	if (!card || !playerStats.totalStats.originalHp || !opponentStats.totalStats.originalHp) return;
 	/**
-	 * When your hp is below 30%, increase DEF of all allies by 20%. Also
+	 * When your hp is below 45%, increase DEF of all allies by 20%. Also
 	 * regen 25% of missing armor.
 	 * 
 	 */ 
 	const criteria = Math.floor(
-		playerStats.totalStats.originalHp * .3
+		playerStats.totalStats.originalHp * .45
 	);
 	// const twentyFivePercentHp = Math.floor(
 	// 	playerStats.totalStats.originalHp * (25 / 100)
