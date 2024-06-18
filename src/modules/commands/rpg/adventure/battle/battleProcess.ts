@@ -264,10 +264,10 @@ export const BattleProcess = async ({
 		 * Before: 1 Int could absorb 1 Dmg
 		 * Update: 1 Int can absorb 1.25 Dmg
 		 */
-		let absorbPercent = 0;
-		if (opponentStats.totalStats.intelligence > 0) absorbPercent = 1.25;
-		const damageAbsorbed = damageDealt / absorbPercent;
-		damageDealt = damageDealt - damageAbsorbed;
+		const boostedArmor = opponentStats.totalStats.intelligence * 1.25;
+		let debuffDamageBy = boostedArmor - opponentStats.totalStats.intelligence;
+		if (debuffDamageBy < 0) debuffDamageBy = 0;
+		damageDealt = damageDealt - debuffDamageBy;
 		if (damageDealt > opponentStats.totalStats.intelligence) {
 			if (opponentStats.totalStats.intelligence < 0)
 				opponentStats.totalStats.intelligence = 0;
