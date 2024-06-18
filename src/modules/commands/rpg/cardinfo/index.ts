@@ -157,7 +157,7 @@ async function prepareCinfoDetails(
 		.setImage("attachment://cinfo.jpg")
 		.attachFiles([ attachment ])
 		.setFooter({
-			text: `Added on: ${new Date(
+			text: `${characterInfo.character_id} | Added on: ${new Date(
 				characterInfo.created_at
 			).toLocaleDateString()}`,
 		});

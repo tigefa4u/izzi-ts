@@ -112,3 +112,12 @@ export const getDex: (
 		return;
 	}
 };
+
+export const updateCharacterNameById = (id: number, name: string) => {
+	try {
+		return Characters.updateName(id, name);
+	} catch (err) {
+		loggers.error("api.controllers.CharactersController.updateCharacterNameById: ERROR", err);
+		return;
+	}
+};

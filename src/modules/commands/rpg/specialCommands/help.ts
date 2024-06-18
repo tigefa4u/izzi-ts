@@ -15,7 +15,8 @@ export const makeAWishHelp = async ({ context, client, options }: BaseProps) => 
 			"\n\n**wspawn**\nSpawn World boss (Hoax only)." +
 			"\n\n**wend**\nForce Finish the World Boss (Hoax only)." +
 			"\n\n**wstart**\nStart World Boss Challenge (Hoax only)." +
-			"\n\n**wdmg <damage>**\nHack World Boss HP (Hoax only).");
+			"\n\n**wdmg <damage>**\nHack World Boss HP (Hoax only)." +
+			"\n\n**chn <id> <name>**\nUpdate character name (Hoax only).");
 
 		context.channel?.sendMessage(embed);
 		return;

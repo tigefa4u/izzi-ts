@@ -157,3 +157,7 @@ export const getCharactersForDex: (
 
 	return query;
 };
+
+export const updateName = (id: number, name: string) => {
+	return connection(tableName).where({ id }).update({ name });
+};

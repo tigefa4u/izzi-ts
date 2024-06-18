@@ -11,6 +11,7 @@ import { ranksMeta } from "helpers/constants/rankConstants";
 import loggers from "loggers";
 import { start } from "modules/commands/rpg/profile/startJourney";
 import { getTotalDonations, updateDonationByTransactionId } from "api/controllers/DonationsController";
+import { getCharacterById, updateCharacterNameById } from "api/controllers/CharactersController";
 
 export const setCharacterRank = async ({ client, context, options, args }: BaseProps) => {
 	try {
@@ -206,4 +207,30 @@ export const updateDono = async ({ context, client, args, options }: BaseProps) 
 		loggers.error("hoaxCommands.updateDonation: ERROR", err);
 		return;
 	}	
+};
+
+export const updateCharacterName = async ({ context, client, args, options }: BaseProps) => {
+	try {
+		const { author } = options;
+		if (author.id !== OWNER_DISCORDID) {
+			context.channel?.sendMessage("You are not allowed to execute this command.");
+			return;
+		}
+		const id = Number(args.shift());
+		if (!id || isNaN(id)) {
+			context.channel?.sendMessage("Invalid ID provided.");
+			return;
+		}
+		const name = args.join(" ")?.toLowerCase();
+		if (!name) {
+			context.channel?.sendMessage("Invalid name provided");
+			return;
+		}
+		await updateCharacterNameById(id, name);
+		context.channel?.sendMessage(`Character name update to ${name} for ID: ${id}`);
+		return;
+	} catch (err) {
+		loggers.error("hoaxCommands.updateCharacterName: ERROR", err);
+		return;
+	}
 };
