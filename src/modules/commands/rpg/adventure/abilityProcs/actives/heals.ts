@@ -21,7 +21,7 @@ export const lifesteal = ({
 }: BattleProcessProps) => {
 	if (!card) return;
 	// Increase life steal by __25%__ and buff ATK by 15%.
-	const procRound = calculateSkillProcRound(2, card.reduceSkillCooldownBy);
+	const procRound = calculateSkillProcRound(3, card.reduceSkillCooldownBy);
 	if (round % procRound === 0 && !playerStats.totalStats.isLifestealProc) {
 		playerStats.totalStats.isLifesteal = true;
 		playerStats.totalStats.isLifestealProc = true;
