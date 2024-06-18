@@ -264,29 +264,24 @@ export const BattleProcess = async ({
 		 * Before: 1 Int could absorb 1 Dmg
 		 * Update: 1 Int can absorb 1.25 Dmg
 		 */
-		const boostedArmor = opponentStats.totalStats.intelligence * 1.25;
-		let debuffDamageBy = boostedArmor - opponentStats.totalStats.intelligence;
-		if (debuffDamageBy < 0) debuffDamageBy = 0;
-		damageDealt = damageDealt - debuffDamageBy;
-		if (damageDealt > opponentStats.totalStats.intelligence) {
+		const armorAbsorbConst = 1.25;
+		const armorNeeded = Math.floor(damageDealt / armorAbsorbConst);
+		if (armorNeeded <= opponentStats.totalStats.intelligence) {
+			opponentStats.totalStats.intelligence = opponentStats.totalStats.intelligence - armorNeeded;
 			if (opponentStats.totalStats.intelligence < 0)
 				opponentStats.totalStats.intelligence = 0;
-			const damageToDeal = damageDealt - opponentStats.totalStats.intelligence;
+
+			isDamageAbsorbed = true;
+		} else {
+			const debuffDamageBy = opponentStats.totalStats.intelligence * armorAbsorbConst;
+			const damageToDeal = damageDealt - debuffDamageBy;
 			opponentStats.totalStats.intelligence = 0;
 
 			opponentStats.totalStats.strength = Math.floor(
 				opponentStats.totalStats.strength - damageToDeal
 			);
 
-			// damageDealt = damageToDeal;
 			isDamageAbsorbed = false;
-		} else if (damageDealt <= opponentStats.totalStats.intelligence) {
-			opponentStats.totalStats.intelligence =
-        opponentStats.totalStats.intelligence - damageDealt;
-			if (opponentStats.totalStats.intelligence < 0)
-				opponentStats.totalStats.intelligence = 0;
-
-			isDamageAbsorbed = true;
 		}
 
 		// 	opponentStats.totalStats.strength =
