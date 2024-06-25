@@ -11,8 +11,10 @@ import {
 	OFFICIAL_SERVER_LINK,
 } from "environment";
 import { DONATOR_PERKS_MESSAGE, DOT } from "helpers/constants/constants";
+import { prepareDailyRewardsDesc } from "helpers/daily";
 import { DMUser } from "helpers/directMessages";
 import loggers from "loggers";
+import { DMUserViaApi } from "server/pipes/directMessage";
 import { titleCase } from "title-case";
 
 export const server = ({ context }: BaseProps) => {
@@ -53,13 +55,7 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 			)
 			.setDescription(
 				`Vote for **__Izzi__** here:-\n${BOT_VOTE_LINK}\n\n` +
-				`**__Your Daily Rewards__**\n${DOT} __2,000__ and 150xStreaks(up to 30) Gold ${emoji.gold}\n` +
-				`${DOT} __${user.is_premium ? "6" : "3"}x__ Shards ${emoji.shard}\n` +
-				`${DOT} __${user.is_premium ? "100" : "80"}x__ Fragments ${emoji.fragments}\n` +
-				`${DOT} __${user.is_married ? "2" : "1"}x__ Raid Permit(s) ${emoji.raidpass}\n` +
-				(user.is_married ? `${DOT} __2,000__ Gold ${emoji.gold} marriage bonus.\n` : "") +
-				(user.is_premium ? `${DOT} __4IP__ ${emoji.izzipoints}\n` : "") +
-				`${DOT} Your Mana and Dungeon Mana gets refilled.`
+				`**__Your Daily Rewards__**\n${prepareDailyRewardsDesc(user)}`
 			);
 
 		try {
@@ -100,7 +96,6 @@ export const daily = async ({ context, client, options }: BaseProps) => {
 		} catch (err) {
 			//
 		}
-
 		context.channel?.sendMessage(embed);
 		return;
 	} catch (err) {

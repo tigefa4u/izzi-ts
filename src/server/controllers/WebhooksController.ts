@@ -24,6 +24,9 @@ import { ranksMeta } from "helpers/constants/rankConstants";
 import { taskQueue } from "handlers/taskQueue/gcp";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
 import { getDarkZoneProfile, updateRawDzProfile } from "api/controllers/DarkZoneController";
+import { createEmbed } from "commons/embeds";
+import { MessageEmbed } from "discord.js";
+import { prepareDailyRewardsDesc } from "helpers/daily";
 
 export const processUpVote = async (req: Request, res: Response) => {
 	try {
@@ -35,7 +38,10 @@ export const processUpVote = async (req: Request, res: Response) => {
 		const key = `voted::${user_tag}`;
 		const hasVoted = await Cache.get(key);
 		if (summoner?.is_banned) return;
-		let desc = "";
+		let dmParams = {} as {
+			content?: string;
+			embeds?: MessageEmbed[];
+		}
 		if (summoner && !hasVoted) {
 			summoner.vote_count = (summoner.vote_count || 0) + 1;
 			if (!summoner.monthly_votes || summoner.monthly_votes <= 0) {
@@ -60,14 +66,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 			summoner.vote_streak = streak;
 			summoner.voted_at = new Date();
 
-			let messageStr =
-        "Thank you for voting! You have received " +
-        `__${numericWithComma(goldReward)}__ Gold ${
-        	emoji.gold
-        }, __3x__ Shards ${emoji.shard}, __${passReward}__ Raid Permit(s) ${
-        	emoji.permitsic
-        }, ` +
-        "and refilled your mana and dungeon mana for dailying.";
+			let messageStr = `**__Daily Rewards__**\n${prepareDailyRewardsDesc(summoner, numericWithComma(goldReward))}`;
 			const updateObj = {
 				voted_at: summoner.voted_at,
 				vote_streak: summoner.vote_streak,
@@ -92,12 +91,8 @@ export const processUpVote = async (req: Request, res: Response) => {
 					izzi_points: summoner.izzi_points,
 					shards: summoner.shards,
 				});
-				messageStr =
-          `${messageStr} You have also received ${emoji.izzipoints} __${IPreward}__ IP ` +
-          `and __${shardReward}__ Shards ${emoji.shard}.`;
 			} else {
-				summoner.shards = (summoner.shards || 0) + 3;
-				updateObj.shards = summoner.shards;
+				updateObj.shards = (summoner.shards || 0) + 3;
 			}
 			// monthly bonus rewards
 			const monthlyRewards = await processMonthlyVoteReward(summoner);
@@ -169,13 +164,22 @@ export const processUpVote = async (req: Request, res: Response) => {
 			}
 
 			await Promise.all(promises);
-			desc = messageStr;
+			const embed = createEmbed(summoner as any)
+				.setTitle(`Daily Sign in:- Thank you for voting! (${
+					summoner.vote_streak
+						? `${summoner.vote_streak} :fire: streaks!`
+						: "No Streaks"
+				})`)
+				.setDescription(messageStr)
+			
+			dmParams.embeds = [ embed ];
 		} else {
-			desc =
+			dmParams.content =
         "Thank you for voting! To receive more rewards " +
         "start your journey in the Xenverse using ``start``";
 		}
-		DMUserViaApi(user_tag, { content: desc });
+
+		DMUserViaApi(user_tag, dmParams);
 		await Cache.set(key, "1");
 		Cache.expire && (await Cache.expire(key, 60 * 60));
 		return res.sendStatus(200);
