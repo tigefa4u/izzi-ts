@@ -20,7 +20,8 @@
     "bot:premcron": "ts-node -r dotenv/config src/server/pipes/premiumCron",
     "migrate:create": "knex --knexfile ./src/db/knexfile.ts migrate:make",
     "migrate:up": "knex --knexfile ./src/db/knexfile.ts migrate:up",
-    "migrate:down": "knex --knexfile ./src/db/knexfile.ts migrate:down"
+    "migrate:down": "knex --knexfile ./src/db/knexfile.ts migrate:down",
+    "migrate:latest": "knex --knexfile ./src/db/knexfile.ts migrate:latest"
   },
   "keywords": [
     "izzi",

@@ -100,7 +100,7 @@ const emoji: EmojiProps = {
 	shatteredsword: "<:shatteredsword:804973071383134209>",
 	confusion: "<:knockedoutstars:804973071580004372>",
 	premium: "<:premium:813678947622977596>",
-	izzipoints: "<:izzipoints:813679204322770944>",
+	izzipoints: "<:izzipoints:1255757623551066122>",
 	shard: "<:shard:813682511833989190>",
 	eclipse: "<:eclipse:819960407581655051>",
 	killerinstincts: "<:killerinstincts:819960407846027305>",
@@ -206,6 +206,7 @@ const emoji: EmojiProps = {
 	transfigure: "<:transfigure:1195306602362834944>",
 	vortex: "<:vortex:1195306609182769242>",
 	raidpass: ":ticket:",
+	izzicredits: "<:izzicredits:1255757621034483785>",
 };
 
 export default emoji;

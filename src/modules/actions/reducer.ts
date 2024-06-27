@@ -37,7 +37,7 @@ import { packs } from "modules/commands/rpg/packs";
 import { premium } from "modules/commands/rpg/premium";
 import { profile } from "modules/commands/rpg/profile";
 import {
-	mana, exp, level, gold, shards, points, orbs, permits, deleteAccount 
+	mana, exp, level, gold, shards, points, orbs, permits, deleteAccount, credits
 } from "modules/commands/rpg/profile/profileInfo";
 import { start } from "modules/commands/rpg/profile/startJourney";
 import { updateIzziProfile } from "modules/commands/rpg/profile/update";
@@ -82,6 +82,7 @@ const commandMap: CommandMapProps = {
 	start: start,
 	mana: mana,
 	points: points,
+	credits: credits,
 	gold: gold,
 	shards: shards,
 	exp: exp,

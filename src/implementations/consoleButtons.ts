@@ -120,6 +120,9 @@ const prepareConsoleDescription = async (
     			? "Mini Premium"
     			: "None"
     }\n` +
+	`**${emoji.izzipoints} Izzi Points:** ${numericWithComma(user.izzi_points)}\n**${
+		emoji.izzicredits
+	} Izzi Credits:** ${numericWithComma(user.izzi_credits)}\n` +
     `**${emoji.gold} Gold:** ${numericWithComma(user.gold)}\n**${
     	emoji.shard
     } Shards:** ${numericWithComma(user.shards)}\n**${

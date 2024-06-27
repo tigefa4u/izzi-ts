@@ -27,10 +27,12 @@ clearBattleCache="export NODE_PATH=src/ && npm run flush:cooldown"
 dockerrun="docker run -v ./izzi-cloud-logging.json:/app/izzi-cloud-logging.json \
 -v ./izzi-task-queue.json:/app/izzi-task-queue.json \
 -d --restart unless-stopped -p 6379:6379 \
---env-file .env --network host --memory=4g izzi && docker stats"
+--env-file .env --network host --memory=4g izzi"
+
+dockerstats="docker stats"
 
 cmd="cd ../home/izzi-ts && ${gitpull} && ${pullcomplete} && ${dockerbuild} && \
-${dockerlist} && ${execute} && ${dockerrun} && ${clearBattleCache}"
+${dockerlist} && ${execute} && ${dockerrun} && ${clearBattleCache} && ${dockerstats}"
 
 read -s -p "Enter password for $username@$host: " password
 sshpass -p $password ssh -l $username $host "$cmd"

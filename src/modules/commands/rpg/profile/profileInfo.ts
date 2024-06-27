@@ -234,6 +234,28 @@ export const points = async function ({
 	}
 };
 
+export const credits = async function ({
+	context,
+	options,
+}: Pick<BaseProps, "context" | "options">) {
+	try {
+		const author = options.author;
+		const result = await getProfileInfo("izzi_credits", author.id);
+		context.channel?.sendMessage(
+			`**${author.username}** currently has __${numericWithComma(
+				+result.data
+			)}__ ${emoji.izzicredits} **Izzi Credits**`
+		);
+		return;
+	} catch (err) {
+		loggers.error(
+			"commands.rpg.profile.profileInfo.points: ERROR",
+			err
+		);
+		return;
+	}
+};
+
 export const gold = async function ({
 	context,
 	options,

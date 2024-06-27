@@ -28,6 +28,7 @@ export type UserProps = {
 	premium_days: number;
 	premium_days_left: number;
 	izzi_points: number;
+	izzi_credits: number;
 	orbs: number;
 	shards: number;
 	vote_streak: number;

@@ -199,6 +199,11 @@ function prepareProfileFields(user: UserProps & P) {
 			inline: true,
 		},
 		{
+			name: `${emoji.izzicredits} Izzi Credits`,
+			value: numericWithComma(user.izzi_credits),
+			inline: true,
+		},
+		{
 			name: "Shards / Orbs",
 			value: `${emoji.shard} ${numericWithComma(user.shards)} / ${
 				emoji.blueorb
@@ -223,25 +228,25 @@ function prepareProfileFields(user: UserProps & P) {
 		});
 	}
 
-	if (user.rank) {
-		fields.push(
-			{
-				name: "DG Rank",
-				value: `${user.rankic} ${user.divisionic}`,
-				inline: true,
-			},
-			{
-				name: "Wins / Loss",
-				value: `[${user.wins} / ${user.loss}]`,
-				inline: true,
-			},
-			{
-				name: "Ranked Exp",
-				value: user.ranked_exp || "",
-				inline: true,
-			}
-		);
-	}
+	// if (user.rank) {
+	// 	fields.push(
+	// 		{
+	// 			name: "DG Rank",
+	// 			value: `${user.rankic} ${user.divisionic}`,
+	// 			inline: true,
+	// 		},
+	// 		{
+	// 			name: "Wins / Loss",
+	// 			value: `[${user.wins} / ${user.loss}]`,
+	// 			inline: true,
+	// 		},
+	// 		{
+	// 			name: "Ranked Exp",
+	// 			value: user.ranked_exp || "",
+	// 			inline: true,
+	// 		}
+	// 	);
+	// }
 
 	if (user.is_premium) {
 		fields.push(

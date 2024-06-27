@@ -23,7 +23,10 @@ import {
 import { ranksMeta } from "helpers/constants/rankConstants";
 import { taskQueue } from "handlers/taskQueue/gcp";
 import { OS_LOG_CHANNELS } from "helpers/constants/channelConstants";
-import { getDarkZoneProfile, updateRawDzProfile } from "api/controllers/DarkZoneController";
+import {
+	getDarkZoneProfile,
+	updateRawDzProfile,
+} from "api/controllers/DarkZoneController";
 import { createEmbed } from "commons/embeds";
 import { MessageEmbed } from "discord.js";
 import { prepareDailyRewardsDesc } from "helpers/daily";
@@ -33,15 +36,15 @@ export const processUpVote = async (req: Request, res: Response) => {
 		const user_tag: string = req.body.user;
 		const [ summoner, dzUser ] = await Promise.all([
 			getRPGUser({ user_tag: user_tag }),
-			getDarkZoneProfile({ user_tag })
+			getDarkZoneProfile({ user_tag }),
 		]);
 		const key = `voted::${user_tag}`;
 		const hasVoted = await Cache.get(key);
 		if (summoner?.is_banned) return;
-		let dmParams = {} as {
+		const dmParams = {} as {
 			content?: string;
 			embeds?: MessageEmbed[];
-		}
+		};
 		if (summoner && !hasVoted) {
 			summoner.vote_count = (summoner.vote_count || 0) + 1;
 			if (!summoner.monthly_votes || summoner.monthly_votes <= 0) {
@@ -59,6 +62,11 @@ export const processUpVote = async (req: Request, res: Response) => {
 				summoner.raid_pass = summoner.raid_pass + passReward;
 			}
 
+			/**
+			 * 20 credits for non premium users and 25 credits for premium users
+			 */
+			summoner.izzi_credits = (summoner.izzi_credits || 0) + (summoner.is_premium ? 25 : 20);
+
 			summoner.gold = summoner.gold + goldReward;
 			if (summoner.mana < summoner.max_mana) summoner.mana = summoner.max_mana;
 			if (summoner.dungeon_mana < DUNGEON_MAX_MANA)
@@ -66,7 +74,10 @@ export const processUpVote = async (req: Request, res: Response) => {
 			summoner.vote_streak = streak;
 			summoner.voted_at = new Date();
 
-			let messageStr = `**__Daily Rewards__**\n${prepareDailyRewardsDesc(summoner, numericWithComma(goldReward))}`;
+			let messageStr = `**__Daily Rewards__**\n${prepareDailyRewardsDesc(
+				summoner,
+				numericWithComma(goldReward)
+			)}`;
 			const updateObj = {
 				voted_at: summoner.voted_at,
 				vote_streak: summoner.vote_streak,
@@ -76,6 +87,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 				dungeon_mana: summoner.dungeon_mana,
 				vote_count: summoner.vote_count,
 				monthly_votes: summoner.monthly_votes,
+				izzi_credits: summoner.izzi_credits,
 			} as UserUpdateProps;
 
 			if (summoner.is_premium) {
@@ -117,7 +129,7 @@ export const processUpVote = async (req: Request, res: Response) => {
 						summoner.r_exp = summoner.level * 47;
 						monthlyRewards.desc =
               `${monthlyRewards.desc}. You have leveled up! You are now level __${summoner.level}__ ` +
-			  `Exp [${summoner.exp} / ${summoner.r_exp}]. ` +
+              `Exp [${summoner.exp} / ${summoner.r_exp}]. ` +
               `${
               	summoner.max_mana >= MAX_MANA_GAIN
               		? "You have already gained the maximum obtainable mana"
@@ -142,10 +154,11 @@ export const processUpVote = async (req: Request, res: Response) => {
 			const promises: any[] = [
 				updateRPGUser({ user_tag }, updateObj),
 				taskQueue("log-vote", {
-					message: `Summoner ${summoner.username} (${summoner.user_tag}) has voted. ` +
-		`Monthly Votes: ${summoner.monthly_votes}`,
-					channelId: OS_LOG_CHANNELS.BOT_VOTE
-				})
+					message:
+            `Summoner ${summoner.username} (${summoner.user_tag}) has voted. ` +
+            `Monthly Votes: ${summoner.monthly_votes}`,
+					channelId: OS_LOG_CHANNELS.BOT_VOTE,
+				}),
 			];
 
 			if (dzUser) {
@@ -153,25 +166,33 @@ export const processUpVote = async (req: Request, res: Response) => {
 				if (summoner.is_premium) {
 					fragmentReward = 100;
 				}
-				promises.push(updateRawDzProfile({ user_tag }, {
-					fragments: {
-						op: "+",
-						value: fragmentReward
-					}
-				}));
-				messageStr = `${messageStr}\n\n**__Dark Zone Bonus__**\n` +
-				`${DOT} ${fragmentReward} Fragments ${emoji.fragments}`;
+				promises.push(
+					updateRawDzProfile(
+						{ user_tag },
+						{
+							fragments: {
+								op: "+",
+								value: fragmentReward,
+							},
+						}
+					)
+				);
+				messageStr =
+          `${messageStr}\n\n**__Dark Zone Bonus__**\n` +
+          `${DOT} ${fragmentReward} Fragments ${emoji.fragments}`;
 			}
 
 			await Promise.all(promises);
 			const embed = createEmbed(summoner as any)
-				.setTitle(`Daily Sign in:- Thank you for voting! (${
-					summoner.vote_streak
-						? `${summoner.vote_streak} :fire: streaks!`
-						: "No Streaks"
-				})`)
-				.setDescription(messageStr)
-			
+				.setTitle(
+					`Daily Sign in:- Thank you for voting! (${
+						summoner.vote_streak
+							? `${summoner.vote_streak} :fire: streaks!`
+							: "No Streaks"
+					})`
+				)
+				.setDescription(messageStr);
+
 			dmParams.embeds = [ embed ];
 		} else {
 			dmParams.content =
@@ -249,7 +270,7 @@ const mythicalRewardObj: any = {
 		type: "mythical",
 		number: 1,
 		rank: ranksMeta.mythical.name,
-		rank_id: ranksMeta.mythical.rank_id
+		rank_id: ranksMeta.mythical.rank_id,
 	},
 };
 
@@ -288,7 +309,11 @@ const processMonthlyVoteReward = async (user: UserProps) => {
 			reward: { gold: 6000 },
 		};
 	}
-	if (item.reward.type === "immortal" || item.reward.type === "fodder" || item.reward.type === "mythical") {
+	if (
+		item.reward.type === "immortal" ||
+    item.reward.type === "fodder" ||
+    item.reward.type === "mythical"
+	) {
 		if (item.reward.type === "fodder") {
 			await directUpdateCreateFodder([
 				{

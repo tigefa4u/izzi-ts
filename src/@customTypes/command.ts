@@ -26,6 +26,7 @@ export type CommandMapProps = {
     shards: (params: BaseProps) => void;
     orbs: (params: BaseProps) => void;
     points: (params: BaseProps) => void;
+	credits: (params: BaseProps) => void;
     permits: (params: BaseProps) => void;
     gold: (params: BaseProps) => void;
 	start: (params: BaseProps) => void;

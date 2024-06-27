@@ -64,6 +64,7 @@ const emojis: MapProps = {
 	"corrupting potion": emoji.corruptingpotion,
 	"immortal shieldbow": emoji.immortalshieldbow,
 	izzipoints: emoji.izzipoints,
+	izzicredits: emoji.izzicredits,
 	premium: emoji.premium,
 	shard: emoji.shard,
 	"killer instincts": emoji.killerinstincts,
